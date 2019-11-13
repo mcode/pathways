@@ -1,0 +1,34 @@
+@import '../../styles/variables';
+
+.header {
+  background-color: $gray;
+  height: 40vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-height: 4em;
+
+  > * {
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+  }
+
+  h1 {
+    font: 1.5em "Avenir Next";
+    color: $white;
+  }
+
+  img {
+    height: 80%;
+  }
+}
+
+.settings-logo {
+  color: $white;
+  font-size: 1.2em;
+  margin-right: 20px;
+}
+
+.header-right {
+  margin-left: auto;
+}
