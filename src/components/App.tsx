@@ -8,6 +8,7 @@ import { getPatientRecord } from '../utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
+import Graph from './Graph.jsx';
 import config from 'utils/ConfigManager';
 
 interface AppProps {
@@ -30,8 +31,7 @@ const App: FC<AppProps> = ({ client }) => {
           <Header logo={logo} title={config.get('appName', 'SMART App')} />
           <Navigation />
         </div>
-
-        <div>{`Fetched ${patientRecords.length} resources`}</div>
+        <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
       </PatientProvider>
     </FHIRClientProvider>
