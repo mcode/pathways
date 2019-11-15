@@ -8,7 +8,7 @@ import { getPatientRecord } from '../utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
-import Graph from './Graph.jsx';
+import Graph from './Graph';
 import config from 'utils/ConfigManager';
 
 interface AppProps {
