@@ -3,7 +3,7 @@
 
 import config from '../utils/ConfigManager';
 
-const url = config.get('cqlToElmWebserviceUrl', 'http://moonshot-dev.mitre.org:8080/cql/translator');
+const url = config.get('cqlToElmWebserviceUrl');
 
 /**
  * Function that requests web_service to convert the cql into elm.
