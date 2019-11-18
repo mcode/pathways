@@ -5,29 +5,11 @@ import { Graphviz } from 'graphviz-react';
 
 import { pathways } from '../engine/index';
 import dummyPathway from '../__test__/fixtures/sample_pathway.json';
+import { Pathway } from 'pathways-model';
 
 interface GraphProps {
   pathway?: Pathway;
   resources: Array<any>;
-}
-
-interface Pathway {
-  states: {
-    [key: string]: State;
-  };
-}
-
-interface State {
-  label: string;
-  transitions: Array<Transition>;
-}
-
-interface Transition {
-  transition: string;
-  condition?: {
-    description: string;
-    cql: string;
-  };
 }
 
 const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
@@ -77,7 +59,6 @@ const generateNodes = (pathway: Pathway, patientPath: Array<Object>): string => 
   return pathwayStates
     .map(state => {
       // Create a JSON object of the node
-      console.log(state);
       let node = {
         id: state,
         shape: 'record',
