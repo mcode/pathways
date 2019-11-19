@@ -9,14 +9,7 @@ const cqlfhir = require('cql-exec-fhir');
  * @param elm - ELM string representing the ELM (previosuly converted from CQL) on which the patient will be run.
  * @return returns a JSON object which is the result of analyzing the patient against the elm file
  */
-export const executeElm = function(patient: object | string, elm: string): ElmResults {
-  if (typeof elm === 'string') {
-    elm = JSON.parse(elm);
-  }
-  if (typeof patient === 'string') {
-    patient = JSON.parse(patient);
-  }
-
+export const executeElm = function(patient: object, elm: object): ElmResults {
   const lib = new cql.Library(elm);
   const executor = new cql.Executor(lib);
   const psource = new cqlfhir.PatientSource.FHIRv400(patient);

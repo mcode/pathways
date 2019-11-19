@@ -9,14 +9,15 @@ const url = config.get('cqlToElmWebserviceUrl');
  * @param cql - cql file that is the input to the function.
  * @return The resulting elm translation of the cql file.
  */
-export const convertCQL = function(cql: string): string {
+export const convertCQL = function(cql: string): Promise<object> {
   // Connect to web service
-  const request = new XMLHttpRequest();
 
-  request.open('POST', url, false); // `false` makes the request synchronous
-  request.setRequestHeader('Content-Type', 'application/cql');
-  request.setRequestHeader('Accept', 'application/elm+json');
-  request.send(cql);
-
-  return request.responseText;
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/cql',
+      'Accept': 'application/elm+json',
+    },
+    body: cql
+  }).then(elm => elm.json());
 };

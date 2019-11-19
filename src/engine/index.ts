@@ -12,15 +12,16 @@ import { Pathway, PathwayResults } from 'pathways-model';
  * @return Information on the patient's current status within the
  *                  clinical pathway
  */
-export const pathways = function(pathway: Pathway, patient: (object | string)): Promise<PathwayResults> {
-  return extractCQL(pathway).then(cql => {
-    const elm = convertCQL(cql);
-    const elmResults = executeElm(patient, elm);
+export const pathways = function(pathway: Pathway, patient: object): Promise<PathwayResults> {
+  return extractCQL(pathway)
+    .then(cql => convertCQL(cql))
+    .then(elm => {
+      const elmResults = executeElm(patient, elm);
 
-    // TODO - update pathwaysData to take multiple patients
-    const patientIds = Object.keys(elmResults.patientResults);
-    const patientData = elmResults.patientResults[patientIds[0]];
+      // TODO - update pathwaysData to take multiple patients
+      const patientIds = Object.keys(elmResults.patientResults);
+      const patientData = elmResults.patientResults[patientIds[0]];
 
-    return pathwayData(pathway, patientData);
-  });
+      return pathwayData(pathway, patientData);
+    });
 };
