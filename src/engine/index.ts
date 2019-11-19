@@ -1,5 +1,5 @@
 import { extractor } from './cql_extractor';
-import { convertCQL } from './cql_to_elm';
+import { convertCQL } from './cql-to-elm';
 import { executeElm } from './elm-executor';
 import { pathwayData } from './output-results';
 import { Pathway, PathwayResults } from 'pathways-model';
