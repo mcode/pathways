@@ -4,7 +4,7 @@ import { Graphviz } from 'graphviz-react';
 // import { usePatient } from './PatientProvider';
 
 import { pathways } from '../engine/index';
-import dummyPathway from '../__test__/fixtures/sample_pathway.json';
+import dummyPathway from '../__tests__/fixtures/sample_pathway.json';
 import { Pathway } from 'pathways-model';
 
 interface GraphProps {
