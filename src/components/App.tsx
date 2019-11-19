@@ -22,28 +22,34 @@ interface AppProps {
 const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<any>>([]);
   const [pathway, setPathway] = useState<Pathway | null>(null);
-  const [selectPathway, setSelectPathway] = useState<boolean>(true)
-  
+  const [selectPathway, setSelectPathway] = useState<boolean>(true);
+
   useEffect(() => {
     getPatientRecord(client).then((records: Array<any>) => {
       setPatientRecords(records);
     });
   }, [client]);
 
-  function setPathwayCallback(value: Pathway|null) {
-      setSelectPathway(false);
-      setPathway(value);
+  function setPathwayCallback(value: Pathway | null) {
+    setSelectPathway(false);
+    setPathway(value);
   }
 
   function renderPatientView() {
-      return (
-        <PathwayProvider pathway = {pathway}>
-            <div>{`Fetched ${patientRecords.length} resources`}</div>
-            <PathwaysDisplay />
-            <button onClick={()=>{setSelectPathway(true)}}>Explore Pathways</button>
-            <PatientRecord resources={patientRecords} />
-        </PathwayProvider>
-      )
+    return (
+      <PathwayProvider pathway={pathway}>
+        <div>{`Fetched ${patientRecords.length} resources`}</div>
+        <PathwaysDisplay />
+        <button
+          onClick={() => {
+            setSelectPathway(true);
+          }}
+        >
+          Explore Pathways
+        </button>
+        <PatientRecord resources={patientRecords} />
+      </PathwayProvider>
+    );
   }
 
   return (

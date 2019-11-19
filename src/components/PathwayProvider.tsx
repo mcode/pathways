@@ -9,10 +9,7 @@ interface PathwayProviderProps {
 export const PathwayContext = createContext<Pathway | null>(null);
 
 export const PathwayProvider: FC<PathwayProviderProps> = ({ children, pathway }) => {
-
-    return (
-        <PathwayContext.Provider value={pathway}>{children}</PathwayContext.Provider>
-    )
-}
+  return <PathwayContext.Provider value={pathway}>{children}</PathwayContext.Provider>;
+};
 
 export const usePathwayContext = (): any => useContext(PathwayContext);
