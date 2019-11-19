@@ -5,7 +5,7 @@ declare module 'pathways-model' {
     };
   }
 
-  interface State {
+  export interface State {
     label: string;
     transitions: Array<Transition>;
   }
@@ -19,6 +19,20 @@ declare module 'pathways-model' {
   }
 
   export interface PathwayResults {
-    path: Array<Object>;
+    patientId: string;
+    currentState: string;
+    currentStatus: string | undefined;
+    nextRecommendation: any;
+    documentation: Array<any>;
+    path: Array<string>;
+  }
+
+  export interface PatientData {
+    Patient: {
+      id: {
+        value: string;
+      }
+    };
+    [key: string]: any;
   }
 }

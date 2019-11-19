@@ -1,10 +1,25 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
+
+import { Pathway, PathwayResults, PatientData, State } from 'pathways-model';
+
+interface StateData {
+  documentation: Resource | string | null;
+  nextState: string | null;
+  status: string;
+}
+
+interface Resource {
+  resourceType: string;
+  status: string;
+  state?: string;
+}
+
 /**
  * Engine function to take in the ELM patient results and output data relating to the patient's pathway
  * @param pathway - JSON (or string representing) the entire pathway
- * @param {string} patientData - JSON (or string representing) the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
- * @return {object} returns a JSON object describing where the patient is on the given pathway
+ * @param  patientData - JSON (or string representing) the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
+ * @return returns a JSON object describing where the patient is on the given pathway
  *  {
  *    currentState - the name of the state patient is currently in
  *    currentStatus - the status of the patient in the current state (from FHIR resource)
@@ -13,30 +28,29 @@
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export const pathwayData = function(pathway, patientData) {
+export const pathwayData = function(pathway: Pathway, patientData: PatientData): PathwayResults {
   if (typeof pathway === 'string') pathway = JSON.parse(pathway);
   if (typeof patientData === 'string') patientData = JSON.parse(patientData);
 
-  const patientPathInfo = getPatientPath(pathway, patientData);
-  return patientPathInfo;
+  return getPatientPath(pathway, patientData);
 };
 
 /**
  * Helper function to determine the pathway followed by a patient and provide the documentation for the pathway
- * @param {object} pathway - JSON object representing the complete pathway
- * @param {object} patientData - JSON object representing the data on a patient
- * @return {object} returns object with the current state, pathway as a list of states, and documentation for pathway as a list of conditions
+ * @param pathway - JSON object representing the complete pathway
+ * @param patientData - JSON object representing the data on a patient
+ * @return returns object with the current state, pathway as a list of states, and documentation for pathway as a list of conditions
  */
-function getPatientPath(pathway, patientData) {
-  let stateData = {currentState: 'Start'}; // Start at the "start" node
+function getPatientPath(pathway: Pathway, patientData: PatientData): PathwayResults {
+  const startState = 'Start';
   let currentStatus;
-  const patientdocumentation = [];
-  const patientPathway = [stateData.currentState];
+  const patientDocumentation = [];
+  const patientPathway = [startState];
 
-  stateData = nextState(pathway, patientData, stateData.currentState);
+  let stateData = nextState(pathway, patientData, startState);
   while (stateData !== null) {
     currentStatus = stateData.status;
-    if (stateData.documentation !== null) patientdocumentation.push(stateData.documentation);
+    if (stateData.documentation !== null) patientDocumentation.push(stateData.documentation);
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
     patientPathway.push(stateData.nextState);
     stateData = nextState(pathway, patientData, stateData.nextState);
@@ -49,18 +63,18 @@ function getPatientPath(pathway, patientData) {
     currentStatus: currentStatus,
     nextRecommendation: nextStateRecommendation(currentState),
     path: patientPathway,
-    documentation: patientdocumentation,
+    documentation: patientDocumentation,
   };
 }
 
 /**
  * Helper function to set the next recommendation
- * @param {object} state - the current state in the pathway (where the patient is)
- * @return {object} "pathway terminal" if state is the end of the pathway
+ * @param state - the current state in the pathway (where the patient is)
+ * @return "pathway terminal" if state is the end of the pathway
  *        the name of the next state in a direct transition
  *        an object describing possible transitions and descriptions
  */
-function nextStateRecommendation(state) {
+function nextStateRecommendation(state: State): string | object {
   const transitions = state.transitions;
   if (transitions.length === 0) return 'pathway terminal';
   else if (transitions.length === 1) return transitions[0].transition;
@@ -68,7 +82,7 @@ function nextStateRecommendation(state) {
     return transitions.map((transition) => {
       return {
         state: transition.transition,
-        conditionDescription: transition.condition.description,
+        conditionDescription: transition.hasOwnProperty('condition') ? transition.condition!.description : '',
       };
     });
   }
@@ -76,11 +90,11 @@ function nextStateRecommendation(state) {
 
 /**
  * Helper function to format the documentation and include the related state
- * @param {object} resource - the resource returned by the CQL execution
- * @param {string} state - the current state name
- * @return {object} the JSON resource with the state property set
+ * @param resource - the resource returned by the CQL execution
+ * @param state - the current state name
+ * @return the JSON resource with the state property set
  */
-function formatdocumentation(resource, state) {
+function formatDocumentation(resource: Resource, state: string): Resource {
   resource.state = state;
   return resource;
 }
@@ -89,11 +103,11 @@ function formatdocumentation(resource, state) {
  * Helper function to select the transition state
  * This function is needed because MedicationRequests can have multiple
  * different statuses to indiciate complete
- * @param {object} resource - the resource returned by the CQL execution
- * @param {object} currentState - the current state
- * @return {String} the next state name or null
+ * @param resource - the resource returned by the CQL execution
+ * @param currentState - the current state
+ * @return the next state name or null
  */
-function formatNextState(resource, currentState) {
+function formatNextState(resource: Resource, currentState: State): string | null {
   if (resource.resourceType === 'MedicationRequest') {
     return currentState.transitions.length !== 0
       ? currentState.transitions[0].transition
@@ -108,23 +122,23 @@ function formatNextState(resource, currentState) {
 
 /**
  * Determine the nextState in a conditional transition state
- * @param {object} patientData - JSON object representing the data on a patient
- * @param {object} currentState - the current state
- * @param {string} currentStateName - the name of the current state
- * @return {object} the next state
+ * @param patientData - JSON object representing the data on a patient
+ * @param currentState - the current state
+ * @param currentStateName - the name of the current state
+ * @return the next state
  */
-function getConditionalNextState(patientData, currentState, currentStateName) {
+function getConditionalNextState(patientData: PatientData, currentState: State, currentStateName: string): StateData {
   for (const x in currentState.transitions) {
     const transition = currentState.transitions[x];
-    let documentationResource = patientData[transition.condition.description];
+    let documentationResource = transition.hasOwnProperty('condition') ? patientData[transition.condition!.description] : '';
     if (documentationResource.length) {
       documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
       return {
         nextState: transition.transition,
-        documentation: formatdocumentation(documentationResource, currentStateName),
+        documentation: formatDocumentation(documentationResource, currentStateName),
         status: documentationResource.hasOwnProperty('status')
                   ? documentationResource.status
-                  : 'unkown',
+                  : 'unknown',
       };
       // Is there ever a time we may hit multiple conditions?
     }
@@ -137,9 +151,9 @@ function getConditionalNextState(patientData, currentState, currentStateName) {
 
 /**
  * No resource exists for the next state
- * @return {object} empty object
+ * @return empty object
  */
-function noMatchingResourceForState() {
+function noMatchingResourceForState(): StateData {
   return {
     nextState: null,
     documentation: null,
@@ -150,12 +164,12 @@ function noMatchingResourceForState() {
 /**
  * Helper function to traverse the pathway and determine the next state in a patients pathway.
  * For actions this function will also verify the move is valid by the resource status
- * @param {object} pathway - JSON object representing the complete pathway
- * @param {object} patientData - JSON object representing the data on a patient
- * @param {string} currentStateName - the name of the current state in the traversal
- * @return {object} returns object with the next state, the status, and the evidenvce
+ * @param pathway - JSON object representing the complete pathway
+ * @param patientData - JSON object representing the data on a patient
+ * @param currentStateName - the name of the current state in the traversal
+ * @return returns object with the next state, the status, and the evidenvce
  */
-function nextState(pathway, patientData, currentStateName) {
+function nextState(pathway: Pathway, patientData: PatientData, currentStateName: string): StateData | null {
   const currentState = pathway.states[currentStateName];
   if (currentState.hasOwnProperty('action')) {
     let resource = patientData[currentStateName];
@@ -163,7 +177,7 @@ function nextState(pathway, patientData, currentStateName) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
         nextState: formatNextState(resource, currentState),
-        documentation: formatdocumentation(resource, currentStateName),
+        documentation: formatDocumentation(resource, currentStateName),
         status: resource.hasOwnProperty('status') ? resource.status : 'unkown',
       };
     } else {

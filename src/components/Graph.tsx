@@ -40,7 +40,7 @@ const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
   );
 };
 
-const generateDOT = (pathway: Pathway, patientPath: Array<Object>): string => {
+const generateDOT = (pathway: Pathway, patientPath: Array<string>): string => {
   const graphNodes = generateNodes(pathway, patientPath);
   const graphTransitions = generateTransitions(pathway, patientPath);
 
@@ -53,7 +53,7 @@ const generateDOT = (pathway: Pathway, patientPath: Array<Object>): string => {
  * @param patientPath - the path the patient took (list of strings)
  * @return string of the nodes in DOT syntax
  */
-const generateNodes = (pathway: Pathway, patientPath: Array<Object>): string => {
+const generateNodes = (pathway: Pathway, patientPath: Array<string>): string => {
   const pathwayStates = Object.keys(pathway.states);
 
   return pathwayStates
@@ -86,7 +86,7 @@ const generateNodes = (pathway: Pathway, patientPath: Array<Object>): string => 
  * @param patientPath - the path the patient took (list of strings)
  * @return string of the tranistions in DOT synatx
  */
-const generateTransitions = (pathway: Pathway, patientPath: Array<Object>): string => {
+const generateTransitions = (pathway: Pathway, patientPath: Array<string>): string => {
   const pathwayStates = Object.keys(pathway.states);
 
   return pathwayStates
@@ -126,7 +126,7 @@ const generateTransitions = (pathway: Pathway, patientPath: Array<Object>): stri
 const isPatientTransition = (
   fromStateName: string,
   toStateName: string,
-  patientPath: Array<Object>
+  patientPath: Array<string>
 ): boolean => {
   if (patientPath.includes(fromStateName) && patientPath.includes(toStateName)) {
     // Check transition is direct
