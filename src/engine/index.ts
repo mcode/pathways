@@ -1,6 +1,6 @@
 import { extractor } from './cql_extractor';
 import { convertCQL } from './cql_to_elm';
-import { executeElm } from './elm_executor';
+import { executeElm } from './elm-executor';
 import { pathwayData } from './output-results';
 import { Pathway, PathwayResults } from 'pathways-model';
 
@@ -15,11 +15,11 @@ import { Pathway, PathwayResults } from 'pathways-model';
 export const pathways = function(pathway: Pathway, patient: (object | string)): PathwayResults {
   const cql = extractor(pathway);
   const elm = convertCQL(cql.toString());
-  let patientData = executeElm(patient, elm);
+  const elmResults = executeElm(patient, elm);
 
   // TODO - update pathwaysData to take multiple patients
-  const patientIds = Object.keys(patientData.patientResults);
-  patientData = patientData.patientResults[patientIds[0]];
+  const patientIds = Object.keys(elmResults.patientResults);
+  const patientData = elmResults.patientResults[patientIds[0]];
 
   return pathwayData(pathway, patientData);
 };

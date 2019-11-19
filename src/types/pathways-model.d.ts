@@ -27,6 +27,12 @@ declare module 'pathways-model' {
     path: Array<string>;
   }
 
+  export interface ElmResults {
+    patientResults: {
+      [key: string]: PatientData;
+    };
+  }
+
   export interface PatientData {
     Patient: {
       id: {
