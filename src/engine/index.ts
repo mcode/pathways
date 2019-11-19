@@ -1,4 +1,4 @@
-import { extractor } from './cql_extractor';
+import { extractCQL } from './cql-extractor';
 import { convertCQL } from './cql-to-elm';
 import { executeElm } from './elm-executor';
 import { pathwayData } from './output-results';
@@ -12,14 +12,15 @@ import { Pathway, PathwayResults } from 'pathways-model';
  * @return Information on the patient's current status within the
  *                  clinical pathway
  */
-export const pathways = function(pathway: Pathway, patient: (object | string)): PathwayResults {
-  const cql = extractor(pathway);
-  const elm = convertCQL(cql.toString());
-  const elmResults = executeElm(patient, elm);
+export const pathways = function(pathway: Pathway, patient: (object | string)): Promise<PathwayResults> {
+  return extractCQL(pathway).then(cql => {
+    const elm = convertCQL(cql);
+    const elmResults = executeElm(patient, elm);
 
-  // TODO - update pathwaysData to take multiple patients
-  const patientIds = Object.keys(elmResults.patientResults);
-  const patientData = elmResults.patientResults[patientIds[0]];
+    // TODO - update pathwaysData to take multiple patients
+    const patientIds = Object.keys(elmResults.patientResults);
+    const patientData = elmResults.patientResults[patientIds[0]];
 
-  return pathwayData(pathway, patientData);
+    return pathwayData(pathway, patientData);
+  });
 };

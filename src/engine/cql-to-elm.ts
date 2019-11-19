@@ -1,5 +1,4 @@
 // External CQL -> ELM service
-// const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
 import config from '../utils/ConfigManager';
 

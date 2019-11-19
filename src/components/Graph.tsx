@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Graphviz } from 'graphviz-react';
 
 // import { usePatient } from './PatientProvider';
@@ -13,12 +13,13 @@ interface GraphProps {
 }
 
 const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
-  let dot: string | undefined;
+  const [dot, setDot] = useState<string | undefined>(undefined);
   const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) }; // fake bundle for the CQL engine
 
   if (patient.entry.length > 0) {
-    const pathwayResults = pathways(pathway, patient);
-    dot = generateDOT(pathway, pathwayResults.path);
+    pathways(pathway, patient).then(pathwayResults => {
+      setDot( generateDOT(pathway, pathwayResults.path) );
+    });
   }
 
   return (
