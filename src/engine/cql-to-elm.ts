@@ -16,7 +16,7 @@ export const convertCQL = function(cql: string): Promise<object> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/cql',
-      'Accept': 'application/elm+json',
+      Accept: 'application/elm+json'
     },
     body: cql
   }).then(elm => elm.json());

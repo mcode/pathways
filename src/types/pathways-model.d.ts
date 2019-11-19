@@ -22,9 +22,9 @@ declare module 'pathways-model' {
     resource: object; // TODO: FHIR resources
   }
 
-  export interface BranchState extends State {
-    // nothing special, yet
-  }
+  // export interface BranchState extends State {
+  //   // nothing special, yet
+  // }
 
   interface Transition {
     transition: string;

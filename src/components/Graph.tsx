@@ -5,7 +5,7 @@ import { Graphviz } from 'graphviz-react';
 
 import { pathways } from '../engine/index';
 import dummyPathway from '../__tests__/fixtures/sample_pathway.json';
-import { Pathway } from 'pathways-model';
+import { Pathway, Transition } from 'pathways-model';
 
 interface GraphProps {
   pathway?: Pathway;
@@ -14,11 +14,13 @@ interface GraphProps {
 
 const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
   const [dot, setDot] = useState<string | undefined>(undefined);
-  const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) }; // fake bundle for the CQL engine
 
-  if (patient.entry.length > 0) {
+  // fake bundle for the CQL engine
+  const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) };
+
+  if (!dot && patient.entry.length > 0) {
     pathways(pathway, patient).then(pathwayResults => {
-      setDot( generateDOT(pathway, pathwayResults.path) );
+      setDot(generateDOT(pathway, pathwayResults.path));
     });
   }
 
@@ -60,7 +62,7 @@ const generateNodes = (pathway: Pathway, patientPath: Array<string>): string => 
   return pathwayStates
     .map(state => {
       // Create a JSON object of the node
-      let node = {
+      const node = {
         id: state,
         shape: 'record',
         style: 'rounded,filled',
@@ -71,11 +73,11 @@ const generateNodes = (pathway: Pathway, patientPath: Array<string>): string => 
       };
 
       // Convert the JSON into DOT syntax
-      let nodeParams = (Object.keys(node) as Array<keyof typeof node>)
+      const nodeParams = (Object.keys(node) as Array<keyof typeof node>)
         .map(key => `${key} = "${node[key]}"`)
         .join(', ');
 
-      let nodeAsDOT = '"' + state + '" [' + nodeParams + ']';
+      const nodeAsDOT = '"' + state + '" [' + nodeParams + ']';
       return nodeAsDOT;
     })
     .join('\n');
@@ -96,15 +98,17 @@ const generateTransitions = (pathway: Pathway, patientPath: Array<string>): stri
       const transitions = fromState.transitions;
 
       return transitions
-        .map(transition => {
+        .map((transition: Transition) => {
           const toStateName = transition.transition;
           const transitionData = {
             id: fromStateName + '_' + toStateName,
-            label: transition.hasOwnProperty('condition') ? transition.condition!.description : '',
+            label: 'condition' in transition ? transition.condition!.description : '',
             penwidth: isPatientTransition(fromStateName, toStateName, patientPath) ? 2 : 1
           };
 
-          const transitionParams = (Object.keys(transitionData) as Array<keyof typeof transitionData>)
+          const transitionParams = (Object.keys(transitionData) as Array<
+            keyof typeof transitionData
+          >)
             .map(key => `${key} = "${transitionData[key]}"`)
             .join(', ');
 

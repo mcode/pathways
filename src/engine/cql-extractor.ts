@@ -1,6 +1,8 @@
 import { Pathway, State } from 'pathways-model';
 
-const getFixture = (filename: string) => fetch(`./static/cql/${filename}`).then(cql => cql.text());
+function getFixture(filename: string): Promise<string> {
+  return fetch(`./static/cql/${filename}`).then(cql => cql.text());
+}
 
 /**
  * Function to format each block from the pathway in CQL format
@@ -37,7 +39,7 @@ function cqlAdd(cql: string, cqlBlock: string): string {
  *                   otherwise
  */
 function isConditional(state: State): boolean {
-  if (state.hasOwnProperty('transitions')) {
+  if ('transitions' in state) {
     return state.transitions.length > 1 ? true : false;
   } else return false;
 }
@@ -48,7 +50,7 @@ function isConditional(state: State): boolean {
  * @param pathway - the JSON object of the entire pathway
  * @return a string of the CQL code for the pathway
  */
-export const extractCQL = function(pathway: Pathway) : Promise<string> {
+export const extractCQL = function(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway

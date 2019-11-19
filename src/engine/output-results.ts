@@ -63,7 +63,7 @@ function getPatientPath(pathway: Pathway, patientData: PatientData): PathwayResu
     currentStatus: currentStatus,
     nextRecommendation: nextStateRecommendation(currentState),
     path: patientPathway,
-    documentation: patientDocumentation,
+    documentation: patientDocumentation
   };
 }
 
@@ -79,10 +79,10 @@ function nextStateRecommendation(state: State): string | object {
   if (transitions.length === 0) return 'pathway terminal';
   else if (transitions.length === 1) return transitions[0].transition;
   else {
-    return transitions.map((transition) => {
+    return transitions.map(transition => {
       return {
         state: transition.transition,
-        conditionDescription: transition.hasOwnProperty('condition') ? transition.condition!.description : '',
+        conditionDescription: 'condition' in transition ? transition.condition!.description : ''
       };
     });
   }
@@ -109,12 +109,9 @@ function formatDocumentation(resource: Resource, state: string): Resource {
  */
 function formatNextState(resource: Resource, currentState: State): string | null {
   if (resource.resourceType === 'MedicationRequest') {
-    return currentState.transitions.length !== 0
-      ? currentState.transitions[0].transition
-      : null;
+    return currentState.transitions.length !== 0 ? currentState.transitions[0].transition : null;
   } else {
-    return resource.status === 'completed' &&
-      currentState.transitions.length !== 0
+    return resource.status === 'completed' && currentState.transitions.length !== 0
       ? currentState.transitions[0].transition
       : null;
   }
@@ -127,23 +124,24 @@ function formatNextState(resource: Resource, currentState: State): string | null
  * @param currentStateName - the name of the current state
  * @return the next state
  */
-function getConditionalNextState(patientData: PatientData, currentState: State, currentStateName: string): StateData {
-  for (const x in currentState.transitions) {
-    const transition = currentState.transitions[x];
-    let documentationResource = transition.hasOwnProperty('condition') ? patientData[transition.condition!.description] : '';
+function getConditionalNextState(
+  patientData: PatientData,
+  currentState: State,
+  currentStateName: string
+): StateData {
+  for (const transition of currentState.transitions) {
+    let documentationResource =
+      'condition' in transition ? patientData[transition.condition!.description] : '';
     if (documentationResource.length) {
       documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
       return {
         nextState: transition.transition,
         documentation: formatDocumentation(documentationResource, currentStateName),
-        status: documentationResource.hasOwnProperty('status')
-                  ? documentationResource.status
-                  : 'unknown',
+        status: 'status' in documentationResource ? documentationResource.status : 'unknown'
       };
       // Is there ever a time we may hit multiple conditions?
     }
   }
-
 
   // No matching resource in the patient data to move from state
   return noMatchingResourceForState();
@@ -157,7 +155,7 @@ function noMatchingResourceForState(): StateData {
   return {
     nextState: null,
     documentation: null,
-    status: 'not-done',
+    status: 'not-done'
   };
 }
 
@@ -169,16 +167,20 @@ function noMatchingResourceForState(): StateData {
  * @param currentStateName - the name of the current state in the traversal
  * @return returns object with the next state, the status, and the evidenvce
  */
-function nextState(pathway: Pathway, patientData: PatientData, currentStateName: string): StateData | null {
+function nextState(
+  pathway: Pathway,
+  patientData: PatientData,
+  currentStateName: string
+): StateData | null {
   const currentState = pathway.states[currentStateName];
-  if (currentState.hasOwnProperty('action')) {
+  if ('action' in currentState) {
     let resource = patientData[currentStateName];
     if (resource.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
         nextState: formatNextState(resource, currentState),
         documentation: formatDocumentation(resource, currentStateName),
-        status: resource.hasOwnProperty('status') ? resource.status : 'unkown',
+        status: 'status' in resource ? resource.status : 'unknown'
       };
     } else {
       // Action exists but has no matching resource in patientData
@@ -188,7 +190,7 @@ function nextState(pathway: Pathway, patientData: PatientData, currentStateName:
     return {
       nextState: currentState.transitions[0].transition,
       documentation: 'direct',
-      status: 'completed',
+      status: 'completed'
     };
   } else if (currentState.transitions.length > 1) {
     return getConditionalNextState(patientData, currentState, currentStateName);
