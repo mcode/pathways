@@ -1,0 +1,16 @@
+@import '../../styles/variables';
+
+.pathway-element {
+    display: block;
+    margin: 1vh 1vw;
+    padding: 5px;
+    border-left: 3px solid $gray;
+    font-weight:700;
+    background-color: #e7e7e9;
+    color: #4a4a4a;
+    height: 10vh;
+
+    &:hover{
+        background-color: #efeff2;
+    }
+}

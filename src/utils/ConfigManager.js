@@ -1,6 +1,6 @@
 export class ConfigManager {
   constructor(config = {}) {
-    this.config = global.CONFIG ? { ...global.CONFIG , ...config } : { ...config };
+    this.config = global.CONFIG ? { ...global.CONFIG, ...config } : { ...config };
   }
 
   get(name, defaultValue) {

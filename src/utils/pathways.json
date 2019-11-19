@@ -1,0 +1,676 @@
+{
+    "results":[
+        {
+            "name": "UPenn Breast Cancer Pathway: Early Stage HER2+ Pathway",
+            "description": "Pathway for the UPenn Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway",
+            "library": "upenn_her2_library.cql",
+            "states": {
+                "Start": {
+                    "label": "Start",
+                    "transitions": [
+                        {
+                            "transition": "NodeStatus"
+                        }
+                    ]
+                },
+                "NodeStatus": {
+                    "label": "Node Status",
+                    "transitions": [
+                        {
+                            "transition": "TumorSize",
+                            "condition": {
+                                "description": "N0",
+                                "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\" return Tuple{ resourceType: 'Observation', id: N0.id.value , status: N0.status.value} "
+                            }
+                        },
+                        {
+                            "transition": "ChemotherapyTCHAC+TH",
+                            "condition": {
+                                "description": "N+",
+                                "cql": " [Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
+                            }
+                        }
+                    ]
+                },
+                "TumorSize": {
+                    "label": "Tumor Size",
+                    "transitions": [
+                        {
+                            "transition": "ChemotherapyTCHAC+TH",
+                            "condition": {
+                                "description": "T > 2cm",
+                                "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TLarge let TLageConcept: ToConcept(TLarge.value as FHIR.CodeableConcept) where TLageConcept ~ \"T2 category (finding)\" or TLageConcept ~ \"T3 category (finding)\" or TLageConcept ~ \"T4 category (finding)\" return Tuple{ resourceType: 'Observation', id: TLarge.id.value , status: TLarge.status.value} "
+                            }
+                        },
+                        {
+                            "transition": "ChemotherapyTHWeekly",
+                            "condition": {
+                                "description": "T <= 2cm",
+                                "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TSmall where ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T0 category (finding)\" or ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T1 category (finding)\" return Tuple{ resourceType: 'Observation', id: TSmall.id.value , status: TSmall.status.value} "
+                            }
+                        }
+                    ]
+                },
+                "ChemotherapyTHWeekly": {
+                    "label": "Chemotherapy TH Weekly",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Chemotherapy TH Weekly",
+                            "resource": {
+                                "resourceType": "Procedure",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "367336001",
+                                            "display": "Chemotherapy (procedure)"
+                                        }
+                                    ],
+                                    "text": "Chemotherapy (procedure)"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "PostchemotherapyTrastuzumabRequest"
+                        }
+                    ],
+                    "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+                },
+                "ChemotherapyTCHAC+TH": {
+                    "label": "Chemotherapy TCH AC + TH",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Chemotherapy TCH AC + TH",
+                            "resource": {
+                                "resourceType": "Procedure",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "367336001",
+                                            "display": "Chemotherapy (procedure)"
+                                        }
+                                    ],
+                                    "text": "Chemotherapy (procedure)"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "PostchemotherapyTrastuzumabRequest"
+                        }
+                    ],
+                    "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+                },
+                "PostchemotherapyTrastuzumabRequest": {
+                    "label": "Post-Chemotherapy Trastuzumab Request",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
+                            "resource": {
+                                "resourceType": "MedicationRequest",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "224905",
+                                            "display": "trastuzumab"
+                                        }
+                                    ],
+                                    "text": "trastuzumab"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "PostchemotherapyTrastuzumabAdministration"
+                        }
+                    ],
+                    "cql": "[MedicationRequest: \"trastuzumab code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value} "
+                },
+                "PostchemotherapyTrastuzumabAdministration": {
+                    "label": "Post-Chemotherapy Trastuzumab Administration",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "224905",
+                                            "display": "trastuzumab"
+                                        }
+                                    ],
+                                    "text": "trastuzumab"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "ERStatus"
+                        }
+                    ],
+                    "cql": "[MedicationAdministration: \"trastuzumab code\"] Trastuzumab return Tuple{ resourceType: 'MedicationAdministration', id: Trastuzumab.id.value, status: Trastuzumab.status.value} "
+                },
+                "ERStatus": {
+                    "label": "ER Status",
+                    "transitions": [
+                        {
+                            "transition": "NoEndocrineTherapy",
+                            "condition": {
+                                "description": "ERNegative",
+                                "cql": "[Observation: \"Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain code\"] Neg where ToConcept(Neg.value as FHIR.CodeableConcept) ~ \"Negative (qualifier value)\" return Tuple{ resourceType: 'Observation', id: Neg.id.value , status: Neg.status.value} "
+                            }
+                        },
+                        {
+                            "transition": "PremenopauseAtDiagnosis",
+                            "condition": {
+                                "description": "ERPositive",
+                                "cql": "[Observation: \"Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain code\"] Pos where ToConcept(Pos.value as FHIR.CodeableConcept) ~ \"Positive (qualifier value)\" return Tuple{ resourceType: 'Observation', id: Pos.id.value , status: Pos.status.value} "
+                            }
+                        }
+                    ]
+                },
+                "NoEndocrineTherapy": {
+                    "label": "No Endocrine Therapy",
+                    "action": [],
+                    "transitions": []
+                },
+                "PremenopauseAtDiagnosis": {
+                    "label": "Premenopause At Diagnosis",
+                    "transitions": [
+                        {
+                            "transition": "AromataseInhibitor5YearsRequest",
+                            "condition": {
+                                "description": "Menopause (present)",
+                                "cql": "(if exists [Observation: \"Age at menopause code\"] then [Observation: \"Age at menopause code\"] else [Observation] Men2 where ToConcept(Men2.value as FHIR.CodeableConcept) ~ \"Menopause present (finding)\") Men return Tuple { resourceType: 'Observation', id: Men.id.value, status: Men.status.value } "
+                            }
+                        },
+                        {
+                            "transition": "PostchemotherapyMenses",
+                            "condition": {
+                                "description": "Premenopause",
+                                "cql": "[Observation: \"missing loinc code\"] PreMen where ToConcept(PreMen.value as FHIR.CodeableConcept) ~ \"Menopause absent (finding)\" return Tuple { resourceType: 'Observation', id: PreMen.id.value, status: PreMen.status.value } "
+                            }
+                        }
+                    ]
+                },
+                "PostchemotherapyMenses": {
+                    "label": "Post-Chemotherapy Menses",
+                    "transitions": [
+                        {
+                            "transition": "StartTamoxifen",
+                            "condition": {
+                                "description": "No Menses & Age >= 35",
+                                "cql": "[Observation: \"Menses finding code\"] Menses let MensesDate: (Menses.effective as FHIR.dateTime).value with [Procedure: \"Chemotherapy (procedure) code\"] Chemo such that ToConcept(Menses.value as FHIR.CodeableConcept) ~ \"Secondary amenorrhea (finding)\" and (Chemo.performed.end as FHIR.dateTime).value before MensesDate and MensesDate within 15 months of (Chemo.performed.end as FHIR.dateTime).value with [Patient] P such that MensesDate after ((convert P.birthDate.value to DateTime) + 35 years) or MensesDate same as ((convert P.birthDate.value to DateTime) + 35 years) return Tuple { resourceType: 'Observation', id: Menses.id.value, status: Menses.status.value } "
+                            }
+                        },
+                        {
+                            "transition": "OvarianAblation",
+                            "condition": {
+                                "description": "No Menses & Age < 35",
+                                "cql": "[Observation: \"Menses finding code\"] Menses let MensesDate: (Menses.effective as FHIR.dateTime).value with [Procedure: \"Chemotherapy (procedure) code\"] Chemo such that ToConcept(Menses.value as FHIR.CodeableConcept) ~ \"Secondary amenorrhea (finding)\" and (Chemo.performed.end as FHIR.dateTime).value before MensesDate and MensesDate within 15 months of (Chemo.performed.end as FHIR.dateTime).value with [Patient] P such that MensesDate within 35 years of (convert P.birthDate.value to DateTime) return Tuple { resourceType: 'Observation', id: Menses.id.value, status: Menses.status.value } "
+                            }
+                        },
+                        {
+                            "transition": "OvarianAblation",
+                            "condition": {
+                                "description": "Postchemotherapy Menses",
+                                "cql": "[Observation: \"Menses finding code\"] Menses let MensesDate: (Menses.effective as FHIR.dateTime).value with [Procedure: \"Chemotherapy (procedure) code\"] Chemo such that ToConcept(Menses.value as FHIR.CodeableConcept) ~ \"Menstruation, function (observable entity)\" and (Chemo.performed.end as FHIR.dateTime).value before MensesDate and MensesDate within 15 months of (Chemo.performed.end as FHIR.dateTime).value return Tuple { resourceType: 'Observation', id: Menses.id.value, status: Menses.status.value } "
+                            }
+                        }
+                    ]
+                },
+                "EstradiolDetectableWithin8Months": {
+                    "label": "Estradiol Decetable Within 8 Months",
+                    "transitions": [
+                        {
+                            "transition": "Tamoxifen5YearsTotal",
+                            "condition": {
+                                "description": "Estradiol not Detectable",
+                                "cql": "if not exists ([Observation: \"missing loinc code\"] Estradiol where ToConcept(Estradiol.value as FHIR.CodeableConcept) ~ \"Abnormal estradiol (finding)\") then [Observation] E return Tuple { resourceType: 'No Estradiol Resource', status: 'final' } else {} "
+                            }
+                        },
+                        {
+                            "transition": "OvarianAblation",
+                            "condition": {
+                                "description": "Estradiol Detectable",
+                                "cql": "[Observation] Estradiol let EstradiolDate: (Estradiol.effective as FHIR.dateTime).value with [MedicationAdministration: \"tamoxifen code\"] Tamoxifen such that ToConcept(Estradiol.value as FHIR.CodeableConcept) ~ \"Abnormal estradiol (finding)\" and EstradiolDate within 8 months of (Tamoxifen.effective as FHIR.dateTime).value return Tuple{ resourceType: 'Observation', id: Estradiol.id.value, status: Estradiol.status.value } "
+                            }
+                        }
+                    ]
+                },
+                "OvarianAblation": {
+                    "label": "Ovarian Ablation",
+                    "transitions": [
+                        {
+                            "transition": "Oophorectomy",
+                            "condition": {
+                                "description": "OophorectomyAsAblation",
+                                "cql": "[Procedure: \"Oophorectomy (procedure) code\"] Oophorectomy return Tuple { resourceType: 'Procedure', id: Oophorectomy.id.value, status: Oophorectomy.status.value } "
+                            }
+                        },
+                        {
+                            "transition": "LupronRequest",
+                            "condition": {
+                                "description": "LupronAsAblation",
+                                "cql": "[MedicationRequest: \"Lupron code\"] Lupron return Tuple { resourceType: 'MedicationRequest', id: Lupron.id.value, status: Lupron.status.value } "
+                            }
+                        }
+                    ]
+                },
+                "Oophorectomy": {
+                    "label": "Oophorectomy (procedure)",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Begin Aromatase Inhibitor",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "84857",
+                                            "display": "anastrozole"
+                                        }
+                                    ],
+                                    "text": "anastrozole"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "AromataseInhibitor5YearsRequest"
+                        }
+                    ],
+                    "cql": "[Procedure: \"Oophorectomy (procedure) code\"] Oophorectomy return Tuple { resourceType: 'Procedure', id: Oophorectomy.id.value, status: Oophorectomy.status.value } "
+                },
+                "LupronRequest": {
+                    "label": "Lupron Medication Request",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Begin Ovarian Ablation with Lupron Request",
+                            "resource": {
+                                "resourceType": "MedicationRequest",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "203852",
+                                            "display": "Lupron"
+                                        }
+                                    ],
+                                    "text": "Lupron"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "LupronAdministration"
+                        }
+                    ],
+                    "cql": "[MedicationRequest: \"Lupron code\"] Lupron return Tuple { resourceType: 'MedicationRequest', id: Lupron.id.value, status: Lupron.status.value } "
+                },
+                "LupronAdministration": {
+                    "label": "Lupron Medication Administration",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Begin Ovarian Ablation with Lupron",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "203852",
+                                            "display": "Lupron"
+                                        }
+                                    ],
+                                    "text": "Lupron"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "AromataseInhibitor5YearsRequest"
+                        }
+                    ],
+                    "cql": "[MedicationAdministration: \"Lupron code\"] Lupron return Tuple { resourceType: 'MedicationAdministration', id: Lupron.id.value, status: Lupron.status.value } "
+                },
+                "StartTamoxifen": {
+                    "label": "Start Tamoxifen",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Start Tamoxifen",
+                            "resource": {
+                                "resourceType": "MedicationRequest",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "10324",
+                                            "display": "tamoxifen"
+                                        }
+                                    ],
+                                    "text": "tamoxifen"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "EstradiolDetectableWithin8Months"
+                        }
+                    ],
+                    "cql": "[MedicationRequest: \"tamoxifen code\"] Tamoxifen with [Procedure: \"Chemotherapy (procedure) code\"] Chemo such that (Tamoxifen.authoredOn as FHIR.dateTime).value within 15 months of (Chemo.performed.end as FHIR.dateTime).value return Tuple{ resourceType: 'MedicationRequest', id: Tamoxifen.id.value, status: Tamoxifen.status.value } "
+                },
+                "Tamoxifen5YearsTotal": {
+                    "label": "Tamoxifen 5 Years Total",
+                    "action": [
+                        {
+                            "type": "update",
+                            "description": "Continue Tamoxifen for 5 years total",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "10324",
+                                            "display": "tamoxifen"
+                                        }
+                                    ],
+                                    "text": "tamoxifen"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "MensesWithin1YearOfTamoxifen"
+                        }
+                    ],
+                    "cql": "[MedicationAdministration: \"tamoxifen code\"] Tamoxifen where years between (Tamoxifen.effective as FHIR.dateTime).value and Now() > 5 return Tuple{ resourceType: 'MedicationAdministration', id: Tamoxifen.id.value, status: Tamoxifen.status.value } "
+                },
+                "MensesWithin1YearOfTamoxifen": {
+                    "label": "Menses Within 1 Year of Tamoxifen",
+                    "transitions": [
+                        {
+                            "transition": "TamoxifenAdditional5Years",
+                            "condition": {
+                                "description": "No Menses within 1 Year of Tamoxifen",
+                                "cql": "[Observation: \"Menses finding code\"] Menses let MensesDate: (Menses.effective as FHIR.dateTime).value with [MedicationAdministration: \"tamoxifen code\"] Tamoxifen such that ToConcept(Menses.value as FHIR.CodeableConcept) ~ \"Secondary amenorrhea (finding)\" and MensesDate after (Tamoxifen.effective as FHIR.dateTime).value and MensesDate within 6 years of (Tamoxifen.effective as FHIR.dateTime).value return Tuple { resourceType: 'Observation', id: Menses.id.value, status: Menses.status.value, effective: MensesDate } "
+                            }
+                        },
+                        {
+                            "transition": "AromataseInhibitor5YearsRequest",
+                            "condition": {
+                                "description": "Menses within 1 Year of Tamoxifen",
+                                "cql": "[Observation: \"Menses finding code\"] Menses let MensesDate: (Menses.effective as FHIR.dateTime).value with [MedicationAdministration: \"tamoxifen code\"] Tamoxifen such that ToConcept(Menses.value as FHIR.CodeableConcept) ~ \"Menstruation, function (observable entity)\" and MensesDate after (Tamoxifen.effective as FHIR.dateTime).value and MensesDate within 6 years of (Tamoxifen.effective as FHIR.dateTime).value return Tuple { resourceType: 'Observation', id: Menses.id.value, status: Menses.status.value } "
+                            }
+                        }
+                    ]
+                },
+                "TamoxifenAdditional5Years": {
+                    "label": "Tamoxifen Additional 5 Years",
+                    "action": [
+                        {
+                            "type": "update",
+                            "description": "Continue Tamoxifen for an additional 5 years",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "10324",
+                                            "display": "tamoxifen"
+                                        }
+                                    ],
+                                    "text": "tamoxifen"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [],
+                    "cql": "[MedicationAdministration: \"tamoxifen code\"] Tamoxifen let TamoxifenDate: (Tamoxifen.effective as FHIR.dateTime).value, MensesDate: (\"No Menses within 1 Year of Tamoxifen\").effective where TamoxifenDate after MensesDate or TamoxifenDate same as MensesDate return Tuple{ resourceType: 'MedicationAdministration', id: Tamoxifen.id.value, status: Tamoxifen.status.value } "
+                },
+                "AromataseInhibitor5YearsRequest": {
+                    "label": "Aromatase Inhibitor 5 Years Request",
+                    "action": [
+                        {
+                            "type": "update",
+                            "description": "Aromatase Inhibitor for an 5 years",
+                            "resource": {
+                                "resourceType": "MedicationRequest",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "84857",
+                                            "display": "anastrozole"
+                                        }
+                                    ],
+                                    "text": "anastrozole"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "AromataseInhibitor5Years"
+                        }
+                    ],
+                    "cql": "[MedicationRequest: \"anastrozole code\"] anastrozole return Tuple{ resourceType: 'MedicationRequest', id: anastrozole.id.value , status: anastrozole.status.value}"
+                },
+                "AromataseInhibitor5Years": {
+                    "label": "Aromatase Inhibitor 5 Years",
+                    "action": [
+                        {
+                            "type": "update",
+                            "description": "Aromatase Inhibitor for an 5 years",
+                            "resource": {
+                                "resourceType": "MedicationAdministration",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "84857",
+                                            "display": "anastrozole"
+                                        }
+                                    ],
+                                    "text": "anastrozole"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [],
+                    "cql": "[MedicationAdministration: \"anastrozole code\"] anastrozole return Tuple{ resourceType: 'MedicationAdministration', id: anastrozole.id.value , status: anastrozole.status.value}"
+                }
+            }
+        },
+        {
+            "name": "test_breast_cancer",
+            "description": "Mock breast cancer pathway used for testing the system",
+            "library": "mCODE_Library.cql",
+            "states": {
+                "Start": {
+                    "label": "Start",
+                    "transitions": [
+                        {
+                            "transition": "T-test"
+                        }
+                    ]
+                },
+                "T-test": {
+                    "label": "T-test",
+                    "transitions": [
+                        {
+                            "transition": "N-test",
+                            "condition": {
+                                "description": "T = T0",
+                                "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] T0 where ToConcept(T0.value as FHIR.CodeableConcept) ~ \"T0 category (finding)\"return Tuple{ resourceType: 'Observation', id: T0.id.value, status: T0.status.value }"
+                            }
+                        },
+                        {
+                            "transition": "Surgery",
+                            "condition": {
+                                "description": "T = T1",
+                                "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] T1 where ToConcept(T1.value as FHIR.CodeableConcept) ~ \"T1 category (finding)\"return Tuple{ resourceType: 'Observation', id: T1.id.value, status: T1.status.value }"
+                            }
+                        }
+                    ]
+                },
+                "N-test": {
+                    "label": "N-test",
+                    "transitions": [
+                        {
+                            "transition": "Radiation",
+                            "condition": {
+                                "description": "N = N0",
+                                "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\"return Tuple{ resourceType: 'Observation', id: N0.id.value, status: N0.status.value }"
+                            }
+                        },
+                        {
+                            "transition": "ChemoMedication",
+                            "condition": {
+                                "description": "N = N1",
+                                "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N1 where ToConcept(N1.value as FHIR.CodeableConcept) ~ \"N1 category (finding)\"return Tuple{ resourceType: 'Observation', id: N1.id.value, status: N1.status.value }"
+                            }
+                        }
+                    ]
+                },
+                "Surgery": {
+                    "label": "Surgery",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Issue Lumpectomy of breast procedure",
+                            "resource": {
+                                "resourceType": "Procedure",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "392021009",
+                                            "display": "Lumpectomy of breast (procedure)"
+                                        }
+                                    ],
+                                    "text": "Lumpectomy of breast (procedure)"
+                                }
+                            }
+                        }
+                    ],
+                    "transitions": [
+                        {
+                            "transition": "N-test"
+                        }
+                    ],
+                    "cql": "[Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value }"
+                },
+                "Radiation": {
+                    "label": "Radiation",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Issue Teleradiotherapy procedure",
+                            "resource": {
+                                "resourceType": "Procedure",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "33195004",
+                                            "display": "Teleradiotherapy procedure (procedure)"
+                                        }
+                                    ],
+                                    "text": "Teleradiotherapy procedure (procedure)"
+                                }
+                            }
+                        }
+                    ],
+                    "cql": "[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value }",
+                    "transitions": []
+                },
+                "Chemo": {
+                    "label": "Chemotherapy",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Begin Chemotherapy procedure",
+                            "resource": {
+                                "resourceType": "Procedure",
+                                "code": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "code": "367336001",
+                                            "display": "Chemotherapy (procedure)"
+                                        }
+                                    ],
+                                    "text": "Chemotherapy (procedure)"
+                                }
+                            }
+                        }
+                    ],
+                    "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value, status: Chemo.status.value }",
+                    "transitions": []
+                },
+                "ChemoMedication": {
+                    "label": "ChemoMedication Request",
+                    "action": [
+                        {
+                            "type": "create",
+                            "description": "Request 10ML Doxorubicin Hydrochloride 2MG/ML Injection",
+                            "resource": {
+                                "resourceType": "MedicationRequest",
+                                "medicationCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                            "code": "1790099",
+                                            "display": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+                                        }
+                                    ],
+                                    "text": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+                                }
+                            }
+                        }
+                    ],
+                    "cql": "[MedicationRequest: \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code\"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection\"return Tuple{ resourceType: 'MedicationRequest', id: ChemoMedication.id.value, status: ChemoMedication.status.value }",
+                    "transitions": [
+                        {
+                            "transition": "Chemo"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "test1",
+            "description": "a third option",
+            "library": "test.cql",
+            "states": {
+                "test": "okay"
+            }
+        }
+    ]
+}
