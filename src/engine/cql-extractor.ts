@@ -4,9 +4,9 @@ const getFixture = (filename: string) => fetch(`./static/cql/${filename}`).then(
 
 /**
  * Function to format each block from the pathway in CQL format
- * @param {String} cqlBlock - block of CQL code from the pathway
- * @param {String} resourceName - Name of the CQL resource block to be defined
- * @return {string} the CQL code formatted pretty with the define line
+ * @param cqlBlock - block of CQL code from the pathway
+ * @param resourceName - Name of the CQL resource block to be defined
+ * @return the CQL code formatted pretty with the define line
  */
 function cqlFormat(cqlBlock: string, resourceName: string): string {
   let formattedBlock = '';
@@ -22,18 +22,18 @@ function cqlFormat(cqlBlock: string, resourceName: string): string {
 /**
  * Helper function to add the cql block to the completed cql
  * with the correct formatting
- * @param {string} cql - complete cql string
- * @param {string} cqlBlock - current cql block to append to the cql
- * @return {string} the cql with the cql block appended correctly
+ * @param cql - complete cql string
+ * @param cqlBlock - current cql block to append to the cql
+ * @return the cql with the cql block appended correctly
  */
-function cqlAdd(cql: string, cqlBlock: string) {
+function cqlAdd(cql: string, cqlBlock: string): string {
   return cql.concat('\n', '\n', cqlBlock);
 }
 
 /**
  * Helper function to determine if a state has a conditional transition
- * @param {State} state - the JSON object of the desired state on the pathway
- * @return {boolean} true if state is a conditional transition and false
+ * @param state - the JSON object of the desired state on the pathway
+ * @return true if state is a conditional transition and false
  *                   otherwise
  */
 function isConditional(state: State): boolean {
@@ -45,8 +45,8 @@ function isConditional(state: State): boolean {
 /**
  * Function to extract the CQL code from each state in the pathway and build
  * the CQL code to execute
- * @param {Pathway} pathway - the JSON object of the entire pathway
- * @return {string} a string of the CQL code for the pathway
+ * @param pathway - the JSON object of the entire pathway
+ * @return a string of the CQL code for the pathway
  */
 export const extractCQL = function(pathway: Pathway) : Promise<string> {
   return getFixture(pathway.library).then(library => {

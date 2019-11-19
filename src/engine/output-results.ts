@@ -18,7 +18,7 @@ interface Resource {
 /**
  * Engine function to take in the ELM patient results and output data relating to the patient's pathway
  * @param pathway - JSON (or string representing) the entire pathway
- * @param  patientData - JSON (or string representing) the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
+ * @param patientData - JSON (or string representing) the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
  * @return returns a JSON object describing where the patient is on the given pathway
  *  {
  *    currentState - the name of the state patient is currently in

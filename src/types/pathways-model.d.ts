@@ -53,7 +53,7 @@ declare module 'pathways-model' {
     Patient: {
       id: {
         value: string;
-      }
+      };
     };
     [key: string]: any;
   }
