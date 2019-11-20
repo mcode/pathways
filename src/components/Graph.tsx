@@ -3,7 +3,7 @@ import { Graphviz } from 'graphviz-react';
 
 // import { usePatient } from './PatientProvider';
 
-import { pathways } from '../engine/index';
+import { evaluatePatientOnPathway } from '../engine';
 import dummyPathway from '../__tests__/fixtures/sample_pathway.json';
 import { Pathway, Transition } from 'pathways-model';
 
@@ -19,7 +19,7 @@ const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
   const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) };
 
   if (!dot && patient.entry.length > 0) {
-    pathways(pathway, patient).then(pathwayResults => {
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
       setDot(generateDOT(pathway, pathwayResults.path));
     });
   }

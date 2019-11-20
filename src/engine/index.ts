@@ -12,7 +12,10 @@ import { Pathway, PathwayResults } from 'pathways-model';
  * @return Information on the patient's current status within the
  *                  clinical pathway
  */
-export const pathways = function(pathway: Pathway, patient: object): Promise<PathwayResults> {
+export const evaluatePatientOnPathway = function(
+  patient: object,
+  pathway: Pathway
+): Promise<PathwayResults> {
   return extractCQL(pathway)
     .then(cql => convertCQL(cql))
     .then(elm => {
