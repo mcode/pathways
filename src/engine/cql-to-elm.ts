@@ -1,6 +1,6 @@
 // External CQL -> ELM service
 
-import config from '../utils/ConfigManager';
+import config from 'utils/ConfigManager';
 
 const url = config.get('cqlToElmWebserviceUrl');
 
