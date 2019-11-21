@@ -31,7 +31,7 @@ const App: FC<AppProps> = ({ client }) => {
     });
   }, [client]);
 
-  const service = useGetPathwaysService('http://pathways.mitre.org:3002/pathways/');
+  const service = useGetPathwaysService(config.get("pathwaysService"));
 
   function setPathwayCallback(value: Pathway | null) {
     setSelectPathway(false);
