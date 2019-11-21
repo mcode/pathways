@@ -10,10 +10,11 @@ import { PatientProvider } from './PatientProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
-import PathwaysList from './PathwaysList/PathwaysList';
-import PathwaysDisplay from 'components/PathwaysDisplay/PathwaysDisplay';
+import PathwaysList from './PathwaysList';
+import PathwaysDisplay from 'components/PathwaysDisplay';
 import { PathwayProvider } from './PathwayProvider';
 import { Pathway } from 'pathways-objects';
+import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
   client: any; // TODO: fhirclient.Client
@@ -29,6 +30,8 @@ const App: FC<AppProps> = ({ client }) => {
       setPatientRecords(records);
     });
   }, [client]);
+
+  const service = useGetPathwaysService('http://pathways.mitre.org:3002/pathways/');
 
   function setPathwayCallback(value: Pathway | null) {
     setSelectPathway(false);

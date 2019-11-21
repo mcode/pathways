@@ -1,15 +1,15 @@
 import React, { FC, ReactNode } from 'react';
-import useGetPathwaysService from '../PathwaysService/PathwaysService';
-import { Pathway } from 'pathways-objects';
+import { Pathway, Service, Pathways } from 'pathways-objects';
 
 import classes from './PathwaysList.module.scss';
 
 interface Props {
   callback: Function;
+  service: Service<Pathways>;
 }
 
 const PathwaysList: FC<Props> = (props: Props) => {
-  const service = useGetPathwaysService('http://pathways.mitre.org:3002/pathways/');
+    const service = props.service;
   function renderList(list: Pathway[]): ReactNode {
     return (
       <div>
@@ -26,7 +26,7 @@ const PathwaysList: FC<Props> = (props: Props) => {
         className={classes['pathway-element']}
         key={pathway.name}
         onClick={() => {
-          props.callback(pathway);
+          return props.callback(pathway);
         }}
       >
         <div>Name: {pathway.name}</div>
