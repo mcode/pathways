@@ -1,18 +1,12 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, PathwayResults, PatientData, State } from 'pathways-model';
+import { Pathway, PathwayResults, PatientData, Resource, State } from 'pathways-model';
 
 interface StateData {
   documentation: Resource | string | null;
   nextState: string | null;
   status: string;
-}
-
-interface Resource {
-  resourceType: string;
-  status: string;
-  state?: string;
 }
 
 /**

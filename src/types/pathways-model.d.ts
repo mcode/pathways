@@ -39,7 +39,7 @@ declare module 'pathways-model' {
     currentState: string;
     currentStatus: string | undefined;
     nextRecommendation: any;
-    documentation: Array<any>;
+    documentation: Array<Resource | string>;
     path: Array<string>;
   }
 
@@ -56,5 +56,12 @@ declare module 'pathways-model' {
       };
     };
     [key: string]: any;
+  }
+
+  export interface Resource {
+    resourceType: string;
+    id: string;
+    status: string;
+    state?: string;
   }
 }
