@@ -38,6 +38,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "test-coverage": "yarn test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint './src/**/*.{ts,tsx}'",
