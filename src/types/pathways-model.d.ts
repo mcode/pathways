@@ -38,8 +38,8 @@ declare module 'pathways-model' {
     patientId: string;
     currentState: string;
     currentStatus: string | undefined;
-    nextRecommendation: any;
-    documentation: Array<Resource | string>;
+    nextRecommendation: string | object;
+    documentation: Array<DocumentationResource | string>;
     path: Array<string>;
   }
 
@@ -58,10 +58,10 @@ declare module 'pathways-model' {
     [key: string]: any;
   }
 
-  export interface Resource {
+  export interface DocumentationResource {
     resourceType: string;
     id: string;
     status: string;
-    state?: string;
+    state: string;
   }
 }

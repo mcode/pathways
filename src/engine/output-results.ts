@@ -1,10 +1,10 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, PathwayResults, PatientData, Resource, State } from 'pathways-model';
+import { Pathway, PathwayResults, PatientData, DocumentationResource, State } from 'pathways-model';
 
 interface StateData {
-  documentation: Resource | string | null;
+  documentation: DocumentationResource | string | null;
   nextState: string | null;
   status: string;
 }
@@ -46,7 +46,7 @@ export const pathwayData = function(pathway: Pathway, patientData: PatientData):
     path: patientPathway,
     documentation: patientDocumentation
   };
-}
+};
 
 /**
  * Helper function to set the next recommendation
@@ -75,7 +75,10 @@ function nextStateRecommendation(state: State): string | object {
  * @param state - the current state name
  * @return the JSON resource with the state property set
  */
-function formatDocumentation(resource: Resource, state: string): Resource {
+function formatDocumentation(
+  resource: DocumentationResource,
+  state: string
+): DocumentationResource {
   resource.state = state;
   return resource;
 }
@@ -88,7 +91,7 @@ function formatDocumentation(resource: Resource, state: string): Resource {
  * @param currentState - the current state
  * @return the next state name or null
  */
-function formatNextState(resource: Resource, currentState: State): string | null {
+function formatNextState(resource: DocumentationResource, currentState: State): string | null {
   if (resource.resourceType === 'MedicationRequest') {
     return currentState.transitions.length !== 0 ? currentState.transitions[0].transition : null;
   } else {
