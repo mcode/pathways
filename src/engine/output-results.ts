@@ -23,19 +23,6 @@ interface StateData {
  *  }
  */
 export const pathwayData = function(pathway: Pathway, patientData: PatientData): PathwayResults {
-  if (typeof pathway === 'string') pathway = JSON.parse(pathway);
-  if (typeof patientData === 'string') patientData = JSON.parse(patientData);
-
-  return getPatientPath(pathway, patientData);
-};
-
-/**
- * Helper function to determine the pathway followed by a patient and provide the documentation for the pathway
- * @param pathway - JSON object representing the complete pathway
- * @param patientData - JSON object representing the data on a patient
- * @return returns object with the current state, pathway as a list of states, and documentation for pathway as a list of conditions
- */
-function getPatientPath(pathway: Pathway, patientData: PatientData): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
