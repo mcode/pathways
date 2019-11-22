@@ -7,7 +7,6 @@ import t1Patient from '../../__tests__/fixtures/patients/T1_patient.json';
 import tripleNegativePatient from '../../__tests__/fixtures/patients/triple_negative.json';
 
 describe('ELM executor', () => {
-
   it('returns expected data for patient1 T0N2', () => {
     const engineReturn = executeElm(t0Patient, elm);
     const results = engineReturn.patientResults;
@@ -58,5 +57,4 @@ describe('ELM executor', () => {
     expect(result['Chemo'].length).toEqual(16);
     expect(result['ChemoMedication'].length).toEqual(0);
   });
-
 });

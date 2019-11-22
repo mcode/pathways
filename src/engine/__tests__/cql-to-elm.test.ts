@@ -1,7 +1,5 @@
 import { convertCQL } from '../cql-to-elm';
-import config from 'utils/ConfigManager';
 
-const url = config.get('cqlToElmWebserviceUrl');
 const fakeCQL = "library mCODEResources version '1'";
 const fakeELM = {
   library: {
