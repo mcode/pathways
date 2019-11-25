@@ -1,18 +1,12 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, PathwayResults, PatientData, State } from 'pathways-model';
+import { Pathway, PathwayResults, PatientData, DocumentationResource, State } from 'pathways-model';
 
 interface StateData {
-  documentation: Resource | string | null;
+  documentation: DocumentationResource | string | null;
   nextState: string | null;
   status: string;
-}
-
-interface Resource {
-  resourceType: string;
-  status: string;
-  state?: string;
 }
 
 /**
@@ -29,19 +23,6 @@ interface Resource {
  *  }
  */
 export const pathwayData = function(pathway: Pathway, patientData: PatientData): PathwayResults {
-  if (typeof pathway === 'string') pathway = JSON.parse(pathway);
-  if (typeof patientData === 'string') patientData = JSON.parse(patientData);
-
-  return getPatientPath(pathway, patientData);
-};
-
-/**
- * Helper function to determine the pathway followed by a patient and provide the documentation for the pathway
- * @param pathway - JSON object representing the complete pathway
- * @param patientData - JSON object representing the data on a patient
- * @return returns object with the current state, pathway as a list of states, and documentation for pathway as a list of conditions
- */
-function getPatientPath(pathway: Pathway, patientData: PatientData): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
@@ -65,7 +46,7 @@ function getPatientPath(pathway: Pathway, patientData: PatientData): PathwayResu
     path: patientPathway,
     documentation: patientDocumentation
   };
-}
+};
 
 /**
  * Helper function to set the next recommendation
@@ -94,7 +75,10 @@ function nextStateRecommendation(state: State): string | object {
  * @param state - the current state name
  * @return the JSON resource with the state property set
  */
-function formatDocumentation(resource: Resource, state: string): Resource {
+function formatDocumentation(
+  resource: DocumentationResource,
+  state: string
+): DocumentationResource {
   resource.state = state;
   return resource;
 }
@@ -107,7 +91,7 @@ function formatDocumentation(resource: Resource, state: string): Resource {
  * @param currentState - the current state
  * @return the next state name or null
  */
-function formatNextState(resource: Resource, currentState: State): string | null {
+function formatNextState(resource: DocumentationResource, currentState: State): string | null {
   if (resource.resourceType === 'MedicationRequest') {
     return currentState.transitions.length !== 0 ? currentState.transitions[0].transition : null;
   } else {

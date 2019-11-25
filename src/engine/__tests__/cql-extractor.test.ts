@@ -1,4 +1,4 @@
-import pathway from './sample_pathway.json';
+import pathway from '../../__tests__/fixtures/pathways/sample_pathway.json';
 import { extractCQL } from '../cql-extractor';
 
 describe('extractCQL', () => {
