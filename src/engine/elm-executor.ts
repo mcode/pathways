@@ -9,7 +9,7 @@ import { PatientSource } from 'cql-exec-fhir';
  * @param elm - ELM structure (previosuly converted from CQL) on which the patient will be run.
  * @return returns a JSON object which is the result of analyzing the patient against the elm file
  */
-export const executeElm = function(patient: object, elm: object): ElmResults {
+export default function executeElm(patient: object, elm: object): ElmResults {
   const lib = new Library(elm);
   const executor = new Executor(lib);
   const psource = new PatientSource.FHIRv400(patient);

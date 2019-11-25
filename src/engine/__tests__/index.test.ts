@@ -1,17 +1,17 @@
-import { evaluatePatientOnPathway } from '..';
+import evaluatePatientOnPathway from '..';
 
-import pathway from '../../__tests__/fixtures/pathways/sample_pathway.json';
-import preconvertedELM from '../../__tests__/fixtures/elm/sample_pathway.elm.json';
+import pathway from './fixtures/pathways/sample_pathway.json';
+import preconvertedELM from './fixtures/elm/sample_pathway.elm.json';
 
-import patient1 from '../../__tests__/fixtures/patients/sample_pathway/patient1.json';
-import patient2 from '../../__tests__/fixtures/patients/sample_pathway/patient2.json';
-import patient3 from '../../__tests__/fixtures/patients/sample_pathway/patient3.json';
-import patient4 from '../../__tests__/fixtures/patients/sample_pathway/patient4.json';
+import patient1 from './fixtures/patients/sample_pathway/patient1.json';
+import patient2 from './fixtures/patients/sample_pathway/patient2.json';
+import patient3 from './fixtures/patients/sample_pathway/patient3.json';
+import patient4 from './fixtures/patients/sample_pathway/patient4.json';
 
-import results1 from '../../__tests__/fixtures/evaluationResults/sample_pathway/patient1.json';
-import results2 from '../../__tests__/fixtures/evaluationResults/sample_pathway/patient2.json';
-import results3 from '../../__tests__/fixtures/evaluationResults/sample_pathway/patient3.json';
-import results4 from '../../__tests__/fixtures/evaluationResults/sample_pathway/patient4.json';
+import results1 from './fixtures/evaluationResults/sample_pathway/patient1.json';
+import results2 from './fixtures/evaluationResults/sample_pathway/patient2.json';
+import results3 from './fixtures/evaluationResults/sample_pathway/patient3.json';
+import results4 from './fixtures/evaluationResults/sample_pathway/patient4.json';
 
 describe('pathways evaluation engine', () => {
   // mock out the actual webservice and preconvert the pathway CQL to ELM.

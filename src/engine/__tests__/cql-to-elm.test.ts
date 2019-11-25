@@ -1,4 +1,4 @@
-import { convertCQL } from '../cql-to-elm';
+import convertCQL from '../cql-to-elm';
 
 const fakeCQL = "library mCODEResources version '1'";
 const fakeELM = {

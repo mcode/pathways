@@ -50,7 +50,7 @@ function isConditional(state: State): boolean {
  * @param pathway - the JSON object of the entire pathway
  * @return a string of the CQL code for the pathway
  */
-export const extractCQL = function(pathway: Pathway): Promise<string> {
+export default function extractCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway

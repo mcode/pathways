@@ -22,7 +22,7 @@ interface StateData {
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export const pathwayData = function(pathway: Pathway, patientData: PatientData): PathwayResults {
+export default function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
