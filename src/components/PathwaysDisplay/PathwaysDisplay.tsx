@@ -5,7 +5,7 @@ interface Props {
   foo?: string;
 }
 
-const PatientRecord: FC<Props> = () => {
+const PathwaysDisplay: FC<Props> = () => {
   // example of how children components can access the current in-context pathway
   // doesn't need tests, is just a placeholder
   const pathway = usePathwayContext();
@@ -18,4 +18,4 @@ const PatientRecord: FC<Props> = () => {
   );
 };
 
-export default PatientRecord;
+export default PathwaysDisplay;
