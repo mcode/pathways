@@ -50,6 +50,7 @@ const App: FC<AppProps> = ({ client }) => {
         >
           Explore Pathways
         </button>
+        <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
       </PathwayProvider>
     );
@@ -62,10 +63,8 @@ const App: FC<AppProps> = ({ client }) => {
           <Header logo={logo} title={config.get('appName', 'SMART App')} />
           <Navigation />
         </div>
-        <Graph resources={patientRecords} />
-        <PatientRecord resources={patientRecords} />
         {selectPathway?
-                <PathwaysList callback = {setPathwayCallback}></PathwaysList>
+                <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
                 :
                 renderPatientView()
         }
