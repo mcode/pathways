@@ -163,6 +163,9 @@ export class Graph {
         let direction = i % 2 == 0 ? -1 : 1;
         node.horizontalPosition += direction * Math.ceil(i / 2) * this.HORIZONTAL_OFFSET;
         i += 1;
+
+        // Give up...
+        if (i > 10) break;
       }
     }
   }
