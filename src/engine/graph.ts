@@ -12,13 +12,13 @@ export class Graph {
   private NODE_HEIGHT = 50;
   private MIN_MARGIN_X = 10;
   private MIN_MARGIN_Y = 50;
-  private NODE_OFFSET = this.NODE_WIDTH + this.MIN_MARGIN_X;
+  private HORIZONTAL_OFFSET = this.NODE_WIDTH + this.MIN_MARGIN_X;
   private VERTICAL_OFFSET = this.NODE_HEIGHT + this.MIN_MARGIN_Y;
 
   constructor(pathway: Pathway) {
     this.graph = [];
     this.graph[0] = [this.START];
-    this.nodes = this.initializeGraph(pathway);
+    this.nodes = this.initializeNodes(pathway);
   }
 
   /**
@@ -83,7 +83,7 @@ export class Graph {
       }
     }
 
-    console.log(this.nodes);
+    // console.log(this.nodes);
 
     return this.produceCoordinates();
   }
@@ -129,12 +129,12 @@ export class Graph {
     for (let i = 0; i < children.length / 2; i++) {
       // Set the left child i from the center
       let childNode = this.nodes[children[children.length / 2 - i - 1]];
-      this.assignHorizontalPositionToNode(childNode, parentHPos - (i + 1) * this.NODE_OFFSET);
+      this.assignHorizontalPositionToNode(childNode, parentHPos - (i + 1) * this.HORIZONTAL_OFFSET);
       childNode.canMove = false;
 
       // Set the right child i from the center
       childNode = this.nodes[children[children.length / 2 + i]];
-      this.assignHorizontalPositionToNode(childNode, parentHPos + (i + 1) * this.NODE_OFFSET);
+      this.assignHorizontalPositionToNode(childNode, parentHPos + (i + 1) * this.HORIZONTAL_OFFSET);
       childNode.canMove = false;
     }
   }
@@ -147,8 +147,23 @@ export class Graph {
   private assignHorizontalPositionToNode(node: Node, hPos: number | undefined): void {
     if (node.horizontalPosition == undefined || node.canMove) {
       node.horizontalPosition = hPos;
-      // TODO: add check this is not overlaying another node by using nodesOverlap() method
-      // this.graph[rank].map(x => this.nodes[x]).every(n => !nodesOverlap(node, n))
+
+      // Check the new position is not on top of another node
+      if (node.horizontalPosition == undefined) return;
+      let rank = node.rank == undefined ? 0 : node.rank;
+      let i = 1;
+      while (
+        this.graph[rank]
+          .map(nodeName => this.nodes[nodeName])
+          .every(n => !this.nodesOverlap(node, n))
+      ) {
+        console.log('Nodes overlap!');
+        // Update Horizontal position of this node
+        // Alternate directions moving further and further away
+        let direction = i % 2 == 0 ? -1 : 1;
+        node.horizontalPosition += direction * Math.ceil(i / 2) * this.HORIZONTAL_OFFSET;
+        i += 1;
+      }
     }
   }
 
@@ -160,7 +175,12 @@ export class Graph {
    * @returns true if the nodes share same rank and position, false otherwise
    */
   private nodesOverlap(node: Node, otherNode: Node): boolean {
-    return node.rank == otherNode.rank && node.horizontalPosition == otherNode.horizontalPosition;
+    return (
+      node.rank != undefined &&
+      node.horizontalPosition != undefined &&
+      node.rank == otherNode.rank &&
+      node.horizontalPosition == otherNode.horizontalPosition
+    );
   }
 
   /**
@@ -179,7 +199,7 @@ export class Graph {
 
       // If the child is on a higher rank than the parent (node) move subtree rooted at child down
       if (childNode.rank != undefined && node.rank != undefined && childNode.rank < node.rank) {
-        console.log('Moving child node ' + child + ' from rank ' + childNode.rank + ' to ' + rank);
+        // console.log('Moving child node ' + child + ' from rank ' + childNode.rank + ' to ' + rank);
         // Remove node from previous rank
         this.graph[childNode.rank].splice(this.graph[childNode.rank].indexOf(child), 1);
 
@@ -214,7 +234,7 @@ export class Graph {
    * Initialize the Nodes data structure for the graph representation
    * @param pathway - JSON Pathway
    */
-  private initializeGraph(pathway: Pathway): Nodes {
+  private initializeNodes(pathway: Pathway): Nodes {
     let nodes: Nodes = {};
 
     // Iniitalize each node with default values
