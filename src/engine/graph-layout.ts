@@ -4,7 +4,7 @@
 import { Pathway, State } from 'pathways-model';
 
 interface Node {
-  rank: number | undefined;
+  rank: number | undefined; // TODO: perhaps set default to -1 instead of undefined?
   horizontalPosition: number | undefined;
   children: string[];
   parents: string[];
@@ -15,10 +15,19 @@ interface Nodes {
   [key: string]: Node;
 }
 
+interface Coordinates {
+  [key: string]: {
+    x: number;
+    y: number;
+  };
+}
+
 const NODE_WIDTH = 100;
-const NODE_HEIGHT = 25;
+const NODE_HEIGHT = 50;
 const MIN_MARGIN_X = 10;
+const MIN_MARGIN_Y = 50;
 const NODE_OFFSET = NODE_WIDTH + MIN_MARGIN_X;
+const VERTICAL_OFFSET = NODE_HEIGHT + MIN_MARGIN_Y;
 const START = 'Start';
 
 /**
@@ -55,7 +64,6 @@ export const graphLayout = function(pathway: Pathway): Nodes {
   for (rank = 1; rank < graph.length; rank++) {
     // Assign position of all nodes on the current level graph[rank]
     for (let nodeName of graph[rank]) {
-      console.log(nodeName);
       let node = nodes[nodeName];
       if (node.horizontalPosition != undefined) continue;
       // TODO: should this be parents on higher rank?
@@ -91,6 +99,20 @@ export const graphLayout = function(pathway: Pathway): Nodes {
   }
 
   return nodes;
+};
+
+export const produceCoordinates = function(nodes: Nodes): Coordinates {
+  let coordinates: Coordinates = {};
+
+  for (let nodeName in nodes) {
+    let node = nodes[nodeName];
+    coordinates[nodeName] = {
+      x: node.horizontalPosition == undefined ? 0 : node.horizontalPosition, // hPos will be defined
+      y: node.rank == undefined ? 0 : node.rank * VERTICAL_OFFSET // rank will be defined
+    };
+  }
+
+  return coordinates;
 };
 
 /**
