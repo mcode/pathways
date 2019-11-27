@@ -2,13 +2,13 @@
 /* eslint-disable max-len */
 
 import { Pathway, State } from 'pathways-model';
-import { parenthesizedExpression } from '@babel/types';
 
 interface Node {
   rank: number | undefined;
   horizontalPosition: number | undefined;
   children: string[];
   parents: string[];
+  canMove: boolean;
 }
 
 interface Nodes {
@@ -26,7 +26,6 @@ const START = 'Start';
  * @param pathway - JSON pathway
  */
 export const graphLayout = function(pathway: Pathway): Nodes {
-  // function graphLayout(pathway: Pathway): string[][] {
   let nodes = initializeGraph(pathway);
   let graph: string[][] = [];
   graph[0] = [START];
@@ -56,6 +55,7 @@ export const graphLayout = function(pathway: Pathway): Nodes {
   for (rank = 1; rank < graph.length; rank++) {
     // Assign position of all nodes on the current level graph[rank]
     for (let nodeName of graph[rank]) {
+      console.log(nodeName);
       let node = nodes[nodeName];
       if (node.horizontalPosition != undefined) continue;
       // TODO: should this be parents on higher rank?
@@ -100,7 +100,9 @@ export const graphLayout = function(pathway: Pathway): Nodes {
  * @param nodes - the Nodes
  */
 function spreadChildrenEvenly(parent: Node, nodes: Nodes): void {
-  let children = parent.children.filter(c => nodes[c].horizontalPosition == undefined);
+  let children = parent.children.filter(
+    c => nodes[c].horizontalPosition == undefined || nodes[c].canMove
+  );
   if (children.length == 0) return;
   if (children.length == 1) {
     assignHorizontalPositionToNode(nodes[children[0]], parent.horizontalPosition);
@@ -109,14 +111,17 @@ function spreadChildrenEvenly(parent: Node, nodes: Nodes): void {
   let parentHPos = parent.horizontalPosition === undefined ? 0 : parent.horizontalPosition; // Parent hPos will be defined
   if (children.length % 2 == 1) children.splice(Math.ceil(children.length / 2), 1); // Remove middle element if odd
 
+  // TODO: this does not consider if there are connections between the children which order to put them in
   for (let i = 0; i < children.length / 2; i++) {
     // Set the left child i from the center
     let childNode = nodes[children[children.length / 2 - i - 1]];
     assignHorizontalPositionToNode(childNode, parentHPos - (i + 1) * NODE_OFFSET);
+    childNode.canMove = false;
 
     // Set the right child i from the center
     childNode = nodes[children[children.length / 2 + i]];
     assignHorizontalPositionToNode(childNode, parentHPos + (i + 1) * NODE_OFFSET);
+    childNode.canMove = false;
   }
 }
 
@@ -126,49 +131,22 @@ function spreadChildrenEvenly(parent: Node, nodes: Nodes): void {
  * @param hPos - the horizontal position for the node
  */
 function assignHorizontalPositionToNode(node: Node, hPos: number | undefined) {
-  if (node.horizontalPosition == undefined) node.horizontalPosition = hPos;
+  if (node.horizontalPosition == undefined || node.canMove) {
+    node.horizontalPosition = hPos;
+    // TODO: add check this is not overlaying another node by using nodesOverlap() method
+  }
 }
 
-// TODO: use this method
-/*
-function assignHorizontalPositionToNode(
-  nodeName: string,
-  position: number,
-  nodesInRank: string[],
-  nodes: Nodes
-): void {
-  let node = nodes[nodeName];
-  nodesInRank.forEach(otherNodeName => {
-    let otherNode = nodes[otherNodeName];
-    if (
-      otherNodeName !== nodeName &&
-      otherNode.horizontalPosition != undefined &&
-      nodesOverlap(otherNode, position)
-    ) {
-      // TODO: get value for shift
-      // TODO: check new shift does not interfere with another node
-      if (position < otherNode.horizontalPosition) {
-        // shift the node left
-        position -= 10;
-      } else {
-        // shift the node right
-        position += 10;
-      }
-    }
-  });
-
-  nodes[nodeName].horizontalPosition = position;
+/**
+ * Helper function to determine if two nodes are in the same slot
+ *
+ * @param node - the first node
+ * @param otherNode - the second node
+ * @returns true if the nodes share same rank and position, false otherwise
+ */
+function nodesOverlap(node: Node, otherNode: Node): boolean {
+  return node.rank == otherNode.rank && node.horizontalPosition == otherNode.horizontalPosition;
 }
-
-function nodesOverlap(node: Node, position: number): boolean {
-  if (
-    node.horizontalPosition != undefined &&
-    Math.abs(position - node.horizontalPosition) < NODE_WIDTH + MIN_MARGIN_X
-  )
-    return true;
-  return false;
-}
-*/
 
 /**
  * Assigns the rank to every child of node. If the child has a lower rank the entire
@@ -232,7 +210,8 @@ function initializeGraph(pathway: Pathway): Nodes {
       rank: undefined,
       horizontalPosition: undefined,
       children: [],
-      parents: []
+      parents: [],
+      canMove: true
     };
   }
 
@@ -240,10 +219,11 @@ function initializeGraph(pathway: Pathway): Nodes {
   for (stateName in pathway.states) {
     let state: State = pathway.states[stateName];
     state.transitions.forEach(transition => {
-      nodes[stateName].children.push(transition.transition);
-      nodes[transition.transition].parents.push(stateName);
+      if (!nodes[stateName].children.includes(transition.transition))
+        nodes[stateName].children.push(transition.transition);
+      if (!nodes[transition.transition].parents.includes(stateName))
+        nodes[transition.transition].parents.push(stateName);
     });
-    // nodes[stateName].children = state.transitions.map(transition => transition.transition);
   }
 
   nodes[START].rank = 0;
