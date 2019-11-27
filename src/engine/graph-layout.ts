@@ -52,13 +52,13 @@ export const graphLayout = function(pathway: Pathway): Nodes {
   // console.log(graph);
 
   // Set the position of nodes within the rank
-  nodes[START].horizontalPosition = -1 * (NODE_WIDTH / 2);
-
+  assignHorizontalPositionToNode(nodes[START], -1 * (NODE_WIDTH / 2));
   for (rank = 1; rank < graph.length; rank++) {
     // Assign position of all nodes on the current level graph[rank]
     for (let nodeName of graph[rank]) {
       let node = nodes[nodeName];
       if (node.horizontalPosition != undefined) continue;
+      // TODO: should this be parents on higher rank?
       if (node.parents.length == 1) {
         let parentName = node.parents[0];
         let parent = nodes[parentName];
@@ -66,11 +66,10 @@ export const graphLayout = function(pathway: Pathway): Nodes {
         if (parent.children.length % 2 == 1) {
           // Odd number of children: one directly below, others to the side
           let childNode = nodes[parent.children[Math.floor(parent.children.length / 2)]];
-          childNode.horizontalPosition = parent.horizontalPosition;
+          assignHorizontalPositionToNode(childNode, parent.horizontalPosition);
         }
         spreadChildrenEvenly(parent, nodes);
       } else {
-        console.log(nodeName + ' is the middle of multiple parents');
         // Multiple Parents: Place the node at the average of parents on higher rank
         // TODO: collect all parents to be next to each other
         let parentsOnHigherRank = node.parents.filter(p => {
@@ -83,7 +82,10 @@ export const graphLayout = function(pathway: Pathway): Nodes {
           .reduce((a, b) => (a != undefined && b != undefined ? a + b : 0), 0);
 
         // sum will always be a number for some reason the compiler thinks it could be undefined
-        node.horizontalPosition = sum != undefined ? sum / parentsOnHigherRank.length : undefined;
+        assignHorizontalPositionToNode(
+          node,
+          sum != undefined ? sum / parentsOnHigherRank.length : undefined
+        );
       }
     }
   }
@@ -98,23 +100,37 @@ export const graphLayout = function(pathway: Pathway): Nodes {
  * @param nodes - the Nodes
  */
 function spreadChildrenEvenly(parent: Node, nodes: Nodes): void {
-  if (parent.children.length <= 1) return;
-  let children = parent.children;
+  let children = parent.children.filter(c => nodes[c].horizontalPosition == undefined);
+  if (children.length == 0) return;
+  if (children.length == 1) {
+    assignHorizontalPositionToNode(nodes[children[0]], parent.horizontalPosition);
+    return;
+  }
   let parentHPos = parent.horizontalPosition === undefined ? 0 : parent.horizontalPosition; // Parent hPos will be defined
   if (children.length % 2 == 1) children.splice(Math.ceil(children.length / 2), 1); // Remove middle element if odd
 
   for (let i = 0; i < children.length / 2; i++) {
     // Set the left child i from the center
     let childNode = nodes[children[children.length / 2 - i - 1]];
-    childNode.horizontalPosition = parentHPos - (i + 1) * NODE_OFFSET;
+    assignHorizontalPositionToNode(childNode, parentHPos - (i + 1) * NODE_OFFSET);
 
     // Set the right child i from the center
     childNode = nodes[children[children.length / 2 + i]];
-    childNode.horizontalPosition = parentHPos + (i + 1) * NODE_OFFSET;
+    assignHorizontalPositionToNode(childNode, parentHPos + (i + 1) * NODE_OFFSET);
   }
 }
 
+/**
+ * Assigns the node given by nodeName the horizontal position hPos if it is not already set
+ * @param node - the node to set the horizontal position of
+ * @param hPos - the horizontal position for the node
+ */
+function assignHorizontalPositionToNode(node: Node, hPos: number | undefined) {
+  if (node.horizontalPosition == undefined) node.horizontalPosition = hPos;
+}
+
 // TODO: use this method
+/*
 function assignHorizontalPositionToNode(
   nodeName: string,
   position: number,
@@ -152,6 +168,7 @@ function nodesOverlap(node: Node, position: number): boolean {
     return true;
   return false;
 }
+*/
 
 /**
  * Assigns the rank to every child of node. If the child has a lower rank the entire
@@ -191,7 +208,7 @@ function assignRankToChildren(nodes: Nodes, graph: string[][], node: Node, rank:
  * @param rank - the new rank for the node
  */
 function assignRankToNode(nodes: Nodes, graph: string[][], nodeName: string, rank: number): void {
-  console.log('Assigning rank ' + rank + ' to node ' + nodeName);
+  // console.log('Assigning rank ' + rank + ' to node ' + nodeName);
   try {
     graph[rank].push(nodeName);
   } catch (err) {
