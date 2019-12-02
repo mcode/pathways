@@ -2,6 +2,8 @@ import React, { FC, useState } from 'react';
 import { Graphviz } from 'graphviz-react';
 
 import evaluatePatientOnPathway from 'engine';
+import { usePathwayContext } from 'components/PathwayProvider';
+
 import { Pathway, Transition } from 'pathways-model';
 
 // TODO: replace this with actual pathway selection ASAP
@@ -14,7 +16,7 @@ interface GraphProps {
 
 const Graph: FC<GraphProps> = ({ pathway = dummyPathway, resources }) => {
   const [dot, setDot] = useState<string | undefined>(undefined);
-
+  pathway = usePathwayContext();
   // fake bundle for the CQL engine
   const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) };
 
