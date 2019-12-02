@@ -1,7 +1,7 @@
 declare module 'graph-model' {
   export interface Node {
-    rank: number | undefined; // TODO: perhaps set default to -1 instead of undefined?
-    horizontalPosition: number | undefined;
+    rank: number;
+    horizontalPosition: number;
     children: string[];
     parents: string[];
     canMove: boolean;
