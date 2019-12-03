@@ -9,7 +9,7 @@ const url = config.get('cqlToElmWebserviceUrl');
  * @param cql - cql file that is the input to the function.
  * @return The resulting elm translation of the cql file.
  */
-export const convertCQL = function(cql: string): Promise<object> {
+export default function convertCQL(cql: string): Promise<object> {
   // Connect to web service
 
   return fetch(url, {

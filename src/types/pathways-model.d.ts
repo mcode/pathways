@@ -22,9 +22,10 @@ declare module 'pathways-model' {
     resource: object; // TODO: FHIR resources
   }
 
-  // export interface BranchState extends State {
-  //   // nothing special, yet
-  // }
+  // NOTE: the model also includes a BranchState (which extends State),
+  // but as of right now it has no additional fields not in State,
+  // and TypeScript does not allow "empty" interfaces so we can't add it yet.
+  // Add it here if/when we ever need it.
 
   interface Transition {
     transition: string;

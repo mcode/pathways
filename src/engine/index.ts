@@ -1,7 +1,7 @@
-import { extractCQL } from './cql-extractor';
-import { convertCQL } from './cql-to-elm';
-import { executeElm } from './elm-executor';
-import { pathwayData } from './output-results';
+import extractCQL from './cql-extractor';
+import convertCQL from './cql-to-elm';
+import executeElm from './elm-executor';
+import pathwayData from './output-results';
 import { Pathway, PathwayResults } from 'pathways-model';
 
 /**
@@ -12,7 +12,7 @@ import { Pathway, PathwayResults } from 'pathways-model';
  * @return Information on the patient's current status within the
  *                  clinical pathway
  */
-export const evaluatePatientOnPathway = function(
+export default function evaluatePatientOnPathway(
   patient: object,
   pathway: Pathway
 ): Promise<PathwayResults> {

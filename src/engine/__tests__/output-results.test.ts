@@ -1,6 +1,6 @@
-import { pathwayData } from '../output-results';
+import pathwayData from '../output-results';
 
-import pathway from '../../__tests__/fixtures/pathways/sample_pathway.json';
+import pathway from './fixtures/pathways/sample_pathway.json';
 
 describe('pathway results translator', () => {
   /**

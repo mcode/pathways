@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
 import { Graphviz } from 'graphviz-react';
 
-// import { usePatient } from './PatientProvider';
-
-import { evaluatePatientOnPathway } from '../engine';
-import dummyPathway from '../__tests__/fixtures/pathways/sample_pathway.json';
+import evaluatePatientOnPathway from 'engine';
 import { Pathway, Transition } from 'pathways-model';
+
+// TODO: replace this with actual pathway selection ASAP
+import dummyPathway from '../engine/__tests__/fixtures/pathways/sample_pathway.json';
 
 interface GraphProps {
   pathway?: Pathway;
