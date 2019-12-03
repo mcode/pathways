@@ -1,8 +1,8 @@
 import { Graph } from '../graph';
 
-import samplePathway from '../../__tests__/fixtures/pathways/sample_pathway.json';
-import upennPathway from '../../__tests__/fixtures/pathways/upenn_her2_pathway.json';
-import testPathway from '../../__tests__/fixtures/pathways/graph_layout_test_pathway.json';
+import samplePathway from './fixtures/pathways/sample_pathway.json';
+import upennPathway from './fixtures/pathways/upenn_her2_pathway.json';
+import testPathway from './fixtures/pathways/graph_layout_test_pathway.json';
 import { Coordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
