@@ -20,4 +20,4 @@ export default function convertCQL(cql: string): Promise<object> {
     },
     body: cql
   }).then(elm => elm.json());
-};
+}

@@ -46,7 +46,7 @@ export default function pathwayData(pathway: Pathway, patientData: PatientData):
     path: patientPathway,
     documentation: patientDocumentation
   };
-};
+}
 
 /**
  * Helper function to set the next recommendation

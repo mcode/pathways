@@ -16,4 +16,4 @@ export default function executeElm(patient: object, elm: object): ElmResults {
   psource.loadBundles(patient);
   const result = executor.exec(psource);
   return result;
-};
+}

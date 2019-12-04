@@ -9,7 +9,7 @@ interface Props {
 }
 
 const PathwaysList: FC<Props> = (props: Props) => {
-    const service = props.service;
+  const service = props.service;
   function renderList(list: Pathway[]): ReactNode {
     return (
       <div>

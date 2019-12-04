@@ -27,4 +27,4 @@ export default function evaluatePatientOnPathway(
 
       return pathwayData(pathway, patientData);
     });
-};
+}

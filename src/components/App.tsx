@@ -31,7 +31,7 @@ const App: FC<AppProps> = ({ client }) => {
     });
   }, [client]);
 
-  const service = useGetPathwaysService(config.get("pathwaysService"));
+  const service = useGetPathwaysService(config.get('pathwaysService'));
 
   function setPathwayCallback(value: Pathway | null) {
     setSelectPathway(false);
@@ -63,11 +63,11 @@ const App: FC<AppProps> = ({ client }) => {
           <Header logo={logo} title={config.get('appName', 'SMART App')} />
           <Navigation />
         </div>
-        {selectPathway?
-                <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
-                :
-                renderPatientView()
-        }
+        {selectPathway ? (
+          <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
+        ) : (
+          renderPatientView()
+        )}
       </PatientProvider>
     </FHIRClientProvider>
   );
