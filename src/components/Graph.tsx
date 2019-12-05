@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Pathway } from 'pathways-model';
 import GraphAlg from '../engine/graph';
 import Node from './Node';
+import icon from '../media-play-16.png';
 
 interface GraphProps {
   pathway: Pathway | null;
@@ -22,14 +23,15 @@ const Graph: FC<GraphProps> = ({ pathway }) => {
           .map(x => x.y)
           .reduce((a, b) => Math.max(a, b))
       : 0;
-  console.log(layout);
+
   return (
     <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
-        ? Object.keys(layout).map(key => {
+        ? Object.keys(layout).map((key) => {
             return (
               <Node
-                icon=""
+                key={key}
+                icon={icon}
                 text={pathway!.states[key].label}
                 xCoordinate={layout[key].x + window.innerWidth / 2}
                 yCoordinate={layout[key].y}

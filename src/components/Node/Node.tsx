@@ -18,6 +18,7 @@ const Node: FC<NodeProps> = ({ icon, text, xCoordinate, yCoordinate }) => {
   return (
     <div className={classes.node} style={style}>
       {/* Insert icon */}
+      <img className={classes.icon} src={icon} alt="icon"/>
       {text}
     </div>
   );
