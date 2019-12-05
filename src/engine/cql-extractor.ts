@@ -73,4 +73,4 @@ export default function extractCQL(pathway: Pathway): Promise<string> {
 
     return cql;
   });
-};
+}

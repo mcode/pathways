@@ -34,10 +34,10 @@ describe('ELM executor', () => {
       'T = T1': 0,
       'N = N0': 0,
       'N = N1': 0,
-      'Surgery': 0,
-      'Radiation': 1,
-      'Chemo': 8,
-      'ChemoMedication': 8
+      Surgery: 0,
+      Radiation: 1,
+      Chemo: 8,
+      ChemoMedication: 8
     };
 
     compareResults(result, expectedResult);
@@ -57,10 +57,10 @@ describe('ELM executor', () => {
       'T = T1': 1,
       'N = N0': 1,
       'N = N1': 0,
-      'Surgery': 1,
-      'Radiation': 0,
-      'Chemo': 0,
-      'ChemoMedication': 0
+      Surgery: 1,
+      Radiation: 0,
+      Chemo: 0,
+      ChemoMedication: 0
     };
 
     compareResults(result, expectedResult);
@@ -80,10 +80,10 @@ describe('ELM executor', () => {
       'T = T1': 0,
       'N = N0': 0,
       'N = N1': 1,
-      'Surgery': 1,
-      'Radiation': 34,
-      'Chemo': 16,
-      'ChemoMedication': 0
+      Surgery: 1,
+      Radiation: 34,
+      Chemo: 16,
+      ChemoMedication: 0
     };
 
     compareResults(result, expectedResult);
