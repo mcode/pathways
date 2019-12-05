@@ -16,8 +16,15 @@ const Graph: FC<GraphProps> = ({ pathway }) => {
   };
 
   const layout = getGraphLayout(pathway);
+  const maxHeight: number =
+    layout !== undefined
+      ? Object.values(layout)
+          .map(x => x.y)
+          .reduce((a, b) => Math.max(a, b))
+      : 0;
+  console.log(layout);
   return (
-    <div>
+    <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
         ? Object.keys(layout).map(key => {
             return (
