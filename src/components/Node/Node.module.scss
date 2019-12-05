@@ -1,0 +1,12 @@
+@import '../../styles/variables';
+
+.node {
+  position: relative;
+  background-color: rgb(96, 166, 168);
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+}
