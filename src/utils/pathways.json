@@ -3,7 +3,7 @@
         {
             "name": "UPenn Breast Cancer Pathway: Early Stage HER2+ Pathway",
             "description": "Pathway for the UPenn Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway",
-            "library": "upenn_her2_library.cql",
+            "library": "mCODE_Library.cql",
             "states": {
                 "Start": {
                     "label": "Start",
