@@ -203,19 +203,10 @@ export class Graph {
    *
    * @param node - the first node
    * @param otherNode - the second node
-   * @returns true if both nodes have the same rank, HPos, children, and parents
+   * @returns true if the two nodes are the same (have the same label)
    */
   private nodesEqual(node: Node, otherNode: Node): boolean {
-    let sameRank = (isNaN(node.rank) && isNaN(otherNode.rank)) || node.rank == otherNode.rank;
-    let sameHPos =
-      (isNaN(node.horizontalPosition) && isNaN(otherNode.horizontalPosition)) ||
-      node.horizontalPosition == otherNode.horizontalPosition;
-    return (
-      sameRank &&
-      sameHPos &&
-      node.children == otherNode.children &&
-      node.parents == otherNode.parents
-    );
+    return node.label === otherNode.label;
   }
 
   /**
@@ -277,6 +268,7 @@ export class Graph {
     let stateName: string;
     for (stateName in pathway.states) {
       nodes[stateName] = {
+        label: stateName,
         rank: NaN,
         horizontalPosition: NaN,
         children: [],

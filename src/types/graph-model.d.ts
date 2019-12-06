@@ -1,5 +1,6 @@
 declare module 'graph-model' {
   export interface Node {
+    label: string;
     rank: number;
     horizontalPosition: number;
     children: string[];
