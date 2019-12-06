@@ -47,31 +47,7 @@ export class Graph {
     // Set the position of nodes within the rank
     this.assignHorizontalPositionToNode(this.nodes[this.START], -1 * (this.NODE_WIDTH / 2));
     for (rank = 1; rank < this.graph.length; rank++) {
-      // Assign position of all nodes on the current level graph[rank]
-      for (let nodeName of this.graph[rank]) {
-        let node = this.nodes[nodeName];
-        if (!isNaN(node.horizontalPosition)) continue;
-        let parentsOnHigherRank = node.parents.filter(p => this.nodes[p].rank < node.rank);
-        if (parentsOnHigherRank.length == 1) {
-          let parentName = node.parents[0];
-          let parent = this.nodes[parentName];
-
-          if (parent.children.length % 2 == 1) {
-            // Odd number of children: one directly below, others to the side
-            let childNode = this.nodes[parent.children[Math.floor(parent.children.length / 2)]];
-            this.assignHorizontalPositionToNode(childNode, parent.horizontalPosition);
-          }
-          this.spreadChildrenEvenly(parent);
-        } else {
-          // Multiple Parents: Place the node at the average of parents on higher rank
-          // TODO: collect all parents to be next to each other
-          let sum = parentsOnHigherRank
-            .map(p => this.nodes[p].horizontalPosition)
-            .reduce((a, b) => a + b, 0);
-
-          this.assignHorizontalPositionToNode(node, sum / parentsOnHigherRank.length);
-        }
-      }
+      this.assignHorizontalPositionToNodesInRank(rank);
     }
 
     return this.produceCoordinates();
@@ -145,12 +121,43 @@ export class Graph {
       // Check the new position is not on top of another node
       let i = 1;
       while (this.hasOverlap(node)) {
-        console.log('Nodes overlap!');
         // Update Horizontal position of this node
         // Alternate directions moving further and further away
         let direction = i % 2 == 0 ? -1 : 1;
         node.horizontalPosition = hPos + direction * Math.ceil(i / 2) * this.HORIZONTAL_OFFSET;
         i += 1;
+      }
+    }
+  }
+
+  /**
+   * Assigns the horizontal position of all nodes on the current level
+   *
+   * @param rank - the level of the graph to assign node positions of
+   */
+  private assignHorizontalPositionToNodesInRank(rank: number): void {
+    for (const nodeName of this.graph[rank]) {
+      const node = this.nodes[nodeName];
+      if (!isNaN(node.horizontalPosition)) continue;
+      const parentsOnHigherRank = node.parents.filter(p => this.nodes[p].rank < node.rank);
+      if (parentsOnHigherRank.length === 1) {
+        const parentName = node.parents[0];
+        const parent = this.nodes[parentName];
+
+        if (parent.children.length % 2 === 1) {
+          // Odd number of children: one directly below, others to the side
+          const childNode = this.nodes[parent.children[Math.floor(parent.children.length / 2)]];
+          this.assignHorizontalPositionToNode(childNode, parent.horizontalPosition);
+        }
+        this.spreadChildrenEvenly(parent);
+      } else {
+        // Multiple Parents: Place the node at the average of parents on higher rank
+        // TODO: collect all parents to be next to each other
+        const sum = parentsOnHigherRank
+          .map(p => this.nodes[p].horizontalPosition)
+          .reduce((a, b) => a + b, 0);
+
+        this.assignHorizontalPositionToNode(node, sum / parentsOnHigherRank.length);
       }
     }
   }
@@ -227,7 +234,6 @@ export class Graph {
 
       // If the child is on a higher rank than the parent (node) move subtree rooted at child down
       if (childNode.rank < node.rank) {
-        console.log('Moving child node ' + child + ' from rank ' + childNode.rank + ' to ' + rank);
         // Remove node from previous rank
         this.graph[childNode.rank].splice(this.graph[childNode.rank].indexOf(child), 1);
 
