@@ -50,7 +50,7 @@ const App: FC<AppProps> = ({ client }) => {
         >
           Explore Pathways
         </button>
-        <Graph pathway={pathway} />
+        <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
       </PathwayProvider>
     );
