@@ -4,68 +4,60 @@
 import { Pathway, State } from 'pathways-model';
 import { Node, Nodes, Coordinates } from 'graph-model';
 
-export class Graph {
-  private nodes: Nodes;
-  private graph: string[][];
-  private START = 'Start';
-  private NODE_WIDTH = 100;
-  private NODE_HEIGHT = 50;
-  private MIN_MARGIN_X = 10;
-  private MIN_MARGIN_Y = 50;
-  private HORIZONTAL_OFFSET = this.NODE_WIDTH + this.MIN_MARGIN_X;
-  private VERTICAL_OFFSET = this.NODE_HEIGHT + this.MIN_MARGIN_Y;
+/**
+ * Obtain the graph layout for the pathway as coordinates for every node
+ *
+ * @param pathway - JSON pathway
+ */
+export function layout(pathway: Pathway): Coordinates {
+  let START = 'Start';
+  let NODE_WIDTH = 100;
+  let NODE_HEIGHT = 50;
+  let MIN_MARGIN_X = 10;
+  let MIN_MARGIN_Y = 50;
+  let nodes: Nodes = initializeNodes(pathway);
+  let graph: string[][] = [[START]];
+  let HORIZONTAL_OFFSET = NODE_WIDTH + MIN_MARGIN_X;
+  let VERTICAL_OFFSET = NODE_HEIGHT + MIN_MARGIN_Y;
 
-  constructor(pathway: Pathway) {
-    this.graph = [];
-    this.graph[0] = [this.START];
-    this.nodes = this.initializeNodes(pathway);
-  }
-
-  /**
-   * Obtain the graph layout for the pathway as coordinates for every node
-   *
-   * @param pathway - JSON pathway
-   */
-  public layout(): Coordinates {
-    // Set the rank for every node
-    let rank = 0;
-    do {
-      // Iterate over each node on the current level
-      for (let nodeName of this.graph[rank]) {
-        // Assign all children to the next rank
-        this.assignRankToChildren(this.nodes[nodeName], rank + 1);
-      }
-
-      rank++;
-
-      // To start rank = 0 and graph.length = 1. In each iteration children will be added
-      // to the next rank incrementing the length of graph. When there are no new children
-      // the graph.length will remain unchanged but the rank would have increased by one.
-      // Therefore we stop when the rank and graph length are the same.
-    } while (this.graph.length != rank);
-
-    // Set the position of nodes within the rank
-    this.assignHorizontalPositionToNode(this.nodes[this.START], -1 * (this.NODE_WIDTH / 2));
-    for (rank = 1; rank < this.graph.length; rank++) {
-      this.assignHorizontalPositionToNodesInRank(rank);
+  // Set the rank for every node
+  let rank = 0;
+  do {
+    // Iterate over each node on the current level
+    for (let nodeName of graph[rank]) {
+      // Assign all children to the next rank
+      assignRankToChildren(nodes[nodeName], rank + 1);
     }
 
-    return this.produceCoordinates();
+    rank++;
+
+    // To start rank = 0 and graph.length = 1. In each iteration children will be added
+    // to the next rank incrementing the length of graph. When there are no new children
+    // the graph.length will remain unchanged but the rank would have increased by one.
+    // Therefore we stop when the rank and graph length are the same.
+  } while (graph.length != rank);
+
+  // Set the position of nodes within the rank
+  assignHorizontalPositionToNode(nodes[START], -1 * (NODE_WIDTH / 2));
+  for (rank = 1; rank < graph.length; rank++) {
+    assignHorizontalPositionToNodesInRank(rank);
   }
+
+  return produceCoordinates();
 
   /**
    * Convert the Nodes into a Coordinates object
    *
    * @returns Coordinates for every node
    */
-  private produceCoordinates(): Coordinates {
+  function produceCoordinates(): Coordinates {
     let coordinates: Coordinates = {};
 
-    for (let nodeName in this.nodes) {
-      let node = this.nodes[nodeName];
+    for (let nodeName in nodes) {
+      let node = nodes[nodeName];
       coordinates[nodeName] = {
         x: node.horizontalPosition,
-        y: node.rank * this.VERTICAL_OFFSET
+        y: node.rank * VERTICAL_OFFSET
       };
     }
 
@@ -78,13 +70,13 @@ export class Graph {
    * @param parent - the parent Node
    * @param nodes - the Nodes
    */
-  private spreadChildrenEvenly(parent: Node): void {
+  function spreadChildrenEvenly(parent: Node): void {
     let children = parent.children.filter(
-      c => isNaN(this.nodes[c].horizontalPosition) || this.nodes[c].canMove
+      c => isNaN(nodes[c].horizontalPosition) || nodes[c].canMove
     );
     if (children.length == 0) return;
     if (children.length == 1) {
-      this.assignHorizontalPositionToNode(this.nodes[children[0]], parent.horizontalPosition);
+      assignHorizontalPositionToNode(nodes[children[0]], parent.horizontalPosition);
       return;
     }
     if (children.length % 2 == 1) children.splice(Math.ceil(children.length / 2), 1); // Remove middle element if odd
@@ -92,18 +84,18 @@ export class Graph {
     // TODO: this does not consider if there are connections between the children which order to put them in
     for (let i = 0; i < children.length / 2; i++) {
       // Set the left child i from the center
-      let childNode = this.nodes[children[children.length / 2 - i - 1]];
-      this.assignHorizontalPositionToNode(
+      let childNode = nodes[children[children.length / 2 - i - 1]];
+      assignHorizontalPositionToNode(
         childNode,
-        parent.horizontalPosition - (i + 1) * this.HORIZONTAL_OFFSET
+        parent.horizontalPosition - (i + 1) * HORIZONTAL_OFFSET
       );
       childNode.canMove = false;
 
       // Set the right child i from the center
-      childNode = this.nodes[children[children.length / 2 + i]];
-      this.assignHorizontalPositionToNode(
+      childNode = nodes[children[children.length / 2 + i]];
+      assignHorizontalPositionToNode(
         childNode,
-        parent.horizontalPosition + (i + 1) * this.HORIZONTAL_OFFSET
+        parent.horizontalPosition + (i + 1) * HORIZONTAL_OFFSET
       );
       childNode.canMove = false;
     }
@@ -114,17 +106,17 @@ export class Graph {
    * @param node - the node to set the horizontal position of
    * @param hPos - the horizontal position for the node
    */
-  private assignHorizontalPositionToNode(node: Node, hPos: number): void {
+  function assignHorizontalPositionToNode(node: Node, hPos: number): void {
     if (isNaN(node.horizontalPosition) || node.canMove) {
       node.horizontalPosition = hPos;
 
       // Check the new position is not on top of another node
       let i = 1;
-      while (this.hasOverlap(node)) {
+      while (hasOverlap(node)) {
         // Update Horizontal position of this node
         // Alternate directions moving further and further away
         let direction = i % 2 == 0 ? -1 : 1;
-        node.horizontalPosition = hPos + direction * Math.ceil(i / 2) * this.HORIZONTAL_OFFSET;
+        node.horizontalPosition = hPos + direction * Math.ceil(i / 2) * HORIZONTAL_OFFSET;
         i += 1;
       }
     }
@@ -135,29 +127,29 @@ export class Graph {
    *
    * @param rank - the level of the graph to assign node positions of
    */
-  private assignHorizontalPositionToNodesInRank(rank: number): void {
-    for (const nodeName of this.graph[rank]) {
-      const node = this.nodes[nodeName];
+  function assignHorizontalPositionToNodesInRank(rank: number): void {
+    for (const nodeName of graph[rank]) {
+      const node = nodes[nodeName];
       if (!isNaN(node.horizontalPosition)) continue;
-      const parentsOnHigherRank = node.parents.filter(p => this.nodes[p].rank < node.rank);
+      const parentsOnHigherRank = node.parents.filter(p => nodes[p].rank < node.rank);
       if (parentsOnHigherRank.length === 1) {
         const parentName = node.parents[0];
-        const parent = this.nodes[parentName];
+        const parent = nodes[parentName];
 
         if (parent.children.length % 2 === 1) {
           // Odd number of children: one directly below, others to the side
-          const childNode = this.nodes[parent.children[Math.floor(parent.children.length / 2)]];
-          this.assignHorizontalPositionToNode(childNode, parent.horizontalPosition);
+          const childNode = nodes[parent.children[Math.floor(parent.children.length / 2)]];
+          assignHorizontalPositionToNode(childNode, parent.horizontalPosition);
         }
-        this.spreadChildrenEvenly(parent);
+        spreadChildrenEvenly(parent);
       } else {
         // Multiple Parents: Place the node at the average of parents on higher rank
         // TODO: collect all parents to be next to each other
         const sum = parentsOnHigherRank
-          .map(p => this.nodes[p].horizontalPosition)
+          .map(p => nodes[p].horizontalPosition)
           .reduce((a, b) => a + b, 0);
 
-        this.assignHorizontalPositionToNode(node, sum / parentsOnHigherRank.length);
+        assignHorizontalPositionToNode(node, sum / parentsOnHigherRank.length);
       }
     }
   }
@@ -168,11 +160,11 @@ export class Graph {
    * @param node - the node to check for overlap with
    * @returns true if the node overlaps with any other node in the rank, false otherwise
    */
-  private hasOverlap(node: Node): boolean {
-    let nodesInRank = this.graph[node.rank].map(name => this.nodes[name]);
+  function hasOverlap(node: Node): boolean {
+    let nodesInRank = graph[node.rank].map(name => nodes[name]);
 
     for (let otherNode of nodesInRank) {
-      if (this.nodesOverlap(node, otherNode)) return true;
+      if (nodesOverlap(node, otherNode)) return true;
     }
 
     return false;
@@ -185,8 +177,8 @@ export class Graph {
    * @param otherNode - the second node
    * @returns true if the nodes share same rank and position, false otherwise
    */
-  private nodesOverlap(node: Node, otherNode: Node): boolean {
-    if (this.nodesEqual(node, otherNode)) return false;
+  function nodesOverlap(node: Node, otherNode: Node): boolean {
+    if (nodesEqual(node, otherNode)) return false;
     else
       return (
         !isNaN(node.rank) &&
@@ -205,7 +197,7 @@ export class Graph {
    * @param otherNode - the second node
    * @returns true if the two nodes are the same (have the same label)
    */
-  private nodesEqual(node: Node, otherNode: Node): boolean {
+  function nodesEqual(node: Node, otherNode: Node): boolean {
     return node.label === otherNode.label;
   }
 
@@ -219,21 +211,21 @@ export class Graph {
    * @param node - the node to get children from
    * @param rank - the rank to assign to the children
    */
-  private assignRankToChildren(node: Node, rank: number): void {
+  function assignRankToChildren(node: Node, rank: number): void {
     node.children.forEach(child => {
-      let childNode = this.nodes[child];
+      let childNode = nodes[child];
 
       // If the child is on a higher rank than the parent (node) move subtree rooted at child down
       if (childNode.rank < node.rank) {
         // Remove node from previous rank
-        this.graph[childNode.rank].splice(this.graph[childNode.rank].indexOf(child), 1);
+        graph[childNode.rank].splice(graph[childNode.rank].indexOf(child), 1);
 
         // Move this node down
-        this.assignRankToNode(child, rank);
+        assignRankToNode(child, rank);
 
         // Move all children of this child down
-        this.assignRankToChildren(childNode, rank + 1);
-      } else if (isNaN(childNode.rank)) this.assignRankToNode(child, rank);
+        assignRankToChildren(childNode, rank + 1);
+      } else if (isNaN(childNode.rank)) assignRankToNode(child, rank);
     });
   }
 
@@ -245,13 +237,13 @@ export class Graph {
    * @param nodeName - the name of the node to set the rank of
    * @param rank - the new rank for the node
    */
-  private assignRankToNode(nodeName: string, rank: number): void {
+  function assignRankToNode(nodeName: string, rank: number): void {
     try {
-      this.graph[rank].push(nodeName);
+      graph[rank].push(nodeName);
     } catch (err) {
-      this.graph[rank] = [nodeName];
+      graph[rank] = [nodeName];
     } finally {
-      this.nodes[nodeName].rank = rank;
+      nodes[nodeName].rank = rank;
     }
   }
 
@@ -261,7 +253,7 @@ export class Graph {
    * @param pathway - JSON Pathway
    * @returns initial Nodes data structure with default values
    */
-  private initializeNodes(pathway: Pathway): Nodes {
+  function initializeNodes(pathway: Pathway): Nodes {
     let nodes: Nodes = {};
 
     // Iniitalize each node with default values
@@ -288,7 +280,7 @@ export class Graph {
       });
     }
 
-    nodes[this.START].rank = 0;
+    nodes[START].rank = 0;
 
     return nodes;
   }

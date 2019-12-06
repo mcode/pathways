@@ -1,4 +1,4 @@
-import { Graph } from '../graph';
+import { layout } from '../graph';
 
 import samplePathway from './fixtures/pathways/sample_pathway.json';
 import upennPathway from './fixtures/pathways/upenn_her2_pathway.json';
@@ -7,20 +7,17 @@ import { Coordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
   it('sample pathway layout set correctly', () => {
-    let graph = new Graph(samplePathway);
-    let graphCoordinates = graph.layout();
+    let graphCoordinates = layout(samplePathway);
     checkLayout(graphCoordinates);
   });
 
   it('test pathway layout set correctly', () => {
-    let graph = new Graph(testPathway);
-    let graphCoordinates = graph.layout();
+    let graphCoordinates = layout(testPathway);
     checkLayout(graphCoordinates);
   });
 
   it('upenn pathway layout set correctly', () => {
-    let graph = new Graph(upennPathway);
-    let graphCoordinates = graph.layout();
+    let graphCoordinates = layout(upennPathway);
     checkLayout(graphCoordinates);
   });
 
