@@ -1,22 +1,31 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
-import { Pathway } from 'pathways-model';
 import GraphAlg from '../engine/graph';
 import Node from './Node';
 import icon from '../media-play-16.png';
+import evaluatePatientOnPathway from 'engine';
+import { usePathwayContext } from './PathwayProvider';
 
 interface GraphProps {
-  pathway: Pathway | null;
+  resources: any;
 }
 
-const Graph: FC<GraphProps> = ({ pathway }) => {
-  const getGraphLayout = (pathway: Pathway | null) => {
-    if (pathway === null) return;
+const Graph: FC<GraphProps> = ({ resources }) => {
+  const pathway = usePathwayContext();
+  const [path, setPath] = useState<string[]>([]);
+
+  // Get the layout of the graph
+  const getGraphLayout = () => {
     const graph = new GraphAlg(pathway);
     return graph.layout();
   };
 
-  const layout = getGraphLayout(pathway);
+  // Create a fake Bundle for the CQL engine
+  const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
+  if (path.length === 0 && patient.entry.length > 0)
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => setPath(pathwayResults.path));
+
+  const layout = getGraphLayout();
   const maxHeight: number =
     layout !== undefined
       ? Object.values(layout)
@@ -27,12 +36,13 @@ const Graph: FC<GraphProps> = ({ pathway }) => {
   return (
     <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
-        ? Object.keys(layout).map((key) => {
+        ? Object.keys(layout).map(key => {
             return (
               <Node
                 key={key}
                 icon={icon}
-                text={pathway!.states[key].label}
+                text={pathway.states[key].label}
+                isOnPatientPath={path.includes(key)}
                 xCoordinate={layout[key].x + window.innerWidth / 2}
                 yCoordinate={layout[key].y}
               />
