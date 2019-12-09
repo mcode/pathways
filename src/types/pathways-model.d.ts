@@ -1,9 +1,9 @@
 declare module 'pathways-model' {
   export interface Pathway {
+    name: string;
+    description?: string;
     library: string;
-    states: {
-      [key: string]: GuidanceState | BranchState;
-    };
+    states: Record<string, GuidanceState | BranchState>;
   }
 
   export interface State {

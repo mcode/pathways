@@ -1,15 +1,4 @@
 declare module 'pathways-objects' {
-  export interface Pathway {
-    name: string;
-    description?: string;
-    library: string;
-    states: Record<string, any>;
-  }
-
-  export interface Pathways {
-    results: Pathway[];
-  }
-
   interface ServiceInit {
     status: 'init';
   }

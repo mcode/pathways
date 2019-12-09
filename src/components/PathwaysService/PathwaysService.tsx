@@ -1,30 +1,30 @@
 import { useState, useEffect } from 'react';
-import pathways from '../../utils/pathways.json';
-import { Pathways, Service } from 'pathways-objects';
+import { Service } from 'pathways-objects';
+import { Pathway } from 'pathways-model';
 
-function getPathways(url?: string): Promise<Response> {
-  // update this function for the api call.  Right now it mocks a
-  // call to an api.
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const response = new Response(JSON.stringify(pathways));
-      resolve(response);
-    }, 500);
+function getPathways(url: string): Promise<Response> {
+  return fetch(url, {
+    headers: {
+      Accept: 'application/json'
+    }
   });
 }
+
+function typedFetch<T>(url: string, options?: object): Promise<T> {
+  return fetch(url, options).then(response => response.json() as Promise<T>);
+}
+
 const useGetPathwaysService = (url: string) => {
-  const [result, setResult] = useState<Service<Pathways>>({
+  const [result, setResult] = useState<Service<Array<Pathway>>>({
     status: 'loading'
   });
 
   useEffect(() => {
     getPathways(url)
-      .then(response => response.json())
-      .then(pathwaysList => {
-        // if the response is not already a list we will have to some
-        // processing here
-        setResult({ status: 'loaded', payload: pathwaysList });
-      })
+      .then(response => response.json() as Promise<Array<string>>)
+      .then(listOfFiles => listOfFiles.map(f => typedFetch<Pathway>(url + '/' + f)))
+      .then(listOfPromises => Promise.all(listOfPromises))
+      .then(pathwaysList => setResult({ status: 'loaded', payload: pathwaysList }))
       .catch(error => setResult({ status: 'error', error }));
   }, [url]);
 

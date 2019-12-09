@@ -13,7 +13,7 @@ import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import PathwaysDisplay from 'components/PathwaysDisplay';
 import { PathwayProvider } from './PathwayProvider';
-import { Pathway } from 'pathways-objects';
+import { Pathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
