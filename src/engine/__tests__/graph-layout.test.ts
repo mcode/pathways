@@ -1,4 +1,4 @@
-import { layout } from '../graph';
+import layout from '../graph';
 
 import samplePathway from './fixtures/pathways/sample_pathway.json';
 import upennPathway from './fixtures/pathways/upenn_her2_pathway.json';

@@ -9,7 +9,7 @@ import { Node, Nodes, Coordinates } from 'graph-model';
  *
  * @param pathway - JSON pathway
  */
-export function layout(pathway: Pathway): Coordinates {
+export default function layout(pathway: Pathway): Coordinates {
   let START = 'Start';
   let NODE_WIDTH = 100;
   let NODE_HEIGHT = 50;
