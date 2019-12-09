@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import GraphAlg from '../engine/graph';
+import graphLayout from 'engine/graph';
 import Node from './Node';
 import icon from '../media-play-16.png';
 import evaluatePatientOnPathway from 'engine';
@@ -16,8 +16,7 @@ const Graph: FC<GraphProps> = ({ resources }) => {
 
   // Get the layout of the graph
   const getGraphLayout = () => {
-    const graph = new GraphAlg(pathway);
-    return graph.layout();
+    return graphLayout(pathway);
   };
 
   // Create a fake Bundle for the CQL engine
