@@ -35,7 +35,7 @@ export default function layout(pathway: Pathway): Coordinates {
     // to the next rank incrementing the length of graph. When there are no new children
     // the graph.length will remain unchanged but the rank would have increased by one.
     // Therefore we stop when the rank and graph length are the same.
-  } while (graph.length != rank);
+  } while (graph.length !== rank);
 
   // Set the position of nodes within the rank
   assignHorizontalPositionToNode(nodes[START], -1 * (NODE_WIDTH / 2));
@@ -74,8 +74,8 @@ export default function layout(pathway: Pathway): Coordinates {
     let children = parent.children.filter(
       c => isNaN(nodes[c].horizontalPosition) || nodes[c].canMove
     );
-    if (children.length == 0) return;
-    if (children.length == 1) {
+    if (children.length === 0) return;
+    if (children.length === 1) {
       assignHorizontalPositionToNode(nodes[children[0]], parent.horizontalPosition);
       return;
     }
@@ -115,7 +115,7 @@ export default function layout(pathway: Pathway): Coordinates {
       while (hasOverlap(node)) {
         // Update Horizontal position of this node
         // Alternate directions moving further and further away
-        let direction = i % 2 == 0 ? -1 : 1;
+        let direction = i % 2 === 0 ? -1 : 1;
         node.horizontalPosition = hPos + direction * Math.ceil(i / 2) * HORIZONTAL_OFFSET;
         i += 1;
       }
