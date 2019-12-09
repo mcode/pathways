@@ -23,7 +23,6 @@ describe('pathway graph layout', () => {
 
   // Helper function to validate layout output
   function checkLayout(graphCoordinates: Coordinates) {
-    console.log(graphCoordinates);
     // Verify every node has (x,y) and only start has y: 0
     for (let nodeName in graphCoordinates) {
       // Validate node
