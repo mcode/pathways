@@ -7,35 +7,35 @@ import { Coordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
   it('sample pathway layout set correctly', () => {
-    let graphCoordinates = layout(samplePathway);
+    const graphCoordinates = layout(samplePathway);
     checkLayout(graphCoordinates);
   });
 
   it('test pathway layout set correctly', () => {
-    let graphCoordinates = layout(testPathway);
+    const graphCoordinates = layout(testPathway);
     checkLayout(graphCoordinates);
   });
 
   it('upenn pathway layout set correctly', () => {
-    let graphCoordinates = layout(upennPathway);
+    const graphCoordinates = layout(upennPathway);
     checkLayout(graphCoordinates);
   });
 
   // Helper function to validate layout output
   function checkLayout(graphCoordinates: Coordinates) {
     // Verify every node has (x,y) and only start has y: 0
-    for (let nodeName in graphCoordinates) {
+    for (const nodeName in graphCoordinates) {
       // Validate node
-      let coords = graphCoordinates[nodeName];
+      const coords = graphCoordinates[nodeName];
       expect(coords).toBeDefined();
       expect(coords.x).toBeDefined();
       expect(coords.y).toBeDefined();
       if (nodeName != 'Start') expect(coords.y != 0).toBeTruthy();
 
       // Validate node does not overlap with another node
-      for (let otherNodeName in graphCoordinates) {
+      for (const otherNodeName in graphCoordinates) {
         if (nodeName != otherNodeName) {
-          let otherCoords = graphCoordinates[otherNodeName];
+          const otherCoords = graphCoordinates[otherNodeName];
           expect(coords.x == otherCoords.x && coords.y == otherCoords.y).toBeFalsy();
         }
       }

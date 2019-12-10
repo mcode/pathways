@@ -10,21 +10,21 @@ import { Node, Nodes, Coordinates } from 'graph-model';
  * @param pathway - JSON pathway
  */
 export default function layout(pathway: Pathway): Coordinates {
-  let START = 'Start';
-  let NODE_WIDTH = 100;
-  let NODE_HEIGHT = 50;
-  let MIN_MARGIN_X = 10;
-  let MIN_MARGIN_Y = 50;
-  let nodes: Nodes = initializeNodes(pathway);
-  let graph: string[][] = [[START]];
-  let HORIZONTAL_OFFSET = NODE_WIDTH + MIN_MARGIN_X;
-  let VERTICAL_OFFSET = NODE_HEIGHT + MIN_MARGIN_Y;
+  const START = 'Start';
+  const NODE_WIDTH = 100;
+  const NODE_HEIGHT = 50;
+  const MIN_MARGIN_X = 10;
+  const MIN_MARGIN_Y = 50;
+  const nodes: Nodes = initializeNodes(pathway);
+  const graph: string[][] = [[START]];
+  const HORIZONTAL_OFFSET = NODE_WIDTH + MIN_MARGIN_X;
+  const VERTICAL_OFFSET = NODE_HEIGHT + MIN_MARGIN_Y;
 
   // Set the rank for every node
   let rank = 0;
   do {
     // Iterate over each node on the current level
-    for (let nodeName of graph[rank]) {
+    for (const nodeName of graph[rank]) {
       // Assign all children to the next rank
       assignRankToChildren(nodes[nodeName], rank + 1);
     }
@@ -51,10 +51,10 @@ export default function layout(pathway: Pathway): Coordinates {
    * @returns Coordinates for every node
    */
   function produceCoordinates(): Coordinates {
-    let coordinates: Coordinates = {};
+    const coordinates: Coordinates = {};
 
-    for (let nodeName in nodes) {
-      let node = nodes[nodeName];
+    for (const nodeName in nodes) {
+      const node = nodes[nodeName];
       coordinates[nodeName] = {
         x: node.horizontalPosition,
         y: node.rank * VERTICAL_OFFSET
@@ -71,7 +71,7 @@ export default function layout(pathway: Pathway): Coordinates {
    * @param nodes - the Nodes
    */
   function spreadChildrenEvenly(parent: Node): void {
-    let children = parent.children.filter(
+    const children = parent.children.filter(
       c => isNaN(nodes[c].horizontalPosition) || nodes[c].canMove
     );
     if (children.length === 0) return;
@@ -115,7 +115,7 @@ export default function layout(pathway: Pathway): Coordinates {
       while (hasOverlap(node)) {
         // Update Horizontal position of this node
         // Alternate directions moving further and further away
-        let direction = i % 2 === 0 ? -1 : 1;
+        const direction = i % 2 === 0 ? -1 : 1;
         node.horizontalPosition = hPos + direction * Math.ceil(i / 2) * HORIZONTAL_OFFSET;
         i += 1;
       }
@@ -161,9 +161,9 @@ export default function layout(pathway: Pathway): Coordinates {
    * @returns true if the node overlaps with any other node in the rank, false otherwise
    */
   function hasOverlap(node: Node): boolean {
-    let nodesInRank = graph[node.rank].map(name => nodes[name]);
+    const nodesInRank = graph[node.rank].map(name => nodes[name]);
 
-    for (let otherNode of nodesInRank) {
+    for (const otherNode of nodesInRank) {
       if (nodesOverlap(node, otherNode)) return true;
     }
 
@@ -213,7 +213,7 @@ export default function layout(pathway: Pathway): Coordinates {
    */
   function assignRankToChildren(node: Node, rank: number): void {
     node.children.forEach(child => {
-      let childNode = nodes[child];
+      const childNode = nodes[child];
 
       // If the child is on a higher rank than the parent (node) move subtree rooted at child down
       if (childNode.rank < node.rank) {
@@ -254,7 +254,7 @@ export default function layout(pathway: Pathway): Coordinates {
    * @returns initial Nodes data structure with default values
    */
   function initializeNodes(pathway: Pathway): Nodes {
-    let nodes: Nodes = {};
+    const nodes: Nodes = {};
 
     // Iniitalize each node with default values
     let stateName: string;
@@ -271,7 +271,7 @@ export default function layout(pathway: Pathway): Coordinates {
 
     // Set the child and parent properties of each node
     for (stateName in pathway.states) {
-      let state: State = pathway.states[stateName];
+      const state: State = pathway.states[stateName];
       state.transitions.forEach(transition => {
         if (!nodes[stateName].children.includes(transition.transition))
           nodes[stateName].children.push(transition.transition);
