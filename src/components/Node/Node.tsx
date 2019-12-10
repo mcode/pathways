@@ -12,7 +12,7 @@ interface NodeProps {
 
 const Node: FC<NodeProps> = ({ icon, text, isOnPatientPath, xCoordinate, yCoordinate }) => {
   const style = {
-    backgroundColor: isOnPatientPath ? 'rgb(155, 155, 155)' : 'rgb(121, 185, 185)',
+    backgroundColor: isOnPatientPath ? 'rgb(121, 185, 185)' : 'rgb(155, 155, 155)',
     top: yCoordinate,
     left: xCoordinate
   };
