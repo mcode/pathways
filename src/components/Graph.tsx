@@ -7,7 +7,7 @@ import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
 
 interface GraphProps {
-  resources: any;
+  resources: Array<any>;
 }
 
 const Graph: FC<GraphProps> = ({ resources }) => {
