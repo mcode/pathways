@@ -12,13 +12,14 @@ interface NodeProps {
 
 const Node: FC<NodeProps> = ({ icon, text, isOnPatientPath, xCoordinate, yCoordinate }) => {
   const style = {
-    backgroundColor: isOnPatientPath ? 'rgb(121, 185, 185)' : 'rgb(155, 155, 155)',
     top: yCoordinate,
     left: xCoordinate
   };
 
+  const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
+
   return (
-    <div className={classes.node} style={style}>
+    <div className={`${classes.node} ${backgroundColorClass}`} style={style}>
       <img className={classes.icon} src={icon} alt="icon" />
       {text}
     </div>
