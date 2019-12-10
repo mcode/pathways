@@ -79,7 +79,7 @@ export default function layout(pathway: Pathway): Coordinates {
       assignHorizontalPositionToNode(nodes[children[0]], parent.horizontalPosition);
       return;
     }
-    if (children.length % 2 === 1) children.splice(Math.ceil(children.length / 2), 1); // Remove middle element if odd
+    if (children.length % 2 == 1) children.splice(Math.ceil(children.length / 2), 1); // Remove middle element if odd
 
     // TODO: this does not consider if there are connections between the children which order to put them in
     for (let i = 0; i < children.length / 2; i++) {
@@ -185,8 +185,8 @@ export default function layout(pathway: Pathway): Coordinates {
         !isNaN(node.horizontalPosition) &&
         !isNaN(otherNode.rank) &&
         !isNaN(otherNode.horizontalPosition) &&
-        node.rank === otherNode.rank &&
-        node.horizontalPosition === otherNode.horizontalPosition
+        node.rank == otherNode.rank &&
+        node.horizontalPosition == otherNode.horizontalPosition
       );
   }
 
@@ -270,16 +270,15 @@ export default function layout(pathway: Pathway): Coordinates {
     }
 
     // Set the child and parent properties of each node
-    Object.keys(pathway.states).forEach((stateName) => {
+    for (stateName in pathway.states) {
       const state: State = pathway.states[stateName];
-
-      state.transitions.forEach((transition) => {
+      state.transitions.forEach(transition => {
         if (!nodes[stateName].children.includes(transition.transition))
           nodes[stateName].children.push(transition.transition);
         if (!nodes[transition.transition].parents.includes(stateName))
           nodes[transition.transition].parents.push(stateName);
       });
-    });
+    }
 
     nodes[START].rank = 0;
 
