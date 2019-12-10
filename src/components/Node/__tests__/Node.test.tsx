@@ -2,19 +2,24 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import Node from '../Node';
 
+const testState = {
+  label: 'Start',
+  transitions: []
+};
+
 describe('<Node />', () => {
   it('renders a node with text, icon, and correct styles', () => {
     const { container, getByText, getByRole } = render(
       <Node
         icon="test"
-        text="Start"
+        pathwayState={testState}
         isOnPatientPath={true}
         xCoordinate={0}
         yCoordinate={0}
       />
     );
 
-    expect(getByText('Start')).toBeVisible();
+    expect(getByText(testState.label)).toBeVisible();
     expect(getByRole('img')).toBeVisible();
 
     expect(container.firstChild).toHaveClass('onPatientPath');
@@ -26,7 +31,7 @@ describe('<Node />', () => {
     const { container } = render(
       <Node
         icon="test"
-        text="Start"
+        pathwayState={testState}
         isOnPatientPath={false}
         xCoordinate={0}
         yCoordinate={0}

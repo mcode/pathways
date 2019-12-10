@@ -41,7 +41,7 @@ const Graph: FC<GraphProps> = ({ resources }) => {
               <Node
                 key={key}
                 icon={icon}
-                text={pathway.states[key].label}
+                pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 xCoordinate={layout[key].x + windowWidth / 2}
                 yCoordinate={layout[key].y}
