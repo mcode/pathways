@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
+import { State } from 'pathways-model';
 
 import classes from './Node.module.scss';
 
 interface NodeProps {
   icon: string;
-  text: string;
+  pathwayState: State;
   isOnPatientPath: boolean;
   xCoordinate: number;
   yCoordinate: number;
 }
 
-const Node: FC<NodeProps> = ({ icon, text, isOnPatientPath, xCoordinate, yCoordinate }) => {
+const Node: FC<NodeProps> = ({ icon, pathwayState, isOnPatientPath, xCoordinate, yCoordinate }) => {
+  const { label } = pathwayState;
   const style = {
     top: yCoordinate,
     left: xCoordinate
@@ -21,7 +23,7 @@ const Node: FC<NodeProps> = ({ icon, text, isOnPatientPath, xCoordinate, yCoordi
   return (
     <div className={`${classes.node} ${backgroundColorClass}`} style={style}>
       <img className={classes.icon} src={icon} alt="icon" />
-      {text}
+      {label}
     </div>
   );
 };
