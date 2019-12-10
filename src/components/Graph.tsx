@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
@@ -11,6 +11,7 @@ interface GraphProps {
 }
 
 const Graph: FC<GraphProps> = ({ resources }) => {
+  const windowWidth = useWindowWidth();
   const pathway = usePathwayContext();
   const [path, setPath] = useState<string[]>([]);
 
@@ -42,7 +43,7 @@ const Graph: FC<GraphProps> = ({ resources }) => {
                 icon={icon}
                 text={pathway.states[key].label}
                 isOnPatientPath={path.includes(key)}
-                xCoordinate={layout[key].x + window.innerWidth / 2}
+                xCoordinate={layout[key].x + windowWidth / 2}
                 yCoordinate={layout[key].y}
               />
             );
@@ -51,5 +52,24 @@ const Graph: FC<GraphProps> = ({ resources }) => {
     </div>
   );
 };
+
+function useWindowWidth() {
+  function getWidth() {
+    return window.innerWidth;
+  }
+
+  const [windowWidth, setWindowWidth] = useState(getWidth);
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowWidth(getWidth());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+
+  return windowWidth;
+}
 
 export default Graph;
