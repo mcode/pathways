@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import graphLayout from 'engine/graph';
+import graphLayout from 'visualization/layout';
 import Node from './Node';
 import icon from '../media-play-16.png';
 import evaluatePatientOnPathway from 'engine';
