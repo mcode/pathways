@@ -17,7 +17,7 @@ describe('<Node />', () => {
     expect(getByText('Start')).toBeVisible();
     expect(getByRole('img')).toBeVisible();
 
-    expect(container.firstChild).toHaveStyle(`background-color: rgb(121, 185, 185)`);
+    expect(container.firstChild).toHaveClass('onPatientPath');
     expect(container.firstChild).toHaveStyle(`top: 0px`);
     expect(container.firstChild).toHaveStyle(`left: 0px`);
   });
@@ -33,6 +33,6 @@ describe('<Node />', () => {
       />
     );
 
-    expect(container.firstChild).toHaveStyle(`background-color: rgb(155, 155, 155)`);
+    expect(container.firstChild).toHaveClass('notOnPatientPath');
   });
 });
