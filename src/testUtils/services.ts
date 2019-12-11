@@ -1,42 +1,41 @@
-import { Pathway, Service, Pathways } from 'pathways-objects';
+import { Pathway } from 'pathways-model';
+import { Service } from 'pathways-objects';
 
-export const loadingService: Service<Pathways> = {
+export const loadingService: Service<Array<Pathway>> = {
   status: 'loading'
 };
 
-export const loadedService: Service<Pathways> = {
+export const loadedService: Service<Array<Pathway>> = {
   status: 'loaded',
-  payload: {
-    results: [
-      {
-        name: 'test1',
-        description: 'test1',
-        library: 'test.cql',
-        states: {
-          test: 'okay'
-        }
-      },
-      {
-        name: 'test2',
-        description: 'test2',
-        library: 'test.cql',
-        states: {
-          test: 'okay'
-        }
-      },
-      {
-        name: 'test3',
-        description: 'test3',
-        library: 'test.cql',
-        states: {
-          test: 'okay'
-        }
+  payload: [
+    {
+      name: 'test1',
+      description: 'test1',
+      library: 'test.cql',
+      states: {
+        test: 'okay'
       }
-    ]
-  }
+    },
+    {
+      name: 'test2',
+      description: 'test2',
+      library: 'test.cql',
+      states: {
+        test: 'okay'
+      }
+    },
+    {
+      name: 'test3',
+      description: 'test3',
+      library: 'test.cql',
+      states: {
+        test: 'okay'
+      }
+    }
+  ]
 };
 
-export const errorService: Service<Pathways> = {
+export const errorService: Service<Array<Pathway>> = {
   status: 'error',
   error: new TypeError('error')
 };

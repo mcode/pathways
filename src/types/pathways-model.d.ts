@@ -1,5 +1,7 @@
 declare module 'pathways-model' {
   export interface Pathway {
+    name: string;
+    description?: string;
     library: string;
     states: {
       [key: string]: GuidanceState | BranchState;

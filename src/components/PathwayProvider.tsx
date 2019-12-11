@@ -1,5 +1,5 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react';
-import { Pathway } from 'pathways-objects';
+import { Pathway } from 'pathways-model';
 
 interface PathwayProviderProps {
   children: ReactNode;

@@ -1,11 +1,12 @@
 import React, { FC, ReactNode } from 'react';
-import { Pathway, Service, Pathways } from 'pathways-objects';
+import { Service } from 'pathways-objects';
+import { Pathway } from 'pathways-model';
 
 import classes from './PathwaysList.module.scss';
 
 interface Props {
   callback: Function;
-  service: Service<Pathways>;
+  service: Service<Array<Pathway>>;
 }
 
 const PathwaysList: FC<Props> = (props: Props) => {
@@ -39,7 +40,7 @@ const PathwaysList: FC<Props> = (props: Props) => {
       {service.status === 'loading' ? (
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
-        <div>{renderList(service.payload.results)}</div>
+        <div>{renderList(service.payload)}</div>
       ) : (
         <div>ERROR</div>
       )}
