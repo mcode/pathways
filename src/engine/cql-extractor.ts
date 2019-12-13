@@ -10,7 +10,7 @@ export interface CqlObject{
 export interface Library{
     [name: string]: string // should probably have an object for expected ELM structure.
 }
-function getFixture(filename: string): Promise<string> {
+export function getFixture(filename: string): Promise<string> {
   return fetch(`./static/cql/${filename}`).then(cql => cql.text());
 }
 
@@ -60,7 +60,7 @@ function isConditional(state: State): boolean {
  * @param pathway - the JSON object of the entire pathway
  * @return a string of the CQL code for the pathway
  */
-export default function extractCQL(pathway: Pathway): Promise<CqlObject> {
+export default function extractCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway
@@ -81,12 +81,7 @@ export default function extractCQL(pathway: Pathway): Promise<CqlObject> {
       }
     }
 
-    // example inclusion of extra cql file
-    return getFixture("mCODE.cql").then(library => {
-        return {
-            main: cql, 
-            libraries: {"mCODE.cql":library}};
-    });
+    return cql
 
   });
 }
