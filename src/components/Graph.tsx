@@ -1,141 +1,75 @@
-import React, { FC, useState } from 'react';
-import { Graphviz } from 'graphviz-react';
+import React, { FC, useState, useEffect } from 'react';
 
+import graphLayout from 'visualization/layout';
+import Node from './Node';
+import icon from '../media-play-16.png';
 import evaluatePatientOnPathway from 'engine';
-import { usePathwayContext } from 'components/PathwayProvider';
-
-import { Pathway, Transition } from 'pathways-model';
+import { usePathwayContext } from './PathwayProvider';
 
 interface GraphProps {
   resources: Array<any>;
 }
 
 const Graph: FC<GraphProps> = ({ resources }) => {
-  const [dot, setDot] = useState<string | undefined>(undefined);
+  const windowWidth = useWindowWidth();
   const pathway = usePathwayContext();
-  // fake bundle for the CQL engine
-  const patient = { resourceType: 'Bundle', entry: resources.map(r => ({ resource: r })) };
+  const [path, setPath] = useState<string[]>([]);
 
-  if (!dot && patient.entry.length > 0) {
-    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-      setDot(generateDOT(pathway, pathwayResults.path));
-    });
-  }
+  // Get the layout of the graph
+  const getGraphLayout = () => {
+    return graphLayout(pathway);
+  };
+
+  // Create a fake Bundle for the CQL engine
+  const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
+  if (path.length === 0 && patient.entry.length > 0)
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => setPath(pathwayResults.path));
+
+  const layout = getGraphLayout();
+  const maxHeight: number =
+    layout !== undefined
+      ? Object.values(layout)
+          .map(x => x.y)
+          .reduce((a, b) => Math.max(a, b))
+      : 0;
 
   return (
-    <div>
-      {dot ? (
-        <Graphviz
-          dot={dot}
-          options={{
-            fit: true,
-            height: 1000,
-            width: 1000,
-            zoom: true
-          }}
-        />
-      ) : (
-        <span>loading...</span>
-      )}
+    <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
+      {layout !== undefined
+        ? Object.keys(layout).map(key => {
+            return (
+              <Node
+                key={key}
+                icon={icon}
+                pathwayState={pathway.states[key]}
+                isOnPatientPath={path.includes(key)}
+                xCoordinate={layout[key].x + windowWidth / 2}
+                yCoordinate={layout[key].y}
+              />
+            );
+          })
+        : []}
     </div>
   );
 };
 
-const generateDOT = (pathway: Pathway, patientPath: Array<string>): string => {
-  const graphNodes = generateNodes(pathway, patientPath);
-  const graphTransitions = generateTransitions(pathway, patientPath);
+function useWindowWidth() {
+  function getWidth() {
+    return window.innerWidth;
+  }
 
-  return `digraph G {${graphNodes} ${graphTransitions}}`;
-};
+  const [windowWidth, setWindowWidth] = useState(getWidth);
 
-/**
- * Create the DOT nodes from the pathway states
- * @param pathway - pathway JSON
- * @param patientPath - the path the patient took (list of strings)
- * @return string of the nodes in DOT syntax
- */
-const generateNodes = (pathway: Pathway, patientPath: Array<string>): string => {
-  const pathwayStates = Object.keys(pathway.states);
+  useEffect(() => {
+    function handleResize() {
+      setWindowWidth(getWidth());
+    }
 
-  return pathwayStates
-    .map(state => {
-      // Create a JSON object of the node
-      const node = {
-        id: state,
-        shape: 'record',
-        style: 'rounded,filled',
-        fillcolor: patientPath.includes(state) ? 'Grey' : 'White',
-        penwidth: patientPath.includes(state) ? 2 : 1,
-        fontcolor: 'Black',
-        label: pathway.states[state].label
-      };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
 
-      // Convert the JSON into DOT syntax
-      const nodeParams = (Object.keys(node) as Array<keyof typeof node>)
-        .map(key => `${key} = "${node[key]}"`)
-        .join(', ');
-
-      const nodeAsDOT = '"' + state + '" [' + nodeParams + ']';
-      return nodeAsDOT;
-    })
-    .join('\n');
-};
-
-/**
- * Create the DOT transitions from the pathway details
- * @param pathway - pathway JSON
- * @param patientPath - the path the patient took (list of strings)
- * @return string of the tranistions in DOT synatx
- */
-const generateTransitions = (pathway: Pathway, patientPath: Array<string>): string => {
-  const pathwayStates = Object.keys(pathway.states);
-
-  return pathwayStates
-    .map(fromStateName => {
-      const fromState = pathway.states[fromStateName];
-      const transitions = fromState.transitions;
-
-      return transitions
-        .map((transition: Transition) => {
-          const toStateName = transition.transition;
-          const transitionData = {
-            id: fromStateName + '_' + toStateName,
-            label: 'condition' in transition ? transition.condition!.description : '',
-            penwidth: isPatientTransition(fromStateName, toStateName, patientPath) ? 2 : 1
-          };
-
-          const transitionParams = (Object.keys(transitionData) as Array<
-            keyof typeof transitionData
-          >)
-            .map(key => `${key} = "${transitionData[key]}"`)
-            .join(', ');
-
-          const transitionAsDOT =
-            '"' + fromStateName + '" -> "' + toStateName + '" [' + transitionParams + ']';
-          return transitionAsDOT;
-        })
-        .join('\n');
-    })
-    .join('\n');
-};
-
-/**
- * Helper function to determine if the patient took the transition
- * @param fromStateName - the initial state
- * @param toStateName - the connecting state
- * @param patientPath - the path the patient took (list of strings)
- * @return true if the patient moved *directly* from the fromStateName to toStateName
- */
-const isPatientTransition = (
-  fromStateName: string,
-  toStateName: string,
-  patientPath: Array<string>
-): boolean => {
-  if (patientPath.includes(fromStateName) && patientPath.includes(toStateName)) {
-    // Check transition is direct
-    const i = patientPath.indexOf(fromStateName);
-    return patientPath[i + 1] === toStateName;
-  } else return false;
-};
+  return windowWidth;
+}
 
 export default Graph;

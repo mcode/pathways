@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+
+.node {
+  position: absolute;
+  width: auto;
+  min-width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.onPatientPath {
+  background-color: #559999;
+  color: $white;
+}
+
+.notOnPatientPath {
+  background-color: #e1e1e1;
+  color: $black;
+}
+
+.icon {
+  padding-right: 5px;
+}
