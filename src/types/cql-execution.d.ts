@@ -9,6 +9,6 @@ declare module 'cql-execution' {
   }
 
   export class Repository {
-      constructor( elm: object );
+    constructor(elm: object);
   }
 }

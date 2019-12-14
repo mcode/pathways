@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import { ElmObject } from './cql-to-elm';
 import { ElmResults } from 'pathways-model';
 import { Library, Executor, Repository } from 'cql-execution';
 import { PatientSource } from 'cql-exec-fhir';
