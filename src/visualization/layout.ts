@@ -6,7 +6,7 @@ import { Node, Nodes, Coordinates } from 'graph-model';
 
 import dagre from 'dagre';
 
-import config from '../utils/ConfigManager';
+import config from 'utils/ConfigManager';
 const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
 
 /**
@@ -15,7 +15,7 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  * @param pathway - JSON pathway
  */
 export default function layout(pathway: Pathway): Coordinates {
-  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway) : layoutNew(pathway);
+  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway) : layoutCustom(pathway);
 }
 
 /**
@@ -28,12 +28,10 @@ function layoutDagre(pathway: Pathway): Coordinates {
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
   const nodeNames = Object.keys(pathway.states);
   const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: 'TB', align: 'DL' });
-  g.setDefaultEdgeLabel(function() {
-    return {};
-  });
 
-  // add all nodes before adding edges
+  g.setGraph({});
+  g.setDefaultEdgeLabel(() => ({})); // dagre requires a default edge label, we want it to just be empty
+
   nodeNames.forEach(stateName => {
     const state: State = pathway.states[stateName];
     g.setNode(stateName, {
@@ -41,10 +39,6 @@ function layoutDagre(pathway: Pathway): Coordinates {
       width: state.label.length * NODE_WIDTH_FACTOR,
       height: NODE_HEIGHT
     });
-  });
-
-  nodeNames.forEach(stateName => {
-    const state: State = pathway.states[stateName];
     state.transitions.forEach(transition => {
       g.setEdge(stateName, transition.transition);
     });
@@ -73,7 +67,7 @@ function layoutDagre(pathway: Pathway): Coordinates {
 /**
  * Layout the pathway using our homegrown layout algorithm.
  */
-function layoutNew(pathway: Pathway): Coordinates {
+function layoutCustom(pathway: Pathway): Coordinates {
   const START = 'Start';
   const NODE_WIDTH = 100;
   const NODE_HEIGHT = 50;
