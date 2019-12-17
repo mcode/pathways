@@ -12,11 +12,26 @@ declare module 'graph-model' {
     [key: string]: Node;
   }
 
+  export interface Layout {
+    coordinates: Coordinates;
+    edges: Edges;
+  }
+
   export interface Coordinates {
-    [key: string]: {
-      x: number;
-      y: number;
-    };
+    [key: string]: Coordinate;
+  }
+
+  export interface Coordinate {
+    x: number;
+    y: number;
+  }
+
+  export interface Edges {
+    [key: string]: Edge;
+  }
+
+  export interface Edge {
+    points: Array<Coordinate>;
   }
 
   export interface ExpandedNodes {

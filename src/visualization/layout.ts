@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 
 import { Pathway, State } from 'pathways-model';
-import { Node, Nodes, Coordinates, ExpandedNodes } from 'graph-model';
+import { Node, Nodes, Layout, Coordinates, Edges, ExpandedNodes } from 'graph-model';
 
 import dagre from 'dagre';
 
@@ -14,7 +14,7 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  *
  * @param pathway - JSON pathway
  */
-export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
+export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   return graphLayoutProvider === 'dagre'
     ? layoutDagre(pathway, expandedNodes)
     : layoutCustom(pathway);
@@ -24,7 +24,7 @@ export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): 
  * Layout the pathway using the Dagre layout engine.
  * @see {@link https://github.com/dagrejs/dagre}
  */
-function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
+function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
@@ -74,13 +74,25 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinate
     };
   }
 
-  return coordinates;
+  const edges: Edges = {};
+
+  g.edges().forEach(e => {
+    const edge = g.edge(e);
+    const edgeName = `${e.v}, ${e.w}`;
+    edges[edgeName] = {
+      points: edge.points.map(p => {
+        return { x: p.x + startNodeShift, y: p.y };
+      })
+    };
+  });
+
+  return { coordinates, edges };
 }
 
 /**
  * Layout the pathway using our homegrown layout algorithm.
  */
-function layoutCustom(pathway: Pathway): Coordinates {
+function layoutCustom(pathway: Pathway): Layout {
   const START = 'Start';
   const NODE_WIDTH = 100;
   const NODE_HEIGHT = 50;
@@ -114,7 +126,10 @@ function layoutCustom(pathway: Pathway): Coordinates {
     assignHorizontalPositionToNodesInRank(rank);
   }
 
-  return produceCoordinates();
+  return {
+    coordinates: produceCoordinates(),
+    edges: {}
+  };
 
   /**
    * Convert the Nodes into a Coordinates object

@@ -4,7 +4,7 @@ import graphLayout from 'visualization/layout';
 import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
 import { Pathway } from 'pathways-model';
-import { Coordinates, ExpandedNodes } from 'graph-model';
+import { Layout, ExpandedNodes } from 'graph-model';
 
 interface GraphProps {
   pathway: Pathway;
@@ -31,20 +31,21 @@ const Graph: FC<GraphProps> = ({
 
   // Get the layout of the graph
   const getGraphLayout = useCallback(
-    (expandedNodes: ExpandedNodes): Coordinates => {
+    (expandedNodes: ExpandedNodes): Layout => {
       return graphLayout(pathway, expandedNodes);
     },
     [pathway]
   );
 
   const [layout, setLayout] = useState(getGraphLayout({}));
+  const { coordinates, edges } = layout;
   const maxHeight = useMemo(() => {
-    return layout !== undefined
-      ? Object.values(layout)
+    return coordinates !== undefined
+      ? Object.values(coordinates)
           .map(x => x.y)
           .reduce((a, b) => Math.max(a, b))
       : 0;
-  }, [layout]);
+  }, [coordinates]);
 
   const initialExpandedState = useMemo(() => {
     return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
@@ -108,8 +109,8 @@ const Graph: FC<GraphProps> = ({
 
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
-      {layout !== undefined
-        ? Object.keys(layout).map(key => {
+      {coordinates !== undefined
+        ? Object.keys(coordinates).map(key => {
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };
@@ -120,8 +121,8 @@ const Graph: FC<GraphProps> = ({
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 isCurrentNode={isCurrentNode()}
-                xCoordinate={layout[key].x + windowWidth / 2}
-                yCoordinate={layout[key].y}
+                xCoordinate={coordinates[key].x + windowWidth / 2}
+                yCoordinate={coordinates[key].y}
                 expanded={expanded[key]}
                 onClickHandler={onClickHandler}
               />
