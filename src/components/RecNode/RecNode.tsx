@@ -9,7 +9,7 @@ interface RecNodeProps {
 
 const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
   if (pathwayState.action.length === 0)
-    return <div className={`${classes.nodeBody}`}>No actions</div>;
+    return <div className={`${classes.recNode}`}>No actions</div>;
 
   const resource = pathwayState.action[0].resource;
   const coding =
@@ -18,7 +18,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       : resource.code.coding;
 
   return (
-    <div className={`${classes.nodeBody}`}>
+    <div className={`${classes.recNode}`}>
       <table className={`${classes.infoTable}`}>
         <tbody>
           <tr>
