@@ -1,0 +1,29 @@
+.nodeExpanded {
+    .recNode {
+        position: absolute;
+        display: block;
+        top: $collapsedNodeHeight;
+        padding: 20px;
+        margin: 0;
+        width: 100%;
+        height: calc(100% - #{$collapsedNodeHeight});
+        color: $black;
+        background-color: $white;
+        border: 1px solid #559999;
+    }
+
+    .nodeTitle {
+        position: absolute;
+        top: 0px;
+        height: $collapsedNodeHeight;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+} 
+
+.nodeExpanded {
+    min-width: 400px;
+    height: 450px;
+    z-index: 1;
+}

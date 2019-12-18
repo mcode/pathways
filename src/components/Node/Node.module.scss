@@ -10,35 +10,22 @@
   justify-content: center;
 }
 
-.nodeExpanded {
-  min-width: 400px;
-  height: 450px;
-  z-index: 1;
-}
+.node {
+  .nodeTitle {
+    padding: 5px;
+  }
 
-.nodeTitle {
-  padding: 5px;
-}
-
-.nodeExpanded .nodeTitle {
-  position: absolute;
-  top: 0px;
-  height: $collapsedNodeHeight;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .icon {
+    padding-right: 5px;
+  }
 }
 
 .onPatientPath {
-  background-color: #559999;
-  color: $white;
+    background-color: #559999;
+    color: $white;
 }
 
 .notOnPatientPath {
-  background-color: #e1e1e1;
-  color: $black;
-}
-
-.icon {
-  padding-right: 5px;
+    background-color: #e1e1e1;
+    color: $black;
 }
