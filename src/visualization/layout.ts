@@ -4,12 +4,70 @@
 import { Pathway, State } from 'pathways-model';
 import { Node, Nodes, Coordinates } from 'graph-model';
 
+import dagre from 'dagre';
+
+import config from 'utils/ConfigManager';
+const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
+
 /**
  * Obtain the graph layout for the pathway as coordinates for every node
  *
  * @param pathway - JSON pathway
  */
 export default function layout(pathway: Pathway): Coordinates {
+  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway) : layoutCustom(pathway);
+}
+
+/**
+ * Layout the pathway using the Dagre layout engine.
+ * @see {@link https://github.com/dagrejs/dagre}
+ */
+function layoutDagre(pathway: Pathway): Coordinates {
+  const START = 'Start';
+  const NODE_HEIGHT = 50;
+  const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
+  const nodeNames = Object.keys(pathway.states);
+  const g = new dagre.graphlib.Graph();
+
+  g.setGraph({});
+  g.setDefaultEdgeLabel(() => ({})); // dagre requires a default edge label, we want it to just be empty
+
+  nodeNames.forEach(stateName => {
+    const state: State = pathway.states[stateName];
+    g.setNode(stateName, {
+      label: state.label,
+      width: state.label.length * NODE_WIDTH_FACTOR,
+      height: NODE_HEIGHT
+    });
+    state.transitions.forEach(transition => {
+      g.setEdge(stateName, transition.transition);
+    });
+  });
+
+  dagre.layout(g);
+
+  const coordinates: Coordinates = {};
+
+  const startNodeShift = g.node(START).x;
+
+  for (const nodeName of nodeNames) {
+    const node = g.node(nodeName);
+    // dagre returns coordinates for the center of the node,
+    // our renderer expects coordinates for the corner of the node.
+    // further, our renderer expects the Start node to be centered at x: 0
+    coordinates[nodeName] = {
+      x: node.x - startNodeShift - node.width / 2,
+      y: node.y - node.height / 2
+    };
+  }
+
+  return coordinates;
+}
+
+/**
+ * Layout the pathway using our homegrown layout algorithm.
+ */
+function layoutCustom(pathway: Pathway): Coordinates {
   const START = 'Start';
   const NODE_WIDTH = 100;
   const NODE_HEIGHT = 50;
@@ -270,10 +328,10 @@ export default function layout(pathway: Pathway): Coordinates {
     }
 
     // Set the child and parent properties of each node
-    Object.keys(pathway.states).forEach((stateName) => {
+    Object.keys(pathway.states).forEach(stateName => {
       const state: State = pathway.states[stateName];
 
-      state.transitions.forEach((transition) => {
+      state.transitions.forEach(transition => {
         if (!nodes[stateName].children.includes(transition.transition))
           nodes[stateName].children.push(transition.transition);
         if (!nodes[transition.transition].parents.includes(stateName))
