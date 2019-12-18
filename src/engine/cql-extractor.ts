@@ -2,9 +2,7 @@ import { Pathway, State } from 'pathways-model';
 
 export interface CqlObject {
   main: string;
-  libraries: {
-    [name: string]: string;
-  };
+  libraries: Library;
 }
 
 export interface Library {

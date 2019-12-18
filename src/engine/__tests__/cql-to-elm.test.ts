@@ -1,8 +1,7 @@
 import convertCQL, { convertBasicCQL } from '../cql-to-elm';
-import { connect } from 'http2';
 
-const fakeCQL = "library mCODEResources version '1'";
-const fakeELM = {
+const testCQL = "library mCODEResources version '1'";
+const testELM = {
   library: {
     identifier: {
       id: 'mCODEResources',
@@ -11,14 +10,14 @@ const fakeELM = {
   }
 };
 
-const fakeCqlObject = {
+const testCqlObject = {
   main: "library mCODEResources version '1'",
   libraries: {
     ex1: "library example version '2'"
   }
 };
 
-const fakeResponse = `--Boundary_1
+const testResponse = `--Boundary_1
 Content-Type: application/elm+json
 Content-Disposition: form-data; name="main"
 
@@ -52,11 +51,11 @@ Content-Disposition: form-data; name="ex1"
 }
 --Boundary_1--`;
 
-const fakeHeader = 'multipart/form-data;boundary=Boundary_1';
+const testHeader = 'multipart/form-data;boundary=Boundary_1';
 describe('cql-to-elm', () => {
   it('converts basic cql to elm', done => {
-    global.fetch = jest.fn(() => Promise.resolve({ json: () => fakeELM }));
-    convertBasicCQL(fakeCQL).then(elm => {
+    global.fetch = jest.fn(() => Promise.resolve({ json: () => testELM }));
+    convertBasicCQL(testCQL).then(elm => {
       expect(elm).toHaveProperty('library');
       expect(elm).toHaveProperty('library.identifier');
       expect(elm).toHaveProperty('library.identifier.id', 'mCODEResources');
@@ -69,12 +68,12 @@ describe('cql-to-elm', () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         headers: {
-          get: (s: string) => fakeHeader
+          get: (s: string) => testHeader
         },
-        text: () => Promise.resolve(fakeResponse)
+        text: () => Promise.resolve(testResponse)
       })
     );
-    convertCQL(fakeCqlObject).then(elms => {
+    convertCQL(testCqlObject).then(elms => {
       expect(elms).toHaveProperty('main');
       expect(elms).toHaveProperty('main.library');
       expect(elms).toHaveProperty('main.library.identifier');
