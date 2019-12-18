@@ -21,7 +21,29 @@ declare module 'pathways-model' {
   interface Action {
     type: string;
     description: string;
-    resource: object; // TODO: FHIR resources
+    resource: BasicActionResource | BasicMedictionRequestResource; // TODO: FHIR resources
+  }
+
+  interface BasicResource {
+    resourceType: string;
+  }
+
+  interface BasicMedictionRequestResource extends BasicResource {
+    medicationCodeableConcept: Coding;
+  }
+
+  interface BasicActionResource extends BasicResource {
+    code: Coding;
+  }
+
+  interface Coding {
+    coding: Array<Code>;
+  }
+
+  interface Code {
+    code: number;
+    system: string;
+    display: string;
   }
 
   // NOTE: the model also includes a BranchState (which extends State),
