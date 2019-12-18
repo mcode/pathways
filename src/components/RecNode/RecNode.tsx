@@ -8,6 +8,9 @@ interface RecNodeProps {
 }
 
 const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
+  if (pathwayState.action.length === 0)
+    return <div className={`${classes.nodeBody}`}>No actions</div>;
+
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
