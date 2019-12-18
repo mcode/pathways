@@ -18,7 +18,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       : resource.code.coding;
 
   return (
-    <div className={`${classes.recNode}`}>
+    <div className="recNode">
       <table className={`${classes.infoTable}`}>
         <tbody>
           <tr>

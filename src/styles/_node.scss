@@ -1,4 +1,8 @@
 .nodeExpanded {
+    min-width: 400px;
+    height: 450px;
+    z-index: 1;
+
     .recNode {
         position: absolute;
         display: block;
@@ -22,8 +26,10 @@
     }
 } 
 
-.nodeExpanded {
-    min-width: 400px;
-    height: 450px;
-    z-index: 1;
+.nodeTitle {
+    padding: 5px;
+}
+
+.recNode {
+  display: none;
 }

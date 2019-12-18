@@ -1,10 +1,5 @@
 @import '../../styles/variables';
 
-.recNode {
-  display: none;
-}
-
-.recNode {
   .infoTable {
     border-spacing: 10px;
   }
@@ -23,26 +18,29 @@
     margin-top: 15px;
   }
 
-  .commentsForm label {
-    font-weight: bold;
+  .commentsForm {
+    label {
+      font-weight: bold;
+    }
+
+    button {
+      border: none;
+      padding: 5px 10px;
+      margin: 0 0 2px 0;
+      float: right;
+      color: $white;
+      background-color: #757575;
+      text-decoration: none;
+      text-transform: uppercase;
+      font-family: sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
   }
 
-  .commentsForm button {
-    border: none;
-    padding: 5px 10px;
-    margin: 0 0 2px 0;
-    float: right;
-    color: $white;
-    background-color: #757575;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-  }
 
   .comments {
     margin-bottom: 10px;
@@ -64,4 +62,3 @@
     color: #DE9085 !important;
     background-color: $white !important;
   }
-}
