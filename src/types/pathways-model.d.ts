@@ -38,10 +38,11 @@ declare module 'pathways-model' {
 
   interface Coding {
     coding: Array<Code>;
+    text?: string;
   }
 
   interface Code {
-    code: number;
+    code: string;
     system: string;
     display: string;
   }

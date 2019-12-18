@@ -23,7 +23,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
         <tbody>
           <tr>
             <td className={`${classes.descTitle}`}>Notes</td>
-            <td className={`${classes.desc}`}>{pathwayState.label}</td>
+            <td className={`${classes.desc}`}>{pathwayState.action[0].description}</td>
           </tr>
           <tr>
             <td className={`${classes.descTitle}`}>Type</td>
