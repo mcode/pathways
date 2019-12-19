@@ -1,64 +1,63 @@
 @import '../../styles/variables';
 
-  .infoTable {
-    border-spacing: 10px;
-  }
+.infoTable {
+  border-spacing: 10px;
+}
 
-  .descTitle {
+.descTitle {
+  font-weight: bold;
+  text-align: right;
+}
+
+.desc {
+  padding-left: 15px;
+  font-style: italic;
+}
+
+.commentsForm {
+  margin-top: 15px;
+}
+
+.commentsForm {
+  label {
     font-weight: bold;
-    text-align: right;
   }
 
-  .desc {
-    padding-left: 15px;
-    font-style: italic;
+  button {
+    border: none;
+    padding: 5px 10px;
+    margin: 0 0 2px 0;
+    float: right;
+    color: $white;
+    background-color: #757575;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
   }
+}
 
-  .commentsForm {
-    margin-top: 15px;
-  }
+.comments {
+  margin-bottom: 10px;
+  width: 100%;
+  height: 85px;
+}
 
-  .commentsForm {
-    label {
-      font-weight: bold;
-    }
+.acceptButton {
+  font-size: 18px;
+  min-width: 120px;
+  padding: 10px !important;
+  background-color: #559999 !important;
+}
 
-    button {
-      border: none;
-      padding: 5px 10px;
-      margin: 0 0 2px 0;
-      float: right;
-      color: $white;
-      background-color: #757575;
-      text-decoration: none;
-      text-transform: uppercase;
-      font-family: sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-  }
-
-
-  .comments {
-    margin-bottom: 10px;
-    width: 100%;
-    height: 85px;
-  }
-
-  .acceptButton {
-    font-size: 18px;
-    min-width: 120px;
-    padding: 10px !important;
-    background-color: #559999 !important;
-  }
-
-  .declineButton {
-    font-size: 18px;
-    min-width: 120px;
-    padding: 10px !important;
-    color: #DE9085 !important;
-    background-color: $white !important;
-  }
+.declineButton {
+  font-size: 18px;
+  min-width: 120px;
+  padding: 10px !important;
+  color: #DE9085 !important;
+  background-color: $white !important;
+}

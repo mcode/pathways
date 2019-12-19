@@ -2,6 +2,8 @@ import React, { FC } from 'react';
 import { GuidanceState, State } from 'pathways-model';
 
 import classes from './Node.module.scss';
+import nodeClasses from 'styles/index.module.scss';
+
 import RecNode from 'components/RecNode';
 
 interface NodeProps {
@@ -28,11 +30,11 @@ const Node: FC<NodeProps> = ({
   };
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
-  const nodeExpandedClass = isExpanded ? 'nodeExpanded' : '';
+  const nodeExpandedClass = isExpanded ? nodeClasses.nodeExpanded : '';
 
   return (
     <div className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass}`} style={style}>
-      <div className="nodeTitle">
+      <div className={`${nodeClasses.nodeTitle}`}>
         <img className={classes.icon} src={icon} alt="icon" />
         {label}
       </div>
