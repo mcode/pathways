@@ -7,17 +7,17 @@ import { Coordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
   it('sample pathway layout set correctly', () => {
-    const graphCoordinates = layout(samplePathway, {});
+    const graphCoordinates = layout(samplePathway, {}).coordinates;
     checkLayout(graphCoordinates);
   });
 
   it('test pathway layout set correctly', () => {
-    const graphCoordinates = layout(testPathway, {});
+    const graphCoordinates = layout(testPathway, {}).coordinates;
     checkLayout(graphCoordinates);
   });
 
   it('upenn pathway layout set correctly', () => {
-    const graphCoordinates = layout(upennPathway, {});
+    const graphCoordinates = layout(upennPathway, {}).coordinates;
     checkLayout(graphCoordinates);
   });
 
