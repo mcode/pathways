@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { GuidanceState } from 'pathways-model';
 
 import classes from './RecNode.module.scss';
+import nodeClasses from 'styles/index.module.scss';
 
 interface RecNodeProps {
   pathwayState: GuidanceState;
@@ -18,7 +19,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       : resource.code.coding;
 
   return (
-    <div className="recNode">
+    <div className={`${nodeClasses.recNode}`}>
       <table className={`${classes.infoTable}`}>
         <tbody>
           <tr>
