@@ -46,12 +46,12 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       </table>
       <form className={`${classes.commentsForm}`}>
         <label>Comments:</label>
-        <button onClick={e => e.preventDefault()}>Use Default Text</button>
+        <button onClick={(e): void => e.preventDefault()}>Use Default Text</button>
         <textarea className={`${classes.comments}`}></textarea>
-        <button className={`${classes.acceptButton}`} onClick={e => e.preventDefault()}>
+        <button className={`${classes.acceptButton}`} onClick={(e): void => e.preventDefault()}>
           Accept
         </button>
-        <button className={`${classes.declineButton}`} onClick={e => e.preventDefault()}>
+        <button className={`${classes.declineButton}`} onClick={(e): void => e.preventDefault()}>
           Decline
         </button>
       </form>
