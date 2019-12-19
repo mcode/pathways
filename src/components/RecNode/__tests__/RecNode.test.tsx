@@ -24,8 +24,7 @@ const testActionState: GuidanceState = {
       }
     }
   ],
-  cql:
-    '[Procedure: "Chemotherapy (procedure) code"] Chemo return Tuple{ resourceType: \'Procedure\', id: Chemo.id.value, status: Chemo.status.value }',
+  cql: 'Chemotherapy',
   transitions: []
 };
 
@@ -50,8 +49,7 @@ const testMedicationRequestState: GuidanceState = {
       }
     }
   ],
-  cql:
-    '[MedicationRequest: "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"return Tuple{ resourceType: \'MedicationRequest\', id: ChemoMedication.id.value, status: ChemoMedication.status.value }',
+  cql: 'DoxorubicinRequest',
   transitions: []
 };
 
