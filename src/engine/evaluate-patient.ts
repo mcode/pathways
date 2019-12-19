@@ -5,7 +5,7 @@ import pathwayData from './output-results';
 import { Pathway, PathwayResults, ElmResults } from 'pathways-model';
 import { getFixture } from './cql-extractor';
 
-function instanceOfElmObject(object: any): object is ElmObject {
+function instanceOfElmObject(object: object): object is ElmObject {
   return 'main' in object;
 }
 
@@ -63,14 +63,14 @@ function gatherCQL(cql: string): Promise<Library> {
   const lib = cql.match(/(?<=include .* called ).*(?=\n)/g);
   if (lib) {
     return getFixture(`${lib[0]}.cql`).then(result => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve, reject): void {
         setTimeout(function() {
           resolve({ FHIRHelpers: result });
         }, 300);
       });
     });
   } else {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject): void {
       setTimeout(function() {
         resolve({});
       }, 300);
