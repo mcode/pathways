@@ -1,6 +1,14 @@
 import { Pathway, State } from 'pathways-model';
 
-function getFixture(filename: string): Promise<string> {
+export interface CqlObject {
+  main: string;
+  libraries: Library;
+}
+
+export interface Library {
+  [name: string]: string; // should probably have an object for expected ELM structure.
+}
+export function getFixture(filename: string): Promise<string> {
   return fetch(`./static/cql/${filename}`).then(cql => cql.text());
 }
 
