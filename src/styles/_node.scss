@@ -2,7 +2,6 @@
 
 .nodeExpanded {
     min-width: 400px;
-    height: 450px;
     z-index: 1;
 
     .recNode {
@@ -12,7 +11,6 @@
         padding: 20px;
         margin: 0;
         width: 100%;
-        height: calc(100% - #{$collapsedNodeHeight});
         color: $black;
         background-color: $white;
         border: 1px solid #559999;
