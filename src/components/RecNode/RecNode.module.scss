@@ -26,10 +26,10 @@
   button {
     border: none;
     padding: 5px 10px;
-    margin: 0 0 2px 0;
+    margin: 0 0 2px 5px;
     float: right;
     color: $white;
-    background-color: #757575;
+    background-color: $blue;
     text-decoration: none;
     text-transform: uppercase;
     font-family: sans-serif;
@@ -46,19 +46,25 @@
   width: 100%;
   min-height: 85px;
   resize: vertical;
+  background-color: $gray-lighter;
+  border: none;
 }
 
 .acceptButton {
   font-size: 18px;
   min-width: 120px;
   padding: 10px !important;
-  background-color: #559999 !important;
 }
 
 .declineButton {
   font-size: 18px;
   min-width: 120px;
   padding: 10px !important;
-  color: #DE9085 !important;
+  color: $red !important;
   background-color: $white !important;
+}
+
+.externalLink {
+  color: $blue;
+  margin-left: 8px;
 }

@@ -1,24 +1,27 @@
 import React, { FC } from 'react';
 import { GuidanceState, State } from 'pathways-model';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
 import RecNode from 'components/RecNode';
 
 interface NodeProps {
-  icon: string;
   pathwayState: State;
   isOnPatientPath: boolean;
-  isExpanded: boolean;
+  isCurrentNode: boolean;
   xCoordinate: number;
   yCoordinate: number;
 }
 
+interface NodeIconProps {
+  pathwayState: State;
+}
+
 const Node: FC<NodeProps> = ({
-  icon,
   pathwayState,
   isOnPatientPath,
-  isExpanded,
+  isCurrentNode,
   xCoordinate,
   yCoordinate
 }) => {
@@ -29,12 +32,16 @@ const Node: FC<NodeProps> = ({
   };
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
-  const nodeExpandedClass = isExpanded ? nodeClasses.nodeExpanded : '';
+  const nodeExpandedClass = isCurrentNode ? nodeClasses.expanded : '';
+  const currentNodeClass = isCurrentNode ? classes.current : '';
 
   return (
-    <div className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass}`} style={style}>
+    <div
+      className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass} ${currentNodeClass}`}
+      style={style}
+    >
       <div className={nodeClasses.nodeTitle}>
-        <img className={classes.icon} src={icon} alt="icon" />
+        <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
       {isGuidanceState(pathwayState) ? (
@@ -42,6 +49,24 @@ const Node: FC<NodeProps> = ({
       ) : null}
     </div>
   );
+};
+
+const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
+  if (pathwayState.label === 'Start')
+    return <FontAwesomeIcon icon="play" className={classes.icon} />;
+  if (pathwayState.hasOwnProperty('action')) {
+    const guidancePathwayState = pathwayState as GuidanceState;
+    if (guidancePathwayState.action.length > 0) {
+      const resourceType = guidancePathwayState.action[0].resource.resourceType;
+      if (resourceType === 'MedicationRequest')
+        return <FontAwesomeIcon icon="prescription-bottle-alt" className={classes.icon} />;
+      else if (resourceType === 'MedicationAdministration')
+        return <FontAwesomeIcon icon="capsules" className={classes.icon} />;
+      else if (resourceType === 'Procedure')
+        return <FontAwesomeIcon icon="syringe" className={classes.icon} />;
+    }
+  }
+  return <FontAwesomeIcon icon="microscope" className={classes.icon} />;
 };
 
 function isGuidanceState(state: State): boolean {

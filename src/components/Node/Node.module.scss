@@ -10,16 +10,26 @@
   justify-content: center;
 
   .icon {
+    font-size: 1.2em;
+    color: $black;
     padding-right: 5px;
   }
 }
 
+.current {
+  background-color: $red !important;
+}
+
 .onPatientPath {
-    background-color: #559999;
+    background-color: $blue;
     color: $white;
+
+    .icon {
+      color: $white;
+    }
 }
 
 .notOnPatientPath {
-    background-color: #e1e1e1;
+    background-color: $gray-lighter;
     color: $black;
 }

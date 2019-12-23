@@ -2,7 +2,6 @@ import React, { FC, useState, useEffect } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
-import icon from '../media-play-16.png';
 import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
 
@@ -40,10 +39,9 @@ const Graph: FC<GraphProps> = ({ resources }) => {
             return (
               <Node
                 key={key}
-                icon={icon}
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
-                isExpanded={path[path.length - 1] === key}
+                isCurrentNode={path[path.length - 1] === key}
                 xCoordinate={layout[key].x + windowWidth / 2}
                 yCoordinate={layout[key].y}
               />

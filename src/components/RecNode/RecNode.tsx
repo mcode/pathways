@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { GuidanceState } from 'pathways-model';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './RecNode.module.scss';
 import nodeClasses from 'styles/index.module.scss';
@@ -31,7 +32,12 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
           </tr>
           <tr>
             <td className={classes.descTitle}>System</td>
-            <td className={classes.desc}>{coding[0].system}</td>
+            <td className={classes.desc}>
+              {coding[0].system}
+              <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+              </a>
+            </td>
           </tr>
           <tr>
             <td className={classes.descTitle}>Code</td>
