@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
 import RecNode from 'components/RecNode';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NodeProps {
   pathwayState: State;
@@ -52,21 +53,18 @@ const Node: FC<NodeProps> = ({
 };
 
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
-  if (pathwayState.label === 'Start')
-    return <FontAwesomeIcon icon="play" className={classes.icon} />;
+  let icon: IconProp = 'microscope';
+  if (pathwayState.label === 'Start') icon = 'play';
   if (pathwayState.hasOwnProperty('action')) {
     const guidancePathwayState = pathwayState as GuidanceState;
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
-      if (resourceType === 'MedicationRequest')
-        return <FontAwesomeIcon icon="prescription-bottle-alt" className={classes.icon} />;
-      else if (resourceType === 'MedicationAdministration')
-        return <FontAwesomeIcon icon="capsules" className={classes.icon} />;
-      else if (resourceType === 'Procedure')
-        return <FontAwesomeIcon icon="syringe" className={classes.icon} />;
+      if (resourceType === 'MedicationRequest') icon = 'prescription-bottle-alt';
+      else if (resourceType === 'MedicationAdministration') icon = 'capsules';
+      else if (resourceType === 'Procedure') icon = 'syringe';
     }
   }
-  return <FontAwesomeIcon icon="microscope" className={classes.icon} />;
+  return <FontAwesomeIcon icon={icon} className={classes.icon} />;
 };
 
 function isGuidanceState(state: State): boolean {
