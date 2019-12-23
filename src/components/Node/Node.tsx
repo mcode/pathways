@@ -3,7 +3,6 @@ import { GuidanceState, State } from 'pathways-model';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
-
 import RecNode from 'components/RecNode';
 
 interface NodeProps {
@@ -34,7 +33,7 @@ const Node: FC<NodeProps> = ({
 
   return (
     <div className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass}`} style={style}>
-      <div className={`${nodeClasses.nodeTitle}`}>
+      <div className={nodeClasses.nodeTitle}>
         <img className={classes.icon} src={icon} alt="icon" />
         {label}
       </div>
