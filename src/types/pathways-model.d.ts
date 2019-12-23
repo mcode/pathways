@@ -21,14 +21,14 @@ declare module 'pathways-model' {
   interface Action {
     type: string;
     description: string;
-    resource: BasicActionResource | BasicMedictionRequestResource; // TODO: FHIR resources
+    resource: BasicActionResource | BasicMedicationRequestResource; // TODO: FHIR resources
   }
 
   interface BasicResource {
     resourceType: string;
   }
 
-  interface BasicMedictionRequestResource extends BasicResource {
+  interface BasicMedicationRequestResource extends BasicResource {
     medicationCodeableConcept: Coding;
   }
 

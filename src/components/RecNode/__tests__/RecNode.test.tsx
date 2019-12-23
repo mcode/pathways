@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import RecNode from 'components/RecNode';
-import { GuidanceState, BasicActionResource, BasicMedictionRequestResource } from 'pathways-model';
+import { GuidanceState, BasicActionResource, BasicMedicationRequestResource } from 'pathways-model';
 
 const testActionState: GuidanceState = {
   label: 'Chemotherapy',
@@ -69,7 +69,8 @@ describe('<RecNode />', () => {
   it('renders a RecNode for a medication request state', () => {
     const { getByText } = render(<RecNode pathwayState={testMedicationRequestState} />);
 
-    const resource = testMedicationRequestState.action[0].resource as BasicMedictionRequestResource;
+    const resource = testMedicationRequestState.action[0]
+      .resource as BasicMedicationRequestResource;
 
     expect(getByText(testMedicationRequestState.action[0].description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
