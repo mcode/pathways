@@ -55,7 +55,7 @@ const Node: FC<NodeProps> = ({
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
   let icon: IconProp = 'microscope';
   if (pathwayState.label === 'Start') icon = 'play';
-  if (pathwayState.hasOwnProperty('action')) {
+  if (isGuidanceState(pathwayState)) {
     const guidancePathwayState = pathwayState as GuidanceState;
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
