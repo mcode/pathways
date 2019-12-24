@@ -16,20 +16,20 @@
   }
 }
 
-.current {
-  background-color: $red !important;
-}
-
 .onPatientPath {
-    background-color: $blue;
-    color: $white;
+  background-color: $blue;
+  color: $white;
 
-    .icon {
-      color: $white;
-    }
+  &.current {
+    background-color: $red;
+  }
+
+  .icon {
+    color: $white;
+  }
 }
 
 .notOnPatientPath {
-    background-color: $gray-lighter;
-    color: $black;
+  background-color: $gray-lighter;
+  color: $black;
 }

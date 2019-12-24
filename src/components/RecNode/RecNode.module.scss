@@ -39,6 +39,20 @@
     -webkit-appearance: none;
     -moz-appearance: none;
   }
+
+  .acceptButton {
+    font-size: 18px;
+    min-width: 120px;
+    padding: 10px;
+  }
+
+  .declineButton {
+    font-size: 18px;
+    min-width: 120px;
+    padding: 10px;
+    color: $red;
+    background-color: $white;
+  }
 }
 
 .comments {
@@ -50,19 +64,6 @@
   border: none;
 }
 
-.acceptButton {
-  font-size: 18px;
-  min-width: 120px;
-  padding: 10px !important;
-}
-
-.declineButton {
-  font-size: 18px;
-  min-width: 120px;
-  padding: 10px !important;
-  color: $red !important;
-  background-color: $white !important;
-}
 
 .externalLink {
   color: $blue;
