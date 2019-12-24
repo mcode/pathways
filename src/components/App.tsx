@@ -44,11 +44,14 @@ const App: FC<AppProps> = ({ client }) => {
   function setPathwayCallback(value: Pathway | null): void {
     setSelectPathway(false);
     setPathway(value);
+    console.log('App::pathway');
+    console.log(value);
+    console.log(pathway);
   }
 
   function renderPatientView() {
     return (
-      <PathwayProvider pathway={pathway}>
+      <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
         <PathwaysDisplay />
         <button
@@ -60,22 +63,24 @@ const App: FC<AppProps> = ({ client }) => {
         </button>
         <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
-      </PathwayProvider>
+      </div>
     );
   }
 
   return (
     <FHIRClientProvider client={client}>
       <PatientProvider>
-        <div>
-          <Header logo={logo} title={config.get('appName', 'SMART App')} />
-          <Navigation />
-        </div>
-        {selectPathway ? (
-          <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
-        ) : (
-          renderPatientView()
-        )}
+        <PathwayProvider pathway={{ pathway: pathway, setPathway: setPathwayCallback }}>
+          <div>
+            <Header logo={logo} title={config.get('appName', 'SMART App')} />
+            <Navigation service={service} selectPathway={selectPathway} />
+          </div>
+          {selectPathway ? (
+            <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
+          ) : (
+            renderPatientView()
+          )}
+        </PathwayProvider>
       </PatientProvider>
     </FHIRClientProvider>
   );

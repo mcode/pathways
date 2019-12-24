@@ -30,8 +30,7 @@ const PathwaysList: FC<Props> = (props: Props) => {
           return props.callback(pathway);
         }}
       >
-        <div>Name: {pathway.name}</div>
-        <div>"{pathway.description}"</div>
+        <div>{pathway.name}</div>
       </div>
     );
   }
@@ -40,7 +39,15 @@ const PathwaysList: FC<Props> = (props: Props) => {
       {service.status === 'loading' ? (
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
-        <div>{renderList(service.payload)}</div>
+        <div className={classes.container}>
+          <p>
+            <strong>Explore Pathways</strong>
+          </p>
+          <p>
+            <em>Select pathway below to view details</em>
+          </p>
+          {renderList(service.payload)}
+        </div>
       ) : (
         <div>ERROR</div>
       )}

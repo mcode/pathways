@@ -11,8 +11,10 @@ interface GraphProps {
 
 const Graph: FC<GraphProps> = ({ resources }) => {
   const windowWidth = useWindowWidth();
-  const pathway = usePathwayContext();
+  const pathway = usePathwayContext().pathway;
   const [path, setPath] = useState<string[]>([]);
+
+  if (pathway === null) return <div>No Pathway Loaded</div>;
 
   // Get the layout of the graph
   const getGraphLayout = () => {

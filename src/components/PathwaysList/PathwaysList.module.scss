@@ -1,16 +1,25 @@
 @import '../../styles/variables';
 
+.container {
+    margin-top: 30px;
+    padding: 0 50px;
+
+    p {
+        margin: 0 0 5px 0;
+    }
+}
+
 .pathway-element {
     display: block;
-    margin: 1vh 1vw;
-    padding: 5px;
-    border-left: 3px solid $gray;
+    margin-bottom: 1vh;
+    padding: 20px 0 20px 20px;
+    font-size: 1.2em;
     font-weight:700;
-    background-color: #e7e7e9;
+    background-color: $gray-lighter;
     color: #4a4a4a;
-    height: 10vh;
 
-    &:hover{
-        background-color: #efeff2;
+    &:hover, &:focus{
+        cursor: pointer;
+        background-color: darken($gray-lighter, 10%);
     }
 }
