@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import Select from 'react-select';
 
 import classes from './DropDown.module.scss';
-import { Pathway } from 'pathways-model';
+import { Option } from 'option';
 
 interface Props {
   label?: string;
@@ -11,26 +11,18 @@ interface Props {
   options: Array<Option>;
   onChange?: (value: Option | ReadonlyArray<Option> | null) => void;
   selectedValue: Option | ReadonlyArray<Option> | null;
+  setSelectPathway: (flag: boolean) => void;
 }
 
-export type Option = {
-  label: string;
-  value: Pathway;
-};
-
-const DropDown: FC<Props> = ({ options, label, id, visible, onChange, selectedValue }: Props) => {
-  // const testPathway: Pathway = {
-  //   name: 'Test',
-  //   library: 'test.cql',
-  //   states: {
-  //     test: {
-  //       label: 'Test state',
-  //       transitions: []
-  //     }
-  //   }
-  // };
-  // selectedValue = { label: 'Test', value: testPathway };
-  console.log('selectedValue: ' + selectedValue);
+const DropDown: FC<Props> = ({
+  options,
+  label,
+  id,
+  visible,
+  onChange,
+  selectedValue,
+  setSelectPathway
+}: Props) => {
   const [value, setValue] = useState<Option | ReadonlyArray<Option> | null>(selectedValue);
 
   const onChangeCallback = useCallback(
@@ -47,12 +39,18 @@ const DropDown: FC<Props> = ({ options, label, id, visible, onChange, selectedVa
     <div className={`${classes.dropdown} ${hiddenClass}`}>
       <div>
         <label htmlFor={id}>{label}</label>
-        <button>Explore Pathways</button>
+        <button
+          onClick={() => {
+            setSelectPathway(true);
+          }}
+        >
+          Explore Pathways
+        </button>
       </div>
       <Select
         classNamePrefix="DropDown"
         inputId={id}
-        value={value}
+        value={value === null ? selectedValue : value}
         onChange={onChangeCallback}
         options={options}
         aria-label={label}

@@ -11,7 +11,6 @@ import PatientRecord from './PatientRecord/PatientRecord';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
-import PathwaysDisplay from 'components/PathwaysDisplay';
 import { PathwayProvider } from './PathwayProvider';
 import { Pathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
@@ -44,23 +43,12 @@ const App: FC<AppProps> = ({ client }) => {
   function setPathwayCallback(value: Pathway | null): void {
     setSelectPathway(false);
     setPathway(value);
-    console.log('App::pathway');
-    console.log(value);
-    console.log(pathway);
   }
 
   function renderPatientView() {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        <PathwaysDisplay />
-        <button
-          onClick={() => {
-            setSelectPathway(true);
-          }}
-        >
-          Explore Pathways
-        </button>
         <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
       </div>
@@ -73,7 +61,11 @@ const App: FC<AppProps> = ({ client }) => {
         <PathwayProvider pathway={{ pathway: pathway, setPathway: setPathwayCallback }}>
           <div>
             <Header logo={logo} title={config.get('appName', 'SMART App')} />
-            <Navigation service={service} selectPathway={selectPathway} />
+            <Navigation
+              service={service}
+              selectPathway={selectPathway}
+              setSelectPathway={setSelectPathway}
+            />
           </div>
           {selectPathway ? (
             <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>

@@ -7,21 +7,17 @@ import DropDown from 'components/DropDown';
 import classes from './Navigation.module.scss';
 import { Service } from 'pathways-objects';
 import { Pathway } from 'pathways-model';
+import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface Props {
   selectPathway: boolean;
   service: Service<Array<Pathway>>;
+  setSelectPathway: (flag: boolean) => void;
 }
 
-type Option = {
-  label: string;
-  value: Pathway;
-};
-
-const Navigation: FC<Props> = ({ service, selectPathway }) => {
+const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => {
   let pathway = usePathwayContext();
-  console.log(pathway);
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
     if (pathwayOption !== null && 'value' in pathwayOption) pathway.setPathway(pathwayOption.value);
@@ -50,6 +46,7 @@ const Navigation: FC<Props> = ({ service, selectPathway }) => {
               ? { label: pathway.pathway.name, value: pathway.pathway }
               : null
           }
+          setSelectPathway={setSelectPathway}
           onChange={onChangeHandler}
         />
       </div>
