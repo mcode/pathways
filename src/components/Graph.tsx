@@ -11,7 +11,8 @@ interface GraphProps {
 
 const Graph: FC<GraphProps> = ({ resources }) => {
   const windowWidth = useWindowWidth();
-  const pathway = usePathwayContext().pathway;
+  const pathwayCtx = usePathwayContext();
+  const pathway = pathwayCtx.pathway;
   const [path, setPath] = useState<string[]>([]);
 
   if (pathway === null) return <div>No Pathway Loaded</div>;
@@ -23,8 +24,11 @@ const Graph: FC<GraphProps> = ({ resources }) => {
 
   // Create a fake Bundle for the CQL engine
   const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
-  if (path.length === 0 && patient.entry.length > 0)
-    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => setPath(pathwayResults.path));
+  if (!pathwayCtx.isRendered && patient.entry.length > 0)
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
+      setPath(pathwayResults.path);
+      pathwayCtx.setIsRendered(true);
+    });
 
   const layout = getGraphLayout();
   const maxHeight: number =

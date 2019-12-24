@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback } from 'react';
 import Select from 'react-select';
 
 import classes from './DropDown.module.scss';
@@ -23,11 +23,8 @@ const DropDown: FC<Props> = ({
   selectedValue,
   setSelectPathway
 }: Props) => {
-  const [value, setValue] = useState<Option | ReadonlyArray<Option> | null>(selectedValue);
-
   const onChangeCallback = useCallback(
     (value: Option | ReadonlyArray<Option> | null | undefined) => {
-      if (value !== undefined) setValue(value);
       if (onChange) onChange(value == null ? null : value);
     },
     [onChange]
@@ -50,7 +47,7 @@ const DropDown: FC<Props> = ({
       <Select
         classNamePrefix="DropDown"
         inputId={id}
-        value={value === null ? selectedValue : value}
+        value={selectedValue}
         onChange={onChangeCallback}
         options={options}
         aria-label={label}

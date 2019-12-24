@@ -17,10 +17,16 @@ interface Props {
 }
 
 const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => {
-  let pathway = usePathwayContext();
+  const pathway = usePathwayContext();
+  const value =
+    pathway.pathway === null ? null : { label: pathway.pathway.name, value: pathway.pathway };
+  // const [value, setValue] = useState<Option | ReadonlyArray<Option> | null>(defaultValue);
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
-    if (pathwayOption !== null && 'value' in pathwayOption) pathway.setPathway(pathwayOption.value);
+    if (pathwayOption !== null && 'value' in pathwayOption) {
+      // setValue(pathwayOption);
+      pathway.setPathway(pathwayOption.value);
+    }
   };
 
   const pathwayOptions =
@@ -41,11 +47,7 @@ const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => 
           id="patient-view"
           visible={!selectPathway}
           options={pathwayOptions}
-          selectedValue={
-            pathway.pathway !== null
-              ? { label: pathway.pathway.name, value: pathway.pathway }
-              : null
-          }
+          selectedValue={value}
           setSelectPathway={setSelectPathway}
           onChange={onChangeHandler}
         />

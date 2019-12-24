@@ -34,6 +34,7 @@ const PathwaysList: FC<Props> = (props: Props) => {
       </div>
     );
   }
+
   return (
     <div>
       {service.status === 'loading' ? (
