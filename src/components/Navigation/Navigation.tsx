@@ -20,11 +20,9 @@ const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => 
   const pathway = usePathwayContext();
   const value =
     pathway.pathway === null ? null : { label: pathway.pathway.name, value: pathway.pathway };
-  // const [value, setValue] = useState<Option | ReadonlyArray<Option> | null>(defaultValue);
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
     if (pathwayOption !== null && 'value' in pathwayOption) {
-      // setValue(pathwayOption);
       pathway.setPathway(pathwayOption.value);
     }
   };

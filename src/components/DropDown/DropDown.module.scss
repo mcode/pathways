@@ -22,6 +22,10 @@
     -moz-appearance: none;
   }
 
+  button:hover, button:focus {
+    background-color: darken($blue, 10%);
+  }
+
   label {
     font-weight: 700;
     font-size: 0.9em;
