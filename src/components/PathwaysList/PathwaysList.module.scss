@@ -13,13 +13,13 @@
     display: block;
     margin-bottom: 1vh;
     font-size: 1.2em;
-    font-weight:700;
     background-color: $gray-lighter;
     color: #4a4a4a;
 
     .title {
         padding: 20px 0 20px 20px;
         width: 100%;
+        font-weight:700;
 
         div {
             display: inline-block;
@@ -53,7 +53,7 @@
         width: 100%;
         height: 500px;
 
-        div {
+        .details, .pathway {
             display: block;
             float: left;
             height: 100%;
@@ -68,6 +68,7 @@
 
             table {
                 border-collapse: collapse;
+                margin-top: 15px;
             }
 
             p, th {
@@ -75,17 +76,49 @@
             }
 
             td, th {
-                padding: 2px 50px 2px 0px;
+                padding: 4px 50px 4px 0px;
                 min-width: 50px;
+            }
+
+            td:first-child {
+                font-weight: bold;
+            }
+
+            td:last-child {
+                color: $blue;
+                font-weight: bold;
             }
              
             tr {
                 border-bottom: 2px solid darken($gray-lighter, 10%);
             }
+
+            button {
+                font-size: 16px;
+                border: none;
+                padding: 10px;
+                margin-top: 25px;
+                color: $white;
+                background-color: $blue;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-family: sans-serif;
+                font-weight: 600;
+                cursor: pointer;
+                text-align: center;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+
+                &:hover, &:focus {
+                    background-color: darken($blue, 10%);
+                }
+            }
+
         }
 
         .pathway {
             width: calc(35% - 5px);
+            overflow: scroll;
         }
     }
 

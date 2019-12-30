@@ -1,19 +1,30 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef, MutableRefObject } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
+import { Pathway } from 'pathways-model';
 
 interface GraphProps {
+  pathwayProp?: Pathway | null;
   resources: Array<any>;
 }
 
-const Graph: FC<GraphProps> = ({ resources }) => {
-  const windowWidth = useWindowWidth();
+const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
+  const graphElement = useRef(null);
+  const _windowWidth = useWindowWidth();
   const pathwayCtx = usePathwayContext();
-  const pathway = pathwayCtx.pathway;
+  const pathway = pathwayProp !== undefined ? pathwayProp : pathwayCtx.pathway;
   const [path, setPath] = useState<string[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(_windowWidth);
+  const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (graphElement && graphElement.current && 'parentNode' in graphElement.current!) {
+      setWindowWidth((graphElement.current! as any).parentNode.clientWidth);
+    }
+  });
 
   if (pathway === null) return <div>No Pathway Loaded</div>;
 
@@ -22,12 +33,12 @@ const Graph: FC<GraphProps> = ({ resources }) => {
     return graphLayout(pathway);
   };
 
-  // Create a fake Bundle for the CQL engine
+  // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
   const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
-  if (!pathwayCtx.isRendered && patient.entry.length > 0)
+  if ((renderedPathway === null || renderedPathway !== pathway.name) && patient.entry.length > 0)
     evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
       setPath(pathwayResults.path);
-      pathwayCtx.setIsRendered(true);
+      setRenderedPathway(pathway.name);
     });
 
   const layout = getGraphLayout();
@@ -39,7 +50,7 @@ const Graph: FC<GraphProps> = ({ resources }) => {
       : 0;
 
   return (
-    <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
+    <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
         ? Object.keys(layout).map(key => {
             return (

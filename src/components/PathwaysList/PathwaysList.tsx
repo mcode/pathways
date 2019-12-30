@@ -97,20 +97,30 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
               </tr>
               <tr>
                 <td>condition</td>
-                <td></td>
-                <td></td>
+                <td>breast cancer</td>
+                <td>breast cancer</td>
               </tr>
               <tr>
                 <td>stage</td>
-                <td></td>
-                <td></td>
+                <td>1a</td>
+                <td>1a</td>
+              </tr>
+              <tr>
+                <td>node status</td>
+                <td>N+/N0</td>
+                <td>N+</td>
+              </tr>
+              <tr>
+                <td>tumor size</td>
+                <td>any</td>
+                <td>2.5cm</td>
               </tr>
             </tbody>
           </table>
           <button onClick={() => callback(pathway)}>Select Pathway</button>
         </div>
         <div className={classes.pathway}>
-          <Graph resources={resources} />
+          <Graph resources={resources} pathwayProp={pathway} />
         </div>
       </div>
     </div>
