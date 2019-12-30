@@ -27,13 +27,21 @@ const App: FC<AppProps> = ({ client }) => {
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<any>) => {
+      // filters out values that are empty
+      // the server might return deleted
+      // resources that only include an
+      // id, meta, and resourceType
+      const values = ['id', 'meta', 'resourceType'];
+      records = records.filter(resource => {
+        return !Object.keys(resource).every(value => values.includes(value));
+      });
       setPatientRecords(records);
     });
   }, [client]);
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null) {
+  function setPathwayCallback(value: Pathway | null): void {
     setSelectPathway(false);
     setPathway(value);
   }

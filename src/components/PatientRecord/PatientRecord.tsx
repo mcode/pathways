@@ -18,7 +18,10 @@ type PatientRecordProps = {
   resources: ReadonlyArray<Record<string, any>>;
 };
 
-const getResourceByType = (patientRecord: ReadonlyArray<any>, resourceType: string) => {
+const getResourceByType = (
+  patientRecord: ReadonlyArray<any>,
+  resourceType: string
+): ReadonlyArray<object> => {
   return patientRecord.filter(resource => resource.resourceType === resourceType);
 };
 
