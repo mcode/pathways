@@ -1,6 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faChevronLeft,
+  faChevronDown,
+  faChevronUp,
   faCog,
   faUserCircle,
   faExternalLinkAlt,
@@ -13,6 +15,8 @@ import {
 
 library.add(
   faChevronLeft,
+  faChevronDown,
+  faChevronUp,
   faCog,
   faUserCircle,
   faExternalLinkAlt,

@@ -12,14 +12,92 @@
 .pathway-element {
     display: block;
     margin-bottom: 1vh;
-    padding: 20px 0 20px 20px;
     font-size: 1.2em;
     font-weight:700;
     background-color: $gray-lighter;
     color: #4a4a4a;
 
+    .title {
+        padding: 20px 0 20px 20px;
+        width: 100%;
+
+        div {
+            display: inline-block;
+        }
+
+        .numElements {
+            float: right;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            margin-right: 25px;
+            color: $white;
+            background-color: $blue;
+            border-radius: 100%;
+            text-align: center;
+        }
+
+        .expand {
+            float: right;
+            margin-right: 25px;
+            font-size: 1.2em;
+        }
+
+        &:hover, &:focus {
+            cursor: pointer;
+        }
+    }
+
+    .infoContainer {
+        padding: 4px;
+        width: 100%;
+        height: 500px;
+
+        div {
+            display: block;
+            float: left;
+            height: 100%;
+            background-color: $white;
+        }
+
+        .details {
+            width: calc(65% - 5px);
+            padding: 15px;
+            margin-right: 10px;
+            font-size: 0.8em;
+
+            table {
+                border-collapse: collapse;
+            }
+
+            p, th {
+                font-style: italic;
+            }
+
+            td, th {
+                padding: 2px 50px 2px 0px;
+                min-width: 50px;
+            }
+             
+            tr {
+                border-bottom: 2px solid darken($gray-lighter, 10%);
+            }
+        }
+
+        .pathway {
+            width: calc(35% - 5px);
+        }
+    }
+
     &:hover, &:focus{
-        cursor: pointer;
         background-color: darken($gray-lighter, 10%);
     }
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
 }

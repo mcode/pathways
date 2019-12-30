@@ -41,8 +41,8 @@ const App: FC<AppProps> = ({ client }) => {
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null): void {
-    setSelectPathway(false);
+  function setPathwayCallback(value: Pathway | null, selectPathway: boolean = false): void {
+    setSelectPathway(selectPathway);
     setPathway(value);
     setIsRendered(false);
   }
@@ -77,7 +77,11 @@ const App: FC<AppProps> = ({ client }) => {
             />
           </div>
           {selectPathway ? (
-            <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
+            <PathwaysList
+              callback={setPathwayCallback}
+              service={service}
+              resources={patientRecords}
+            ></PathwaysList>
           ) : (
             renderPatientView()
           )}

@@ -94,7 +94,7 @@ declare module 'pathways-model' {
   export interface PathwayContextInterface {
     pathway: Pathway | null;
     isRendered: boolean;
-    setPathway: (pathway: Pathway | null) => void;
+    setPathway: (pathway: Pathway | null, selectPathway?: boolean) => void;
     setIsRendered: (flag: boolean) => void;
   }
 }
