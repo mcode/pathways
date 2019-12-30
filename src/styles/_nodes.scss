@@ -1,35 +1,35 @@
 @import 'variables';
 
 .expanded {
-    min-width: 400px;
-    z-index: 1;
+  min-width: 400px;
+  z-index: 1;
 
-    .recNode {
-        position: absolute;
-        display: block;
-        top: $collapsedNodeHeight;
-        padding: 20px;
-        margin: 0;
-        width: 100%;
-        color: $black;
-        background-color: $white;
-        border: 1px solid $red;
-    }
+  .recNode {
+    position: absolute;
+    display: block;
+    top: $collapsedNodeHeight;
+    padding: 20px;
+    margin: 0;
+    width: 100%;
+    color: $black;
+    background-color: $white;
+    border: 1px solid $red;
+  }
 
-    .nodeTitle {
-        position: absolute;
-        top: 0px;
-        height: $collapsedNodeHeight;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .nodeTitle {
+    position: absolute;
+    top: 0px;
+    height: $collapsedNodeHeight;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 } 
 
 .nodeTitle {
-    padding: 15px;
+  padding: 15px;
 }
 
 .recNode {
-    display: none;
+  display: none;
 }
