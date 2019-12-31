@@ -1,5 +1,9 @@
 @import '../../styles/variables';
 
+// ----------  TITLE SPACING  --------- //
+$verticalPadding: 20px;
+$lineHeight: 35px;
+
 .container {
     margin-top: 30px;
     padding: 0 50px;
@@ -17,7 +21,9 @@
     color: #4a4a4a;
 
     .title {
-        padding: 20px 0 20px 20px;
+        padding: $verticalPadding 0 $verticalPadding 20px;
+        height: 2*$verticalPadding + $lineHeight;
+        line-height: $lineHeight;
         width: 100%;
         font-weight:700;
 

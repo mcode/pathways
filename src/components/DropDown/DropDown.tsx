@@ -2,6 +2,7 @@ import React, { FC, useCallback } from 'react';
 import Select from 'react-select';
 
 import classes from './DropDown.module.scss';
+// import indexClasses from 'styles/index.module.scss';
 import { Option } from 'option';
 
 interface Props {
@@ -37,6 +38,7 @@ const DropDown: FC<Props> = ({
       <div>
         <label htmlFor={id}>{label}</label>
         <button
+          // className={indexClasses.btn1}
           onClick={() => {
             setSelectPathway(true);
           }}
