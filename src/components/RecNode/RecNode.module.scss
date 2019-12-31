@@ -31,20 +31,9 @@
   }
 
   button {
-    border: none;
     padding: 5px 10px;
     margin: 0 0 2px 5px;
     float: right;
-    color: $white;
-    background-color: $blue;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
 
     &.accept {
       font-size: 18px;
@@ -62,10 +51,6 @@
       &:hover, &:focus {
         background-color: darken($white, 10%);
       }
-    }
-
-    &:hover, &:focus {
-      background-color: darken($blue, 10%);
     }
   }
 

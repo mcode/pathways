@@ -10,7 +10,9 @@ import {
   faCapsules,
   faSyringe,
   faMicroscope,
-  faPlay
+  faPlay,
+  faPlus,
+  faMinus
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -24,5 +26,7 @@ library.add(
   faCapsules,
   faSyringe,
   faMicroscope,
-  faPlay
+  faPlay,
+  faPlus,
+  faMinus
 );

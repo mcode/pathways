@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef, MutableRefObject } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
@@ -20,11 +20,14 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   const [windowWidth, setWindowWidth] = useState<number>(_windowWidth);
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
+  const parentWidth =
+    graphElement && graphElement.current && 'parentNode' in graphElement.current!
+      ? (graphElement.current! as any).parentNode.clientWidth
+      : 0;
+
   useEffect(() => {
-    if (graphElement && graphElement.current && 'parentNode' in graphElement.current!) {
-      setWindowWidth((graphElement.current! as any).parentNode.clientWidth);
-    }
-  });
+    if (parentWidth !== 0) setWindowWidth(parentWidth);
+  }, [parentWidth]);
 
   if (pathway === null) return <div>No Pathway Loaded</div>;
 

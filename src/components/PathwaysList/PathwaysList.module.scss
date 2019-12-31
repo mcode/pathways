@@ -95,30 +95,27 @@
 
             button {
                 font-size: 16px;
-                border: none;
                 padding: 10px;
                 margin-top: 25px;
-                color: $white;
-                background-color: $blue;
-                text-decoration: none;
-                text-transform: uppercase;
-                font-family: sans-serif;
-                font-weight: 600;
-                cursor: pointer;
-                text-align: center;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-
-                &:hover, &:focus {
-                    background-color: darken($blue, 10%);
-                }
             }
 
         }
 
         .pathway {
+            position: relative;
             width: calc(35% - 5px);
-            overflow: scroll;
+            overflow: hidden;
+
+            .controls {
+                position: absolute;
+                top: 20px;
+                right: 10px;
+                width: 20px;
+
+                svg {
+                    display: inline;
+                }
+            }
         }
     }
 

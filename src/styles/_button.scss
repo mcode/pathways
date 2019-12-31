@@ -1,14 +1,6 @@
-@import '../../styles/variables';
+@import 'variables';
 
-.dropdown {
-  display: inline-flex;
-  flex-direction: column;
-  width: 100%;
-
-  button {
-    padding: 5px 10px;
-    margin: 0 0 2px 5px;
-    float: right;
+.button {
     border: none;
     color: $white;
     background-color: $blue;
@@ -23,15 +15,4 @@
     &:hover, &:focus {
         background-color: darken($blue, 10%);
     }
-  }
-
-  label {
-    font-weight: 700;
-    font-size: 0.9em;
-    margin-bottom: 5px;
-  }
-
-  &.hidden {
-    display: none;
-  }
 }

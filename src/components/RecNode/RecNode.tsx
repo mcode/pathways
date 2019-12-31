@@ -3,7 +3,7 @@ import { GuidanceState } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './RecNode.module.scss';
-import nodeClasses from 'styles/index.module.scss';
+import indexClasses from 'styles/index.module.scss';
 
 interface RecNodeProps {
   pathwayState: GuidanceState;
@@ -19,7 +19,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       : resource.code.coding;
 
   return (
-    <div className={nodeClasses.recNode}>
+    <div className={indexClasses.recNode}>
       <table className={classes.infoTable}>
         <tbody>
           <tr>
@@ -51,12 +51,20 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
       </table>
       <form className={classes.commentsForm}>
         <label>Comments:</label>
-        <button onClick={(e): void => e.preventDefault()}>Use Default Text</button>
+        <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
+          Use Default Text
+        </button>
         <textarea className={classes.comments}></textarea>
-        <button className={classes.accept} onClick={(e): void => e.preventDefault()}>
+        <button
+          className={`${classes.accept} ${indexClasses.button}`}
+          onClick={(e): void => e.preventDefault()}
+        >
           Accept
         </button>
-        <button className={classes.decline} onClick={(e): void => e.preventDefault()}>
+        <button
+          className={`${classes.decline} ${indexClasses.button}`}
+          onClick={(e): void => e.preventDefault()}
+        >
           Decline
         </button>
       </form>

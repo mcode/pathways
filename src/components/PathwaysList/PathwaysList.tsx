@@ -3,6 +3,7 @@ import { Service } from 'pathways-objects';
 import { Pathway } from 'pathways-model';
 
 import classes from './PathwaysList.module.scss';
+import indexClasses from 'styles/index.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -117,10 +118,17 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
               </tr>
             </tbody>
           </table>
-          <button onClick={() => callback(pathway)}>Select Pathway</button>
+          <button className={indexClasses.button} onClick={() => callback(pathway)}>
+            Select Pathway
+          </button>
         </div>
         <div className={classes.pathway}>
           <Graph resources={resources} pathwayProp={pathway} />
+          <div className={classes.controls}>
+            <FontAwesomeIcon icon={'play'} />
+            <FontAwesomeIcon icon={'plus'} />
+            <FontAwesomeIcon icon={'minus'} />
+          </div>
         </div>
       </div>
     </div>
