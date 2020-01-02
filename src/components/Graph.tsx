@@ -20,14 +20,12 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   const [windowWidth, setWindowWidth] = useState<number>(_windowWidth);
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
-  const parentWidth =
-    graphElement && graphElement.current && 'parentNode' in graphElement.current!
+  useEffect(() => {
+    const parentWidth = graphElement.current
       ? (graphElement.current! as any).parentNode.clientWidth
       : 0;
-
-  useEffect(() => {
-    if (parentWidth !== 0) setWindowWidth(parentWidth);
-  }, [parentWidth]);
+    setWindowWidth(parentWidth);
+  }, []);
 
   if (pathway === null) return <div>No Pathway Loaded</div>;
 
@@ -73,16 +71,11 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
 };
 
 function useWindowWidth() {
-  function getWidth() {
-    return window.innerWidth;
-  }
-
+  const getWidth = () => window.innerWidth;
   const [windowWidth, setWindowWidth] = useState(getWidth);
 
   useEffect(() => {
-    function handleResize() {
-      setWindowWidth(getWidth());
-    }
+    const handleResize = () => setWindowWidth(getWidth);
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

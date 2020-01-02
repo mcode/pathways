@@ -40,17 +40,16 @@ const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) =
   }
 
   return (
-    <div>
+    <div className={classes.pathways_list}>
       {service.status === 'loading' ? (
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
         <div className={classes.container}>
-          <p>
-            <strong>Explore Pathways</strong>
-          </p>
-          <p>
-            <em>Select pathway below to view details</em>
-          </p>
+          <div className={classes.header_title}>
+            <div className={classes.header_title__header}>Explore Pathways</div>
+            <div className={classes.header_title__note}>Select pathway below to view details</div>
+          </div>
+
           {renderList(service.payload)}
         </div>
       ) : (
@@ -64,7 +63,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
-  const visibleClass = isVisible ? classes.vissible : classes.hidden;
   const chevron: IconProp = isVisible ? 'chevron-up' : 'chevron-down';
 
   function toggleVisible() {
@@ -81,56 +79,57 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
         }}
       >
         <div>{pathway.name}</div>
-        <div className={classes.expand}>
-          <FontAwesomeIcon icon={chevron} />
-        </div>
+        <div className={classes.expand}><FontAwesomeIcon icon={chevron} /></div>
         <div className={classes.numElements}>4</div>
       </div>
-      <div className={`${classes.infoContainer} ${visibleClass}`}>
-        <div className={classes.details}>
-          <p>{pathway.description}</p>
-          <table>
-            <tbody>
-              <tr>
-                <th></th>
-                <th>mCODE elements</th>
-                <th>patient elements</th>
-              </tr>
-              <tr>
-                <td>condition</td>
-                <td>breast cancer</td>
-                <td>breast cancer</td>
-              </tr>
-              <tr>
-                <td>stage</td>
-                <td>1a</td>
-                <td>1a</td>
-              </tr>
-              <tr>
-                <td>node status</td>
-                <td>N+/N0</td>
-                <td>N+</td>
-              </tr>
-              <tr>
-                <td>tumor size</td>
-                <td>any</td>
-                <td>2.5cm</td>
-              </tr>
-            </tbody>
-          </table>
-          <button className={indexClasses.button} onClick={() => callback(pathway)}>
-            Select Pathway
-          </button>
-        </div>
-        <div className={classes.pathway}>
-          <Graph resources={resources} pathwayProp={pathway} />
-          <div className={classes.controls}>
-            <FontAwesomeIcon icon={'play'} />
-            <FontAwesomeIcon icon={'plus'} />
-            <FontAwesomeIcon icon={'minus'} />
+
+      {isVisible && (
+        <div className={classes.infoContainer}>
+          <div className={classes.details}>
+            <p>{pathway.description}</p>
+            <table>
+              <tbody>
+                <tr>
+                  <th></th>
+                  <th>mCODE elements</th>
+                  <th>patient elements</th>
+                </tr>
+                <tr>
+                  <td>condition</td>
+                  <td>breast cancer</td>
+                  <td>breast cancer</td>
+                </tr>
+                <tr>
+                  <td>stage</td>
+                  <td>1a</td>
+                  <td>1a</td>
+                </tr>
+                <tr>
+                  <td>node status</td>
+                  <td>N+/N0</td>
+                  <td>N+</td>
+                </tr>
+                <tr>
+                  <td>tumor size</td>
+                  <td>any</td>
+                  <td>2.5cm</td>
+                </tr>
+              </tbody>
+            </table>
+            <button className={indexClasses.button} onClick={() => callback(pathway)}>
+              Select Pathway
+            </button>
+          </div>
+          <div className={classes.pathway}>
+            <Graph resources={resources} pathwayProp={pathway} />
+            <div className={classes.controls}>
+              <FontAwesomeIcon icon={'play'} />
+              <FontAwesomeIcon icon={'plus'} />
+              <FontAwesomeIcon icon={'minus'} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
