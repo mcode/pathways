@@ -70,16 +70,19 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
   }
 
   return (
-    <div className={classes['pathway-element']} key={pathway.name}>
+    <div className={classes['pathway-element']} role={'list'} key={pathway.name}>
       <div
         className={classes.title}
+        role={'listitem'}
         onClick={e => {
           pathwayCtx.setPathway(pathway, true);
           toggleVisible();
         }}
       >
         <div>{pathway.name}</div>
-        <div className={classes.expand}><FontAwesomeIcon icon={chevron} /></div>
+        <div className={classes.expand}>
+          <FontAwesomeIcon icon={chevron} />
+        </div>
         <div className={classes.numElements}>4</div>
       </div>
 

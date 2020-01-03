@@ -20,12 +20,13 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   const [windowWidth, setWindowWidth] = useState<number>(_windowWidth);
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
+  const parentWidth = graphElement.current
+    ? (graphElement.current! as any).parentNode.clientWidth
+    : 0;
+
   useEffect(() => {
-    const parentWidth = graphElement.current
-      ? (graphElement.current! as any).parentNode.clientWidth
-      : 0;
     setWindowWidth(parentWidth);
-  }, []);
+  }, [parentWidth]);
 
   if (pathway === null) return <div>No Pathway Loaded</div>;
 

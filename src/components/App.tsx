@@ -23,7 +23,6 @@ const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<any>>([]);
   const [pathway, setPathway] = useState<Pathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
-  const [isRendered, setIsRendered] = useState<boolean>(false);
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<any>) => {
@@ -45,7 +44,6 @@ const App: FC<AppProps> = ({ client }) => {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
     setPathway(value);
-    setIsRendered(false);
   }
 
   function renderPatientView() {
@@ -64,9 +62,7 @@ const App: FC<AppProps> = ({ client }) => {
         <PathwayProvider
           pathwayCtx={{
             pathway: pathway,
-            isRendered: isRendered,
-            setPathway: setPathwayCallback,
-            setIsRendered: setIsRendered
+            setPathway: setPathwayCallback
           }}
         >
           <div>
