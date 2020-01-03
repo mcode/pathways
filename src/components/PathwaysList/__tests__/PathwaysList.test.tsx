@@ -52,7 +52,7 @@ describe('<PathwaysList />', () => {
     expect(getByText('ERROR')).toBeVisible();
   });
 
-  it('responds to click events with pathway', async () => {
+  it('responds to click events with pathway', () => {
     let value = '';
     function setValue(text: string) {
       value = text;
@@ -66,14 +66,12 @@ describe('<PathwaysList />', () => {
         resources={[]}
       />
     );
-    getAllByRole(container, 'listitem').forEach(async node => {
+    getAllByRole(container, 'listitem').forEach(node => {
       fireEvent.click(node);
-      await wait();
-      console.log(prettyDOM(node));
-      // getByText(node, 'SELECT PATHWAY');
-      // expect(node.innerHTML).toContain(value);
     });
-    console.log(prettyDOM(container));
-    getAllByText(container, 'Select Pathway');
+    getAllByText(container, 'Select Pathway').forEach(button => {
+      fireEvent.click(button);
+      expect(value !== '').toBeTruthy();
+    });
   });
 });
