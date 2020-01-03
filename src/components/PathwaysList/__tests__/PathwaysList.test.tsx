@@ -1,5 +1,12 @@
 import React from 'react';
-import { render, fireEvent, getByRole, getByText } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  prettyDOM,
+  getAllByRole,
+  getAllByText,
+  wait
+} from '@testing-library/react';
 import PathwaysList from 'components/PathwaysList';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
@@ -45,12 +52,12 @@ describe('<PathwaysList />', () => {
     expect(getByText('ERROR')).toBeVisible();
   });
 
-  it('responds to click events with pathway', () => {
+  it('responds to click events with pathway', async () => {
     let value = '';
     function setValue(text: string) {
       value = text;
     }
-    const component = render(
+    const { container } = render(
       <PathwaysList
         callback={(pathway: Pathway) => {
           setValue(pathway.name);
@@ -59,12 +66,14 @@ describe('<PathwaysList />', () => {
         resources={[]}
       />
     );
-    component.getAllByRole('listitem').forEach(node => {
+    getAllByRole(container, 'listitem').forEach(async node => {
       fireEvent.click(node);
-      // TODO: Fix this test so it expands the node and then
-      // clicks on the "Select Pathway" button
+      await wait();
+      console.log(prettyDOM(node));
       // getByText(node, 'SELECT PATHWAY');
       // expect(node.innerHTML).toContain(value);
     });
+    console.log(prettyDOM(container));
+    getAllByText(container, 'Select Pathway');
   });
 });
