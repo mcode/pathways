@@ -2,7 +2,6 @@ import React, { FC, useCallback } from 'react';
 import Select from 'react-select';
 
 import classes from './DropDown.module.scss';
-// import indexClasses from 'styles/index.module.scss';
 import { Option } from 'option';
 
 interface Props {
@@ -31,31 +30,30 @@ const DropDown: FC<Props> = ({
     [onChange]
   );
 
-  const hiddenClass = visible ? '' : classes.hidden;
-
-  return (
-    <div className={`${classes.dropdown} ${hiddenClass}`}>
-      <div>
-        <label htmlFor={id}>{label}</label>
-        <button
-          // className={indexClasses.btn1}
-          onClick={() => {
-            setSelectPathway(true);
-          }}
-        >
-          Explore Pathways
-        </button>
+  if (visible)
+    return (
+      <div className={classes.dropdown}>
+        <div>
+          <label htmlFor={id}>{label}</label>
+          <button
+            onClick={() => {
+              setSelectPathway(true);
+            }}
+          >
+            Explore Pathways
+          </button>
+        </div>
+        <Select
+          classNamePrefix="DropDown"
+          inputId={id}
+          value={selectedValue}
+          onChange={onChangeCallback}
+          options={options}
+          aria-label={label}
+        />
       </div>
-      <Select
-        classNamePrefix="DropDown"
-        inputId={id}
-        value={selectedValue}
-        onChange={onChangeCallback}
-        options={options}
-        aria-label={label}
-      />
-    </div>
-  );
+    );
+  else return <div></div>;
 };
 
 export default DropDown;

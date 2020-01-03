@@ -13,11 +13,10 @@ interface GraphProps {
 
 const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   const graphElement = useRef(null);
-  const _windowWidth = useWindowWidth();
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayProp !== undefined ? pathwayProp : pathwayCtx.pathway;
   const [path, setPath] = useState<string[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(_windowWidth);
+  const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
   const parentWidth = graphElement.current
