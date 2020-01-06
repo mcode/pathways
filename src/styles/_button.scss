@@ -9,8 +9,7 @@
     font-weight: 600;
     cursor: pointer;
     text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
 
     &:hover, &:focus {
         background-color: darken($blue, 10%);
