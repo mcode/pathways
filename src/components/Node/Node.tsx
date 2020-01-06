@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { GuidanceState, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -36,16 +36,21 @@ const Node: FC<NodeProps> = ({
   const nodeExpandedClass = isCurrentNode ? nodeClasses.expanded : '';
   const currentNodeClass = isCurrentNode ? classes.current : '';
 
+  const [expanded, setExpanded] = useState<boolean>(false);
+
   return (
     <div
       className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass} ${currentNodeClass}`}
       style={style}
+      onClick={(): void => setExpanded(!expanded)}
     >
       <div className={nodeClasses.nodeTitle}>
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {isGuidanceState(pathwayState) && <RecNode pathwayState={pathwayState as GuidanceState} />}
+      {isGuidanceState(pathwayState) && expanded && (
+        <RecNode pathwayState={pathwayState as GuidanceState} />
+      )}
     </div>
   );
 };
