@@ -14,7 +14,7 @@ function typedFetch<T>(url: string, options?: object): Promise<T> {
   return fetch(url, options).then(response => response.json() as Promise<T>);
 }
 
-const useGetPathwaysService = (url: string) => {
+const useGetPathwaysService = (url: string): Service<Pathway[]> => {
   const [result, setResult] = useState<Service<Array<Pathway>>>({
     status: 'loading'
   });

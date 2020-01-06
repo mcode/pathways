@@ -36,7 +36,7 @@ const DropDown: FC<Props> = ({
         <div>
           <label htmlFor={id}>{label}</label>
           <button
-            onClick={() => {
+            onClick={(): void => {
               setSelectPathway(true);
             }}
           >

@@ -5,17 +5,21 @@ import MockedPatientProvider from 'testUtils/MockedPatientProvider';
 import MockedPathwayProvider from 'testUtils/MockedPathwayProvider';
 import { loadedService } from './services';
 
-const MockedNavigation: FC = ({}) => {
+const MockedNavigation: FC = () => {
   const [pathway, setPathway] = useState<Pathway | null>(null);
 
-  function setPathwayCallback(value: Pathway | null, selectPathway: boolean = false) {
+  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
     if (value !== null) setPathway(value);
   }
 
   return (
     <MockedPatientProvider>
       <MockedPathwayProvider pathwayCtx={{ pathway: pathway, setPathway: setPathwayCallback }}>
-        <Navigation selectPathway={false} service={loadedService} setSelectPathway={() => {}} />
+        <Navigation
+          selectPathway={false}
+          service={loadedService}
+          setSelectPathway={(): void => {}}
+        />
       </MockedPathwayProvider>
     </MockedPatientProvider>
   );

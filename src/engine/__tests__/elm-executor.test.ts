@@ -6,7 +6,7 @@ import t0Patient from './fixtures/patients/T0_patient.json';
 import t1Patient from './fixtures/patients/T1_patient.json';
 import tripleNegativePatient from './fixtures/patients/triple_negative.json';
 
-const compareResults = (result, expectedResult) => {
+const compareResults = (result, expectedResult): void => {
   // expectedResult is of form:
   // { 'T = T1': 0,
   //   'N = N0': 0,

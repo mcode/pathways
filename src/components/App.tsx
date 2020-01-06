@@ -46,7 +46,7 @@ const App: FC<AppProps> = ({ client }) => {
     setPathway(value);
   }
 
-  function renderPatientView() {
+  function renderPatientView(): JSX.Element {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>

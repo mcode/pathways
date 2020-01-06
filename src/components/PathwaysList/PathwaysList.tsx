@@ -65,7 +65,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
 
   const chevron: IconProp = isVisible ? 'chevron-up' : 'chevron-down';
 
-  function toggleVisible() {
+  function toggleVisible(): void {
     setIsVisible(!isVisible);
   }
 
@@ -74,7 +74,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
       <div
         className={classes.title}
         role={'listitem'}
-        onClick={e => {
+        onClick={(e): void => {
           pathwayCtx.setPathway(pathway, true);
           toggleVisible();
         }}
@@ -119,7 +119,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
                 </tr>
               </tbody>
             </table>
-            <button className={indexClasses.button} onClick={() => callback(pathway)}>
+            <button className={indexClasses.button} onClick={(): any => callback(pathway)}>
               Select Pathway
             </button>
           </div>

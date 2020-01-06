@@ -5,6 +5,7 @@ import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
 import { Pathway } from 'pathways-model';
+import { Coordinates } from 'graph-model';
 
 interface GraphProps {
   pathwayProp?: Pathway | null;
@@ -30,7 +31,7 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   if (pathway === null) return <div>No Pathway Loaded</div>;
 
   // Get the layout of the graph
-  const getGraphLayout = () => {
+  const getGraphLayout = (): Coordinates => {
     return graphLayout(pathway);
   };
 
@@ -70,15 +71,15 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
   );
 };
 
-function useWindowWidth() {
-  const getWidth = () => window.innerWidth;
+function useWindowWidth(): number {
+  const getWidth = (): number => window.innerWidth;
   const [windowWidth, setWindowWidth] = useState(getWidth);
 
   useEffect(() => {
-    const handleResize = () => setWindowWidth(getWidth);
+    const handleResize = (): void => setWindowWidth(getWidth);
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return (): void => window.removeEventListener('resize', handleResize);
   }, []); // Empty array ensures that effect is only run on mount and unmount
 
   return windowWidth;

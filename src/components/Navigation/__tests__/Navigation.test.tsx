@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, RenderResult } from '@testing-library/react';
 import MockedNavigation from 'testUtils/MockedNavigation';
 
 describe('<Navigation />', () => {
-  const renderComponent = () => render(<MockedNavigation />);
+  const renderComponent = (): RenderResult => render(<MockedNavigation />);
 
   it('can select a pathway', () => {
     const { getByLabelText, getByText, getAllByText } = renderComponent();

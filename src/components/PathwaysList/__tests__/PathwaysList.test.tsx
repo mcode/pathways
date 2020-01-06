@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  render,
-  fireEvent,
-  prettyDOM,
-  getAllByRole,
-  getAllByText,
-  wait
-} from '@testing-library/react';
+import { render, fireEvent, getAllByRole, getAllByText } from '@testing-library/react';
 import PathwaysList from 'components/PathwaysList';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
@@ -16,7 +9,7 @@ describe('<PathwaysList />', () => {
   it('renders loading screen', () => {
     const { getByText } = render(
       <PathwaysList
-        callback={() => {
+        callback={(): void => {
           return;
         }}
         service={loadingService}
@@ -29,7 +22,7 @@ describe('<PathwaysList />', () => {
   it('renders list of pathways', () => {
     const { getAllByText } = render(
       <PathwaysList
-        callback={() => {
+        callback={(): void => {
           return;
         }}
         service={loadedService}
@@ -42,7 +35,7 @@ describe('<PathwaysList />', () => {
   it('renders error', () => {
     const { getByText } = render(
       <PathwaysList
-        callback={() => {
+        callback={(): void => {
           return;
         }}
         service={errorService}
@@ -54,12 +47,12 @@ describe('<PathwaysList />', () => {
 
   it('responds to click events with pathway', () => {
     let value = '';
-    function setValue(text: string) {
+    function setValue(text: string): void {
       value = text;
     }
     const { container } = render(
       <PathwaysList
-        callback={(pathway: Pathway) => {
+        callback={(pathway: Pathway): void => {
           setValue(pathway.name);
         }}
         service={loadedService}

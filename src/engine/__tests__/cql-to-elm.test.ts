@@ -68,7 +68,7 @@ describe('cql-to-elm', () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         headers: {
-          get: (s: string) => testHeader
+          get: (s: string): string => testHeader
         },
         text: () => Promise.resolve(testResponse)
       })
