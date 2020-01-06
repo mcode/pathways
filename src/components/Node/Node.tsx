@@ -45,9 +45,7 @@ const Node: FC<NodeProps> = ({
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {isGuidanceState(pathwayState) ? (
-        <RecNode pathwayState={pathwayState as GuidanceState} />
-      ) : null}
+      {isGuidanceState(pathwayState) && <RecNode pathwayState={pathwayState as GuidanceState} />}
     </div>
   );
 };
