@@ -40,7 +40,7 @@ const App: FC<AppProps> = ({ client }) => {
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null, selectPathway: boolean = false): void {
+  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
     setPathway(value);
