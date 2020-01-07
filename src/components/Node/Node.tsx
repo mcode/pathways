@@ -33,14 +33,13 @@ const Node: FC<NodeProps> = ({
   };
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
-  const nodeExpandedClass = isCurrentNode ? nodeClasses.expanded : '';
   const currentNodeClass = isCurrentNode ? classes.current : '';
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
   return (
     <div
-      className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass} ${currentNodeClass}`}
+      className={`${classes.node} ${backgroundColorClass} ${nodeClasses.expanded} ${currentNodeClass}`}
       style={style}
       onClick={(): void => setExpanded(!expanded)}
     >
