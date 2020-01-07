@@ -31,6 +31,8 @@ declare module 'graph-model' {
   }
 
   export interface Edge {
+    start: string;
+    end: string;
     points: Array<Coordinate>;
   }
 

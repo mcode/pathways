@@ -79,9 +79,15 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   g.edges().forEach(e => {
     const edge = g.edge(e);
     const edgeName = `${e.v}, ${e.w}`;
+
     edges[edgeName] = {
+      start: e.v,
+      end: e.w,
       points: edge.points.map(p => {
-        return { x: p.x + startNodeShift, y: p.y };
+        return {
+          x: p.x - startNodeShift,
+          y: p.y
+        };
       })
     };
   });

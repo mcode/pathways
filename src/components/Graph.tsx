@@ -135,7 +135,7 @@ const Graph: FC<GraphProps> = ({
         style={{
           position: 'absolute',
           width: windowWidth,
-          height: maxHeight + 150,
+          height: maxHeight + 50,
           transition: 'all 2s linear',
           zIndex: 1,
           top: 0,
@@ -144,8 +144,18 @@ const Graph: FC<GraphProps> = ({
         }}
       >
         {edges !== undefined
-          ? Object.keys(edges).map(edge => {
-              return <Arrow key={edge} edge={edges[edge]} widthOffset={windowWidth / 2} />;
+          ? Object.keys(edges).map(edgeName => {
+              const edge = edges[edgeName];
+
+              return (
+                <Arrow
+                  key={edgeName}
+                  edge={edge}
+                  edgeName={edgeName}
+                  isOnPatientPath={path.includes(edge.start) && path.includes(edge.end)}
+                  widthOffset={windowWidth / 2}
+                />
+              );
             })
           : []}
       </svg>
