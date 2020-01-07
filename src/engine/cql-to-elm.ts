@@ -31,19 +31,25 @@ export default function convertCQL(cql: CqlObject): Promise<ElmObject> {
     const header = elm.headers.get('content-type');
     let boundary = '';
     if (header) {
-      const result = header.match(/(?<=boundary=)Boundary.*/g);
-      boundary = result ? `--${result[0]}` : '';
+      // sample header= "multipart/form-data;boundary=Boundary_1"
+      // get the part after "boundary=" and before any subsequent ;
+      const boundaryRegex = /.*;boundary=(Boundary.*);?.*/g;
+      const result = boundaryRegex.exec(header);
+      boundary = result ? `--${result[1]}` : '';
     }
     const obj: ElmObject = { main: {}, libraries: {} };
     return elm.text().then(text => {
       const elms = text.split(boundary).reduce((oldArray, line, i) => {
-        const x = line.match(/(?<=Content-Type[^]+Content-Disposition.*[\r\n]+)[^]+/g);
-        if (x) {
-          const elmName = line.match(/(?<=name=").+(?=")/g);
-          if (elmName && elmName[0] === 'main') {
-            oldArray[elmName[0]] = JSON.parse(x[0]);
+        const bodyRegex = /(\{[^]*\})/;
+        // eveything between { } including newlines. [^] is like . but matches newline
+        const body = bodyRegex.exec(line);
+        if (body) {
+          const nameRegex = /Content-Disposition: form-data; name="([^"]+)"/;
+          const elmName = nameRegex.exec(line);
+          if (elmName && elmName[1] === 'main') {
+            oldArray[elmName[1]] = JSON.parse(body[1]);
           } else if (elmName) {
-            oldArray.libraries[elmName[0]] = JSON.parse(x[0]);
+            oldArray.libraries[elmName[1]] = JSON.parse(body[1]);
           }
         }
         return oldArray;

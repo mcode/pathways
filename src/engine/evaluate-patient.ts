@@ -60,9 +60,10 @@ export default function evaluatePatientOnPathway(
 
 // example function that would gather library CQL files
 function gatherCQL(cql: string): Promise<Library> {
-  const lib = cql.match(/(?<=include .* called ).*(?=\n)/g);
+  const libRegex = /include (.*) called/g;
+  const lib = libRegex.exec(cql);
   if (lib) {
-    return getFixture(`${lib[0]}.cql`).then(result => {
+    return getFixture(`${lib[1]}.cql`).then(result => {
       return new Promise(function(resolve, reject): void {
         setTimeout(function() {
           resolve({ FHIRHelpers: result });
