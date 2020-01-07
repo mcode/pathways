@@ -39,7 +39,8 @@ const Node: FC<NodeProps> = ({
 
   return (
     <div
-      className={`${classes.node} ${backgroundColorClass} ${nodeClasses.expanded} ${currentNodeClass}`}
+      className={`${classes.node} ${backgroundColorClass} ${expanded &&
+        nodeClasses.expanded} ${currentNodeClass}`}
       style={style}
       onClick={(): void => setExpanded(!expanded)}
     >
