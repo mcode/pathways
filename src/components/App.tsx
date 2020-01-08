@@ -11,7 +11,6 @@ import PatientRecord from './PatientRecord/PatientRecord';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
-import PathwaysDisplay from 'components/PathwaysDisplay';
 import { PathwayProvider } from './PathwayProvider';
 import { Pathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
@@ -41,41 +40,49 @@ const App: FC<AppProps> = ({ client }) => {
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null): void {
-    setSelectPathway(false);
+  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
+    window.scrollTo(0, 0);
+    setSelectPathway(selectPathway);
     setPathway(value);
   }
 
-  function renderPatientView() {
+  function renderPatientView(): JSX.Element {
     return (
-      <PathwayProvider pathway={pathway}>
+      <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        <PathwaysDisplay />
-        <button
-          onClick={() => {
-            setSelectPathway(true);
-          }}
-        >
-          Explore Pathways
-        </button>
         <Graph resources={patientRecords} />
         <PatientRecord resources={patientRecords} />
-      </PathwayProvider>
+      </div>
     );
   }
 
   return (
     <FHIRClientProvider client={client}>
       <PatientProvider>
-        <div>
-          <Header logo={logo} title={config.get('appName', 'SMART App')} />
-          <Navigation />
-        </div>
-        {selectPathway ? (
-          <PathwaysList callback={setPathwayCallback} service={service}></PathwaysList>
-        ) : (
-          renderPatientView()
-        )}
+        <PathwayProvider
+          pathwayCtx={{
+            pathway: pathway,
+            setPathway: setPathwayCallback
+          }}
+        >
+          <div>
+            <Header logo={logo} title={config.get('appName', 'SMART App')} />
+            <Navigation
+              service={service}
+              selectPathway={selectPathway}
+              setSelectPathway={setSelectPathway}
+            />
+          </div>
+          {selectPathway ? (
+            <PathwaysList
+              callback={setPathwayCallback}
+              service={service}
+              resources={patientRecords}
+            ></PathwaysList>
+          ) : (
+            renderPatientView()
+          )}
+        </PathwayProvider>
       </PatientProvider>
     </FHIRClientProvider>
   );

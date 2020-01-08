@@ -90,4 +90,9 @@ declare module 'pathways-model' {
     status: string;
     state: string;
   }
+
+  export interface PathwayContextInterface {
+    pathway: Pathway | null;
+    setPathway: (pathway: Pathway | null, selectPathway?: boolean) => void;
+  }
 }

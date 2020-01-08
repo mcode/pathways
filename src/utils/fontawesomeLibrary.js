@@ -1,6 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faChevronLeft,
+  faChevronDown,
+  faChevronUp,
   faCog,
   faUserCircle,
   faExternalLinkAlt,
@@ -8,11 +10,15 @@ import {
   faCapsules,
   faSyringe,
   faMicroscope,
-  faPlay
+  faPlay,
+  faPlus,
+  faMinus
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
   faChevronLeft,
+  faChevronDown,
+  faChevronUp,
   faCog,
   faUserCircle,
   faExternalLinkAlt,
@@ -20,5 +26,7 @@ library.add(
   faCapsules,
   faSyringe,
   faMicroscope,
-  faPlay
+  faPlay,
+  faPlus,
+  faMinus
 );

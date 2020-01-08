@@ -1,15 +1,18 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react';
-import { Pathway } from 'pathways-model';
+import { PathwayContextInterface } from 'pathways-model';
 
 interface PathwayProviderProps {
   children: ReactNode;
-  pathway: Pathway | null;
+  pathwayCtx: PathwayContextInterface;
 }
 
-export const PathwayContext = createContext<Pathway | null>(null);
+export const PathwayContext = createContext<PathwayContextInterface>({
+  pathway: null,
+  setPathway: () => {}
+});
 
-export const PathwayProvider: FC<PathwayProviderProps> = ({ children, pathway }) => {
-  return <PathwayContext.Provider value={pathway}>{children}</PathwayContext.Provider>;
+export const PathwayProvider: FC<PathwayProviderProps> = ({ children, pathwayCtx }) => {
+  return <PathwayContext.Provider value={pathwayCtx}>{children}</PathwayContext.Provider>;
 };
 
-export const usePathwayContext = (): any => useContext(PathwayContext);
+export const usePathwayContext = (): PathwayContextInterface => useContext(PathwayContext);

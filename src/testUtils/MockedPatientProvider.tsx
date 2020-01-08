@@ -3,7 +3,7 @@ import { PatientContext } from 'components/PatientProvider';
 
 interface PatientProviderProps {
   children: ReactNode;
-  patient: any; // fhir.Patient | null;
+  patient?: any; // fhir.Patient | null;
 }
 
 export const mockedPatient = {

@@ -13,7 +13,10 @@ export const loadedService: Service<Array<Pathway>> = {
       description: 'test1',
       library: 'test.cql',
       states: {
-        test: 'okay'
+        Start: {
+          label: 'Start',
+          transitions: []
+        }
       }
     },
     {
@@ -21,7 +24,10 @@ export const loadedService: Service<Array<Pathway>> = {
       description: 'test2',
       library: 'test.cql',
       states: {
-        test: 'okay'
+        Start: {
+          label: 'Start',
+          transitions: []
+        }
       }
     },
     {
@@ -29,7 +35,10 @@ export const loadedService: Service<Array<Pathway>> = {
       description: 'test3',
       library: 'test.cql',
       states: {
-        test: 'okay'
+        Start: {
+          label: 'Start',
+          transitions: []
+        }
       }
     }
   ]

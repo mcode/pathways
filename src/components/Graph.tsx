@@ -1,28 +1,47 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
+import { Pathway } from 'pathways-model';
+import { Coordinates } from 'graph-model';
 
 interface GraphProps {
+  pathwayProp?: Pathway | null;
   resources: Array<any>;
 }
 
-const Graph: FC<GraphProps> = ({ resources }) => {
-  const windowWidth = useWindowWidth();
-  const pathway = usePathwayContext();
+const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
+  const graphElement = useRef(null);
+  const pathwayCtx = usePathwayContext();
+  const pathway = pathwayProp !== undefined ? pathwayProp : pathwayCtx.pathway;
   const [path, setPath] = useState<string[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
+  const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
+
+  const parentWidth = graphElement.current
+    ? (graphElement.current! as any).parentNode.clientWidth
+    : 0;
+
+  useEffect(() => {
+    setWindowWidth(parentWidth);
+  }, [parentWidth]);
+
+  if (pathway === null) return <div>No Pathway Loaded</div>;
 
   // Get the layout of the graph
-  const getGraphLayout = () => {
+  const getGraphLayout = (): Coordinates => {
     return graphLayout(pathway);
   };
 
-  // Create a fake Bundle for the CQL engine
+  // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
   const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
-  if (path.length === 0 && patient.entry.length > 0)
-    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => setPath(pathwayResults.path));
+  if ((renderedPathway === null || renderedPathway !== pathway.name) && patient.entry.length > 0)
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
+      setPath(pathwayResults.path);
+      setRenderedPathway(pathway.name);
+    });
 
   const layout = getGraphLayout();
   const maxHeight: number =
@@ -33,7 +52,7 @@ const Graph: FC<GraphProps> = ({ resources }) => {
       : 0;
 
   return (
-    <div style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
+    <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
         ? Object.keys(layout).map(key => {
             return (
@@ -52,20 +71,15 @@ const Graph: FC<GraphProps> = ({ resources }) => {
   );
 };
 
-function useWindowWidth() {
-  function getWidth() {
-    return window.innerWidth;
-  }
-
+function useWindowWidth(): number {
+  const getWidth = (): number => window.innerWidth;
   const [windowWidth, setWindowWidth] = useState(getWidth);
 
   useEffect(() => {
-    function handleResize() {
-      setWindowWidth(getWidth());
-    }
+    const handleResize = (): void => setWindowWidth(getWidth);
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return (): void => window.removeEventListener('resize', handleResize);
   }, []); // Empty array ensures that effect is only run on mount and unmount
 
   return windowWidth;

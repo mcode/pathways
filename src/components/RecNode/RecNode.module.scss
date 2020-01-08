@@ -12,47 +12,48 @@
 .desc {
   padding-left: 15px;
   font-style: italic;
+
+  .externalLink {
+    color: $blue;
+    margin-left: 8px;
+  }
+
+  .externalLink:hover, .externalLink:focus {
+    color: darken($blue, 10%);
+  }
 }
 
 .commentsForm {
   margin-top: 15px;
-}
 
-.commentsForm {
   label {
     font-weight: bold;
   }
 
   button {
-    border: none;
     padding: 5px 10px;
     margin: 0 0 2px 5px;
     float: right;
-    color: $white;
-    background-color: $blue;
-    text-decoration: none;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+
+    &.accept {
+      font-size: 18px;
+      min-width: 120px;
+      padding: 10px;
+    }
+
+    &.decline {
+      font-size: 18px;
+      min-width: 120px;
+      padding: 10px;
+      color: $red;
+      background-color: $white;
+
+      &:hover, &:focus {
+        background-color: darken($white, 10%);
+      }
+    }
   }
 
-  .acceptButton {
-    font-size: 18px;
-    min-width: 120px;
-    padding: 10px;
-  }
-
-  .declineButton {
-    font-size: 18px;
-    min-width: 120px;
-    padding: 10px;
-    color: $red;
-    background-color: $white;
-  }
 }
 
 .comments {
@@ -64,8 +65,3 @@
   border: none;
 }
 
-
-.externalLink {
-  color: $blue;
-  margin-left: 8px;
-}
