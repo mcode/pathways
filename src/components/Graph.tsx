@@ -32,8 +32,8 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) =
   if (pathway === null) return <div>No Pathway Loaded</div>;
 
   // Get the layout of the graph
-  const getGraphLayout = (): Coordinates => {
-    return graphLayout(pathway);
+  const getGraphLayout = (expandedNodes: Array<string>): Coordinates => {
+    return graphLayout(pathway, expandedNodes);
   };
 
   // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
@@ -43,8 +43,9 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) =
       setPath(pathwayResults.path);
       setRenderedPathway(pathway.name);
     });
-
-  const layout = getGraphLayout();
+  
+  const currentNode = path[path.length - 1];
+  const layout = getGraphLayout([currentNode]);
   const maxHeight: number =
     layout !== undefined
       ? Object.values(layout)

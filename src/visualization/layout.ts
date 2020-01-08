@@ -14,15 +14,15 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  *
  * @param pathway - JSON pathway
  */
-export default function layout(pathway: Pathway): Coordinates {
-  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway) : layoutCustom(pathway);
+export default function layout(pathway: Pathway, expandedNodes: Array<string>): Coordinates {
+  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway, expandedNodes) : layoutCustom(pathway);
 }
 
 /**
  * Layout the pathway using the Dagre layout engine.
  * @see {@link https://github.com/dagrejs/dagre}
  */
-function layoutDagre(pathway: Pathway): Coordinates {
+function layoutDagre(pathway: Pathway, expandedNodes: Array<string>): Coordinates {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
@@ -34,11 +34,22 @@ function layoutDagre(pathway: Pathway): Coordinates {
 
   nodeNames.forEach(stateName => {
     const state: State = pathway.states[stateName];
-    g.setNode(stateName, {
-      label: state.label,
-      width: state.label.length * NODE_WIDTH_FACTOR,
-      height: NODE_HEIGHT
-    });
+    const expanded = expandedNodes.includes(stateName);
+
+    if (expanded) {
+      g.setNode(stateName, {
+        label: state.label,
+        width: 400,
+        height: 450
+      });
+    } else {
+      g.setNode(stateName, {
+        label: state.label,
+        width: state.label.length * NODE_WIDTH_FACTOR,
+        height: NODE_HEIGHT
+      });
+    }
+
     state.transitions.forEach(transition => {
       g.setEdge(stateName, transition.transition);
     });
