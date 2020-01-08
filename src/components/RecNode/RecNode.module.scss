@@ -2,16 +2,20 @@
 
 .infoTable {
   border-spacing: 10px;
+  table-layout: fixed;
+  width: 100%;
 }
 
 .descTitle {
   font-weight: bold;
   text-align: right;
+  width: 20%;
 }
 
 .desc {
   padding-left: 15px;
   font-style: italic;
+  overflow-wrap: break-word;
 
   .externalLink {
     color: $blue;
