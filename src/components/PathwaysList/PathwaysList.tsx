@@ -124,7 +124,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
             </button>
           </div>
           <div className={classes.pathway}>
-            <Graph resources={resources} pathwayProp={pathway} />
+            <Graph resources={resources} pathwayProp={pathway} interactive={false} />
             <div className={classes.controls}>
               <FontAwesomeIcon icon={'play'} />
               <FontAwesomeIcon icon={'plus'} />

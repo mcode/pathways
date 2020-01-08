@@ -13,6 +13,7 @@ interface NodeProps {
   isCurrentNode: boolean;
   xCoordinate: number;
   yCoordinate: number;
+  interactive?: boolean;
 }
 
 interface NodeIconProps {
@@ -24,7 +25,8 @@ const Node: FC<NodeProps> = ({
   isOnPatientPath,
   isCurrentNode,
   xCoordinate,
-  yCoordinate
+  yCoordinate,
+  interactive = true
 }) => {
   const { label } = pathwayState;
   const style = {
@@ -36,9 +38,10 @@ const Node: FC<NodeProps> = ({
   const currentNodeClass = isCurrentNode ? classes.current : '';
 
   const [expanded, setExpanded] = useState<boolean>(false);
+  const onClickHandler = interactive ? () => setExpanded(!expanded) : () => {};
 
   useEffect(() => {
-    setExpanded(isCurrentNode)
+    setExpanded(isCurrentNode);
   }, [isCurrentNode]);
 
   return (
@@ -46,7 +49,7 @@ const Node: FC<NodeProps> = ({
       className={`${classes.node} ${backgroundColorClass} ${expanded &&
         nodeClasses.expanded} ${currentNodeClass}`}
       style={style}
-      onClick={(): void => setExpanded(!expanded)}
+      onClick={onClickHandler}
     >
       <div className={nodeClasses.nodeTitle}>
         <NodeIcon pathwayState={pathwayState} />

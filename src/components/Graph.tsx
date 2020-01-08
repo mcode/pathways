@@ -10,9 +10,10 @@ import { Coordinates } from 'graph-model';
 interface GraphProps {
   pathwayProp?: Pathway | null;
   resources: Array<any>;
+  interactive?: boolean;
 }
 
-const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
+const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) => {
   const graphElement = useRef(null);
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayProp !== undefined ? pathwayProp : pathwayCtx.pathway;
@@ -63,6 +64,7 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp }) => {
                 isCurrentNode={path[path.length - 1] === key}
                 xCoordinate={layout[key].x + windowWidth / 2}
                 yCoordinate={layout[key].y}
+                interactive={interactive}
               />
             );
           })
