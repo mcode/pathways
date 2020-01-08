@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { GuidanceState, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -36,6 +36,10 @@ const Node: FC<NodeProps> = ({
   const currentNodeClass = isCurrentNode ? classes.current : '';
 
   const [expanded, setExpanded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setExpanded(isCurrentNode)
+  }, [isCurrentNode]);
 
   return (
     <div
