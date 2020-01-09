@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 
 import { Pathway, State } from 'pathways-model';
-import { Node, Nodes, Coordinates } from 'graph-model';
+import { Node, Nodes, Coordinates, ExpandedNodes } from 'graph-model';
 
 import dagre from 'dagre';
 
@@ -14,7 +14,7 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  *
  * @param pathway - JSON pathway
  */
-export default function layout(pathway: Pathway, expandedNodes: Array<string>): Coordinates {
+export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
   return graphLayoutProvider === 'dagre'
     ? layoutDagre(pathway, expandedNodes)
     : layoutCustom(pathway);
@@ -24,7 +24,7 @@ export default function layout(pathway: Pathway, expandedNodes: Array<string>): 
  * Layout the pathway using the Dagre layout engine.
  * @see {@link https://github.com/dagrejs/dagre}
  */
-function layoutDagre(pathway: Pathway, expandedNodes: Array<string>): Coordinates {
+function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
@@ -36,13 +36,13 @@ function layoutDagre(pathway: Pathway, expandedNodes: Array<string>): Coordinate
 
   nodeNames.forEach(stateName => {
     const state: State = pathway.states[stateName];
-    const expanded = expandedNodes.includes(stateName);
+    const expanded = expandedNodes[stateName];
 
     if (expanded) {
       g.setNode(stateName, {
         label: state.label,
-        width: 400,
-        height: 450
+        width: expanded.width,
+        height: expanded.height
       });
     } else {
       g.setNode(stateName, {

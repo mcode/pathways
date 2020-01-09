@@ -18,4 +18,11 @@ declare module 'graph-model' {
       y: number;
     };
   }
+
+  export interface ExpandedNodes {
+    [key: string]: {
+      width: number;
+      height: number;
+    };
+  }
 }

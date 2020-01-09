@@ -5,7 +5,7 @@ import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
 import { usePathwayContext } from './PathwayProvider';
 import { Pathway } from 'pathways-model';
-import { Coordinates } from 'graph-model';
+import { Coordinates, ExpandedNodes } from 'graph-model';
 
 interface GraphProps {
   pathway: Pathway;
@@ -34,7 +34,7 @@ const Graph: FC<GraphProps> = ({
   }, [parentWidth]);
 
   // Get the layout of the graph
-  const getGraphLayout = (expandedNodes: Array<string>): Coordinates => {
+  const getGraphLayout = (expandedNodes: ExpandedNodes): Coordinates => {
     return graphLayout(pathway, expandedNodes);
   };
 
@@ -48,7 +48,9 @@ const Graph: FC<GraphProps> = ({
 
   const currentNode = path[path.length - 1];
 
-  const [layout, setLayout] = useState(getGraphLayout([currentNode]))
+  const expandedNodes: ExpandedNodes = {};
+
+  const [layout, setLayout] = useState(getGraphLayout(expandedNodes));
   const maxHeight: number =
     layout !== undefined
       ? Object.values(layout)
@@ -57,26 +59,45 @@ const Graph: FC<GraphProps> = ({
       : 0;
 
   const initialExpandedState = Object.keys(layout).reduce(
-    (acc: { [key: string]: boolean }, curr: string) => (
-      (acc[curr] = false), acc
-    ),
+    (acc: { [key: string]: boolean }, curr: string) => ((acc[curr] = false), acc),
     {}
   );
 
-  useEffect(()=> {
-    if (expandCurrentNode) setExpanded(currentNode, true)
+  useEffect(() => {
+    if (expandCurrentNode) {
+      if (currentNode) setExpanded(currentNode, true);
+    }
   }, [currentNode]);
 
-  const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(initialExpandedState);
+  const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
+    initialExpandedState
+  );
   const setExpanded = (key: string, expand?: boolean) => {
     const toggle = expand === undefined ? !expanded[key] : expand;
     _setExpanded({ ...expanded, [`${key}`]: toggle });
   };
 
   useEffect(() => {
-    const expandedNodes = Object.keys(expanded).filter(node => expanded[node]);
-    setLayout(getGraphLayout(expandedNodes))
-  },[expanded]);
+    const expandedNodes: ExpandedNodes = {};
+
+    Object.keys(expanded)
+      .filter(node => expanded[node])
+      .forEach(e => {
+        if (pathway.states[e].action) {
+          expandedNodes[e] = {
+            width: 400,
+            height: 450
+          };
+        } else {
+          expandedNodes[e] = {
+            width: 400,
+            height: 50
+          };
+        }
+      });
+
+    setLayout(getGraphLayout(expandedNodes));
+  }, [expanded]);
 
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
