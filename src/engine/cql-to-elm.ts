@@ -1,6 +1,11 @@
 // External CQL -> ELM service
 import { CqlObject } from './cql-extractor';
 import config from 'utils/ConfigManager';
+import {
+  extractJSONContent,
+  extractMultipartBoundary,
+  extractMultipartFileName
+} from 'utils/regexes';
 
 const url = config.get('cqlToElmWebserviceUrl');
 
@@ -32,20 +37,15 @@ export default function convertCQL(cql: CqlObject): Promise<ElmObject> {
     let boundary = '';
     if (header) {
       // sample header= "multipart/form-data;boundary=Boundary_1"
-      // get the part after "boundary=" and before any subsequent ;
-      const boundaryRegex = /.*;boundary=(Boundary.*);?.*/g;
-      const result = boundaryRegex.exec(header);
+      const result = extractMultipartBoundary.exec(header);
       boundary = result ? `--${result[1]}` : '';
     }
     const obj: ElmObject = { main: {}, libraries: {} };
     return elm.text().then(text => {
       const elms = text.split(boundary).reduce((oldArray, line, i) => {
-        const bodyRegex = /(\{[^]*\})/;
-        // eveything between { } including newlines. [^] is like . but matches newline
-        const body = bodyRegex.exec(line);
+        const body = extractJSONContent.exec(line);
         if (body) {
-          const nameRegex = /Content-Disposition: form-data; name="([^"]+)"/;
-          const elmName = nameRegex.exec(line);
+          const elmName = extractMultipartFileName.exec(line);
           if (elmName && elmName[1] === 'main') {
             oldArray[elmName[1]] = JSON.parse(body[1]);
           } else if (elmName) {

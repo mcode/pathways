@@ -1,0 +1,33 @@
+--Boundary_2_526521536_1556163069788
+Content-Type: application/elm+json
+Content-Disposition: form-data; name="HelloWorld"
+
+{
+  "library" : {
+      "identifier" : {
+        "id" : "HelloWorld",
+        "version" : "1.0.0"
+      },
+      "schemaIdentifier" : {
+        "id" : "urn:hl7-org:elm",
+        "version" : "r1"
+      }
+  }
+}
+--Boundary_2_526521536_1556163069788
+Content-Type: application/elm+json
+Content-Disposition: form-data; name="Speaker"
+
+{
+  "library" : {
+      "identifier" : {
+        "id" : "Speaker",
+        "version" : "1.0.0"
+      },
+      "schemaIdentifier" : {
+        "id" : "urn:hl7-org:elm",
+        "version" : "r1"
+      }
+  }
+}
+--Boundary_2_526521536_1556163069788--'

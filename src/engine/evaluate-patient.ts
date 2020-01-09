@@ -4,6 +4,7 @@ import executeElm from './elm-executor';
 import pathwayData from './output-results';
 import { Pathway, PathwayResults, ElmResults } from 'pathways-model';
 import { getFixture } from './cql-extractor';
+import { extractCQLInclude } from 'utils/regexes';
 
 function instanceOfElmObject(object: object): object is ElmObject {
   return 'main' in object;
@@ -60,8 +61,7 @@ export default function evaluatePatientOnPathway(
 
 // example function that would gather library CQL files
 function gatherCQL(cql: string): Promise<Library> {
-  const libRegex = /include (.*) called/g;
-  const lib = libRegex.exec(cql);
+  const lib = extractCQLInclude.exec(cql);
   if (lib) {
     return getFixture(`${lib[1]}.cql`).then(result => {
       return new Promise(function(resolve, reject): void {
