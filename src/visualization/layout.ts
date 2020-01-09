@@ -15,7 +15,9 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  * @param pathway - JSON pathway
  */
 export default function layout(pathway: Pathway, expandedNodes: Array<string>): Coordinates {
-  return graphLayoutProvider === 'dagre' ? layoutDagre(pathway, expandedNodes) : layoutCustom(pathway);
+  return graphLayoutProvider === 'dagre'
+    ? layoutDagre(pathway, expandedNodes)
+    : layoutCustom(pathway);
 }
 
 /**

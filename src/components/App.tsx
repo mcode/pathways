@@ -50,7 +50,11 @@ const App: FC<AppProps> = ({ client }) => {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        <Graph resources={patientRecords} />
+        {pathway ? (
+          <Graph resources={patientRecords} pathway={pathway} expandCurrentNode={true} />
+        ) : (
+          <div>No Pathway Loaded</div>
+        )}
         <PatientRecord resources={patientRecords} />
       </div>
     );

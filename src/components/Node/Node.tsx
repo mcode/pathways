@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { GuidanceState, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -13,7 +13,8 @@ interface NodeProps {
   isCurrentNode: boolean;
   xCoordinate: number;
   yCoordinate: number;
-  interactive?: boolean;
+  expanded?: boolean;
+  onClickHandler?: () => void;
 }
 
 interface NodeIconProps {
@@ -26,7 +27,8 @@ const Node: FC<NodeProps> = ({
   isCurrentNode,
   xCoordinate,
   yCoordinate,
-  interactive = true
+  expanded = false,
+  onClickHandler
 }) => {
   const { label } = pathwayState;
   const style = {
@@ -36,13 +38,6 @@ const Node: FC<NodeProps> = ({
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const onClickHandler = interactive ? () => setExpanded(!expanded) : () => {};
-
-  useEffect(() => {
-    setExpanded(isCurrentNode);
-  }, [isCurrentNode]);
 
   return (
     <div

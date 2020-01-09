@@ -8,15 +8,19 @@ import { Pathway } from 'pathways-model';
 import { Coordinates } from 'graph-model';
 
 interface GraphProps {
-  pathwayProp?: Pathway | null;
+  pathway: Pathway;
   resources: Array<any>;
   interactive?: boolean;
+  expandCurrentNode?: boolean;
 }
 
-const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) => {
+const Graph: FC<GraphProps> = ({
+  resources,
+  pathway,
+  interactive = true,
+  expandCurrentNode = true
+}) => {
   const graphElement = useRef(null);
-  const pathwayCtx = usePathwayContext();
-  const pathway = pathwayProp !== undefined ? pathwayProp : pathwayCtx.pathway;
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
@@ -28,8 +32,6 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) =
   useEffect(() => {
     setWindowWidth(parentWidth);
   }, [parentWidth]);
-
-  if (pathway === null) return <div>No Pathway Loaded</div>;
 
   // Get the layout of the graph
   const getGraphLayout = (expandedNodes: Array<string>): Coordinates => {
@@ -43,9 +45,10 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) =
       setPath(pathwayResults.path);
       setRenderedPathway(pathway.name);
     });
-  
+
   const currentNode = path[path.length - 1];
-  const layout = getGraphLayout([currentNode]);
+
+  const [layout, setLayout] = useState(getGraphLayout([currentNode]))
   const maxHeight: number =
     layout !== undefined
       ? Object.values(layout)
@@ -53,19 +56,46 @@ const Graph: FC<GraphProps> = ({ resources, pathwayProp, interactive = true }) =
           .reduce((a, b) => Math.max(a, b))
       : 0;
 
+  const initialExpandedState = Object.keys(layout).reduce(
+    (acc: { [key: string]: boolean }, curr: string) => (
+      (acc[curr] = false), acc
+    ),
+    {}
+  );
+
+  useEffect(()=> {
+    if (expandCurrentNode) setExpanded(currentNode, true)
+  }, [currentNode]);
+
+  const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(initialExpandedState);
+  const setExpanded = (key: string, expand?: boolean) => {
+    const toggle = expand === undefined ? !expanded[key] : expand;
+    _setExpanded({ ...expanded, [`${key}`]: toggle });
+  };
+
+  useEffect(() => {
+    const expandedNodes = Object.keys(expanded).filter(node => expanded[node]);
+    setLayout(getGraphLayout(expandedNodes))
+  },[expanded]);
+
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {layout !== undefined
         ? Object.keys(layout).map(key => {
+            const isCurrentNode = (): boolean => {
+              return path[path.length - 1] === key;
+            };
+            const onClickHandler = interactive ? () => setExpanded(key) : () => {};
             return (
               <Node
                 key={key}
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
-                isCurrentNode={path[path.length - 1] === key}
+                isCurrentNode={isCurrentNode()}
                 xCoordinate={layout[key].x + windowWidth / 2}
                 yCoordinate={layout[key].y}
-                interactive={interactive}
+                expanded={expanded[key]}
+                onClickHandler={onClickHandler}
               />
             );
           })
