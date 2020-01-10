@@ -3,7 +3,6 @@ import React, { FC, useState, useEffect, useRef } from 'react';
 import graphLayout from 'visualization/layout';
 import Node from './Node';
 import evaluatePatientOnPathway from 'engine';
-import { usePathwayContext } from './PathwayProvider';
 import { Pathway } from 'pathways-model';
 import { Coordinates, ExpandedNodes } from 'graph-model';
 
@@ -20,14 +19,12 @@ const Graph: FC<GraphProps> = ({
   interactive = true,
   expandCurrentNode = true
 }) => {
-  const graphElement = useRef(null);
+  const graphElement = useRef<HTMLElement>(null);
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
-  const parentWidth = graphElement.current
-    ? (graphElement.current! as any).parentNode.clientWidth
-    : 0;
+  const parentWidth = graphElement?.current?.parentNode?.clientWidth ?? 0;
 
   useEffect(() => {
     setWindowWidth(parentWidth);
@@ -39,7 +36,7 @@ const Graph: FC<GraphProps> = ({
   };
 
   // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
-  const patient = { resourceType: 'Bundle', entry: resources.map((r: any) => ({ resource: r })) };
+  const patient = { resourceType: 'Bundle', entry: resources.map((r: object) => ({ resource: r })) };
   if ((renderedPathway === null || renderedPathway !== pathway.name) && patient.entry.length > 0)
     evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
       setPath(pathwayResults.path);
