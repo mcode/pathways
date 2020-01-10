@@ -8,7 +8,9 @@ interface PathwayProviderProps {
 
 export const PathwayContext = createContext<PathwayContextInterface>({
   pathway: null,
-  setPathway: () => {}
+  setPathway: () => {
+    //do nothing
+  }
 });
 
 export const PathwayProvider: FC<PathwayProviderProps> = ({ children, pathwayCtx }) => {

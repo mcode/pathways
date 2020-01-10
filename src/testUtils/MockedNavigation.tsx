@@ -18,7 +18,9 @@ const MockedNavigation: FC = () => {
         <Navigation
           selectPathway={false}
           service={loadedService}
-          setSelectPathway={(): void => {}}
+          setSelectPathway={(): void => {
+            //do nothing
+          }}
         />
       </MockedPathwayProvider>
     </MockedPatientProvider>
