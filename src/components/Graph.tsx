@@ -19,12 +19,12 @@ const Graph: FC<GraphProps> = ({
   interactive = true,
   expandCurrentNode = true
 }) => {
-  const graphElement = useRef<HTMLElement>(null);
+  const graphElement = useRef<HTMLDivElement>(null);
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
-  const parentWidth = graphElement?.current?.parentNode?.clientWidth ?? 0;
+  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
 
   useEffect(() => {
     setWindowWidth(parentWidth);
