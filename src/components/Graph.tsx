@@ -8,7 +8,7 @@ import { Coordinates, ExpandedNodes } from 'graph-model';
 
 interface GraphProps {
   pathway: Pathway;
-  resources: Array<any>;
+  resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
 }
@@ -36,7 +36,11 @@ const Graph: FC<GraphProps> = ({
   };
 
   // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
-  const patient = { resourceType: 'Bundle', entry: resources.map((r: object) => ({ resource: r })) };
+  const patient = {
+    resourceType: 'Bundle',
+    entry: resources.map((r: object) => ({ resource: r }))
+  };
+
   if ((renderedPathway === null || renderedPathway !== pathway.name) && patient.entry.length > 0)
     evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
       setPath(pathwayResults.path);
@@ -56,7 +60,10 @@ const Graph: FC<GraphProps> = ({
       : 0;
 
   const initialExpandedState = Object.keys(layout).reduce(
-    (acc: { [key: string]: boolean }, curr: string) => ((acc[curr] = false), acc),
+    (acc: { [key: string]: boolean }, curr: string) => {
+      acc[curr] = false;
+      return acc;
+    },
     {}
   );
 
@@ -103,7 +110,7 @@ const Graph: FC<GraphProps> = ({
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };
-            const onClickHandler = interactive ? () => setExpanded(key) : () => {};
+            const onClickHandler = interactive ? (): void => setExpanded(key) : undefined;
             return (
               <Node
                 key={key}
