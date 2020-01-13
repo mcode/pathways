@@ -1,7 +1,14 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, PathwayResults, PatientData, DocumentationResource, State } from 'pathways-model';
+import {
+  Pathway,
+  PathwayResults,
+  PatientData,
+  CriteriaResult,
+  DocumentationResource,
+  State
+} from 'pathways-model';
 
 interface StateData {
   documentation: DocumentationResource | string | null;
@@ -22,7 +29,7 @@ interface StateData {
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export default function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
+export function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
@@ -46,6 +53,33 @@ export default function pathwayData(pathway: Pathway, patientData: PatientData):
     path: patientPathway,
     documentation: patientDocumentation
   };
+}
+
+export function criteriaData(pathway: Pathway, patientData: PatientData): Array<CriteriaResult> {
+  const result: Array<CriteriaResult> = [];
+
+  pathway.criteria.forEach(criteria => {
+    const evaluationResult = patientData[criteria.elementName];
+
+    let actual = 'unknown';
+    let match = false;
+
+    if (evaluationResult) {
+      actual = evaluationResult['value'];
+      match = evaluationResult['match'];
+    }
+
+    const criteriaResult = {
+      elementName: criteria.elementName,
+      expected: criteria.expected,
+      actual,
+      match
+    };
+
+    result.push(criteriaResult);
+  });
+
+  return result;
 }
 
 /**

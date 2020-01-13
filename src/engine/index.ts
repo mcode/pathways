@@ -1,1 +1,1 @@
-export { default } from './evaluate-patient';
+export { evaluatePatientOnPathway, evaluatePathwayCriteria } from './evaluate-patient';

@@ -3,9 +3,16 @@ declare module 'pathways-model' {
     name: string;
     description?: string;
     library: string;
+    criteria: Array<Criteria>;
     states: {
       [key: string]: GuidanceState | BranchState;
     };
+  }
+
+  export interface Criteria {
+    elementName: string; // name of the mCODE element
+    expected: string; // human readable value
+    cql: string; // cql to fetch the value from a patient
   }
 
   export interface State {
@@ -67,6 +74,16 @@ declare module 'pathways-model' {
     nextRecommendation: string | object;
     documentation: Array<DocumentationResource | string>;
     path: Array<string>;
+  }
+
+  export interface CriteriaResult {
+    // doesn't extend Criteria because we don't care about the cql here,
+    // and don't want to make it optional in Criteria
+
+    elementName: string; // name of the mCODE element
+    expected: string; // human readable value
+    actual: string;
+    match: boolean; // in case expected !== actual but they are still a match
   }
 
   export interface ElmResults {

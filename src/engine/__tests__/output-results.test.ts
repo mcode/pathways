@@ -1,4 +1,4 @@
-import pathwayData from '../output-results';
+import { pathwayData } from '../output-results';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
 
