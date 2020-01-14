@@ -6,6 +6,10 @@
     stroke-width: 2;
   }
 
+  text {
+    font-size: 18px;
+  }
+
   .arrowhead {
     polygon {
       fill: $arrow-color;

@@ -30,9 +30,14 @@ declare module 'graph-model' {
     [key: string]: Edge;
   }
 
+  export interface Label extends Coordinate {
+    text: string;
+  }
+
   export interface Edge {
     start: string;
     end: string;
+    label: Label | null;
     points: Array<Coordinate>;
   }
 

@@ -14,9 +14,12 @@ const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset })
   const edgeNameNoWhitespace = edgeName.replace(' ', '');
   const arrowheadId = `arrowhead-${edgeNameNoWhitespace}`;
 
+  // Returns path for arrow from edge points
   const createPath = (points: Coordinate[], arrowheadId: string): ReactElement => {
     const pointsWithOffset = points.map((p, i, arr) => {
       const x = p.x + widthOffset;
+
+      // Adjust y coordinate of last point for arrowhead
       const y = i === arr.length - 1 ? p.y - 17.5 : p.y;
 
       return { x, y };
@@ -36,9 +39,15 @@ const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset })
     return <path d={pathString} fill="transparent" markerEnd={`url(#${arrowheadId})`} />;
   };
 
+  const label = edge.label;
   return (
     <svg className={className}>
       {createPath(edge.points, arrowheadId)}
+      {label ? (
+        <text x={label.x + widthOffset} y={label.y}>
+          {label.text}
+        </text>
+      ) : null}
       <defs>
         <marker
           id={arrowheadId}

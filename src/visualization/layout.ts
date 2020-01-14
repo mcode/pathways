@@ -53,7 +53,15 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
     }
 
     state.transitions.forEach(transition => {
-      g.setEdge(stateName, transition.transition);
+      const label = transition.condition
+        ? {
+            label: transition.condition.description,
+            width: 25,
+            height: 20
+          }
+        : {};
+
+      g.setEdge(stateName, transition.transition, label);
     });
   });
 
@@ -77,8 +85,10 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   g.edges().forEach(e => {
     const edge = g.edge(e);
     const edgeName = `${e.v}, ${e.w}`;
+    const label = edge.label ? { text: edge.label, x: edge.x - startNodeShift, y: edge.y } : null;
 
     edges[edgeName] = {
+      label,
       start: e.v,
       end: e.w,
       points: edge.points.map(p => {
