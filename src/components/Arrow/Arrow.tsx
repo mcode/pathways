@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Edge } from 'graph-model';
+import React, { FC, ReactElement } from 'react';
+import { Edge, Coordinate } from 'graph-model';
 import styles from './Arrow.module.scss';
 
 interface ArrowProps {
@@ -12,39 +12,36 @@ interface ArrowProps {
 const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset }) => {
   const className = isOnPatientPath ? styles.arrowOnPatientPath : styles.arrow;
   const edgeNameNoWhitespace = edgeName.replace(' ', '');
+  const arrowheadId = `arrowhead-${edgeNameNoWhitespace}`;
+
+  const createPath = (points: Coordinate[], arrowheadId: string): ReactElement => {
+    const pointsWithOffset = points.map((p, i, arr) => {
+      const x = p.x + widthOffset;
+      const y = i === arr.length - 1 ? p.y - 17.5 : p.y;
+
+      return { x, y };
+    });
+
+    const length = pointsWithOffset.length;
+    let pathString = `M ${pointsWithOffset[0].x} ${pointsWithOffset[0].y} `;
+
+    if (length === 3) {
+      pathString = `${pathString} C ${pointsWithOffset.map(p => `${p.x} ${p.y}`).join(',')}`;
+    } else {
+      pathString = `${pathString} C ${pointsWithOffset[1].x} ${pointsWithOffset[1].y}, 
+      ${pointsWithOffset[length - 2].x} ${pointsWithOffset[length - 2].y},
+      ${pointsWithOffset[length - 1].x} ${pointsWithOffset[length - 1].y}`;
+    }
+
+    return <path d={pathString} fill="transparent" markerEnd={`url(#${arrowheadId})`} />;
+  };
 
   return (
     <svg className={className}>
-      {edge.points.map((p, i, arr) => {
-        // Do not map last point
-        if (i === arr.length - 1) return null;
-
-        const key = `${edgeNameNoWhitespace}-${i}`;
-        const point2 = arr[i + 1];
-
-        // Add arrowhead to last point
-        return i !== arr.length - 2 ? (
-          <line
-            key={key}
-            x1={p.x + widthOffset}
-            y1={p.y}
-            x2={point2.x + widthOffset}
-            y2={point2.y}
-          />
-        ) : (
-          <line
-            key={key}
-            x1={p.x + widthOffset}
-            y1={p.y}
-            x2={point2.x + widthOffset}
-            y2={point2.y - 17.5}
-            markerEnd={`url(#arrowhead-${edgeNameNoWhitespace})`}
-          />
-        );
-      })}
+      {createPath(edge.points, arrowheadId)}
       <defs>
         <marker
-          id={`arrowhead-${edgeNameNoWhitespace}`}
+          id={arrowheadId}
           className={styles.arrowhead}
           markerWidth="10"
           markerHeight="7"
