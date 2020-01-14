@@ -56,7 +56,7 @@ function isConditional(state: State): boolean {
  * Function to extract the CQL code from each state in the pathway and build
  * the CQL code to execute
  * @param pathway - the JSON object of the entire pathway
- * @return a string of the CQL code for the pathway
+ * @return a string of the CQL code for the navigational nodes in the pathway
  */
 export function extractNavigationCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
@@ -83,6 +83,12 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
   });
 }
 
+/**
+ * Extract the CQL statements from the `criteria` section of the pathway
+ * into a snippet ready to be converted to ELM.
+ * @param pathway - the entire pathway object
+ * @return a string of the CQL for the criteria in the pathway
+ */
 export function extractCriteriaCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
