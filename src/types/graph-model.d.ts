@@ -13,11 +13,11 @@ declare module 'graph-model' {
   }
 
   export interface Layout {
-    coordinates: Coordinates;
+    nodeCoordinates: NodeCoordinates;
     edges: Edges;
   }
 
-  export interface Coordinates {
+  export interface NodeCoordinates {
     [key: string]: Coordinate;
   }
 

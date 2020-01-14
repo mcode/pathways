@@ -3,26 +3,26 @@ import layout from '../layout';
 import samplePathway from './fixtures/pathways/sample_pathway.json';
 import upennPathway from './fixtures/pathways/upenn_her2_pathway.json';
 import testPathway from './fixtures/pathways/graph_layout_test_pathway.json';
-import { Coordinates } from 'graph-model';
+import { NodeCoordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
   it('sample pathway layout set correctly', () => {
-    const graphCoordinates = layout(samplePathway, {}).coordinates;
+    const graphCoordinates = layout(samplePathway, {}).nodeCoordinates;
     checkLayout(graphCoordinates);
   });
 
   it('test pathway layout set correctly', () => {
-    const graphCoordinates = layout(testPathway, {}).coordinates;
+    const graphCoordinates = layout(testPathway, {}).nodeCoordinates;
     checkLayout(graphCoordinates);
   });
 
   it('upenn pathway layout set correctly', () => {
-    const graphCoordinates = layout(upennPathway, {}).coordinates;
+    const graphCoordinates = layout(upennPathway, {}).nodeCoordinates;
     checkLayout(graphCoordinates);
   });
 
   // Helper function to validate layout output
-  function checkLayout(graphCoordinates: Coordinates): void {
+  function checkLayout(graphCoordinates: NodeCoordinates): void {
     // Verify every node has (x,y) and only start has y: 0
     for (const nodeName in graphCoordinates) {
       // Validate node

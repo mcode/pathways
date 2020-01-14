@@ -39,14 +39,14 @@ const Graph: FC<GraphProps> = ({
   );
 
   const [layout, setLayout] = useState(getGraphLayout({}));
-  const { coordinates, edges } = layout;
+  const { nodeCoordinates, edges } = layout;
   const maxHeight = useMemo(() => {
-    return coordinates !== undefined
-      ? Object.values(coordinates)
+    return nodeCoordinates !== undefined
+      ? Object.values(nodeCoordinates)
           .map(x => x.y)
           .reduce((a, b) => Math.max(a, b))
       : 0;
-  }, [coordinates]);
+  }, [nodeCoordinates]);
 
   const initialExpandedState = useMemo(() => {
     return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
@@ -110,8 +110,8 @@ const Graph: FC<GraphProps> = ({
 
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
-      {coordinates !== undefined
-        ? Object.keys(coordinates).map(key => {
+      {nodeCoordinates !== undefined
+        ? Object.keys(nodeCoordinates).map(key => {
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };
@@ -122,8 +122,8 @@ const Graph: FC<GraphProps> = ({
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 isCurrentNode={isCurrentNode()}
-                xCoordinate={coordinates[key].x + windowWidth / 2}
-                yCoordinate={coordinates[key].y}
+                xCoordinate={nodeCoordinates[key].x + windowWidth / 2}
+                yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
                 onClickHandler={onClickHandler}
               />
@@ -133,7 +133,6 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          position: 'absolute',
           width: windowWidth,
           height: maxHeight + 50,
           transition: 'all 2s linear',

@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 
 import { Pathway, State } from 'pathways-model';
-import { Node, Nodes, Layout, Coordinates, Edges, ExpandedNodes } from 'graph-model';
+import { Node, Nodes, Layout, NodeCoordinates, Edges, ExpandedNodes } from 'graph-model';
 
 import dagre from 'dagre';
 
@@ -58,9 +58,7 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   });
 
   dagre.layout(g);
-
-  const coordinates: Coordinates = {};
-
+  const nodeCoordinates: NodeCoordinates = {};
   const startNodeShift = g.node(START).x;
 
   for (const nodeName of nodeNames) {
@@ -68,7 +66,7 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
     // dagre returns coordinates for the center of the node,
     // our renderer expects coordinates for the corner of the node.
     // further, our renderer expects the Start node to be centered at x: 0
-    coordinates[nodeName] = {
+    nodeCoordinates[nodeName] = {
       x: node.x - startNodeShift - node.width / 2,
       y: node.y - node.height / 2
     };
@@ -92,7 +90,7 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
     };
   });
 
-  return { coordinates, edges };
+  return { nodeCoordinates, edges };
 }
 
 /**
@@ -133,7 +131,7 @@ function layoutCustom(pathway: Pathway): Layout {
   }
 
   return {
-    coordinates: produceCoordinates(),
+    nodeCoordinates: produceCoordinates(),
     edges: {}
   };
 
@@ -142,8 +140,8 @@ function layoutCustom(pathway: Pathway): Layout {
    *
    * @returns Coordinates for every node
    */
-  function produceCoordinates(): Coordinates {
-    const coordinates: Coordinates = {};
+  function produceCoordinates(): NodeCoordinates {
+    const coordinates: NodeCoordinates = {};
 
     for (const nodeName in nodes) {
       const node = nodes[nodeName];

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Edge } from 'graph-model';
-import classes from './Arrow.module.scss';
+import styles from './Arrow.module.scss';
 
 interface ArrowProps {
   edge: Edge;
@@ -10,7 +10,7 @@ interface ArrowProps {
 }
 
 const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset }) => {
-  const className = isOnPatientPath ? classes['arrow-on-patient-path'] : classes.arrow;
+  const className = isOnPatientPath ? styles.arrowOnPatientPath : styles.arrow;
   const edgeNameNoWhitespace = edgeName.replace(' ', '');
 
   return (
@@ -45,7 +45,7 @@ const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset })
       <defs>
         <marker
           id={`arrowhead-${edgeNameNoWhitespace}`}
-          className={classes.arrowhead}
+          className={styles.arrowhead}
           markerWidth="10"
           markerHeight="7"
           refX="0"
