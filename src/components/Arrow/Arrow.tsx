@@ -28,12 +28,31 @@ const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset })
     const length = pointsWithOffset.length;
     let pathString = `M ${pointsWithOffset[0].x} ${pointsWithOffset[0].y} `;
 
-    if (length === 3) {
-      pathString = `${pathString} C ${pointsWithOffset.map(p => `${p.x} ${p.y}`).join(',')}`;
+    /**
+     * The points to use in the Cubic command is determined by the length of points array
+     * If i % 3 is 0, use all points including the 1st point
+     * If i % 3 is 1, use all points except the 1st point
+     * If i % 3 is 2, use all points including the 1st point and reuse every 3rd point
+     * We need points to be a multiple of 3 because the Cubic command expects 3 points
+     */
+    if (length % 3 === 0) {
+      pathString = pointsWithOffset.reduce((acc, point, i, arr) => {
+        if (i % 3 !== 0) return acc;
+        return `${acc} C ${point.x} ${point.y} ${arr[i + 1].x} ${arr[i + 1].y} ${arr[i + 2].x} 
+        ${arr[i + 2].y}`;
+      }, pathString);
+    } else if (length % 3 === 1) {
+      pathString = pointsWithOffset.reduce((acc, point, i, arr) => {
+        if (i % 3 !== 1) return acc;
+        return `${acc} C ${point.x} ${point.y} ${arr[i + 1].x} ${arr[i + 1].y} ${arr[i + 2].x} 
+        ${arr[i + 2].y}`;
+      }, pathString);
     } else {
-      pathString = `${pathString} C ${pointsWithOffset[1].x} ${pointsWithOffset[1].y}, 
-      ${pointsWithOffset[length - 2].x} ${pointsWithOffset[length - 2].y},
-      ${pointsWithOffset[length - 1].x} ${pointsWithOffset[length - 1].y}`;
+      pathString = pointsWithOffset.reduce((acc, point, i, arr) => {
+        if (i !== 0 && i % 3 !== 2) return acc;
+        return `${acc} C ${point.x} ${point.y} ${arr[i + 1].x} ${arr[i + 1].y} ${arr[i + 2].x} 
+        ${arr[i + 2].y}`;
+      }, pathString);
     }
 
     return <path d={pathString} fill="transparent" markerEnd={`url(#${arrowheadId})`} />;
