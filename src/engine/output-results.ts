@@ -59,8 +59,10 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Array<
   const result: Array<CriteriaResult> = [];
 
   pathway.criteria.forEach(criteria => {
-    const evaluationResult = patientData[criteria.elementName];
-
+    let evaluationResult = patientData[criteria.elementName];
+    if (Array.isArray(evaluationResult) && evaluationResult.length > 0) {
+      evaluationResult = evaluationResult[0];
+    }
     let actual = 'unknown';
     let match = false;
 

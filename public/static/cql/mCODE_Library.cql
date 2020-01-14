@@ -12,6 +12,7 @@ codesystem "RXNORM": 'http://www.nlm.nih.gov/research/umls/rxnorm'
 // LOINC Observation Codes
 code "Primary tumor.clinical [Class] Cancer code": '21905-5' from "LOINC" display 'Primary tumor.clinical [Class] Cancer'
 code "Regional lymph nodes.clinical [Class] Cancer code": '21906-3' from "LOINC" display 'Regional lymph nodes.clinical [Class] Cancer'
+code "HER2 [Presence] in Breast cancer specimen by Immune stain code": '85319-2' from LOINC display 'HER2 [Presence] in Breast cancer specimen by Immune stain'
 // SNOMED Observation Values
 code "T0 category (finding) code": '58790005' from "SNOMEDCT" display 'T0 category (finding)'
 code "T1 category (finding) code": '23351008' from "SNOMEDCT" display 'T1 category (finding)'
@@ -24,6 +25,10 @@ code "Chemotherapy (procedure) code": '367336001' from "SNOMEDCT" display 'Chemo
 // RXNORM Medication Request
 code "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code": '1790099' from "RXNORM" display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
+code "11p partial monosomy syndrome 4135001 code": '4135001' from SNOMEDCT display '11p partial monosomy syndrome'
+code "Orbital lymphoma 13048006 code": '13048006' from SNOMEDCT display 'Orbital lymphoma'
+code "Delta heavy chain disease 20224008 code": '20224008' from SNOMEDCT display 'Delta heavy chain disease'
+code "Malignant neoplasm of breast 254837009 code": '254837009' from SNOMEDCT display 'Malignant neoplasm of breast'
 
 // FHIR CONCEPTS
 
@@ -35,9 +40,20 @@ concept "N1 category (finding)": {"N1 category (finding) code"} display 'N1 cate
 // Medication Requests
 concept "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection": {"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"} display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
+concept "HER2 [Presence] in Breast cancer specimen by Immune stain" {"HER2 [Presence] in Breast cancer specimen by Immune stain code"} display 'HER2 [Presence] in Breast cancer specimen by Immune stain'
+
+concept "Primary cancers": {
+    "11p partial monosomy syndrome 4135001 code",
+    "Orbital lymphoma 13048006 code",
+    "Delta heavy chain disease 20224008 code",
+    "Malignant neoplasm of breast 254837009 code"
+}
+
 
 context Patient
 
+define "Primary Cancer Condition":
+    [Condition: code in "Primary cancers"] Cancer
 
 // Copied functions from FHIRHelpers as a workaround
 // https://github.com/cqframework/clinical_quality_language/blob/master/Src/java/quick/src/main/resources/org/hl7/fhir/FHIRHelpers-4.0.0.cql
