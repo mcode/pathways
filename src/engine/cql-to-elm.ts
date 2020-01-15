@@ -1,6 +1,11 @@
 // External CQL -> ELM service
 import { CqlObject } from './cql-extractor';
 import config from 'utils/ConfigManager';
+import {
+  extractJSONContent,
+  extractMultipartBoundary,
+  extractMultipartFileName
+} from 'utils/regexes';
 
 const url = config.get('cqlToElmWebserviceUrl');
 
@@ -31,19 +36,20 @@ export default function convertCQL(cql: CqlObject): Promise<ElmObject> {
     const header = elm.headers.get('content-type');
     let boundary = '';
     if (header) {
-      const result = header.match(/(?<=boundary=)Boundary.*/g);
-      boundary = result ? `--${result[0]}` : '';
+      // sample header= "multipart/form-data;boundary=Boundary_1"
+      const result = extractMultipartBoundary.exec(header);
+      boundary = result ? `--${result[1]}` : '';
     }
     const obj: ElmObject = { main: {}, libraries: {} };
     return elm.text().then(text => {
       const elms = text.split(boundary).reduce((oldArray, line, i) => {
-        const x = line.match(/(?<=Content-Type[^]+Content-Disposition.*[\r\n]+)[^]+/g);
-        if (x) {
-          const elmName = line.match(/(?<=name=").+(?=")/g);
-          if (elmName && elmName[0] === 'main') {
-            oldArray[elmName[0]] = JSON.parse(x[0]);
+        const body = extractJSONContent.exec(line);
+        if (body) {
+          const elmName = extractMultipartFileName.exec(line);
+          if (elmName && elmName[1] === 'main') {
+            oldArray[elmName[1]] = JSON.parse(body[1]);
           } else if (elmName) {
-            oldArray.libraries[elmName[0]] = JSON.parse(x[0]);
+            oldArray.libraries[elmName[1]] = JSON.parse(body[1]);
           }
         }
         return oldArray;
