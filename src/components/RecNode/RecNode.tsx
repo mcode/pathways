@@ -10,7 +10,8 @@ interface RecNodeProps {
 }
 
 const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
-  if (pathwayState.action.length === 0) return <div className={indexClasses.recNode}>No actions</div>;
+  if (pathwayState.action.length === 0)
+    return <div className={indexClasses.recNode}>No actions</div>;
 
   const resource = pathwayState.action[0].resource;
   const coding =
