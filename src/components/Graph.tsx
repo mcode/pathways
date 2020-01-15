@@ -92,10 +92,15 @@ const Graph: FC<GraphProps> = ({
     Object.keys(expanded)
       .filter(node => expanded[node])
       .forEach(e => {
-        if (pathway.states[e].action) {
+        const action = pathway.states[e].action;
+
+        if (action) {
+          // Adjust height depending on the action description's length
+          const height = action.length === 0 ? 100 : 450 + Math.floor(action[0].description.length / 25) * 25;
+
           expandedNodes[e] = {
-            width: 400,
-            height: 450
+            height,
+            width: 400
           };
         } else {
           expandedNodes[e] = {
@@ -133,7 +138,7 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          width: windowWidth,
+          width: windowWidth + 250,
           height: maxHeight + 50,
           transition: 'all 2s linear',
           zIndex: 1,
