@@ -76,7 +76,7 @@ const Graph: FC<GraphProps> = ({
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
     initialExpandedState
   );
-  const setExpanded = (key: string, expand?: boolean) => {
+  const setExpanded = (key: string, expand?: boolean): void => {
     const toggle = expand === undefined ? !expanded[key] : expand;
     _setExpanded({ ...expanded, [`${key}`]: toggle });
   };
