@@ -44,9 +44,8 @@ const Node: FC<NodeProps> = ({
       className={`${classes.node} ${backgroundColorClass} ${expanded &&
         nodeClasses.expanded} ${currentNodeClass}`}
       style={style}
-      onClick={onClickHandler}
     >
-      <div className={nodeClasses.nodeTitle}>
+      <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>

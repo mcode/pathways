@@ -52,6 +52,7 @@ const Graph: FC<GraphProps> = ({
       return acc;
     }, {});
   }, [layout]);
+
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
     initialExpandedState
   );
