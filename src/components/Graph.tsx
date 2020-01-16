@@ -114,9 +114,15 @@ const Graph: FC<GraphProps> = ({
     setLayout(getGraphLayout(expandedNodes));
   }, [expanded, getGraphLayout, pathway.states]);
 
-  // This additional width is needed to fit long edge labels
-  // TODO: 250 is an arbitrary number, calculate the exact width needed
-  const ADDITIONAL_WIDTH = 250;
+  // maxWidth finds the edge label that is farthest to the right
+  const maxWidth: number =
+    edges !== undefined
+      ? Object.values(edges)
+          .map(e => e.label)
+          .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
+          .reduce((a, b) => Math.max(a, b))
+      : windowWidth;
+
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {nodeCoordinates !== undefined
@@ -142,7 +148,7 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          width: windowWidth + ADDITIONAL_WIDTH,
+          width: maxWidth,
           height: maxHeight,
           zIndex: 1,
           top: 0,
