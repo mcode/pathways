@@ -114,6 +114,9 @@ const Graph: FC<GraphProps> = ({
     setLayout(getGraphLayout(expandedNodes));
   }, [expanded, getGraphLayout, pathway.states]);
 
+  // This additional width is needed to fit long edge labels
+  // TODO: 250 is an arbitrary number, calculate the exact width needed
+  const ADDITIONAL_WIDTH = 250;
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {nodeCoordinates !== undefined
@@ -139,8 +142,8 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          width: windowWidth + 250,
-          height: maxHeight + 50,
+          width: windowWidth + ADDITIONAL_WIDTH,
+          height: maxHeight,
           zIndex: 1,
           top: 0,
           left: 0,
