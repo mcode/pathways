@@ -37,9 +37,7 @@ const Graph: FC<GraphProps> = ({
     [pathway]
   );
 
-  const expandedNodes: ExpandedNodes = {};
-
-  const [layout, setLayout] = useState(getGraphLayout(expandedNodes));
+  const [layout, setLayout] = useState(getGraphLayout({}));
   const maxHeight: number =
     layout !== undefined
       ? Object.values(layout)
