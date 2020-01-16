@@ -46,14 +46,12 @@ const Graph: FC<GraphProps> = ({
       : 0;
   }, [layout]);
 
-  const initialExpandedState = Object.keys(layout).reduce(
-    (acc: { [key: string]: boolean }, curr: string) => {
+  const initialExpandedState = useMemo(() => {
+    return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
       return acc;
-    },
-    {}
-  );
-
+    }, {});
+  }, [layout]);
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
     initialExpandedState
   );
