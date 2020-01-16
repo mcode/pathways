@@ -96,7 +96,8 @@ const Graph: FC<GraphProps> = ({
 
         if (action) {
           // Adjust height depending on the action description's length
-          const height = action.length === 0 ? 100 : 450 + Math.floor(action[0].description.length / 25) * 25;
+          const height =
+            action.length === 0 ? 100 : 450 + Math.floor(action[0].description.length / 25) * 25;
 
           expandedNodes[e] = {
             height,
@@ -140,7 +141,6 @@ const Graph: FC<GraphProps> = ({
         style={{
           width: windowWidth + 250,
           height: maxHeight + 50,
-          transition: 'all 2s linear',
           zIndex: 1,
           top: 0,
           left: 0,
