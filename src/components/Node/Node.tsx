@@ -38,6 +38,11 @@ const Node: FC<NodeProps> = ({
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
+  const recNodeClass = isCurrentNode
+    ? classes.childCurrent
+    : isOnPatientPath
+    ? classes.childOnPatientPath
+    : classes.childNotOnPatientPath;
 
   return (
     <div
@@ -50,7 +55,9 @@ const Node: FC<NodeProps> = ({
         {label}
       </div>
       {isGuidanceState(pathwayState) && expanded && (
-        <RecNode pathwayState={pathwayState as GuidanceState} />
+        <div className={`${classes.recNode} ${recNodeClass}`}>
+          <RecNode pathwayState={pathwayState as GuidanceState} />
+        </div>
       )}
     </div>
   );

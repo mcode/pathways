@@ -37,3 +37,24 @@
   background-color: $gray-lighter;
   color: $black;
 }
+
+.recNode {
+  position: absolute;
+  display: block;
+  top: $collapsedNodeHeight;
+  padding: 20px;
+  margin: 0;
+  width: 100%;
+
+  &.childOnPatientPath {
+    border: 1px solid $blue;
+
+  }
+  &.childCurrent {
+    border: 1px solid $red;
+  }
+
+  &.childNotOnPatientPath {
+    border: 1px solid $gray-lighter;
+  }
+}
