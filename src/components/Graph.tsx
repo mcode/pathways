@@ -22,7 +22,6 @@ const Graph: FC<GraphProps> = ({
   const graphElement = useRef<HTMLDivElement>(null);
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
-  const [renderedPathway, setRenderedPathway] = useState<string | null>(null);
 
   const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
 
@@ -37,18 +36,6 @@ const Graph: FC<GraphProps> = ({
     },
     [pathway]
   );
-
-  // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
-  const patient = {
-    resourceType: 'Bundle',
-    entry: resources.map((r: object) => ({ resource: r }))
-  };
-
-  if ((renderedPathway === null || renderedPathway !== pathway.name) && patient.entry.length > 0)
-    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-      setPath(pathwayResults.path);
-      setRenderedPathway(pathway.name);
-    });
 
   const currentNode = path[path.length - 1];
 
@@ -79,6 +66,18 @@ const Graph: FC<GraphProps> = ({
       return { ...prevState, [`${key}`]: !prevState[`${key}`] };
     });
   }, []);
+
+  useEffect(() => {
+    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+    const patient = {
+      resourceType: 'Bundle',
+      entry: resources.map((r: object) => ({ resource: r }))
+    };
+
+    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
+      setPath(pathwayResults.path);
+    });
+  }, [pathway, resources]);
 
   useEffect(() => {
     if (expandCurrentNode) {
