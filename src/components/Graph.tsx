@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef, useCallback } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
@@ -38,12 +38,13 @@ const Graph: FC<GraphProps> = ({
   );
 
   const [layout, setLayout] = useState(getGraphLayout({}));
-  const maxHeight: number =
-    layout !== undefined
+  const maxHeight = useMemo(() => {
+    return layout !== undefined
       ? Object.values(layout)
           .map(x => x.y)
           .reduce((a, b) => Math.max(a, b))
       : 0;
+  }, [layout]);
 
   const initialExpandedState = Object.keys(layout).reduce(
     (acc: { [key: string]: boolean }, curr: string) => {
