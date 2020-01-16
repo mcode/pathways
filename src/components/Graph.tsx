@@ -37,8 +37,6 @@ const Graph: FC<GraphProps> = ({
     [pathway]
   );
 
-  const currentNode = path[path.length - 1];
-
   const expandedNodes: ExpandedNodes = {};
 
   const [layout, setLayout] = useState(getGraphLayout(expandedNodes));
@@ -80,10 +78,11 @@ const Graph: FC<GraphProps> = ({
   }, [pathway, resources]);
 
   useEffect(() => {
+    const currentNode = path[path.length - 1];
     if (expandCurrentNode) {
       if (currentNode) setExpanded(currentNode, true);
     }
-  }, [currentNode, expandCurrentNode, setExpanded]);
+  }, [expandCurrentNode, path, setExpanded]);
 
   useEffect(() => {
     const expandedNodes: ExpandedNodes = {};
