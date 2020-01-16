@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, useCallback } from 'react';
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
@@ -31,9 +31,12 @@ const Graph: FC<GraphProps> = ({
   }, [parentWidth]);
 
   // Get the layout of the graph
-  const getGraphLayout = (expandedNodes: ExpandedNodes): Coordinates => {
-    return graphLayout(pathway, expandedNodes);
-  };
+  const getGraphLayout = useCallback(
+    (expandedNodes: ExpandedNodes): Coordinates => {
+      return graphLayout(pathway, expandedNodes);
+    },
+    [pathway]
+  );
 
   // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
   const patient = {
@@ -67,19 +70,21 @@ const Graph: FC<GraphProps> = ({
     {}
   );
 
+  const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
+    initialExpandedState
+  );
+
+  const setExpanded = useCallback((key: string, expand?: boolean): void => {
+    _setExpanded(prevState => {
+      return { ...prevState, [`${key}`]: !prevState[`${key}`] };
+    });
+  }, []);
+
   useEffect(() => {
     if (expandCurrentNode) {
       if (currentNode) setExpanded(currentNode, true);
     }
-  }, [currentNode]);
-
-  const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
-    initialExpandedState
-  );
-  const setExpanded = (key: string, expand?: boolean): void => {
-    const toggle = expand === undefined ? !expanded[key] : expand;
-    _setExpanded({ ...expanded, [`${key}`]: toggle });
-  };
+  }, [currentNode, expandCurrentNode, setExpanded]);
 
   useEffect(() => {
     const expandedNodes: ExpandedNodes = {};
@@ -101,7 +106,7 @@ const Graph: FC<GraphProps> = ({
       });
 
     setLayout(getGraphLayout(expandedNodes));
-  }, [expanded]);
+  }, [expanded, getGraphLayout, pathway.states]);
 
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
