@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import Arrow from '../Arrow';
 
 const testEdge = {
@@ -10,18 +10,17 @@ const testEdge = {
     x: 0,
     y: 0
   },
-  points: [{ x: 0, y: 0 }, { x: 10, y: 10 }, { x: 20, y: 20 }]
+  points: [
+    { x: 0, y: 0 },
+    { x: 10, y: 10 },
+    { x: 20, y: 20 }
+  ]
 };
 
 describe('<Arrow />', () => {
   it('renders an arrow with a label', () => {
     const { container, getByText } = render(
-      <Arrow 
-        edge={testEdge}
-        edgeName='test'
-        isOnPatientPath={false}
-        widthOffset={0}
-      />
+      <Arrow edge={testEdge} edgeName="test" isOnPatientPath={false} widthOffset={0} />
     );
 
     expect(getByText(testEdge.label.text)).toBeVisible();
@@ -29,15 +28,10 @@ describe('<Arrow />', () => {
   });
 
   it('renders an arrow on patient path', () => {
-    const { container, getByText } = render(
-      <Arrow 
-        edge={testEdge}
-        edgeName='test'
-        isOnPatientPath={true}
-        widthOffset={0}
-      />
+    const { container } = render(
+      <Arrow edge={testEdge} edgeName="test" isOnPatientPath={true} widthOffset={0} />
     );
 
     expect(container.firstChild).toHaveClass('arrowOnPatientPath');
-  })
+  });
 });
