@@ -69,12 +69,7 @@ const ArrowPath: FC<ArrowPathProps> = ({ points, arrowheadId, widthOffset }) => 
     }, pathString);
   };
 
-  pathString =
-    length % 3 === 0
-      ? writeCommandString(0)
-      : length % 3 === 1
-      ? writeCommandString(1)
-      : writeCommandString(2);
+  pathString = writeCommandString(length % 3);
 
   return <path d={pathString} fill="transparent" markerEnd={`url(#${arrowheadId})`} />;
 };
