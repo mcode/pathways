@@ -126,7 +126,7 @@ const Graph: FC<GraphProps> = ({
       ? Object.values(edges)
           .map(e => e.label)
           .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
-          .reduce((a, b) => Math.max(a, b))
+          .reduce((a, b) => Math.max(a, b), 0)
       : windowWidth;
 
   return (
