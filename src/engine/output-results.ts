@@ -66,7 +66,7 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Array<
 
   pathway.criteria.forEach(criteria => {
     let evaluationResult = patientData[criteria.elementName];
-    if (Array.isArray(evaluationResult) && evaluationResult.length > 0) {
+    if (Array.isArray(evaluationResult)) {
       evaluationResult = evaluationResult[0]; // TODO: add functionality for multiple resources
     }
     let actual = 'unknown';
