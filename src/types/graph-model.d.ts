@@ -38,7 +38,7 @@ declare module 'graph-model' {
     start: string;
     end: string;
     label: Label | null;
-    points: Array<Coordinate>;
+    points: Coordinate[];
   }
 
   export interface ExpandedNodes {
