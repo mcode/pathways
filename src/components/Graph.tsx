@@ -64,15 +64,17 @@ const Graph: FC<GraphProps> = ({
   }, []);
 
   useEffect(() => {
-    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
-    const patient = {
-      resourceType: 'Bundle',
-      entry: resources.map((r: object) => ({ resource: r }))
-    };
+    if (resources.length > 0) {
+      // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+      const patient = {
+        resourceType: 'Bundle',
+        entry: resources.map((r: object) => ({ resource: r }))
+      };
 
-    evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-      setPath(pathwayResults.path);
-    });
+      evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
+        setPath(pathwayResults.path);
+      });
+    }
   }, [pathway, resources]);
 
   useEffect(() => {
