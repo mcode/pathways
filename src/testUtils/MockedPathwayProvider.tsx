@@ -20,7 +20,9 @@ export const mockedPathwayCtx = {
       }
     ]
   },
-  setPathway: (): void => {}
+  setPathway: (): void => {
+    //do nothing
+  }
 };
 
 const MockedPathwayProvider: FC<PathwayProviderProps> = ({ pathwayCtx = null, children }) => (

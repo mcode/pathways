@@ -13,6 +13,8 @@ interface NodeProps {
   isCurrentNode: boolean;
   xCoordinate: number;
   yCoordinate: number;
+  expanded?: boolean;
+  onClickHandler?: () => void;
 }
 
 interface NodeIconProps {
@@ -24,7 +26,9 @@ const Node: FC<NodeProps> = ({
   isOnPatientPath,
   isCurrentNode,
   xCoordinate,
-  yCoordinate
+  yCoordinate,
+  expanded = false,
+  onClickHandler
 }) => {
   const { label } = pathwayState;
   const style = {
@@ -33,21 +37,28 @@ const Node: FC<NodeProps> = ({
   };
 
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
-  const nodeExpandedClass = isCurrentNode ? nodeClasses.expanded : '';
   const currentNodeClass = isCurrentNode ? classes.current : '';
+  const recNodeClass = isCurrentNode
+    ? classes.childCurrent
+    : isOnPatientPath
+    ? classes.childOnPatientPath
+    : classes.childNotOnPatientPath;
 
   return (
     <div
-      className={`${classes.node} ${backgroundColorClass} ${nodeExpandedClass} ${currentNodeClass}`}
+      className={`${classes.node} ${backgroundColorClass} ${expanded &&
+        nodeClasses.expanded} ${currentNodeClass}`}
       style={style}
     >
-      <div className={nodeClasses.nodeTitle}>
+      <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {isGuidanceState(pathwayState) ? (
-        <RecNode pathwayState={pathwayState as GuidanceState} />
-      ) : null}
+      {isGuidanceState(pathwayState) && expanded && (
+        <div className={`${classes.recNode} ${recNodeClass}`}>
+          <RecNode pathwayState={pathwayState as GuidanceState} />
+        </div>
+      )}
     </div>
   );
 };

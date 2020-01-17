@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { GuidanceState } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -22,31 +22,21 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
     <div className={indexClasses.recNode}>
       <table className={classes.infoTable}>
         <tbody>
-          <tr>
-            <td className={classes.descTitle}>Notes</td>
-            <td className={classes.desc}>{pathwayState.action[0].description}</td>
-          </tr>
-          <tr>
-            <td className={classes.descTitle}>Type</td>
-            <td className={classes.desc}>{resource.resourceType}</td>
-          </tr>
-          <tr>
-            <td className={classes.descTitle}>System</td>
-            <td className={classes.desc}>
-              {coding[0].system}
-              <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td className={classes.descTitle}>Code</td>
-            <td className={classes.desc}>{coding[0].code}</td>
-          </tr>
-          <tr>
-            <td className={classes.descTitle}>Display</td>
-            <td className={classes.desc}>{coding[0].display}</td>
-          </tr>
+          <RecNodeField title="Notes" description={pathwayState.action[0].description} />
+          <RecNodeField title="Type" description={resource.resourceType} />
+          <RecNodeField
+            title="System"
+            description={
+              <>
+                {coding[0].system}
+                <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+                </a>
+              </>
+            }
+          />
+          <RecNodeField title="Code" description={coding[0].code} />
+          <RecNodeField title="Display" description={coding[0].display} />
         </tbody>
       </table>
       <form className={classes.commentsForm}>
@@ -69,6 +59,20 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
         </button>
       </form>
     </div>
+  );
+};
+
+type RecNodeFieldProps = {
+  title: string;
+  description: ReactNode;
+};
+
+const RecNodeField: FC<RecNodeFieldProps> = ({ title, description }) => {
+  return (
+    <tr>
+      <td className={classes.descTitle}>{title}</td>
+      <td className={classes.desc}>{description}</td>
+    </tr>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import Node from '../Node';
 
 const testState = {
@@ -39,5 +39,22 @@ describe('<Node />', () => {
     );
 
     expect(container.firstChild).toHaveClass('notOnPatientPath');
+  });
+
+  it('expands the additional children when clicked', () => {
+    const { container } = render(
+      <Node
+        pathwayState={testState}
+        isOnPatientPath={true}
+        isCurrentNode={false}
+        xCoordinate={0}
+        yCoordinate={0}
+      />
+    );
+
+    const numberOfChildren = container.children.length;
+
+    fireEvent.click(container);
+    expect(container.children.length > numberOfChildren);
   });
 });
