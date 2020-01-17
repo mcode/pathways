@@ -7,18 +7,18 @@ import { NodeCoordinates } from 'graph-model';
 
 describe('pathway graph layout', () => {
   it('sample pathway layout set correctly', () => {
-    const graphCoordinates = layout(samplePathway, {}).nodeCoordinates;
-    checkLayout(graphCoordinates);
+    const { nodeCoordinates } = layout(samplePathway, {});
+    checkLayout(nodeCoordinates);
   });
 
   it('test pathway layout set correctly', () => {
-    const graphCoordinates = layout(testPathway, {}).nodeCoordinates;
-    checkLayout(graphCoordinates);
+    const { nodeCoordinates } = layout(testPathway, {});
+    checkLayout(nodeCoordinates);
   });
 
   it('upenn pathway layout set correctly', () => {
-    const graphCoordinates = layout(upennPathway, {}).nodeCoordinates;
-    checkLayout(graphCoordinates);
+    const { nodeCoordinates } = layout(upennPathway, {});
+    checkLayout(nodeCoordinates);
   });
 
   // Helper function to validate layout output

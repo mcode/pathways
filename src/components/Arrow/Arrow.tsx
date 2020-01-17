@@ -58,7 +58,7 @@ const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset })
     return <path d={pathString} fill="transparent" markerEnd={`url(#${arrowheadId})`} />;
   };
 
-  const label = edge.label;
+  const { label } = edge;
   return (
     <svg className={className}>
       {createPath(edge.points, arrowheadId)}
