@@ -79,7 +79,8 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
 };
 
 function isGuidanceState(state: State): boolean {
-  return 'action' in state;
+  const { action } = state as GuidanceState;
+  return action ? action.length > 0 : false;
 }
 
 export default Node;

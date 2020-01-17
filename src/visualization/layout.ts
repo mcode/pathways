@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 
 import { Pathway, State } from 'pathways-model';
-import { Node, Nodes, Coordinates, ExpandedNodes } from 'graph-model';
+import { Node, Nodes, Layout, NodeCoordinates, Edges, ExpandedNodes } from 'graph-model';
 
 import dagre from 'dagre';
 
@@ -14,7 +14,7 @@ const graphLayoutProvider = config.get('graphLayoutProvider', 'dagre');
  *
  * @param pathway - JSON pathway
  */
-export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
+export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   return graphLayoutProvider === 'dagre'
     ? layoutDagre(pathway, expandedNodes)
     : layoutCustom(pathway);
@@ -24,7 +24,7 @@ export default function layout(pathway: Pathway, expandedNodes: ExpandedNodes): 
  * Layout the pathway using the Dagre layout engine.
  * @see {@link https://github.com/dagrejs/dagre}
  */
-function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinates {
+function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Layout {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
@@ -53,14 +53,20 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinate
     }
 
     state.transitions.forEach(transition => {
-      g.setEdge(stateName, transition.transition);
+      const label = transition.condition
+        ? {
+            label: transition.condition.description,
+            width: 25,
+            height: 20
+          }
+        : {};
+
+      g.setEdge(stateName, transition.transition, label);
     });
   });
 
   dagre.layout(g);
-
-  const coordinates: Coordinates = {};
-
+  const nodeCoordinates: NodeCoordinates = {};
   const startNodeShift = g.node(START).x;
 
   for (const nodeName of nodeNames) {
@@ -68,19 +74,39 @@ function layoutDagre(pathway: Pathway, expandedNodes: ExpandedNodes): Coordinate
     // dagre returns coordinates for the center of the node,
     // our renderer expects coordinates for the corner of the node.
     // further, our renderer expects the Start node to be centered at x: 0
-    coordinates[nodeName] = {
+    nodeCoordinates[nodeName] = {
       x: node.x - startNodeShift - node.width / 2,
       y: node.y - node.height / 2
     };
   }
 
-  return coordinates;
+  const edges: Edges = {};
+
+  g.edges().forEach(e => {
+    const edge = g.edge(e);
+    const edgeName = `${e.v}, ${e.w}`;
+    const label = edge.label ? { text: edge.label, x: edge.x - startNodeShift, y: edge.y } : null;
+
+    edges[edgeName] = {
+      label,
+      start: e.v,
+      end: e.w,
+      points: edge.points.map(p => {
+        return {
+          x: p.x - startNodeShift,
+          y: p.y
+        };
+      })
+    };
+  });
+
+  return { nodeCoordinates, edges };
 }
 
 /**
  * Layout the pathway using our homegrown layout algorithm.
  */
-function layoutCustom(pathway: Pathway): Coordinates {
+function layoutCustom(pathway: Pathway): Layout {
   const START = 'Start';
   const NODE_WIDTH = 100;
   const NODE_HEIGHT = 50;
@@ -114,15 +140,18 @@ function layoutCustom(pathway: Pathway): Coordinates {
     assignHorizontalPositionToNodesInRank(rank);
   }
 
-  return produceCoordinates();
+  return {
+    nodeCoordinates: produceCoordinates(),
+    edges: {}
+  };
 
   /**
    * Convert the Nodes into a Coordinates object
    *
    * @returns Coordinates for every node
    */
-  function produceCoordinates(): Coordinates {
-    const coordinates: Coordinates = {};
+  function produceCoordinates(): NodeCoordinates {
+    const coordinates: NodeCoordinates = {};
 
     for (const nodeName in nodes) {
       const node = nodes[nodeName];

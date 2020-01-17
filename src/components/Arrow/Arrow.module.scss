@@ -1,0 +1,26 @@
+@import '../../styles/variables';
+
+@mixin arrow($arrow-color) {
+  path {
+    stroke: $arrow-color;
+    stroke-width: 2;
+  }
+
+  text {
+    font-size: 18px;
+  }
+
+  .arrowhead {
+    polygon {
+      fill: $arrow-color;
+    }
+  }
+}
+
+.arrow {
+  @include arrow($gray-medium);
+}
+
+.arrowOnPatientPath {
+  @include arrow($blue);
+}

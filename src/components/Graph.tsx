@@ -2,9 +2,10 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 
 import graphLayout from 'visualization/layout';
 import Node from './Node';
+import Arrow from './Arrow';
 import evaluatePatientOnPathway from 'engine';
 import { Pathway } from 'pathways-model';
-import { Coordinates, ExpandedNodes } from 'graph-model';
+import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
   pathway: Pathway;
@@ -12,6 +13,12 @@ interface GraphProps {
   interactive?: boolean;
   expandCurrentNode?: boolean;
 }
+
+const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
+  const startIndex = path.indexOf(edge.start);
+  const endIndex = path.indexOf(edge.end);
+  return startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex;
+};
 
 const Graph: FC<GraphProps> = ({
   resources,
@@ -31,20 +38,21 @@ const Graph: FC<GraphProps> = ({
 
   // Get the layout of the graph
   const getGraphLayout = useCallback(
-    (expandedNodes: ExpandedNodes): Coordinates => {
+    (expandedNodes: ExpandedNodes): Layout => {
       return graphLayout(pathway, expandedNodes);
     },
     [pathway]
   );
 
   const [layout, setLayout] = useState(getGraphLayout({}));
+  const { nodeCoordinates, edges } = layout;
   const maxHeight = useMemo(() => {
-    return layout !== undefined
-      ? Object.values(layout)
+    return nodeCoordinates !== undefined
+      ? Object.values(nodeCoordinates)
           .map(x => x.y)
           .reduce((a, b) => Math.max(a, b))
       : 0;
-  }, [layout]);
+  }, [nodeCoordinates]);
 
   const initialExpandedState = useMemo(() => {
     return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
@@ -90,10 +98,16 @@ const Graph: FC<GraphProps> = ({
     Object.keys(expanded)
       .filter(node => expanded[node])
       .forEach(e => {
-        if (pathway.states[e].action) {
+        const action = pathway.states[e].action;
+
+        if (action) {
+          // Adjust height depending on the action description's length
+          const height =
+            action.length === 0 ? 100 : 455 + Math.floor(action[0].description.length / 25) * 35;
+
           expandedNodes[e] = {
-            width: 400,
-            height: 450
+            height,
+            width: 400
           };
         } else {
           expandedNodes[e] = {
@@ -106,10 +120,19 @@ const Graph: FC<GraphProps> = ({
     setLayout(getGraphLayout(expandedNodes));
   }, [expanded, getGraphLayout, pathway.states]);
 
+  // maxWidth finds the edge label that is farthest to the right
+  const maxWidth: number =
+    edges !== undefined
+      ? Object.values(edges)
+          .map(e => e.label)
+          .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
+          .reduce((a, b) => Math.max(a, b), 0)
+      : windowWidth;
+
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
-      {layout !== undefined
-        ? Object.keys(layout).map(key => {
+      {nodeCoordinates !== undefined
+        ? Object.keys(nodeCoordinates).map(key => {
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };
@@ -120,14 +143,41 @@ const Graph: FC<GraphProps> = ({
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 isCurrentNode={isCurrentNode()}
-                xCoordinate={layout[key].x + windowWidth / 2}
-                yCoordinate={layout[key].y}
+                xCoordinate={nodeCoordinates[key].x + windowWidth / 2}
+                yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
                 onClickHandler={onClickHandler}
               />
             );
           })
         : []}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          width: maxWidth,
+          height: maxHeight,
+          zIndex: 1,
+          top: 0,
+          left: 0,
+          overflow: 'visible'
+        }}
+      >
+        {edges !== undefined
+          ? Object.keys(edges).map(edgeName => {
+              const edge = edges[edgeName];
+
+              return (
+                <Arrow
+                  key={edgeName}
+                  edge={edge}
+                  edgeName={edgeName}
+                  isOnPatientPath={isEdgeOnPatientPath(path, edge)}
+                  widthOffset={windowWidth / 2}
+                />
+              );
+            })
+          : []}
+      </svg>
     </div>
   );
 };
