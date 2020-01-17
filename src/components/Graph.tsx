@@ -59,7 +59,7 @@ const Graph: FC<GraphProps> = ({
 
   const setExpanded = useCallback((key: string, expand?: boolean): void => {
     _setExpanded(prevState => {
-      return { ...prevState, [`${key}`]: !prevState[`${key}`] };
+      return { ...prevState, [key]: !prevState[key] };
     });
   }, []);
 
