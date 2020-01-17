@@ -15,11 +15,11 @@ import {
 } from 'fhir-visualizers';
 
 type PatientRecordProps = {
-  resources: ReadonlyArray<Record<string, any>>;
+  resources: ReadonlyArray<fhir.DomainResource>;
 };
 
 const getResourceByType = (
-  patientRecord: ReadonlyArray<any>,
+  patientRecord: ReadonlyArray<fhir.DomainResource>,
   resourceType: string
 ): ReadonlyArray<object> => {
   return patientRecord.filter(resource => resource.resourceType === resourceType);

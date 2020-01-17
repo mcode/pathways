@@ -3,14 +3,19 @@ import { PatientContext } from 'components/PatientProvider';
 
 interface PatientProviderProps {
   children: ReactNode;
-  patient?: any; // fhir.Patient | null;
+  patient?: fhir.Patient; // fhir.Patient | null;
 }
 
 export const mockedPatient = {
   name: [{ given: ['Jane'], family: 'Doe' }],
   birthDate: '1960-04-01',
   gender: 'female',
-  address: 'Anycity, Anystate'
+  address: [
+    {
+      state: 'AnyState',
+      city: 'AnyCity'
+    }
+  ]
 };
 
 const MockedPatientProvider: FC<PatientProviderProps> = ({ patient = null, children }) => (

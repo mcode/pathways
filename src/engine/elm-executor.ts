@@ -21,5 +21,6 @@ export default function executeElm(patient: object, elm: object, libraries?: obj
   const psource = new PatientSource.FHIRv400(patient);
   psource.loadBundles(patient);
   const result = executor.exec(psource);
+  console.log(result);
   return result;
 }

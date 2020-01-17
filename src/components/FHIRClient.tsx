@@ -6,7 +6,7 @@ interface FHIRClientProviderProps {
   children: ReactNode;
 }
 
-export const FHIRClientContext = createContext({});
+export const FHIRClientContext = createContext({ patient: {} });
 
 export const FHIRClientProvider: FC<FHIRClientProviderProps> = ({ client, children }) => (
   <FHIRClientContext.Provider value={client}>{children}</FHIRClientContext.Provider>

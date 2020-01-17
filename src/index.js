@@ -3,7 +3,6 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FHIR from 'fhirclient';
-
 import App from './components/App.tsx';
 import './styles/index.module.scss';
 import './utils/fontawesomeLibrary';

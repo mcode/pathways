@@ -1,5 +1,4 @@
 import React, { FC, useState, useEffect } from 'react';
-
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -20,12 +19,12 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ client }) => {
-  const [patientRecords, setPatientRecords] = useState<Array<Object>>([]);
+  const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
   const [pathway, setPathway] = useState<Pathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
 
   useEffect(() => {
-    getPatientRecord(client).then((records: Array<Object>) => {
+    getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
       // filters out values that are empty
       // the server might return deleted
       // resources that only include an

@@ -5,7 +5,7 @@ declare module 'cql-execution' {
 
   export class Executor {
     constructor(library: Library);
-    exec(patientsource: any);
+    exec(patientsource: PatientSource);
   }
 
   export class Repository {
