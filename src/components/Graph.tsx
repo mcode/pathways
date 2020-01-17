@@ -5,7 +5,7 @@ import Node from './Node';
 import Arrow from './Arrow';
 import evaluatePatientOnPathway from 'engine';
 import { Pathway } from 'pathways-model';
-import { Layout, ExpandedNodes } from 'graph-model';
+import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
   pathway: Pathway;
@@ -13,6 +13,12 @@ interface GraphProps {
   interactive?: boolean;
   expandCurrentNode?: boolean;
 }
+
+const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
+  const startIndex = path.indexOf(edge.start);
+  const endIndex = path.indexOf(edge.end);
+  return startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex;
+};
 
 const Graph: FC<GraphProps> = ({
   resources,
@@ -97,7 +103,7 @@ const Graph: FC<GraphProps> = ({
         if (action) {
           // Adjust height depending on the action description's length
           const height =
-            action.length === 0 ? 100 : 450 + Math.floor(action[0].description.length / 25) * 25;
+            action.length === 0 ? 100 : 455 + Math.floor(action[0].description.length / 25) * 35;
 
           expandedNodes[e] = {
             height,
@@ -165,7 +171,7 @@ const Graph: FC<GraphProps> = ({
                   key={edgeName}
                   edge={edge}
                   edgeName={edgeName}
-                  isOnPatientPath={path.includes(edge.start) && path.includes(edge.end)}
+                  isOnPatientPath={isEdgeOnPatientPath(path, edge)}
                   widthOffset={windowWidth / 2}
                 />
               );
