@@ -7,9 +7,10 @@ import indexClasses from 'styles/index.module.scss';
 
 interface RecNodeProps {
   pathwayState: GuidanceState;
+  isCurrentNode: boolean;
 }
 
-const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
+const RecNode: FC<RecNodeProps> = ({ pathwayState, isCurrentNode }) => {
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
@@ -37,25 +38,27 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState }) => {
           <RecNodeField title="Display" description={coding[0].display} />
         </tbody>
       </table>
-      <form className={classes.commentsForm}>
-        <label>Comments:</label>
-        <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
-          Use Default Text
-        </button>
-        <textarea className={classes.comments}></textarea>
-        <button
-          className={`${classes.accept} ${indexClasses.button}`}
-          onClick={(e): void => e.preventDefault()}
-        >
-          Accept
-        </button>
-        <button
-          className={`${classes.decline} ${indexClasses.button}`}
-          onClick={(e): void => e.preventDefault()}
-        >
-          Decline
-        </button>
-      </form>
+      {isCurrentNode ? (
+        <form className={classes.commentsForm}>
+          <label>Comments:</label>
+          <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
+            Use Default Text
+          </button>
+          <textarea className={classes.comments}></textarea>
+          <button
+            className={`${classes.accept} ${indexClasses.button}`}
+            onClick={(e): void => e.preventDefault()}
+          >
+            Accept
+          </button>
+          <button
+            className={`${classes.decline} ${indexClasses.button}`}
+            onClick={(e): void => e.preventDefault()}
+          >
+            Decline
+          </button>
+        </form>
+      ) : null}
     </div>
   );
 };

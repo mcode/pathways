@@ -55,7 +55,9 @@ const testMedicationRequestState: GuidanceState = {
 
 describe('<RecNode />', () => {
   it('renders a RecNode for action state', () => {
-    const { getByText } = render(<RecNode pathwayState={testActionState} />);
+    const { getByText, queryByRole, queryByText } = render(
+      <RecNode pathwayState={testActionState} isCurrentNode={false} />
+    );
 
     const resource = testActionState.action[0].resource as BasicActionResource;
 
@@ -64,10 +66,18 @@ describe('<RecNode />', () => {
     expect(getByText(resource.code.coding[0].system)).toBeVisible();
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
     expect(getByText(resource.code.coding[0].display)).toBeVisible();
+
+    // Form and buttons should not be displayed in an inactive RecNode
+    expect(queryByRole('form')).toBeNull();
+    expect(queryByText('Accept')).toBeNull();
+    expect(queryByText('Decline')).toBeNull();
+    expect(queryByText('Use Default Text')).toBeNull();
   });
 
   it('renders a RecNode for a medication request state', () => {
-    const { getByText } = render(<RecNode pathwayState={testMedicationRequestState} />);
+    const { getByText } = render(
+      <RecNode pathwayState={testMedicationRequestState} isCurrentNode={false} />
+    );
 
     const resource = testMedicationRequestState.action[0]
       .resource as BasicMedicationRequestResource;
@@ -77,5 +87,17 @@ describe('<RecNode />', () => {
     expect(getByText(resource.medicationCodeableConcept.coding[0].system)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].code)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].display)).toBeVisible();
+  });
+
+  it('renders an active RecNode', () => {
+    const { getByText, getByRole } = render(
+      <RecNode pathwayState={testActionState} isCurrentNode={true} />
+    );
+
+    // Form and buttons should be displayed in an active RecNode
+    expect(getByRole('form')).toBeVisible();
+    expect(getByText('Accept')).toBeVisible();
+    expect(getByText('Decline')).toBeVisible();
+    expect(getByText('Use Default Text')).toBeVisible();
   });
 });
