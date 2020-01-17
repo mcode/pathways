@@ -46,19 +46,22 @@ const App: FC<AppProps> = ({ client }) => {
     setPathway(value);
   }
 
-  function renderPatientView(): JSX.Element {
+  interface PatientViewProps {
+    patientPathway: Pathway | null;
+  }
+  const PatientView: FC<PatientViewProps> = ({ patientPathway }) => {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        {pathway ? (
-          <Graph resources={patientRecords} pathway={pathway} expandCurrentNode={true} />
+        {patientPathway ? (
+          <Graph resources={patientRecords} pathway={patientPathway} expandCurrentNode={true} />
         ) : (
           <div>No Pathway Loaded</div>
         )}
         <PatientRecord resources={patientRecords} />
       </div>
     );
-  }
+  };
 
   return (
     <FHIRClientProvider client={client}>
@@ -84,7 +87,7 @@ const App: FC<AppProps> = ({ client }) => {
               resources={patientRecords}
             ></PathwaysList>
           ) : (
-            renderPatientView()
+            <PatientView patientPathway={pathway} />
           )}
         </PathwayProvider>
       </PatientProvider>
