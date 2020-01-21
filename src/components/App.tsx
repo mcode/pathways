@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
-import logo from '../logo.svg';
+import logo from 'camino-logo-dark.png';
 import { getPatientRecord } from '../utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
@@ -72,7 +72,7 @@ const App: FC<AppProps> = ({ client }) => {
           }}
         >
           <div>
-            <Header logo={logo} title={config.get('appName', 'SMART App')} />
+            <Header logo={logo} />
             <Navigation
               service={service}
               selectPathway={selectPathway}
