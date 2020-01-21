@@ -56,7 +56,7 @@ const Node: FC<NodeProps> = ({
       </div>
       {isGuidanceState(pathwayState) && expanded && (
         <div className={`${classes.recNode} ${recNodeClass}`}>
-          <RecNode pathwayState={pathwayState as GuidanceState} isCurrentNode={isCurrentNode} />
+          <RecNode pathwayState={pathwayState as GuidanceState} isActionable={isCurrentNode} />
         </div>
       )}
     </div>

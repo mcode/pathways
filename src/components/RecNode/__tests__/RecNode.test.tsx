@@ -56,7 +56,7 @@ const testMedicationRequestState: GuidanceState = {
 describe('<RecNode />', () => {
   it('renders a RecNode for action state', () => {
     const { getByText, queryByRole, queryByText } = render(
-      <RecNode pathwayState={testActionState} isCurrentNode={false} />
+      <RecNode pathwayState={testActionState} isActionable={false} />
     );
 
     const resource = testActionState.action[0].resource as BasicActionResource;
@@ -76,7 +76,7 @@ describe('<RecNode />', () => {
 
   it('renders a RecNode for a medication request state', () => {
     const { getByText } = render(
-      <RecNode pathwayState={testMedicationRequestState} isCurrentNode={false} />
+      <RecNode pathwayState={testMedicationRequestState} isActionable={false} />
     );
 
     const resource = testMedicationRequestState.action[0]
@@ -91,7 +91,7 @@ describe('<RecNode />', () => {
 
   it('renders an active RecNode', () => {
     const { getByText, getByRole } = render(
-      <RecNode pathwayState={testActionState} isCurrentNode={true} />
+      <RecNode pathwayState={testActionState} isActionable={true} />
     );
 
     // Form and buttons should be displayed in an active RecNode

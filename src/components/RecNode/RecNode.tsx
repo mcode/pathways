@@ -7,10 +7,10 @@ import indexClasses from 'styles/index.module.scss';
 
 interface RecNodeProps {
   pathwayState: GuidanceState;
-  isCurrentNode: boolean;
+  isActionable: boolean;
 }
 
-const RecNode: FC<RecNodeProps> = ({ pathwayState, isCurrentNode }) => {
+const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
@@ -38,7 +38,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isCurrentNode }) => {
           <RecNodeField title="Display" description={coding[0].display} />
         </tbody>
       </table>
-      {isCurrentNode ? (
+      {isActionable && (
         <form className={classes.commentsForm}>
           <label>Comments:</label>
           <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
@@ -58,7 +58,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isCurrentNode }) => {
             Decline
           </button>
         </form>
-      ) : null}
+      )}
     </div>
   );
 };
