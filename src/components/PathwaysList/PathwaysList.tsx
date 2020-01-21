@@ -64,7 +64,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
-  const [criteria, setCriteria] = useState<Array<CriteriaResult> | null>(null);
+  const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
 
   if (criteria == null && resources != null && resources.length > 0) {
     // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated

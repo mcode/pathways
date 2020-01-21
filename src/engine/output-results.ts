@@ -61,8 +61,8 @@ export function pathwayData(pathway: Pathway, patientData: PatientData): Pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
  * @return returns a list of CriteriaResults, each containing the expected and actual value for one data element
  */
-export function criteriaData(pathway: Pathway, patientData: PatientData): Array<CriteriaResult> {
-  const result: Array<CriteriaResult> = [];
+export function criteriaData(pathway: Pathway, patientData: PatientData): CriteriaResult[] {
+  const result: CriteriaResult[] = [];
 
   pathway.criteria.forEach(criteria => {
     let evaluationResult = patientData[criteria.elementName];

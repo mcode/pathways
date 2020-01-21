@@ -3,7 +3,7 @@ declare module 'pathways-model' {
     name: string;
     description?: string;
     library: string;
-    criteria: Array<Criteria>;
+    criteria: Criteria[];
     states: {
       [key: string]: GuidanceState | BranchState;
     };
@@ -17,12 +17,12 @@ declare module 'pathways-model' {
 
   export interface State {
     label: string;
-    transitions: Array<Transition>;
+    transitions: Transition[];
   }
 
   export interface GuidanceState extends State {
     cql: string;
-    action: Array<Action>;
+    action: Action[];
   }
 
   interface Action {
@@ -44,7 +44,7 @@ declare module 'pathways-model' {
   }
 
   interface Coding {
-    coding: Array<Code>;
+    coding: Code[];
     text?: string;
   }
 
@@ -73,7 +73,7 @@ declare module 'pathways-model' {
     currentStatus: string | undefined;
     nextRecommendation: string | object;
     documentation: Array<DocumentationResource | string>;
-    path: Array<string>;
+    path: string[];
   }
 
   export interface CriteriaResult {
