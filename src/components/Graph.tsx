@@ -100,10 +100,12 @@ const Graph: FC<GraphProps> = ({
       .forEach(e => {
         const action = pathway.states[e].action;
 
-        if (action) {
-          // Adjust height depending on the action description's length
-          const height =
-            action.length === 0 ? 100 : 455 + Math.floor(action[0].description.length / 25) * 35;
+        if (action && action.length > 0) {
+          const currentNode = path[path.length - 1];
+
+          // Adjust height depending on the action description's length and for the current node
+          const heightOffset = Math.floor(action[0].description.length / 25) * 35;
+          const height = (currentNode === e ? 455 : 270) + heightOffset;
 
           expandedNodes[e] = {
             height,
@@ -118,7 +120,7 @@ const Graph: FC<GraphProps> = ({
       });
 
     setLayout(getGraphLayout(expandedNodes));
-  }, [expanded, getGraphLayout, pathway.states]);
+  }, [expanded, getGraphLayout, pathway.states, path]);
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
