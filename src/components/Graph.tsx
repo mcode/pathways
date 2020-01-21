@@ -30,7 +30,12 @@ const Graph: FC<GraphProps> = ({
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
 
-  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
+  const parentWidth =
+    (graphElement &&
+      graphElement.current &&
+      graphElement.current.parentElement &&
+      graphElement.current.parentElement.clientWidth) ||
+    0;
 
   useEffect(() => {
     setWindowWidth(parentWidth);

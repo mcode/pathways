@@ -11,14 +11,14 @@ import { usePathwayContext } from 'components/PathwayProvider';
 
 interface PathwaysListElementProps {
   pathway: Pathway;
-  resources: any;
+  resources: Array<fhir.DomainResource>;
   callback: Function;
 }
 
 interface PathwaysListProps {
   callback: Function;
   service: Service<Array<Pathway>>;
-  resources: any;
+  resources: Array<fhir.DomainResource>;
 }
 
 const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) => {
@@ -119,7 +119,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
                 </tr>
               </tbody>
             </table>
-            <button className={indexClasses.button} onClick={(): any => callback(pathway)}>
+            <button className={indexClasses.button} onClick={(): void => callback(pathway)}>
               Select Pathway
             </button>
           </div>

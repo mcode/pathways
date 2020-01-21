@@ -1,6 +1,7 @@
 {
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "only-error"
   ],
   "extends": [
     "react-app",

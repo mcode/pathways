@@ -63,7 +63,8 @@ function nextStateRecommendation(state: State): string | object {
     return transitions.map(transition => {
       return {
         state: transition.transition,
-        conditionDescription: 'condition' in transition ? transition.condition!.description : ''
+        conditionDescription:
+          'condition' in transition ? transition.condition && transition.condition.description : ''
       };
     });
   }
@@ -114,16 +115,18 @@ function getConditionalNextState(
   currentStateName: string
 ): StateData {
   for (const transition of currentState.transitions) {
-    let documentationResource =
-      'condition' in transition ? patientData[transition.condition!.description] : '';
-    if (documentationResource.length) {
-      documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
-      return {
-        nextState: transition.transition,
-        documentation: formatDocumentation(documentationResource, currentStateName),
-        status: 'status' in documentationResource ? documentationResource.status : 'unknown'
-      };
-      // Is there ever a time we may hit multiple conditions?
+    if (transition.condition) {
+      let documentationResource =
+        'condition' in transition ? patientData[transition.condition.description] : '';
+      if (documentationResource.length) {
+        documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
+        return {
+          nextState: transition.transition,
+          documentation: formatDocumentation(documentationResource, currentStateName),
+          status: 'status' in documentationResource ? documentationResource.status : 'unknown'
+        };
+        // Is there ever a time we may hit multiple conditions?
+      }
     }
   }
 

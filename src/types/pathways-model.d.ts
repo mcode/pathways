@@ -81,7 +81,7 @@ declare module 'pathways-model' {
         value: string;
       };
     };
-    [key: string]: any;
+    [key: string]: Array<fhir.DomainResource, string> | fhir.DomainResource;
   }
 
   export interface DocumentationResource {

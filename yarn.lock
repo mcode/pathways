@@ -4779,6 +4779,11 @@ eslint-plugin-jsx-a11y@6.2.3:
     has "^1.0.3"
     jsx-ast-utils "^2.2.1"
 
+eslint-plugin-only-error@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-only-error/-/eslint-plugin-only-error-1.0.2.tgz#3e802e5455879e6f42a0ca8730521ec554f9bb42"
+  integrity sha512-tdz/EU/LeQLPNMBIQOSl39by+/NGKdhjfba6qDvMWjcbY0GmiMk0bXrIXRGAwW9fksH30Y+KKlK1Jc32bbql9w==
+
 eslint-plugin-prettier@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.2.tgz#432e5a667666ab84ce72f945c72f77d996a5c9ba"

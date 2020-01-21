@@ -1,8 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
-
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
-
+import { PathwaysClient } from 'pathways-client';
 import logo from '../logo.svg';
 import { getPatientRecord } from '../utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
@@ -16,16 +15,16 @@ import { Pathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
-  client: any; // TODO: fhirclient.Client
+  client: PathwaysClient; // TODO: fhirclient.Client
 }
 
 const App: FC<AppProps> = ({ client }) => {
-  const [patientRecords, setPatientRecords] = useState<Array<any>>([]);
+  const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
   const [pathway, setPathway] = useState<Pathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
 
   useEffect(() => {
-    getPatientRecord(client).then((records: Array<any>) => {
+    getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
       // filters out values that are empty
       // the server might return deleted
       // resources that only include an
