@@ -100,7 +100,7 @@ const Graph: FC<GraphProps> = ({
       .forEach(e => {
         const action = pathway.states[e].action;
 
-        if (action) {
+        if (action && action.length > 0) {
           const currentNode = path[path.length - 1];
 
           // Adjust height depending on the action description's length and for the current node
