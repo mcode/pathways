@@ -4,9 +4,7 @@ import Header from '../Header';
 
 describe('<Header />', () => {
   it('renders a visible header title and logo', () => {
-    const { getByText, getByRole } = render(<Header title="Title" logo="logo" />);
-
-    expect(getByText('Title')).toBeVisible();
+    const { getByRole } = render(<Header logo="logo" />);
     expect(getByRole('img')).toBeVisible();
   });
 });
