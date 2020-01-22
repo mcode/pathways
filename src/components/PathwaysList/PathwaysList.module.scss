@@ -100,11 +100,7 @@ $lineHeight: 35px;
           min-width: 50px;
         }
 
-        td:first-child {
-          font-weight: bold;
-        }
-
-        td:last-child {
+        .matchingElement {
           color: $blue;
           font-weight: bold;
         }

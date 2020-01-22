@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Service } from 'pathways-objects';
-import { Pathway } from 'pathways-model';
+import { Pathway, CriteriaResult } from 'pathways-model';
 
 import classes from './PathwaysList.module.scss';
 import indexClasses from 'styles/index.module.scss';
@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
+import { evaluatePathwayCriteria } from 'engine';
 
 interface PathwaysListElementProps {
   pathway: Pathway;
@@ -63,6 +64,17 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
+  const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
+
+  if (criteria == null && resources != null && resources.length > 0) {
+    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+    const patient = {
+      resourceType: 'Bundle',
+      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
+    };
+    evaluatePathwayCriteria(patient, pathway).then(c => setCriteria(c));
+  }
+
   const chevron: IconProp = isVisible ? 'chevron-up' : 'chevron-down';
 
   function toggleVisible(): void {
@@ -83,7 +95,9 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
         <div className={classes.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={classes.numElements}>4</div>
+        <div className={classes.numElements}>
+          {criteria && criteria.filter(c => c.match).length}
+        </div>
       </div>
 
       {isVisible && (
@@ -97,26 +111,14 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
                   <th>mCODE elements</th>
                   <th>patient elements</th>
                 </tr>
-                <tr>
-                  <td>condition</td>
-                  <td>breast cancer</td>
-                  <td>breast cancer</td>
-                </tr>
-                <tr>
-                  <td>stage</td>
-                  <td>1a</td>
-                  <td>1a</td>
-                </tr>
-                <tr>
-                  <td>node status</td>
-                  <td>N+/N0</td>
-                  <td>N+</td>
-                </tr>
-                <tr>
-                  <td>tumor size</td>
-                  <td>any</td>
-                  <td>2.5cm</td>
-                </tr>
+                {criteria &&
+                  criteria.map(c => (
+                    <tr key={c.elementName}>
+                      <td>{c.elementName}</td>
+                      <td>{c.expected}</td>
+                      <td className={c.match ? classes.matchingElement : undefined}>{c.actual}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
             <button className={indexClasses.button} onClick={(): void => callback(pathway)}>

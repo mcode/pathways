@@ -1,4 +1,4 @@
-import evaluatePatientOnPathway from '..';
+import { evaluatePatientOnPathway } from '..';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
 import preconvertedELM from './fixtures/elm/sample_pathway.elm.json';

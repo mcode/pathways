@@ -1,7 +1,14 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, PathwayResults, PatientData, DocumentationResource, State } from 'pathways-model';
+import {
+  Pathway,
+  PathwayResults,
+  PatientData,
+  CriteriaResult,
+  DocumentationResource,
+  State
+} from 'pathways-model';
 
 interface StateData {
   documentation: DocumentationResource | string | null;
@@ -11,8 +18,8 @@ interface StateData {
 
 /**
  * Engine function to take in the ELM patient results and output data relating to the patient's pathway
- * @param pathway - JSON (or string representing) the entire pathway
- * @param patientData - JSON (or string representing) the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
+ * @param pathway - the entire pathway
+ * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
  * @return returns a JSON object describing where the patient is on the given pathway
  *  {
  *    currentState - the name of the state patient is currently in
@@ -22,7 +29,7 @@ interface StateData {
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export default function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
+export function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
@@ -46,6 +53,41 @@ export default function pathwayData(pathway: Pathway, patientData: PatientData):
     path: patientPathway,
     documentation: patientDocumentation
   };
+}
+
+/**
+ * Engine function to take in the ELM patient results and output data relating to the pathway criteria
+ * @param pathway - the entire pathway
+ * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
+ * @return returns a list of CriteriaResults, each containing the expected and actual value for one data element
+ */
+export function criteriaData(pathway: Pathway, patientData: PatientData): CriteriaResult[] {
+  const result: CriteriaResult[] = [];
+
+  pathway.criteria.forEach(criteria => {
+    let evaluationResult = patientData[criteria.elementName];
+    if (Array.isArray(evaluationResult)) {
+      evaluationResult = evaluationResult[0]; // TODO: add functionality for multiple resources
+    }
+    let actual = 'unknown';
+    let match = false;
+
+    if (evaluationResult) {
+      actual = evaluationResult['value'];
+      match = evaluationResult['match'];
+    }
+
+    const criteriaResult = {
+      elementName: criteria.elementName,
+      expected: criteria.expected,
+      actual,
+      match
+    };
+
+    result.push(criteriaResult);
+  });
+
+  return result;
 }
 
 /**

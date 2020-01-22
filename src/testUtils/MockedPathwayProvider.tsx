@@ -11,6 +11,13 @@ export const mockedPathwayCtx = {
   pathway: {
     name: 'Test Pathway',
     library: 'mCODE.cql',
+    criteria: [
+      {
+        elementName: 'condition',
+        expected: 'breast cancer',
+        cql: 'some fancy CQL statement'
+      }
+    ],
     states: [
       {
         Start: {

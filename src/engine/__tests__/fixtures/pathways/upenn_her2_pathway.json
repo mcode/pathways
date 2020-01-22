@@ -2,6 +2,13 @@
     "name": "UPenn Breast Cancer Pathway: Early Stage HER2+ Pathway",
     "description": "Pathway for the UPenn Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway",
     "library": "upenn_her2_library.cql",
+    "criteria": [
+      {
+        "elementName": "Condition",
+        "expected": "Breast Cancer",
+        "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } "
+      }
+    ],
     "states": {
       "Start": {
         "label": "Start",

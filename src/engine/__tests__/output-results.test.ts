@@ -1,4 +1,4 @@
-import pathwayData from '../output-results';
+import { pathwayData, criteriaData } from '../output-results';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
 
@@ -419,5 +419,61 @@ describe('pathway results translator', () => {
       }
     ]);
     expect(patientPath.path).toEqual(['Start', 'T-test', 'Surgery', 'N-test', 'Radiation']);
+  });
+});
+
+describe('criteria results translator', () => {
+  it('matching patient produces correct results', () => {
+    const patientData = {
+      Patient: {
+        id: {
+          value: '1'
+        }
+      },
+      Condition: [
+        {
+          value: 'Malignant neoplasm of breast (disorder)',
+          match: true
+        }
+      ]
+    };
+
+    const results = criteriaData(pathway, patientData);
+
+    expect(results).toEqual([
+      {
+        elementName: 'Condition',
+        expected: 'Breast Cancer',
+        actual: 'Malignant neoplasm of breast (disorder)',
+        match: true
+      }
+    ]);
+  });
+
+  it('nonmatching patient produces correct results', () => {
+    const patientData = {
+      Patient: {
+        id: {
+          value: '2'
+        }
+      },
+      Condition: [
+        {
+          value: 'Gastrointestinal stromal tumor (disorder)',
+          match: false
+        }
+      ]
+    };
+
+    const results = criteriaData(pathway, patientData);
+
+    expect(results).toEqual([
+      {
+        elementName: 'Condition',
+        expected: 'Breast Cancer',
+        actual: 'Gastrointestinal stromal tumor (disorder)',
+        match: false
+      }
+    ]);
   });
 });
