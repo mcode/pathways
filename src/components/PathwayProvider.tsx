@@ -7,8 +7,8 @@ interface PathwayProviderProps {
 }
 
 export const PathwayContext = createContext<PathwayContextInterface>({
-  pathway: null,
-  setPathway: () => {
+  patientPathway: null,
+  setPatientPathway: () => {
     //do nothing
   }
 });

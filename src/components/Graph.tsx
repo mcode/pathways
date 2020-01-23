@@ -4,11 +4,11 @@ import graphLayout from 'visualization/layout';
 import Node from './Node';
 import Arrow from './Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { Pathway } from 'pathways-model';
+import { PatientPathway } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
-  pathway: Pathway;
+  patientPathway: PatientPathway;
   resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
@@ -22,10 +22,11 @@ const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
 
 const Graph: FC<GraphProps> = ({
   resources,
-  pathway,
+  patientPathway,
   interactive = true,
   expandCurrentNode = true
 }) => {
+  const pathway = patientPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());

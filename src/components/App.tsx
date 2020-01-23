@@ -11,7 +11,7 @@ import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
-import { Pathway } from 'pathways-model';
+import { PatientPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
@@ -20,7 +20,7 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
-  const [pathway, setPathway] = useState<Pathway | null>(null);
+  const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
 
   useEffect(() => {
@@ -39,21 +39,28 @@ const App: FC<AppProps> = ({ client }) => {
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
+  function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
-    setPathway(value);
+    console.log('set patient pathway');
+    console.log(value);
+    setPatientPathway(value);
   }
 
   interface PatientViewProps {
-    patientPathway: Pathway | null;
+    patientPathway: PatientPathway | null;
   }
+
   const PatientView: FC<PatientViewProps> = ({ patientPathway }) => {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
         {patientPathway ? (
-          <Graph resources={patientRecords} pathway={patientPathway} expandCurrentNode={true} />
+          <Graph
+            resources={patientRecords}
+            patientPathway={patientPathway}
+            expandCurrentNode={true}
+          />
         ) : (
           <div>No Pathway Loaded</div>
         )}
@@ -67,8 +74,8 @@ const App: FC<AppProps> = ({ client }) => {
       <PatientProvider>
         <PathwayProvider
           pathwayCtx={{
-            pathway: pathway,
-            setPathway: setPathwayCallback
+            patientPathway: patientPathway,
+            setPatientPathway: setPatientPathwayCallback
           }}
         >
           <div>
@@ -81,12 +88,12 @@ const App: FC<AppProps> = ({ client }) => {
           </div>
           {selectPathway ? (
             <PathwaysList
-              callback={setPathwayCallback}
+              callback={setPatientPathwayCallback}
               service={service}
               resources={patientRecords}
             ></PathwaysList>
           ) : (
-            <PatientView patientPathway={pathway} />
+            <PatientView patientPathway={patientPathway} />
           )}
         </PathwayProvider>
       </PatientProvider>

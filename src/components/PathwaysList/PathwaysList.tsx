@@ -1,6 +1,6 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useState, useEffect } from 'react';
 import { Service } from 'pathways-objects';
-import { Pathway, CriteriaResult } from 'pathways-model';
+import { Pathway, PatientPathway, CriteriaResult } from 'pathways-model';
 
 import classes from './PathwaysList.module.scss';
 import indexClasses from 'styles/index.module.scss';
@@ -11,7 +11,7 @@ import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 
 interface PathwaysListElementProps {
-  pathway: Pathway;
+  patientPathway: PatientPathway;
   resources: Array<fhir.DomainResource>;
   callback: Function;
 }
@@ -23,16 +23,23 @@ interface PathwaysListProps {
 }
 
 const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) => {
-  function renderList(list: Pathway[]): ReactNode {
+  const [list, setList] = useState<PatientPathway[]>([]);
+
+  useEffect(() => {
+    if (service.status === 'loaded' && list.length === 0)
+      setList(service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null })));
+  }, [service, list.length]);
+
+  function renderList(): ReactNode {
     return (
       <div>
-        {list.map(pathway => {
+        {list.map(patientPathway => {
           return (
             <PathwaysListElement
-              pathway={pathway}
+              patientPathway={patientPathway}
               callback={callback}
               resources={resources}
-              key={pathway.name}
+              key={patientPathway.pathway.name}
             />
           );
         })}
@@ -51,7 +58,7 @@ const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) =
             <div className={classes.header_title__note}>Select pathway below to view details</div>
           </div>
 
-          {renderList(service.payload)}
+          {renderList()}
         </div>
       ) : (
         <div>ERROR</div>
@@ -60,7 +67,12 @@ const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) =
   );
 };
 
-const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources, callback }) => {
+const PathwaysListElement: FC<PathwaysListElementProps> = ({
+  patientPathway,
+  resources,
+  callback
+}) => {
+  const pathway = patientPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -87,7 +99,8 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
         className={classes.title}
         role={'listitem'}
         onClick={(e): void => {
-          pathwayCtx.setPathway(pathway, true);
+          pathwayCtx.setPatientPathway(patientPathway, true);
+          console.log(patientPathway);
           toggleVisible();
         }}
       >
@@ -121,14 +134,14 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ pathway, resources,
                   ))}
               </tbody>
             </table>
-            <button className={indexClasses.button} onClick={(): void => callback(pathway)}>
+            <button className={indexClasses.button} onClick={(): void => callback(patientPathway)}>
               Select Pathway
             </button>
           </div>
           <div className={classes.pathway}>
             <Graph
               resources={resources}
-              pathway={pathway}
+              patientPathway={patientPathway}
               interactive={false}
               expandCurrentNode={false}
             />
