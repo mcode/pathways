@@ -77,6 +77,9 @@ const Graph: FC<GraphProps> = ({
   }, []);
 
   useEffect(() => {
+    // Keeps track of whether the current useEffect cycle has ended
+    let cancel = false;
+
     if (resources.length > 0) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
@@ -85,8 +88,12 @@ const Graph: FC<GraphProps> = ({
       };
 
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-        setPath(pathwayResults.path);
+        if (!cancel) setPath(pathwayResults.path);
       });
+
+      return (): void => {
+        cancel = true;
+      };
     }
   }, [pathway, resources]);
 
