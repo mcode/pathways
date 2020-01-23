@@ -17,13 +17,14 @@ interface Props {
 }
 
 const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => {
-  const pathway = usePathwayContext();
+  const pathwayCtx = usePathwayContext();
+  const pathway = pathwayCtx.patientPathway?.pathway;
   const value =
-    pathway.pathway === null ? null : { label: pathway.pathway.name, value: pathway.pathway };
+    pathway === undefined ? null : { label: pathway.name, value: pathwayCtx.patientPathway };
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
     if (pathwayOption !== null && 'value' in pathwayOption) {
-      pathway.setPathway(pathwayOption.value);
+      pathwayCtx.setPatientPathway(pathwayOption.value);
     }
   };
 
