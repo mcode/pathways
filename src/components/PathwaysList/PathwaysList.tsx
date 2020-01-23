@@ -17,19 +17,13 @@ interface PathwaysListElementProps {
 }
 
 interface PathwaysListProps {
+  list: PatientPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
   resources: Array<fhir.DomainResource>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({ callback, service, resources }) => {
-  const [list, setList] = useState<PatientPathway[]>([]);
-
-  useEffect(() => {
-    if (service.status === 'loaded' && list.length === 0)
-      setList(service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null })));
-  }, [service, list.length]);
-
+const PathwaysList: FC<PathwaysListProps> = ({ list, callback, service, resources }) => {
   function renderList(): ReactNode {
     return (
       <div>
