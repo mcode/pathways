@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useEffect } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import { Service } from 'pathways-objects';
 import { Pathway, PatientPathway, CriteriaResult } from 'pathways-model';
 

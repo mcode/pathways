@@ -48,8 +48,6 @@ const App: FC<AppProps> = ({ client }) => {
   function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
-    console.log('set patient pathway');
-    console.log(value);
     setPatientPathway(value);
   }
 
@@ -87,7 +85,7 @@ const App: FC<AppProps> = ({ client }) => {
           <div>
             <Header logo={logo} />
             <Navigation
-              service={service}
+              list={list}
               selectPathway={selectPathway}
               setSelectPathway={setSelectPathway}
             />

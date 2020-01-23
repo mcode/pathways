@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react';
-import { Pathway, PatientPathway } from 'pathways-model';
+import { PatientPathway } from 'pathways-model';
 import Navigation from 'components/Navigation';
 import MockedPatientProvider from 'testUtils/MockedPatientProvider';
 import MockedPathwayProvider from 'testUtils/MockedPathwayProvider';
-import { loadedService } from './services';
 
 const MockedNavigation: FC = () => {
   const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
@@ -21,8 +20,8 @@ const MockedNavigation: FC = () => {
         }}
       >
         <Navigation
+          list={[]}
           selectPathway={false}
-          service={loadedService}
           setSelectPathway={(): void => {
             //do nothing
           }}

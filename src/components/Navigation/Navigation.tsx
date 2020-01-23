@@ -5,18 +5,17 @@ import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
 
 import classes from './Navigation.module.scss';
-import { Service } from 'pathways-objects';
-import { Pathway } from 'pathways-model';
+import { PatientPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface Props {
+  list: PatientPathway[];
   selectPathway: boolean;
-  service: Service<Array<Pathway>>;
   setSelectPathway: (flag: boolean) => void;
 }
 
-const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => {
+const Navigation: FC<Props> = ({ list, selectPathway, setSelectPathway }) => {
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayCtx.patientPathway?.pathway;
   const value =
@@ -28,10 +27,13 @@ const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => 
     }
   };
 
-  const pathwayOptions =
-    service.status !== 'loaded'
-      ? []
-      : service.payload.map(pathway => ({ label: pathway.name, value: pathway }));
+  const pathwayOptions = list.map(patientPathway => ({
+    label: patientPathway.pathway.name,
+    value: patientPathway
+  }));
+  // service.status !== 'loaded'
+  //   ? []
+  //   : service.payload.map(pathway => ({ label: pathway.name, value: pathway }));
 
   return (
     <nav className={classes.navigation}>
