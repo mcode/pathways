@@ -22,6 +22,7 @@ const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
   const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
+  const [list, setList] = useState<PatientPathway[]>([]);
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
@@ -38,6 +39,11 @@ const App: FC<AppProps> = ({ client }) => {
   }, [client]);
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
+
+  useEffect(() => {
+    if (service.status === 'loaded' && list.length === 0)
+      setList(service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null })));
+  }, [service, list.length, client]);
 
   function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
     window.scrollTo(0, 0);
@@ -88,6 +94,7 @@ const App: FC<AppProps> = ({ client }) => {
           </div>
           {selectPathway ? (
             <PathwaysList
+              list={list}
               callback={setPatientPathwayCallback}
               service={service}
               resources={patientRecords}
