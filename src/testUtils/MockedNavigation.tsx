@@ -3,10 +3,19 @@ import { PatientPathway } from 'pathways-model';
 import Navigation from 'components/Navigation';
 import MockedPatientProvider from 'testUtils/MockedPatientProvider';
 import MockedPathwayProvider from 'testUtils/MockedPathwayProvider';
+import { loadedService } from './services';
 
 const MockedNavigation: FC = () => {
+  let defaultList: PatientPathway[] = [];
+  if (loadedService.status === 'loaded') {
+    defaultList = loadedService.payload.map(pathway => ({
+      pathway: pathway,
+      pathwayResults: null
+    }));
+  }
+
   const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
-  const [list, setList] = useState<PatientPathway[]>([]);
+  const [list, setList] = useState<PatientPathway[]>(defaultList);
 
   function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
     if (value !== null) setPatientPathway(value);
