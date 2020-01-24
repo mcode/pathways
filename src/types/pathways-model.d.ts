@@ -116,5 +116,6 @@ declare module 'pathways-model' {
   export interface PathwayContextInterface {
     patientPathway: PatientPathway | null;
     setPatientPathway: (patientPathway: PatientPathway | null, selectPathway?: boolean) => void;
+    updatePatientPathwayList: (value: PatientPathway) => void;
   }
 }

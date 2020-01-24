@@ -51,6 +51,20 @@ const App: FC<AppProps> = ({ client }) => {
     setPatientPathway(value);
   }
 
+  function updatePatientPathwayList(value: PatientPathway) {
+    let newList = [...list]; // Create a deep copy of list
+    for (let i in list) {
+      if (list[i].pathway.name === value.pathway.name) {
+        newList[i] = value;
+        setList(newList);
+      }
+    }
+
+    if (patientPathway?.pathway.name === value.pathway.name) {
+      setPatientPathway(value);
+    }
+  }
+
   interface PatientViewProps {
     patientPathway: PatientPathway | null;
   }
@@ -64,6 +78,7 @@ const App: FC<AppProps> = ({ client }) => {
             resources={patientRecords}
             patientPathway={patientPathway}
             expandCurrentNode={true}
+            updatePatientPathwayList={updatePatientPathwayList}
           />
         ) : (
           <div>No Pathway Loaded</div>
@@ -79,7 +94,8 @@ const App: FC<AppProps> = ({ client }) => {
         <PathwayProvider
           pathwayCtx={{
             patientPathway: patientPathway,
-            setPatientPathway: setPatientPathwayCallback
+            setPatientPathway: setPatientPathwayCallback,
+            updatePatientPathwayList: updatePatientPathwayList
           }}
         >
           <div>

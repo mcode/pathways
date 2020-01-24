@@ -4,7 +4,7 @@ import graphLayout from 'visualization/layout';
 import Node from './Node';
 import Arrow from './Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { PatientPathway } from 'pathways-model';
+import { PatientPathway, PathwayResults } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
@@ -12,6 +12,7 @@ interface GraphProps {
   resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
+  updatePatientPathwayList: (value: PatientPathway) => void;
 }
 
 const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
@@ -24,12 +25,19 @@ const Graph: FC<GraphProps> = ({
   resources,
   patientPathway,
   interactive = true,
-  expandCurrentNode = true
+  expandCurrentNode = true,
+  updatePatientPathwayList
 }) => {
   const pathway = patientPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
-  const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
+  const [path, _setPath] = useState<string[]>(
+    patientPathway.pathwayResults ? patientPathway.pathwayResults.path : []
+  );
+  const setPath = (value: PathwayResults) => {
+    _setPath(value.path);
+    updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
+  };
 
   const parentWidth =
     (graphElement &&
@@ -81,7 +89,7 @@ const Graph: FC<GraphProps> = ({
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0) {
+    if (resources.length > 0 && path.length === 0) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -89,7 +97,7 @@ const Graph: FC<GraphProps> = ({
       };
 
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-        if (!cancel) setPath(pathwayResults.path);
+        if (!cancel) setPath(pathwayResults);
       });
 
       return (): void => {

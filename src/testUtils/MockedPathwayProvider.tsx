@@ -34,6 +34,9 @@ export const mockedPathwayCtx = {
   },
   setPatientPathway: (): void => {
     //do nothing
+  },
+  updatePatientPathwayList: (): void => {
+    //do nothing
   }
 };
 
