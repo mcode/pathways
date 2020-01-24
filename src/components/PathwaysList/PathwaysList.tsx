@@ -17,17 +17,22 @@ interface PathwaysListElementProps {
 }
 
 interface PathwaysListProps {
-  list: PatientPathway[];
+  patientPathwayList: PatientPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
   resources: Array<fhir.DomainResource>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({ list, callback, service, resources }) => {
+const PathwaysList: FC<PathwaysListProps> = ({
+  patientPathwayList,
+  callback,
+  service,
+  resources
+}) => {
   function renderList(): ReactNode {
     return (
       <div>
-        {list.map(patientPathway => {
+        {patientPathwayList.map(patientPathway => {
           return (
             <PathwaysListElement
               patientPathway={patientPathway}
