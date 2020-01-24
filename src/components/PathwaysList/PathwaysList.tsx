@@ -94,7 +94,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         role={'listitem'}
         onClick={(e): void => {
           pathwayCtx.setPatientPathway(patientPathway, true);
-          console.log(patientPathway);
           toggleVisible();
         }}
       >
@@ -138,6 +137,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               patientPathway={patientPathway}
               interactive={false}
               expandCurrentNode={false}
+              updatePatientPathwayList={pathwayCtx.updatePatientPathwayList}
             />
             <div className={classes.controls}>
               <FontAwesomeIcon icon={'play'} />

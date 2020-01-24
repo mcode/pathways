@@ -10,6 +10,9 @@ export const PathwayContext = createContext<PathwayContextInterface>({
   patientPathway: null,
   setPatientPathway: () => {
     //do nothing
+  },
+  updatePatientPathwayList: () => {
+    //do nothing
   }
 });
 
