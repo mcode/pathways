@@ -104,7 +104,7 @@ const Graph: FC<GraphProps> = ({
         cancel = true;
       };
     }
-  }, [pathway, resources]);
+  }, [pathway, resources, path.length]);
 
   useEffect(() => {
     const currentNode = path[path.length - 1];

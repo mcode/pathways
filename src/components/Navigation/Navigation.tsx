@@ -10,12 +10,12 @@ import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface Props {
-  list: PatientPathway[];
+  patientPathwayList: PatientPathway[];
   selectPathway: boolean;
   setSelectPathway: (flag: boolean) => void;
 }
 
-const Navigation: FC<Props> = ({ list, selectPathway, setSelectPathway }) => {
+const Navigation: FC<Props> = ({ patientPathwayList, selectPathway, setSelectPathway }) => {
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayCtx.patientPathway?.pathway;
   const value =
@@ -27,13 +27,10 @@ const Navigation: FC<Props> = ({ list, selectPathway, setSelectPathway }) => {
     }
   };
 
-  const pathwayOptions = list.map(patientPathway => ({
+  const pathwayOptions = patientPathwayList.map(patientPathway => ({
     label: patientPathway.pathway.name,
     value: patientPathway
   }));
-  // service.status !== 'loaded'
-  //   ? []
-  //   : service.payload.map(pathway => ({ label: pathway.name, value: pathway }));
 
   return (
     <nav className={classes.navigation}>

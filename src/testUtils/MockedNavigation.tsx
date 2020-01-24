@@ -14,19 +14,19 @@ const MockedNavigation: FC = () => {
     }));
   }
 
-  const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
-  const [list, setList] = useState<PatientPathway[]>(defaultList);
+  const [currentPathway, setCurrentPathway] = useState<PatientPathway | null>(null);
+  const [patientPathwayList, setPatientPathwayList] = useState<PatientPathway[]>(defaultList);
 
   function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
-    if (value !== null) setPatientPathway(value);
+    if (value !== null) setCurrentPathway(value);
   }
 
   function updatePatientPathwayList(value: PatientPathway) {
-    let newList = [...list]; // Create a deep copy of list
-    for (let i in list) {
-      if (list[i].pathway.name === value.pathway.name) {
+    let newList = [...patientPathwayList]; // Create a deep copy of list
+    for (let i in patientPathwayList) {
+      if (patientPathwayList[i].pathway.name === value.pathway.name) {
         newList[i] = value;
-        setList(newList);
+        setPatientPathwayList(newList);
       }
     }
   }
@@ -35,13 +35,13 @@ const MockedNavigation: FC = () => {
     <MockedPatientProvider>
       <MockedPathwayProvider
         pathwayCtx={{
-          patientPathway: patientPathway,
+          patientPathway: currentPathway,
           setPatientPathway: setPatientPathwayCallback,
           updatePatientPathwayList: updatePatientPathwayList
         }}
       >
         <Navigation
-          list={list}
+          patientPathwayList={patientPathwayList}
           selectPathway={false}
           setSelectPathway={(): void => {
             //do nothing

@@ -17,7 +17,7 @@ describe('<PathwaysList />', () => {
   it('renders loading screen', () => {
     const { getByText } = render(
       <PathwaysList
-        list={[]}
+        patientPathwayList={[]}
         callback={(): void => {
           return;
         }}
@@ -31,7 +31,7 @@ describe('<PathwaysList />', () => {
   it('renders list of pathways', () => {
     const { getAllByText } = render(
       <PathwaysList
-        list={pathwayList}
+        patientPathwayList={pathwayList}
         callback={(): void => {
           return;
         }}
@@ -45,7 +45,7 @@ describe('<PathwaysList />', () => {
   it('renders error', () => {
     const { getByText } = render(
       <PathwaysList
-        list={[]}
+        patientPathwayList={[]}
         callback={(): void => {
           return;
         }}
@@ -63,7 +63,7 @@ describe('<PathwaysList />', () => {
     }
     const { container } = render(
       <PathwaysList
-        list={pathwayList}
+        patientPathwayList={pathwayList}
         callback={(pathway: Pathway): void => {
           setValue(pathway.name);
         }}

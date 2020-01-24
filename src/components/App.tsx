@@ -20,9 +20,9 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
-  const [patientPathway, setPatientPathway] = useState<PatientPathway | null>(null);
+  const [currentPathway, setCurrentPathway] = useState<PatientPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
-  const [list, setList] = useState<PatientPathway[]>([]);
+  const [patientPathwayList, setPatientPathwayList] = useState<PatientPathway[]>([]);
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
@@ -41,27 +41,29 @@ const App: FC<AppProps> = ({ client }) => {
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
   useEffect(() => {
-    if (service.status === 'loaded' && list.length === 0)
-      setList(service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null })));
-  }, [service, list.length, client]);
+    if (service.status === 'loaded' && patientPathwayList.length === 0)
+      setPatientPathwayList(
+        service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null }))
+      );
+  }, [service, patientPathwayList.length, client]);
 
   function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
-    setPatientPathway(value);
+    setCurrentPathway(value);
   }
 
   function updatePatientPathwayList(value: PatientPathway) {
-    let newList = [...list]; // Create a deep copy of list
-    for (let i in list) {
-      if (list[i].pathway.name === value.pathway.name) {
+    let newList = [...patientPathwayList]; // Create a deep copy of list
+    for (let i in patientPathwayList) {
+      if (patientPathwayList[i].pathway.name === value.pathway.name) {
         newList[i] = value;
-        setList(newList);
+        setPatientPathwayList(newList);
       }
     }
 
-    if (patientPathway?.pathway.name === value.pathway.name) {
-      setPatientPathway(value);
+    if (currentPathway?.pathway.name === value.pathway.name) {
+      setCurrentPathway(value);
     }
   }
 
@@ -93,7 +95,7 @@ const App: FC<AppProps> = ({ client }) => {
       <PatientProvider>
         <PathwayProvider
           pathwayCtx={{
-            patientPathway: patientPathway,
+            patientPathway: currentPathway,
             setPatientPathway: setPatientPathwayCallback,
             updatePatientPathwayList: updatePatientPathwayList
           }}
@@ -101,20 +103,20 @@ const App: FC<AppProps> = ({ client }) => {
           <div>
             <Header logo={logo} />
             <Navigation
-              list={list}
+              patientPathwayList={patientPathwayList}
               selectPathway={selectPathway}
               setSelectPathway={setSelectPathway}
             />
           </div>
           {selectPathway ? (
             <PathwaysList
-              list={list}
+              patientPathwayList={patientPathwayList}
               callback={setPatientPathwayCallback}
               service={service}
               resources={patientRecords}
             ></PathwaysList>
           ) : (
-            <PatientView patientPathway={patientPathway} />
+            <PatientView patientPathway={currentPathway} />
           )}
         </PathwayProvider>
       </PatientProvider>
