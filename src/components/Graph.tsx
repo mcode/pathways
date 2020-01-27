@@ -34,10 +34,14 @@ const Graph: FC<GraphProps> = ({
   const [path, _setPath] = useState<string[]>(
     patientPathway.pathwayResults ? patientPathway.pathwayResults.path : []
   );
-  const setPath = (value: PathwayResults) => {
-    _setPath(value.path);
-    updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
-  };
+
+  const setPath = useCallback(
+    (value: PathwayResults): void => {
+      _setPath(value.path);
+      updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
+    },
+    [patientPathway.pathway, updatePatientPathwayList]
+  );
 
   const parentWidth =
     (graphElement &&
@@ -97,7 +101,7 @@ const Graph: FC<GraphProps> = ({
         setPath(pathwayResults);
       });
     }
-  }, [pathway, resources, path.length]);
+  }, [pathway, resources, path.length, setPath]);
 
   useEffect(() => {
     const currentNode = path[path.length - 1];

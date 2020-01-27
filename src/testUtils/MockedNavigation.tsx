@@ -21,9 +21,9 @@ const MockedNavigation: FC = () => {
     if (value !== null) setCurrentPathway(value);
   }
 
-  function updatePatientPathwayList(value: PatientPathway) {
-    let newList = [...patientPathwayList]; // Create a deep copy of list
-    for (let i in patientPathwayList) {
+  function updatePatientPathwayList(value: PatientPathway): void {
+    const newList = [...patientPathwayList]; // Create a deep copy of list
+    for (let i = 0; i < patientPathwayList.length; i++) {
       if (patientPathwayList[i].pathway.name === value.pathway.name) {
         newList[i] = value;
         setPatientPathwayList(newList);
