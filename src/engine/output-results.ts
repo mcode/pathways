@@ -9,6 +9,7 @@ import {
   DocumentationResource,
   State
 } from 'pathways-model';
+import { PathwaysClient } from 'pathways-client';
 
 interface StateData {
   documentation: DocumentationResource | string | null;
@@ -235,7 +236,7 @@ function retrieveResource(
   doc: DocumentationResource | string,
   resources: fhir.DomainResource[]
 ): DocumentationResource | string {
-  if (typeof doc !== 'string' && resources) {
+  if (typeof doc !== 'string') {
     doc.resource = resources.find(resource => {
       return resource.resourceType === doc.resourceType && resource.id === doc.id;
     });
