@@ -30,7 +30,14 @@ const Graph: FC<GraphProps> = ({
 }) => {
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
-  const [pathwayResults, setPathwayResults] = useState<PathwayResults>({path: [], patientId: '', currentStatus: '', currentState: '', nextRecommendation: '', documentation: []});
+  const [pathwayResults, setPathwayResults] = useState<PathwayResults>({
+    path: [],
+    patientId: '',
+    currentStatus: '',
+    currentState: '',
+    nextRecommendation: '',
+    documentation: []
+  });
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [path, _setPath] = useState<string[]>(
     evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
@@ -109,10 +116,10 @@ const Graph: FC<GraphProps> = ({
   useEffect(() => {
     const path = pathwayResults.path;
     if (path) {
-        const currentNode = path[path.length - 1];
-        if (expandCurrentNode) {
-          if (currentNode) setExpanded(currentNode, true);
-        }
+      const currentNode = path[path.length - 1];
+      if (expandCurrentNode) {
+        if (currentNode) setExpanded(currentNode, true);
+      }
     }
   }, [expandCurrentNode, pathwayResults, setExpanded]);
 
@@ -136,12 +143,16 @@ const Graph: FC<GraphProps> = ({
             width: 400
           };
         } else {
-          //TODO: This obviously has to be changed eventually.  The nodes height should change dynamically
-          const found = pathwayResults.documentation.find((doc)=>{return typeof doc !== 'string' && doc.state === e})
+          // TODO: This obviously has to be changed eventually.
+          // The nodes height should change dynamically
+          const found = pathwayResults.documentation.find(doc => {
+            return typeof doc !== 'string' && doc.state === e;
+          });
           const height = found ? 125 : 50;
           expandedNodes[e] = {
             height,
-            width: 400};
+            width: 400
+          };
         }
       });
 
@@ -156,14 +167,15 @@ const Graph: FC<GraphProps> = ({
           .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
           .reduce((a, b) => Math.max(a, b), 0)
       : windowWidth;
-  
 
-  const {path, documentation} = pathwayResults;
+  const { path, documentation } = pathwayResults;
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {nodeCoordinates !== undefined
         ? Object.keys(nodeCoordinates).map(key => {
-            const docResource = documentation.find((doc): doc is DocumentationResource => { return typeof doc !== 'string' && doc.state === key });
+            const docResource = documentation.find((doc): doc is DocumentationResource => {
+              return typeof doc !== 'string' && doc.state === key;
+            });
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };

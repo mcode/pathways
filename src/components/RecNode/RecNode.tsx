@@ -114,7 +114,7 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
 function parseResource(resource: fhir.DomainResource): ReactElement[] {
   const returnValue: ReactElement[] = [];
   switch (resource.resourceType) {
-    case 'Procedure':
+    case 'Procedure': {
       const procedure = resource as fhir.Procedure;
       const start = procedure.performedPeriod && procedure.performedPeriod.start;
       const end = procedure.performedPeriod && procedure.performedPeriod.end;
@@ -135,7 +135,8 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
           />
         );
       break;
-    case 'Observation':
+    }
+    case 'Observation': {
       const observation = resource as fhir.Observation;
       const date = observation.effectiveDateTime;
       date &&
@@ -146,6 +147,7 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
             description={new Date(date).toLocaleTimeString('en-us')}
           />
         );
+    }
   }
 
   return returnValue;

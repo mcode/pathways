@@ -9,7 +9,6 @@ import {
   DocumentationResource,
   State
 } from 'pathways-model';
-import { PathwaysClient } from 'pathways-client';
 
 interface StateData {
   documentation: DocumentationResource | string | null;
@@ -30,7 +29,11 @@ interface StateData {
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export function pathwayData(pathway: Pathway, patientData: PatientData, resources: object[]): PathwayResults {
+export function pathwayData(
+  pathway: Pathway,
+  patientData: PatientData,
+  resources: object[]
+): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
@@ -39,7 +42,8 @@ export function pathwayData(pathway: Pathway, patientData: PatientData, resource
   let stateData = nextState(pathway, patientData, startState);
   while (stateData !== null) {
     currentStatus = stateData.status;
-    if (stateData.documentation !== null) patientDocumentation.push(retrieveResource(stateData.documentation, resources));
+    if (stateData.documentation !== null)
+      patientDocumentation.push(retrieveResource(stateData.documentation, resources));
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
     evaluatedPathway.push(stateData.nextState);
     stateData = nextState(pathway, patientData, stateData.nextState);
@@ -228,15 +232,14 @@ function nextState(
 }
 
 function retrieveResource(
-    doc: DocumentationResource | string, 
-    resources: fhir.DomainResource[]
-):  DocumentationResource | string {
-    if( typeof doc !== "string") {
-        doc.resource = resources.find((resource) => {
-            return resource.resourceType === doc.resourceType 
-                && resource.id === doc.id;
-        })
-    }
+  doc: DocumentationResource | string,
+  resources: fhir.DomainResource[]
+): DocumentationResource | string {
+  if (typeof doc !== 'string') {
+    doc.resource = resources.find(resource => {
+      return resource.resourceType === doc.resourceType && resource.id === doc.id;
+    });
+  }
 
-    return doc;
+  return doc;
 }
