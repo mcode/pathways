@@ -111,6 +111,7 @@ declare module 'pathways-model' {
     id: string;
     status: string;
     state: string;
+    resource?: fhir.DomainResource;
   }
 
   export interface PathwayContextInterface {
