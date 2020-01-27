@@ -54,15 +54,28 @@ const Node: FC<NodeProps> = ({
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {isGuidanceState(pathwayState) ? expanded && (
-        <div className={`${classes.recNode} ${recNodeClass}`}>
-          <RecNode pathwayState={pathwayState as GuidanceState} isActionable={isCurrentNode} documentation={documentation} isGuidance={true}/>
-        </div>
-      ):
-      expanded && documentation && (
-        <div className={`${classes.recNode} ${recNodeClass}`}>
-          <RecNode pathwayState={pathwayState} isActionable={isCurrentNode} documentation={documentation} isGuidance={false}/>
-        </div>)}
+      {isGuidanceState(pathwayState)
+        ? expanded && (
+            <div className={`${classes.recNode} ${recNodeClass}`}>
+              <RecNode
+                pathwayState={pathwayState as GuidanceState}
+                isActionable={isCurrentNode}
+                documentation={documentation}
+                isGuidance={true}
+              />
+            </div>
+          )
+        : expanded &&
+          documentation && (
+            <div className={`${classes.recNode} ${recNodeClass}`}>
+              <RecNode
+                pathwayState={pathwayState}
+                isActionable={isCurrentNode}
+                documentation={documentation}
+                isGuidance={false}
+              />
+            </div>
+          )}
     </div>
   );
 };

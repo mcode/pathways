@@ -2,7 +2,6 @@ import { extractNavigationCQL, extractCriteriaCQL, CqlObject, Library } from './
 import convertCQL, { convertBasicCQL, ElmObject } from './cql-to-elm';
 import executeElm from './elm-executor';
 import { pathwayData, criteriaData } from './output-results';
-import { PathwaysClient } from 'pathways-client';
 import { Pathway, PatientData, PathwayResults, ElmResults, CriteriaResult } from 'pathways-model';
 import { getFixture } from './cql-extractor';
 import { extractCQLInclude } from 'utils/regexes';

@@ -12,13 +12,13 @@ interface RecNodeProps {
   isGuidance: boolean;
 }
 
-const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance}) => {
-    let fhirFields: ReactElement[] = []
-    if(documentation && documentation.resource) {
-        fhirFields = parseResource(documentation.resource);
-    }
-    const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState)
-  
+const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance }) => {
+  let fhirFields: ReactElement[] = [];
+  if (documentation && documentation.resource) {
+    fhirFields = parseResource(documentation.resource);
+  }
+  const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState);
+
   return (
     <div className={indexClasses.recNode}>
       <table className={classes.infoTable}>
@@ -67,12 +67,13 @@ const RecNodeField: FC<RecNodeFieldProps> = ({ title, description }) => {
 };
 
 function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
-    const resource = pathwayState.action[0].resource;
-    const coding =
+  const resource = pathwayState.action[0].resource;
+  const coding =
     'medicationCodeableConcept' in resource
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
-    return [<RecNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
+  return [
+    <RecNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
     <RecNodeField key="Type" title="Type" description={resource.resourceType} />,
     <RecNodeField
       key="System"
@@ -87,32 +88,49 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
       }
     />,
     <RecNodeField key="Code" title="Code" description={coding[0].code} />,
-    <RecNodeField key="Display" title="Display" description={coding[0].display} />]
-
+    <RecNodeField key="Display" title="Display" description={coding[0].display} />
+  ];
 }
 function parseResource(resource: fhir.DomainResource): ReactElement[] {
-    let returnValue: ReactElement[] = [];
-    switch (resource.resourceType){
-        case "Procedure":
-            const procedure = resource as fhir.Procedure;
-            const start = procedure.performedPeriod && procedure.performedPeriod.start;
-            const end = procedure.performedPeriod && procedure.performedPeriod.end;
-            start && returnValue.push(
-                    <RecNodeField key="Start" title="Start" description={new Date(start).toLocaleDateString('en-us')} />
-                )
-            end && returnValue.push(
-                <RecNodeField key="End" title="End" description={new Date(end).toLocaleDateString('en-us')} />
-            )
-            break;
-        case "Observation":
-            const observation = resource as fhir.Observation;
-            const date = observation.effectiveDateTime;
-            date && returnValue.push(
-                <RecNodeField key="Date" title="Date" description={new Date(date).toLocaleTimeString('en-us')} />
-            )
+  const returnValue: ReactElement[] = [];
+  switch (resource.resourceType) {
+    case 'Procedure': {
+      const procedure = resource as fhir.Procedure;
+      const start = procedure.performedPeriod && procedure.performedPeriod.start;
+      const end = procedure.performedPeriod && procedure.performedPeriod.end;
+      start &&
+        returnValue.push(
+          <RecNodeField
+            key="Start"
+            title="Start"
+            description={new Date(start).toLocaleDateString('en-us')}
+          />
+        );
+      end &&
+        returnValue.push(
+          <RecNodeField
+            key="End"
+            title="End"
+            description={new Date(end).toLocaleDateString('en-us')}
+          />
+        );
+      break;
     }
+    case 'Observation': {
+      const observation = resource as fhir.Observation;
+      const date = observation.effectiveDateTime;
+      date &&
+        returnValue.push(
+          <RecNodeField
+            key="Date"
+            title="Date"
+            description={new Date(date).toLocaleTimeString('en-us')}
+          />
+        );
+    }
+  }
 
-    return returnValue;
+  return returnValue;
 }
 
 export default RecNode;
