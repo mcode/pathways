@@ -142,7 +142,8 @@ const Graph: FC<GraphProps> = ({
             width: 400
           };
         } else {
-          //TODO: This obviously has to be changed eventually.  The nodes height should change dynamically
+          // TODO: This obviously has to be changed eventually.
+          // The nodes height should change dynamically
           const found = pathwayResults.documentation.find(doc => {
             return typeof doc !== 'string' && doc.state === e;
           });

@@ -9,7 +9,6 @@ import {
   DocumentationResource,
   State
 } from 'pathways-model';
-import { PathwaysClient } from 'pathways-client';
 
 interface StateData {
   documentation: DocumentationResource | string | null;
