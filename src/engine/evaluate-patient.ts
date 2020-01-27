@@ -2,6 +2,7 @@ import { extractNavigationCQL, extractCriteriaCQL, CqlObject, Library } from './
 import convertCQL, { convertBasicCQL, ElmObject } from './cql-to-elm';
 import executeElm from './elm-executor';
 import { pathwayData, criteriaData } from './output-results';
+import { PathwaysClient } from 'pathways-client';
 import { Pathway, PatientData, PathwayResults, ElmResults, CriteriaResult } from 'pathways-model';
 import { getFixture } from './cql-extractor';
 import { extractCQLInclude } from 'utils/regexes';
@@ -20,11 +21,12 @@ function instanceOfElmObject(object: object): object is ElmObject {
  */
 export function evaluatePatientOnPathway(
   patient: object,
-  pathway: Pathway
+  pathway: Pathway,
+  resources: object[]
 ): Promise<PathwayResults> {
   return extractNavigationCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
-    .then(patientData => pathwayData(pathway, patientData));
+    .then(patientData => pathwayData(pathway, patientData, resources));
 }
 
 /**

@@ -91,7 +91,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   function toggleVisible(): void {
     setIsVisible(!isVisible);
   }
-
   return (
     <div className={classes['pathway-element']} role={'list'} key={pathway.name}>
       <div
