@@ -1,5 +1,12 @@
 import React from 'react';
-import { render, fireEvent, waitForDomChange, waitForElement } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  waitForDomChange,
+  waitForElement,
+  act,
+  wait
+} from '@testing-library/react';
 import Graph from '../Graph';
 
 import { loadedService } from 'testUtils/services';
@@ -43,7 +50,7 @@ describe('<Graph />', () => {
     issued: '2014-11-06T09:27:09.556-05:00'
   };
 
-  it('Graph uses results on patientPathway', () => {
+  it('uses results on patientPathway', () => {
     const mockedUpdate = jest.fn();
     let patientPathway = pathwayList[0];
     patientPathway.pathwayResults = {
@@ -66,18 +73,20 @@ describe('<Graph />', () => {
     expect(mockedUpdate).toHaveBeenCalledTimes(0);
   });
 
-  it('Graph evaluates patient on pathway', async () => {
-    console.log(pathwayList[0]);
+  it('evaluates patient on pathway', async () => {
+    console.log(pathwayList[1]);
     const mockedUpdate = jest.fn();
-    render(
-      <Graph
-        patientPathway={pathwayList[0]}
-        resources={[sampleObservation]}
-        updatePatientPathwayList={mockedUpdate}
-      />
-    );
+    await act(async () => {
+      render(
+        <Graph
+          patientPathway={pathwayList[1]}
+          resources={[sampleObservation]}
+          updatePatientPathwayList={mockedUpdate}
+        />
+      );
+      await wait();
+    });
 
-    await waitForDomChange();
     expect(mockedUpdate).toHaveBeenCalledTimes(1);
   });
 });

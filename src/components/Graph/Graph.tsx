@@ -101,8 +101,6 @@ const Graph: FC<GraphProps> = ({
         entry: resources.map((r: object) => ({ resource: r }))
       };
 
-      console.log(patient);
-
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
         console.log('Evaluated patient on pathway');
         setPath(pathwayResults);
