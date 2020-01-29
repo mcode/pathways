@@ -102,9 +102,8 @@ const Graph: FC<GraphProps> = ({
         resourceType: 'Bundle',
         entry: resources.map((r: object) => ({ resource: r }))
       };
-
-      evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-        if (!cancel) setPath(pathwayResults);
+      evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
+        if (!cancel) setPathwayResults(pathwayResults);
       });
 
       return (): void => {
