@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import { GuidanceState } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -11,6 +11,7 @@ interface RecNodeProps {
 }
 
 const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
+  const [comments, setComments] = useState<string>('');
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
@@ -41,10 +42,20 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
       {isActionable && (
         <form className={classes.commentsForm}>
           <label>Comments:</label>
-          <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
+          <button
+            className={indexClasses.button}
+            onClick={(e): void => {
+              e.preventDefault();
+              setComments('sample default text');
+            }}
+          >
             Use Default Text
           </button>
-          <textarea className={classes.comments}></textarea>
+          <textarea
+            className={classes.comments}
+            value={comments}
+            onChange={(e): void => setComments(e.target.value)}
+          ></textarea>
           <button
             className={`${classes.accept} ${indexClasses.button}`}
             onClick={(e): void => e.preventDefault()}
