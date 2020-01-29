@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import graphLayout from 'visualization/layout';
-import Node from './Node';
-import Arrow from './Arrow';
+import Node from '../Node';
+import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
 import { PatientPathway, PathwayResults } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
@@ -37,6 +37,7 @@ const Graph: FC<GraphProps> = ({
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
+      console.log('setting path');
       _setPath(value.path);
       updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
     },
@@ -94,11 +95,14 @@ const Graph: FC<GraphProps> = ({
     let cancel = false;
 
     if (resources.length > 0 && path.length === 0) {
+      console.log('creating fake cql');
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
         entry: resources.map((r: object) => ({ resource: r }))
       };
+
+      console.log(patient);
 
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
         if (!cancel) setPath(pathwayResults);
