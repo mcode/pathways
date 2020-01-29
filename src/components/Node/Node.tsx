@@ -55,16 +55,15 @@ const Node: FC<NodeProps> = ({
         {label}
       </div>
       {expanded && (isGuidanceState(pathwayState) || documentation) && (
-            <div className={`${classes.recNode} ${recNodeClass}`}>
-              <RecNode
-                pathwayState={pathwayState as GuidanceState}
-                isActionable={isCurrentNode}
-                documentation={documentation}
-                isGuidance={isGuidanceState(pathwayState)}
-              />
-            </div>
-          )
-        }
+        <div className={`${classes.recNode} ${recNodeClass}`}>
+          <RecNode
+            pathwayState={pathwayState as GuidanceState}
+            isActionable={isCurrentNode}
+            documentation={documentation}
+            isGuidance={isGuidanceState(pathwayState)}
+          />
+        </div>
+      )}
     </div>
   );
 };
