@@ -13,29 +13,52 @@ import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
+import FHIR from 'fhirclient';
+import demoRecords from './fixtures/MaureenMcodeDemoPatientRecords.json';
+import demoPatient from './fixtures/MaureenMcodeDemoPatient.json';
 
 interface AppProps {
-  client: PathwaysClient; // TODO: fhirclient.Client
+  demo: boolean;
 }
 
-const App: FC<AppProps> = ({ client }) => {
+const App: FC<AppProps> = ({ demo }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
+  const [client, setClient] = useState<PathwaysClient | null>(null);
 
   useEffect(() => {
-    getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
-      // filters out values that are empty
-      // the server might return deleted
-      // resources that only include an
-      // id, meta, and resourceType
-      const values = ['id', 'meta', 'resourceType'];
-      records = records.filter(resource => {
-        return !Object.keys(resource).every(value => values.includes(value));
+    if (!demo) {
+      FHIR.oauth2
+        .init({
+          clientId: 'Input client id you get when you register the app',
+          scope: 'launch/patient openid profile'
+        })
+        .then(client => {
+          console.log(JSON.stringify(client));
+          setClient(client);
+        });
+    } else {
+      setPatientRecords(demoRecords);
+    }
+  }, [demo]);
+
+  useEffect(() => {
+    if (client) {
+      getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
+        // filters out values that are empty
+        // the server might return deleted
+        // resources that only include an
+        // id, meta, and resourceType
+        const values = ['id', 'meta', 'resourceType'];
+        records = records.filter(resource => {
+          return !Object.keys(resource).every(value => values.includes(value));
+        });
+
+        setPatientRecords(records);
       });
-      setPatientRecords(records);
-    });
+    }
   }, [client]);
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
@@ -93,14 +116,14 @@ const App: FC<AppProps> = ({ client }) => {
     );
   };
 
-  return (
-    <FHIRClientProvider client={client}>
+  return !demo ? (
+    <FHIRClientProvider client={client as PathwaysClient}>
       <PatientProvider>
         <PathwayProvider
           pathwayCtx={{
+            updateEvaluatedPathways,
             evaluatedPathway: currentPathway,
-            setEvaluatedPathway: setEvaluatedPathwayCallback,
-            updateEvaluatedPathways: updateEvaluatedPathways
+            setEvaluatedPathway: setEvaluatedPathwayCallback
           }}
         >
           <div>
@@ -124,6 +147,35 @@ const App: FC<AppProps> = ({ client }) => {
         </PathwayProvider>
       </PatientProvider>
     </FHIRClientProvider>
+  ) : (
+    <PatientProvider demoPatient={demoPatient}>
+      <PathwayProvider
+        pathwayCtx={{
+          updateEvaluatedPathways,
+          evaluatedPathway: currentPathway,
+          setEvaluatedPathway: setEvaluatedPathwayCallback
+        }}
+      >
+        <div>
+          <Header logo={logo} />
+          <Navigation
+            evaluatedPathways={evaluatedPathways}
+            selectPathway={selectPathway}
+            setSelectPathway={setSelectPathway}
+          />
+        </div>
+        {selectPathway ? (
+          <PathwaysList
+            evaluatedPathways={evaluatedPathways}
+            callback={setEvaluatedPathwayCallback}
+            service={service}
+            resources={patientRecords}
+          ></PathwaysList>
+        ) : (
+          <PatientView evaluatedPathway={currentPathway} />
+        )}
+      </PathwayProvider>
+    </PatientProvider>
   );
 };
 
