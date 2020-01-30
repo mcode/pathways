@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, ReactNode, useState, useEffect } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -14,8 +14,8 @@ import { PathwayProvider } from './PathwayProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
-import demoRecords from './fixtures/MaureenMcodeDemoPatientRecords.json';
-import demoPatient from './fixtures/MaureenMcodeDemoPatient.json';
+import demoRecords from '../fixtures/MaureenMcodeDemoPatientRecords.json';
+import demoPatient from '../fixtures/MaureenMcodeDemoPatient.json';
 
 interface AppProps {
   demo: boolean;
@@ -36,7 +36,6 @@ const App: FC<AppProps> = ({ demo }) => {
           scope: 'launch/patient openid profile'
         })
         .then(client => {
-          console.log(JSON.stringify(client));
           setClient(client);
         });
     } else {
@@ -118,39 +117,8 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
-  return !demo ? (
-    <FHIRClientProvider client={client as PathwaysClient}>
-      <PatientProvider>
-        <PathwayProvider
-          pathwayCtx={{
-            updateEvaluatedPathways,
-            evaluatedPathway: currentPathway,
-            setEvaluatedPathway: setEvaluatedPathwayCallback
-          }}
-        >
-          <div>
-            <Header logo={logo} />
-            <Navigation
-              evaluatedPathways={evaluatedPathways}
-              selectPathway={selectPathway}
-              setSelectPathway={setSelectPathway}
-            />
-          </div>
-          {selectPathway ? (
-            <PathwaysList
-              evaluatedPathways={evaluatedPathways}
-              callback={setEvaluatedPathwayCallback}
-              service={service}
-              resources={patientRecords}
-            ></PathwaysList>
-          ) : (
-            <PatientView evaluatedPathway={currentPathway} />
-          )}
-        </PathwayProvider>
-      </PatientProvider>
-    </FHIRClientProvider>
-  ) : (
-    <PatientProvider demoPatient={demoPatient}>
+  const renderPathwayProvider = (): ReactNode => {
+    return (
       <PathwayProvider
         pathwayCtx={{
           updateEvaluatedPathways,
@@ -177,7 +145,15 @@ const App: FC<AppProps> = ({ demo }) => {
           <PatientView evaluatedPathway={currentPathway} />
         )}
       </PathwayProvider>
-    </PatientProvider>
+    );
+  };
+
+  return !demo ? (
+    <FHIRClientProvider client={client as PathwaysClient}>
+      <PatientProvider>{renderPathwayProvider()}</PatientProvider>
+    </FHIRClientProvider>
+  ) : (
+    <PatientProvider demoPatient={demoPatient}>{renderPathwayProvider()}</PatientProvider>
   );
 };
 
