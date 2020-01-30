@@ -61,7 +61,9 @@ const App: FC<AppProps> = ({ demo }) => {
     }
   }, [client]);
 
-  const service = useGetPathwaysService(config.get('pathwaysService'));
+  const service = useGetPathwaysService(
+    config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
+  );
 
   useEffect(() => {
     if (service.status === 'loaded' && evaluatedPathways.length === 0)

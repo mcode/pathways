@@ -1,0 +1,160 @@
+{
+  "name": "Breast Cancer (Notional Example)",
+  "description": "Mock breast cancer pathway used for testing the system",
+  "library": "mCODE_Library.cql",
+  "criteria": [
+    {
+      "elementName": "Condition",
+      "expected": "Breast Cancer",
+      "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } "
+    }
+  ],
+  "states": {
+    "Start": {
+      "label": "Start",
+      "transitions": [
+        {
+          "transition": "T-test"
+        }
+      ]
+    },
+    "T-test": {
+      "label": "Tumor Size",
+      "transitions": [
+        {
+          "transition": "N-test",
+          "condition": {
+            "description": "T = T0",
+            "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] T0 where ToConcept(T0.value as FHIR.CodeableConcept) ~ \"T0 category (finding)\"return Tuple{ resourceType: 'Observation', id: T0.id.value, status: T0.status.value }"
+          }
+        },
+        {
+          "transition": "Surgery",
+          "condition": {
+            "description": "T = T1",
+            "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] T1 where ToConcept(T1.value as FHIR.CodeableConcept) ~ \"T1 category (finding)\"return Tuple{ resourceType: 'Observation', id: T1.id.value, status: T1.status.value }"
+          }
+        }
+      ]
+    },
+    "N-test": {
+      "label": "Lymph Nodes",
+      "transitions": [
+        {
+          "transition": "Radiation",
+          "condition": {
+            "description": "N = N0",
+            "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\"return Tuple{ resourceType: 'Observation', id: N0.id.value, status: N0.status.value }"
+          }
+        },
+        {
+          "transition": "ChemoMedication",
+          "condition": {
+            "description": "N = N1",
+            "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N1 where ToConcept(N1.value as FHIR.CodeableConcept) ~ \"N1 category (finding)\"return Tuple{ resourceType: 'Observation', id: N1.id.value, status: N1.status.value }"
+          }
+        }
+      ]
+    },
+    "Surgery": {
+      "label": "Surgery",
+      "action": [
+        {
+          "type": "create",
+          "description": "Issue Lumpectomy of breast procedure",
+          "resource": {
+            "resourceType": "Procedure",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "392021009",
+                  "display": "Lumpectomy of breast (procedure)"
+                }
+              ],
+              "text": "Lumpectomy of breast (procedure)"
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "transition": "N-test"
+        }
+      ],
+      "cql": "[Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value }"
+    },
+    "Radiation": {
+      "label": "Radiation",
+      "action": [
+        {
+          "type": "create",
+          "description": "Issue Teleradiotherapy procedure",
+          "resource": {
+            "resourceType": "Procedure",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "33195004",
+                  "display": "Teleradiotherapy procedure (procedure)"
+                }
+              ],
+              "text": "Teleradiotherapy procedure (procedure)"
+            }
+          }
+        }
+      ],
+      "cql": "[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value }",
+      "transitions": []
+    },
+    "Chemo": {
+      "label": "Chemotherapy",
+      "action": [
+        {
+          "type": "create",
+          "description": "Begin Chemotherapy procedure",
+          "resource": {
+            "resourceType": "Procedure",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "367336001",
+                  "display": "Chemotherapy (procedure)"
+                }
+              ],
+              "text": "Chemotherapy (procedure)"
+            }
+          }
+        }
+      ],
+      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value, status: Chemo.status.value }",
+      "transitions": []
+    },
+    "ChemoMedication": {
+      "label": "ChemoMedication Request",
+      "action": [
+        {
+          "type": "create",
+          "description": "Request 10ML Doxorubicin Hydrochloride 2MG/ML Injection",
+          "resource": {
+            "resourceType": "MedicationRequest",
+            "medicationCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                  "code": "1790099",
+                  "display": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+                }
+              ],
+              "text": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+            }
+          }
+        }
+      ],
+      "cql": "[MedicationRequest: \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code\"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection\"return Tuple{ resourceType: 'MedicationRequest', id: ChemoMedication.id.value, status: ChemoMedication.status.value }",
+      "transitions": [{ "transition": "Chemo" }]
+    }
+  }
+}
