@@ -2,13 +2,13 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 import Graph from '../Graph';
 import { loadedService } from 'testUtils/services';
-import { PatientPathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import preconvertedELM from '../../../engine/__tests__/fixtures/elm/sample_pathway.elm.json';
 
 describe('<Graph />', () => {
   global.fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
 
-  let pathwayList: PatientPathway[] = [];
+  let pathwayList: EvaluatedPathway[] = [];
   if (loadedService.status === 'loaded') {
     pathwayList = loadedService.payload.map(pathway => ({
       pathway: pathway,
@@ -50,10 +50,10 @@ describe('<Graph />', () => {
     issued: '2014-11-06T09:27:09.556-05:00'
   };
 
-  it('uses results on patientPathway', async () => {
+  it('uses results on evaluatedPathway', async () => {
     const mockedUpdate = jest.fn();
-    const patientPathway = pathwayList[0];
-    patientPathway.pathwayResults = {
+    const evaluatedPathway = pathwayList[0];
+    evaluatedPathway.pathwayResults = {
       patientId: 'test',
       currentState: 'Start',
       currentStatus: '',
@@ -66,9 +66,9 @@ describe('<Graph />', () => {
     await act(async () => {
       render(
         <Graph
-          patientPathway={patientPathway}
+          evaluatedPathway={evaluatedPathway}
           resources={[samplePatient, sampleObservation]}
-          updatePatientPathwayList={mockedUpdate}
+          updateEvaluatedPathways={mockedUpdate}
         />
       );
     });
@@ -83,9 +83,9 @@ describe('<Graph />', () => {
     await act(async () => {
       render(
         <Graph
-          patientPathway={pathwayList[1]}
+          evaluatedPathway={pathwayList[1]}
           resources={[samplePatient, sampleObservation]}
-          updatePatientPathwayList={mockedUpdate}
+          updateEvaluatedPathways={mockedUpdate}
         />
       );
     });

@@ -3,10 +3,10 @@ import { render, fireEvent, getAllByRole, getAllByText } from '@testing-library/
 import PathwaysList from 'components/PathwaysList';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
-import { Pathway, PatientPathway } from 'pathways-model';
+import { Pathway, EvaluatedPathway } from 'pathways-model';
 
 describe('<PathwaysList />', () => {
-  let pathwayList: PatientPathway[] = [];
+  let pathwayList: EvaluatedPathway[] = [];
   if (loadedService.status === 'loaded') {
     pathwayList = loadedService.payload.map(pathway => ({
       pathway: pathway,
@@ -17,7 +17,7 @@ describe('<PathwaysList />', () => {
   it('renders loading screen', () => {
     const { getByText } = render(
       <PathwaysList
-        patientPathwayList={[]}
+        evaluatedPathways={[]}
         callback={(): void => {
           return;
         }}
@@ -31,7 +31,7 @@ describe('<PathwaysList />', () => {
   it('renders list of pathways', () => {
     const { getAllByText } = render(
       <PathwaysList
-        patientPathwayList={pathwayList}
+        evaluatedPathways={pathwayList}
         callback={(): void => {
           return;
         }}
@@ -45,7 +45,7 @@ describe('<PathwaysList />', () => {
   it('renders error', () => {
     const { getByText } = render(
       <PathwaysList
-        patientPathwayList={[]}
+        evaluatedPathways={[]}
         callback={(): void => {
           return;
         }}
@@ -63,7 +63,7 @@ describe('<PathwaysList />', () => {
     }
     const { container } = render(
       <PathwaysList
-        patientPathwayList={pathwayList}
+        evaluatedPathways={pathwayList}
         callback={(pathway: Pathway): void => {
           setValue(pathway.name);
         }}

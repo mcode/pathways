@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Service } from 'pathways-objects';
-import { Pathway, PatientPathway, CriteriaResult } from 'pathways-model';
+import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
 
 import classes from './PathwaysList.module.scss';
 import indexClasses from 'styles/index.module.scss';
@@ -11,20 +11,20 @@ import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 
 interface PathwaysListElementProps {
-  patientPathway: PatientPathway;
+  evaluatedPathway: EvaluatedPathway;
   resources: Array<fhir.DomainResource>;
   callback: Function;
 }
 
 interface PathwaysListProps {
-  patientPathwayList: PatientPathway[];
+  evaluatedPathways: EvaluatedPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
   resources: Array<fhir.DomainResource>;
 }
 
 const PathwaysList: FC<PathwaysListProps> = ({
-  patientPathwayList,
+  evaluatedPathways,
   callback,
   service,
   resources
@@ -32,13 +32,13 @@ const PathwaysList: FC<PathwaysListProps> = ({
   function renderList(): ReactNode {
     return (
       <div>
-        {patientPathwayList.map(patientPathway => {
+        {evaluatedPathways.map(evaluatedPathway => {
           return (
             <PathwaysListElement
-              patientPathway={patientPathway}
+              evaluatedPathway={evaluatedPathway}
               callback={callback}
               resources={resources}
-              key={patientPathway.pathway.name}
+              key={evaluatedPathway.pathway.name}
             />
           );
         })}
@@ -67,11 +67,11 @@ const PathwaysList: FC<PathwaysListProps> = ({
 };
 
 const PathwaysListElement: FC<PathwaysListElementProps> = ({
-  patientPathway,
+  evaluatedPathway,
   resources,
   callback
 }) => {
-  const pathway = patientPathway.pathway;
+  const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -98,7 +98,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         className={classes.title}
         role={'listitem'}
         onClick={(e): void => {
-          pathwayCtx.setPatientPathway(patientPathway, true);
+          pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
           toggleVisible();
         }}
       >
@@ -132,17 +132,20 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                   ))}
               </tbody>
             </table>
-            <button className={indexClasses.button} onClick={(): void => callback(patientPathway)}>
+            <button
+              className={indexClasses.button}
+              onClick={(): void => callback(evaluatedPathway)}
+            >
               Select Pathway
             </button>
           </div>
           <div className={classes.pathway}>
             <Graph
               resources={resources}
-              patientPathway={patientPathway}
+              evaluatedPathway={evaluatedPathway}
               interactive={false}
               expandCurrentNode={false}
-              updatePatientPathwayList={pathwayCtx.updatePatientPathwayList}
+              updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
             />
             <div className={classes.controls}>
               <FontAwesomeIcon icon={'play'} />
