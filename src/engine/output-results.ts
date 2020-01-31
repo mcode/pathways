@@ -33,24 +33,24 @@ export function pathwayData(pathway: Pathway, patientData: PatientData): Pathway
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
-  const patientPathway = [startState];
+  const evaluatedPathway = [startState];
 
   let stateData = nextState(pathway, patientData, startState);
   while (stateData !== null) {
     currentStatus = stateData.status;
     if (stateData.documentation !== null) patientDocumentation.push(stateData.documentation);
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
-    patientPathway.push(stateData.nextState);
+    evaluatedPathway.push(stateData.nextState);
     stateData = nextState(pathway, patientData, stateData.nextState);
   }
-  const currentStateName = patientPathway[patientPathway.length - 1];
+  const currentStateName = evaluatedPathway[evaluatedPathway.length - 1];
   const currentState = pathway.states[currentStateName];
   return {
     patientId: patientData.Patient.id.value,
     currentState: currentStateName,
     currentStatus: currentStatus,
     nextRecommendation: nextStateRecommendation(currentState),
-    path: patientPathway,
+    path: evaluatedPathway,
     documentation: patientDocumentation
   };
 }

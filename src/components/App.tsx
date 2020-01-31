@@ -11,7 +11,7 @@ import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
-import { PatientPathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
@@ -20,9 +20,9 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
-  const [currentPathway, setCurrentPathway] = useState<PatientPathway | null>(null);
+  const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
-  const [patientPathwayList, setPatientPathwayList] = useState<PatientPathway[]>([]);
+  const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
@@ -41,24 +41,27 @@ const App: FC<AppProps> = ({ client }) => {
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
   useEffect(() => {
-    if (service.status === 'loaded' && patientPathwayList.length === 0)
-      setPatientPathwayList(
+    if (service.status === 'loaded' && evaluatedPathways.length === 0)
+      setEvaluatedPathways(
         service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null }))
       );
-  }, [service, patientPathwayList.length, client]);
+  }, [service, evaluatedPathways.length, client]);
 
-  function setPatientPathwayCallback(value: PatientPathway | null, selectPathway = false): void {
+  function setEvaluatedPathwayCallback(
+    value: EvaluatedPathway | null,
+    selectPathway = false
+  ): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
     setCurrentPathway(value);
   }
 
-  function updatePatientPathwayList(value: PatientPathway): void {
-    const newList = [...patientPathwayList]; // Create a deep copy of list
-    for (let i = 0; i < patientPathwayList.length; i++) {
-      if (patientPathwayList[i].pathway.name === value.pathway.name) {
+  function updateEvaluatedPathways(value: EvaluatedPathway): void {
+    const newList = [...evaluatedPathways]; // Create a shallow copy of list
+    for (let i = 0; i < evaluatedPathways.length; i++) {
+      if (evaluatedPathways[i].pathway.name === value.pathway.name) {
         newList[i] = value;
-        setPatientPathwayList(newList);
+        setEvaluatedPathways(newList);
       }
     }
 
@@ -68,19 +71,19 @@ const App: FC<AppProps> = ({ client }) => {
   }
 
   interface PatientViewProps {
-    patientPathway: PatientPathway | null;
+    evaluatedPathway: EvaluatedPathway | null;
   }
 
-  const PatientView: FC<PatientViewProps> = ({ patientPathway }) => {
+  const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        {patientPathway ? (
+        {evaluatedPathway ? (
           <Graph
             resources={patientRecords}
-            patientPathway={patientPathway}
+            evaluatedPathway={evaluatedPathway}
             expandCurrentNode={true}
-            updatePatientPathwayList={updatePatientPathwayList}
+            updateEvaluatedPathways={updateEvaluatedPathways}
           />
         ) : (
           <div>No Pathway Loaded</div>
@@ -95,28 +98,28 @@ const App: FC<AppProps> = ({ client }) => {
       <PatientProvider>
         <PathwayProvider
           pathwayCtx={{
-            patientPathway: currentPathway,
-            setPatientPathway: setPatientPathwayCallback,
-            updatePatientPathwayList: updatePatientPathwayList
+            evaluatedPathway: currentPathway,
+            setEvaluatedPathway: setEvaluatedPathwayCallback,
+            updateEvaluatedPathways: updateEvaluatedPathways
           }}
         >
           <div>
             <Header logo={logo} />
             <Navigation
-              patientPathwayList={patientPathwayList}
+              evaluatedPathways={evaluatedPathways}
               selectPathway={selectPathway}
               setSelectPathway={setSelectPathway}
             />
           </div>
           {selectPathway ? (
             <PathwaysList
-              patientPathwayList={patientPathwayList}
-              callback={setPatientPathwayCallback}
+              evaluatedPathways={evaluatedPathways}
+              callback={setEvaluatedPathwayCallback}
               service={service}
               resources={patientRecords}
             ></PathwaysList>
           ) : (
-            <PatientView patientPathway={currentPathway} />
+            <PatientView evaluatedPathway={currentPathway} />
           )}
         </PathwayProvider>
       </PatientProvider>

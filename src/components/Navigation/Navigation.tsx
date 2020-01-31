@@ -5,31 +5,31 @@ import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
 
 import classes from './Navigation.module.scss';
-import { PatientPathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface Props {
-  patientPathwayList: PatientPathway[];
+  evaluatedPathways: EvaluatedPathway[];
   selectPathway: boolean;
   setSelectPathway: (flag: boolean) => void;
 }
 
-const Navigation: FC<Props> = ({ patientPathwayList, selectPathway, setSelectPathway }) => {
+const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPathway }) => {
   const pathwayCtx = usePathwayContext();
-  const pathway = pathwayCtx.patientPathway?.pathway;
+  const pathway = pathwayCtx.evaluatedPathway?.pathway;
   const value =
-    pathway === undefined ? null : { label: pathway.name, value: pathwayCtx.patientPathway };
+    pathway === undefined ? null : { label: pathway.name, value: pathwayCtx.evaluatedPathway };
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
     if (pathwayOption !== null && 'value' in pathwayOption) {
-      pathwayCtx.setPatientPathway(pathwayOption.value);
+      pathwayCtx.setEvaluatedPathway(pathwayOption.value);
     }
   };
 
-  const pathwayOptions = patientPathwayList.map(patientPathway => ({
-    label: patientPathway.pathway.name,
-    value: patientPathway
+  const pathwayOptions = evaluatedPathways.map(evaluatedPathway => ({
+    label: evaluatedPathway.pathway.name,
+    value: evaluatedPathway
   }));
 
   return (

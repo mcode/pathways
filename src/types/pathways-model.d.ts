@@ -9,7 +9,7 @@ declare module 'pathways-model' {
     };
   }
 
-  export interface PatientPathway {
+  export interface EvaluatedPathway {
     pathway: Pathway;
     pathwayResults: PathwayResults | null;
   }
@@ -114,8 +114,11 @@ declare module 'pathways-model' {
   }
 
   export interface PathwayContextInterface {
-    patientPathway: PatientPathway | null;
-    setPatientPathway: (patientPathway: PatientPathway | null, selectPathway?: boolean) => void;
-    updatePatientPathwayList: (value: PatientPathway) => void;
+    evaluatedPathway: EvaluatedPathway | null;
+    setEvaluatedPathway: (
+      evaluatedPathway: EvaluatedPathway | null,
+      selectPathway?: boolean
+    ) => void;
+    updateEvaluatedPathways: (value: EvaluatedPathway) => void;
   }
 }

@@ -28,14 +28,14 @@ const pathway = {
 };
 
 export const mockedPathwayCtx = {
-  patientPathway: {
+  evaluatedPathway: {
     pathway: pathway,
     pathwayResults: null
   },
-  setPatientPathway: (): void => {
+  setEvaluatedPathway: (): void => {
     //do nothing
   },
-  updatePatientPathwayList: (): void => {
+  updateEvaluatedPathways: (): void => {
     //do nothing
   }
 };

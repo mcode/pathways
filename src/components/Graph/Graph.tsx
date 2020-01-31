@@ -4,15 +4,15 @@ import graphLayout from 'visualization/layout';
 import Node from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { PatientPathway, PathwayResults } from 'pathways-model';
+import { EvaluatedPathway, PathwayResults } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
-  patientPathway: PatientPathway;
+  evaluatedPathway: EvaluatedPathway;
   resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
-  updatePatientPathwayList: (value: PatientPathway) => void;
+  updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
 const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
@@ -23,24 +23,24 @@ const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
 
 const Graph: FC<GraphProps> = ({
   resources,
-  patientPathway,
+  evaluatedPathway,
   interactive = true,
   expandCurrentNode = true,
-  updatePatientPathwayList
+  updateEvaluatedPathways
 }) => {
-  const pathway = patientPathway.pathway;
+  const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [path, _setPath] = useState<string[]>(
-    patientPathway.pathwayResults ? patientPathway.pathwayResults.path : []
+    evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
   );
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
       _setPath(value.path);
-      updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
+      updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
-    [patientPathway.pathway, updatePatientPathwayList]
+    [evaluatedPathway.pathway, updateEvaluatedPathways]
   );
 
   const parentWidth =
