@@ -22,7 +22,6 @@ export function evaluatePatientOnPathway(
   patient: object,
   pathway: Pathway
 ): Promise<PathwayResults> {
-  console.log('evaluating');
   return extractNavigationCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
     .then(patientData => pathwayData(pathway, patientData));
@@ -54,7 +53,6 @@ export function evaluatePathwayCriteria(
 function processCQLCommon(patient: object, cql: string): Promise<PatientData> {
   // Likely need an intermediary step that gathers the CQL files needed
   // example function gatherCQL
-  console.log('processing cql');
   return gatherCQL(cql)
     .then(result => {
       if (Object.keys(result).length > 0) {
@@ -98,9 +96,7 @@ function gatherCQL(cql: string): Promise<Library> {
     });
   } else {
     return new Promise(function(resolve, reject): void {
-      setTimeout(function() {
-        resolve({});
-      }, 300);
+      resolve({});
     });
   }
 }

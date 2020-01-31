@@ -37,7 +37,6 @@ const Graph: FC<GraphProps> = ({
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
-      console.log('setting path');
       _setPath(value.path);
       updatePatientPathwayList({ pathway: patientPathway.pathway, pathwayResults: value });
     },
@@ -91,10 +90,7 @@ const Graph: FC<GraphProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log('path.length is ' + path.length);
-    console.log('resources.length is ' + resources.length);
     if (resources.length > 0 && path.length === 0) {
-      console.log('creating fake cql');
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -102,7 +98,6 @@ const Graph: FC<GraphProps> = ({
       };
 
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-        console.log('Evaluated patient on pathway');
         setPath(pathwayResults);
       });
     }
