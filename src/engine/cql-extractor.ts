@@ -9,11 +9,7 @@ export interface Library {
   [name: string]: string; // should probably have an object for expected ELM structure.
 }
 export function getFixture(filename: string): Promise<string> {
-  console.log('attempting to fetch');
-  return fetch(`./static/cql/${filename}`).then(cql => {
-    console.log(cql);
-    return cql.text();
-  });
+  return fetch(`./static/cql/${filename}`).then(cql => cql.text());
 }
 
 /**
@@ -63,9 +59,7 @@ function isConditional(state: State): boolean {
  * @return a string of the CQL code for the navigational nodes in the pathway
  */
 export function extractNavigationCQL(pathway: Pathway): Promise<string> {
-  console.log('extracting CQL');
   return getFixture(pathway.library).then(library => {
-    console.log('retrieved library');
     let cql = library;
     // Loop through each JSON object in the pathway
     for (const stateName in pathway.states) {
@@ -85,7 +79,6 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
       }
     }
 
-    console.log(cql);
     return cql;
   });
 }
