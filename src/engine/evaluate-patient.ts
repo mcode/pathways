@@ -96,9 +96,7 @@ function gatherCQL(cql: string): Promise<Library> {
     });
   } else {
     return new Promise(function(resolve, reject): void {
-      setTimeout(function() {
-        resolve({});
-      }, 300);
+      resolve({});
     });
   }
 }

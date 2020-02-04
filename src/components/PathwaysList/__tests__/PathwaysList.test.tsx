@@ -3,12 +3,21 @@ import { render, fireEvent, getAllByRole, getAllByText } from '@testing-library/
 import PathwaysList from 'components/PathwaysList';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
-import { Pathway } from 'pathways-model';
+import { Pathway, EvaluatedPathway } from 'pathways-model';
 
 describe('<PathwaysList />', () => {
+  let pathwayList: EvaluatedPathway[] = [];
+  if (loadedService.status === 'loaded') {
+    pathwayList = loadedService.payload.map(pathway => ({
+      pathway: pathway,
+      pathwayResults: null
+    }));
+  }
+
   it('renders loading screen', () => {
     const { getByText } = render(
       <PathwaysList
+        evaluatedPathways={[]}
         callback={(): void => {
           return;
         }}
@@ -22,6 +31,7 @@ describe('<PathwaysList />', () => {
   it('renders list of pathways', () => {
     const { getAllByText } = render(
       <PathwaysList
+        evaluatedPathways={pathwayList}
         callback={(): void => {
           return;
         }}
@@ -35,6 +45,7 @@ describe('<PathwaysList />', () => {
   it('renders error', () => {
     const { getByText } = render(
       <PathwaysList
+        evaluatedPathways={[]}
         callback={(): void => {
           return;
         }}
@@ -52,6 +63,7 @@ describe('<PathwaysList />', () => {
     }
     const { container } = render(
       <PathwaysList
+        evaluatedPathways={pathwayList}
         callback={(pathway: Pathway): void => {
           setValue(pathway.name);
         }}

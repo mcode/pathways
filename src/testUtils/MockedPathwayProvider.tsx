@@ -7,27 +7,35 @@ interface PathwayProviderProps {
   pathwayCtx: PathwayContextInterface;
 }
 
+const pathway = {
+  name: 'Test Pathway',
+  library: 'mCODE.cql',
+  criteria: [
+    {
+      elementName: 'condition',
+      expected: 'breast cancer',
+      cql: 'some fancy CQL statement'
+    }
+  ],
+  states: [
+    {
+      Start: {
+        label: 'Start',
+        transitions: []
+      }
+    }
+  ]
+};
+
 export const mockedPathwayCtx = {
-  pathway: {
-    name: 'Test Pathway',
-    library: 'mCODE.cql',
-    criteria: [
-      {
-        elementName: 'condition',
-        expected: 'breast cancer',
-        cql: 'some fancy CQL statement'
-      }
-    ],
-    states: [
-      {
-        Start: {
-          label: 'Start',
-          transitions: []
-        }
-      }
-    ]
+  evaluatedPathway: {
+    pathway: pathway,
+    pathwayResults: null
   },
-  setPathway: (): void => {
+  setEvaluatedPathway: (): void => {
+    //do nothing
+  },
+  updateEvaluatedPathways: (): void => {
     //do nothing
   }
 };

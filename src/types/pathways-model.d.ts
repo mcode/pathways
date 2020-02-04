@@ -9,6 +9,11 @@ declare module 'pathways-model' {
     };
   }
 
+  export interface EvaluatedPathway {
+    pathway: Pathway;
+    pathwayResults: PathwayResults | null;
+  }
+
   export interface Criteria {
     elementName: string; // name of the mCODE element
     expected: string; // human readable value
@@ -109,7 +114,11 @@ declare module 'pathways-model' {
   }
 
   export interface PathwayContextInterface {
-    pathway: Pathway | null;
-    setPathway: (pathway: Pathway | null, selectPathway?: boolean) => void;
+    evaluatedPathway: EvaluatedPathway | null;
+    setEvaluatedPathway: (
+      evaluatedPathway: EvaluatedPathway | null,
+      selectPathway?: boolean
+    ) => void;
+    updateEvaluatedPathways: (value: EvaluatedPathway) => void;
   }
 }

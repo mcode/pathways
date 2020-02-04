@@ -11,7 +11,7 @@ import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
-import { Pathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 
 interface AppProps {
@@ -20,8 +20,9 @@ interface AppProps {
 
 const App: FC<AppProps> = ({ client }) => {
   const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
-  const [pathway, setPathway] = useState<Pathway | null>(null);
+  const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
+  const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
 
   useEffect(() => {
     getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
@@ -39,21 +40,51 @@ const App: FC<AppProps> = ({ client }) => {
 
   const service = useGetPathwaysService(config.get('pathwaysService'));
 
-  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
+  useEffect(() => {
+    if (service.status === 'loaded' && evaluatedPathways.length === 0)
+      setEvaluatedPathways(
+        service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null }))
+      );
+  }, [service, evaluatedPathways.length, client]);
+
+  function setEvaluatedPathwayCallback(
+    value: EvaluatedPathway | null,
+    selectPathway = false
+  ): void {
     window.scrollTo(0, 0);
     setSelectPathway(selectPathway);
-    setPathway(value);
+    setCurrentPathway(value);
+  }
+
+  function updateEvaluatedPathways(value: EvaluatedPathway): void {
+    const newList = [...evaluatedPathways]; // Create a shallow copy of list
+    for (let i = 0; i < evaluatedPathways.length; i++) {
+      if (evaluatedPathways[i].pathway.name === value.pathway.name) {
+        newList[i] = value;
+        setEvaluatedPathways(newList);
+      }
+    }
+
+    if (currentPathway?.pathway.name === value.pathway.name) {
+      setCurrentPathway(value);
+    }
   }
 
   interface PatientViewProps {
-    patientPathway: Pathway | null;
+    evaluatedPathway: EvaluatedPathway | null;
   }
-  const PatientView: FC<PatientViewProps> = ({ patientPathway }) => {
+
+  const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div>
         <div>{`Fetched ${patientRecords.length} resources`}</div>
-        {patientPathway ? (
-          <Graph resources={patientRecords} pathway={patientPathway} expandCurrentNode={true} />
+        {evaluatedPathway ? (
+          <Graph
+            resources={patientRecords}
+            evaluatedPathway={evaluatedPathway}
+            expandCurrentNode={true}
+            updateEvaluatedPathways={updateEvaluatedPathways}
+          />
         ) : (
           <div>No Pathway Loaded</div>
         )}
@@ -67,26 +98,28 @@ const App: FC<AppProps> = ({ client }) => {
       <PatientProvider>
         <PathwayProvider
           pathwayCtx={{
-            pathway: pathway,
-            setPathway: setPathwayCallback
+            evaluatedPathway: currentPathway,
+            setEvaluatedPathway: setEvaluatedPathwayCallback,
+            updateEvaluatedPathways: updateEvaluatedPathways
           }}
         >
           <div>
             <Header logo={logo} />
             <Navigation
-              service={service}
+              evaluatedPathways={evaluatedPathways}
               selectPathway={selectPathway}
               setSelectPathway={setSelectPathway}
             />
           </div>
           {selectPathway ? (
             <PathwaysList
-              callback={setPathwayCallback}
+              evaluatedPathways={evaluatedPathways}
+              callback={setEvaluatedPathwayCallback}
               service={service}
               resources={patientRecords}
             ></PathwaysList>
           ) : (
-            <PatientView patientPathway={pathway} />
+            <PatientView evaluatedPathway={currentPathway} />
           )}
         </PathwayProvider>
       </PatientProvider>

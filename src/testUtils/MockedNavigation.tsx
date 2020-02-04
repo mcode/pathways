@@ -1,23 +1,51 @@
 import React, { FC, useState } from 'react';
-import { Pathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import Navigation from 'components/Navigation';
 import MockedPatientProvider from 'testUtils/MockedPatientProvider';
 import MockedPathwayProvider from 'testUtils/MockedPathwayProvider';
 import { loadedService } from './services';
 
 const MockedNavigation: FC = () => {
-  const [pathway, setPathway] = useState<Pathway | null>(null);
+  let defaultList: EvaluatedPathway[] = [];
+  if (loadedService.status === 'loaded') {
+    defaultList = loadedService.payload.map(pathway => ({
+      pathway: pathway,
+      pathwayResults: null
+    }));
+  }
 
-  function setPathwayCallback(value: Pathway | null, selectPathway = false): void {
-    if (value !== null) setPathway(value);
+  const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
+  const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>(defaultList);
+
+  function setEvaluatedPathwayCallback(
+    value: EvaluatedPathway | null,
+    selectPathway = false
+  ): void {
+    if (value !== null) setCurrentPathway(value);
+  }
+
+  function updateEvaluatedPathways(value: EvaluatedPathway): void {
+    const newList = [...evaluatedPathways]; // Create a shallow copy of list
+    for (let i = 0; i < evaluatedPathways.length; i++) {
+      if (evaluatedPathways[i].pathway.name === value.pathway.name) {
+        newList[i] = value;
+        setEvaluatedPathways(newList);
+      }
+    }
   }
 
   return (
     <MockedPatientProvider>
-      <MockedPathwayProvider pathwayCtx={{ pathway: pathway, setPathway: setPathwayCallback }}>
+      <MockedPathwayProvider
+        pathwayCtx={{
+          evaluatedPathway: currentPathway,
+          setEvaluatedPathway: setEvaluatedPathwayCallback,
+          updateEvaluatedPathways: updateEvaluatedPathways
+        }}
+      >
         <Navigation
+          evaluatedPathways={evaluatedPathways}
           selectPathway={false}
-          service={loadedService}
           setSelectPathway={(): void => {
             //do nothing
           }}

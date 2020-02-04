@@ -5,32 +5,32 @@ import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
 
 import classes from './Navigation.module.scss';
-import { Service } from 'pathways-objects';
-import { Pathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface Props {
+  evaluatedPathways: EvaluatedPathway[];
   selectPathway: boolean;
-  service: Service<Array<Pathway>>;
   setSelectPathway: (flag: boolean) => void;
 }
 
-const Navigation: FC<Props> = ({ service, selectPathway, setSelectPathway }) => {
-  const pathway = usePathwayContext();
+const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPathway }) => {
+  const pathwayCtx = usePathwayContext();
+  const pathway = pathwayCtx.evaluatedPathway?.pathway;
   const value =
-    pathway.pathway === null ? null : { label: pathway.pathway.name, value: pathway.pathway };
+    pathway === undefined ? null : { label: pathway.name, value: pathwayCtx.evaluatedPathway };
 
   const onChangeHandler = (pathwayOption: Option | ReadonlyArray<Option> | null): void => {
     if (pathwayOption !== null && 'value' in pathwayOption) {
-      pathway.setPathway(pathwayOption.value);
+      pathwayCtx.setEvaluatedPathway(pathwayOption.value);
     }
   };
 
-  const pathwayOptions =
-    service.status !== 'loaded'
-      ? []
-      : service.payload.map(pathway => ({ label: pathway.name, value: pathway }));
+  const pathwayOptions = evaluatedPathways.map(evaluatedPathway => ({
+    label: evaluatedPathway.pathway.name,
+    value: evaluatedPathway
+  }));
 
   return (
     <nav className={classes.navigation}>

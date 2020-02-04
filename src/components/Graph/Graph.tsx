@@ -1,17 +1,18 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import graphLayout from 'visualization/layout';
-import Node from './Node';
-import Arrow from './Arrow';
+import Node from '../Node';
+import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { Pathway } from 'pathways-model';
+import { EvaluatedPathway, PathwayResults } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
-  pathway: Pathway;
+  evaluatedPathway: EvaluatedPathway;
   resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
+  updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
 const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
@@ -22,13 +23,25 @@ const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
 
 const Graph: FC<GraphProps> = ({
   resources,
-  pathway,
+  evaluatedPathway,
   interactive = true,
-  expandCurrentNode = true
+  expandCurrentNode = true,
+  updateEvaluatedPathways
 }) => {
+  const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
-  const [path, setPath] = useState<string[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
+  const [path, _setPath] = useState<string[]>(
+    evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
+  );
+
+  const setPath = useCallback(
+    (value: PathwayResults): void => {
+      _setPath(value.path);
+      updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
+    },
+    [evaluatedPathway.pathway, updateEvaluatedPathways]
+  );
 
   const parentWidth =
     (graphElement &&
@@ -80,7 +93,7 @@ const Graph: FC<GraphProps> = ({
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0) {
+    if (resources.length > 0 && path.length === 0) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -88,14 +101,14 @@ const Graph: FC<GraphProps> = ({
       };
 
       evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
-        if (!cancel) setPath(pathwayResults.path);
+        if (!cancel) setPath(pathwayResults);
       });
 
       return (): void => {
         cancel = true;
       };
     }
-  }, [pathway, resources]);
+  }, [pathway, resources, path.length, setPath]);
 
   useEffect(() => {
     const currentNode = path[path.length - 1];

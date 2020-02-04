@@ -1,6 +1,6 @@
 declare module 'option' {
   export type Option = {
     label: string;
-    value: Pathway;
+    value: EvaluatedPathway;
   };
 }
