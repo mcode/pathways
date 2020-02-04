@@ -56,7 +56,7 @@ const testMedicationRequestState: GuidanceState = {
 describe('<RecNode />', () => {
   it('renders a RecNode for action state', () => {
     const { getByText, queryByRole, queryByText } = render(
-      <RecNode pathwayState={testActionState} isActionable={false} />
+      <RecNode pathwayState={testActionState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testActionState.action[0].resource as BasicActionResource;
@@ -76,7 +76,7 @@ describe('<RecNode />', () => {
 
   it('renders a RecNode for a medication request state', () => {
     const { getByText } = render(
-      <RecNode pathwayState={testMedicationRequestState} isActionable={false} />
+      <RecNode pathwayState={testMedicationRequestState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testMedicationRequestState.action[0]
