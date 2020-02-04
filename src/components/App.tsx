@@ -15,7 +15,6 @@ import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import demoRecords from '../fixtures/MaureenMcodeDemoPatientRecords.json';
-import demoPatient from '../fixtures/MaureenMcodeDemoPatient.json';
 
 interface AppProps {
   demo: boolean;
@@ -39,6 +38,7 @@ const App: FC<AppProps> = ({ demo }) => {
           setClient(client);
         });
     } else {
+      // TODO: Use mocked out FHIR client
       setPatientRecords(demoRecords);
     }
   }, [demo]);
@@ -148,12 +148,17 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
+  // TODO: Once we have a mocked out FHIR client we can include FHIRClientProvider to /demo endpoint
   return !demo ? (
     <FHIRClientProvider client={client as PathwaysClient}>
       <PatientProvider>{renderPathwayProvider()}</PatientProvider>
     </FHIRClientProvider>
   ) : (
-    <PatientProvider demoPatient={demoPatient}>{renderPathwayProvider()}</PatientProvider>
+    <PatientProvider
+      demoPatient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}
+    >
+      {renderPathwayProvider()}
+    </PatientProvider>
   );
 };
 
