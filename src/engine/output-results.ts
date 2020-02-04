@@ -235,7 +235,7 @@ function retrieveResource(
   doc: DocumentationResource | string,
   resources: fhir.DomainResource[]
 ): DocumentationResource | string {
-  if (typeof doc !== 'string') {
+  if (typeof doc !== 'string' && resources) {
     doc.resource = resources.find(resource => {
       return resource.resourceType === doc.resourceType && resource.id === doc.id;
     });
