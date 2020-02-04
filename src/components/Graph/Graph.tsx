@@ -4,7 +4,7 @@ import graphLayout from 'visualization/layout';
 import Node from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { EvaluatedPathway, PathwayResults } from 'pathways-model';
+import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
@@ -30,14 +30,6 @@ const Graph: FC<GraphProps> = ({
 }) => {
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
-  const [pathwayResults, setPathwayResults] = useState<PathwayResults>({
-    path: [],
-    patientId: '',
-    currentStatus: '',
-    currentState: '',
-    nextRecommendation: '',
-    documentation: []
-  });
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [path, _setPath] = useState<string[]>(
     evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
@@ -108,7 +100,7 @@ const Graph: FC<GraphProps> = ({
         entry: resources.map((r: object) => ({ resource: r }))
       };
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
-        if (!cancel) setPathwayResults(pathwayResults);
+        if (!cancel) setPath(pathwayResults);
       });
 
       return (): void => {
@@ -118,14 +110,13 @@ const Graph: FC<GraphProps> = ({
   }, [pathway, resources, path.length, setPath]);
 
   useEffect(() => {
-    const path = pathwayResults.path;
     if (path) {
       const currentNode = path[path.length - 1];
       if (expandCurrentNode) {
         if (currentNode) setExpanded(currentNode, true);
       }
     }
-  }, [expandCurrentNode, pathwayResults, setExpanded]);
+  }, [expandCurrentNode, path, setExpanded]);
 
   useEffect(() => {
     const expandedNodes: ExpandedNodes = {};
@@ -135,8 +126,8 @@ const Graph: FC<GraphProps> = ({
       .forEach(e => {
         const action = pathway.states[e].action;
 
-        if (action && action.length > 0 && pathwayResults.path) {
-          const currentNode = pathwayResults.path[pathwayResults.path.length - 1];
+        if (action && action.length > 0 && path) {
+          const currentNode = path[path.length - 1];
 
           // Adjust height depending on the action description's length and for the current node
           const heightOffset = Math.floor(action[0].description.length / 25) * 35;
@@ -149,10 +140,13 @@ const Graph: FC<GraphProps> = ({
         } else {
           // TODO: This obviously has to be changed eventually.
           // The nodes height should change dynamically
-          const found = pathwayResults.documentation.find(doc => {
-            return typeof doc !== 'string' && doc.state === e;
-          });
-          const height = found ? 125 : 50;
+          const found =
+            evaluatedPathway &&
+            evaluatedPathway.pathwayResults &&
+            evaluatedPathway.pathwayResults.documentation.find(doc => {
+              return typeof doc !== 'string' && doc.state === e;
+            });
+          const height = found ? 140 : 50;
           expandedNodes[e] = {
             height,
             width: 400
@@ -161,7 +155,7 @@ const Graph: FC<GraphProps> = ({
       });
 
     setLayout(getGraphLayout(expandedNodes));
-  }, [expanded, getGraphLayout, pathway.states, pathwayResults]);
+  }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
@@ -172,7 +166,9 @@ const Graph: FC<GraphProps> = ({
           .reduce((a, b) => Math.max(a, b), 0)
       : windowWidth;
 
-  const { path, documentation } = pathwayResults;
+  const documentation = evaluatedPathway.pathwayResults
+    ? evaluatedPathway.pathwayResults.documentation
+    : [];
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {nodeCoordinates !== undefined

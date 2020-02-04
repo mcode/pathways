@@ -2,17 +2,17 @@ import React, { FC, ReactNode, ReactElement } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './RecNode.module.scss';
+import classes from './DocNode.module.scss';
 import indexClasses from 'styles/index.module.scss';
 
-interface RecNodeProps {
+interface DocNodeProps {
   pathwayState: GuidanceState | State;
   isActionable: boolean;
   documentation: DocumentationResource | undefined;
   isGuidance: boolean;
 }
 
-const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance }) => {
+const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance }) => {
   let fhirFields: ReactElement[] = [];
   if (documentation && documentation.resource) {
     fhirFields = parseResource(documentation.resource);
@@ -20,7 +20,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable, documentation, 
   const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState);
 
   return (
-    <div className={indexClasses.recNode}>
+    <div className={indexClasses.docNode}>
       <table className={classes.infoTable}>
         <tbody>
           {guidance}
@@ -52,12 +52,12 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable, documentation, 
   );
 };
 
-type RecNodeFieldProps = {
+type DocNodeFieldProps = {
   title: string;
   description: ReactNode;
 };
 
-const RecNodeField: FC<RecNodeFieldProps> = ({ title, description }) => {
+const DocNodeField: FC<DocNodeFieldProps> = ({ title, description }) => {
   return (
     <tr>
       <td className={classes.descTitle}>{title}</td>
@@ -73,9 +73,9 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
   return [
-    <RecNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
-    <RecNodeField key="Type" title="Type" description={resource.resourceType} />,
-    <RecNodeField
+    <DocNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
+    <DocNodeField key="Type" title="Type" description={resource.resourceType} />,
+    <DocNodeField
       key="System"
       title="System"
       description={
@@ -87,8 +87,8 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
         </>
       }
     />,
-    <RecNodeField key="Code" title="Code" description={coding[0].code} />,
-    <RecNodeField key="Display" title="Display" description={coding[0].display} />
+    <DocNodeField key="Code" title="Code" description={coding[0].code} />,
+    <DocNodeField key="Display" title="Display" description={coding[0].display} />
   ];
 }
 function parseResource(resource: fhir.DomainResource): ReactElement[] {
@@ -96,24 +96,29 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
   switch (resource.resourceType) {
     case 'Procedure': {
       const procedure = resource as fhir.Procedure;
-      const start = procedure.performedPeriod && procedure.performedPeriod.start;
+      const start =
+        (procedure.performedPeriod && procedure.performedPeriod.start) ||
+        procedure.performedDateTime;
       const end = procedure.performedPeriod && procedure.performedPeriod.end;
-      start &&
+      if (start) {
         returnValue.push(
-          <RecNodeField
+          <DocNodeField
             key="Start"
             title="Start"
             description={new Date(start).toLocaleDateString('en-us')}
           />
         );
-      end &&
+      }
+
+      if (end) {
         returnValue.push(
-          <RecNodeField
+          <DocNodeField
             key="End"
             title="End"
             description={new Date(end).toLocaleDateString('en-us')}
           />
         );
+      }
       break;
     }
     case 'Observation': {
@@ -121,7 +126,7 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
       const date = observation.effectiveDateTime;
       date &&
         returnValue.push(
-          <RecNodeField
+          <DocNodeField
             key="Date"
             title="Date"
             description={new Date(date).toLocaleTimeString('en-us')}
@@ -133,4 +138,4 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
   return returnValue;
 }
 
-export default RecNode;
+export default DocNode;
