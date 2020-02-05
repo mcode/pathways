@@ -128,10 +128,9 @@ const Graph: FC<GraphProps> = ({
 
         if (action && action.length > 0 && path) {
           const currentNode = path[path.length - 1];
-
           // Adjust height depending on the action description's length and for the current node
-          const heightOffset = Math.floor(action[0].description.length / 25) * 35;
-          const height = (currentNode === e ? 455 : 270) + heightOffset;
+          const heightOffset = Math.floor(action[0].description.length / 25) * 40;
+          const height = (currentNode === e ? 455 : 345) + heightOffset;
 
           expandedNodes[e] = {
             height,
