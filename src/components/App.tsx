@@ -154,9 +154,7 @@ const App: FC<AppProps> = ({ demo }) => {
       <PatientProvider>{renderPathwayProvider()}</PatientProvider>
     </FHIRClientProvider>
   ) : (
-    <PatientProvider
-      demoPatient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}
-    >
+    <PatientProvider patient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}>
       {renderPathwayProvider()}
     </PatientProvider>
   );
