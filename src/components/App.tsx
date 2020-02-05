@@ -14,7 +14,7 @@ import { PathwayProvider } from './PathwayProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
-import demoRecords from '../fixtures/MaureenMcodeDemoPatientRecords.json';
+import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 
 interface AppProps {
   demo: boolean;
