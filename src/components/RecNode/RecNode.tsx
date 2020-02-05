@@ -13,6 +13,10 @@ interface RecNodeProps {
 const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
   const [comments, setComments] = useState<string>('');
   const resource = pathwayState.action[0].resource;
+  const defaultText =
+    `The patient and I discussed the treatment plan, ` +
+    `risks, benefits and alternatives.  The patient ` +
+    `expressed understanding and wants to proceed.`;
   const coding =
     'medicationCodeableConcept' in resource
       ? resource.medicationCodeableConcept.coding
@@ -46,11 +50,7 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
             className={indexClasses.button}
             onClick={(e): void => {
               e.preventDefault();
-              setComments(
-                comments +
-                  // eslint-disable-next-line max-len
-                  `\nThe patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.`
-              );
+              if (!comments.includes(defaultText)) setComments(comments + defaultText);
             }}
           >
             Use Default Text
