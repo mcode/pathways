@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -117,45 +117,45 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
-  const renderPathwayProvider = (): ReactNode => {
-    return (
-      <PathwayProvider
-        pathwayCtx={{
-          updateEvaluatedPathways,
-          evaluatedPathway: currentPathway,
-          setEvaluatedPathway: setEvaluatedPathwayCallback
-        }}
-      >
-        <div>
-          <Header logo={logo} />
-          <Navigation
-            evaluatedPathways={evaluatedPathways}
-            selectPathway={selectPathway}
-            setSelectPathway={setSelectPathway}
-          />
-        </div>
-        {selectPathway ? (
-          <PathwaysList
-            evaluatedPathways={evaluatedPathways}
-            callback={setEvaluatedPathwayCallback}
-            service={service}
-            resources={patientRecords}
-          ></PathwaysList>
-        ) : (
-          <PatientView evaluatedPathway={currentPathway} />
-        )}
-      </PathwayProvider>
-    );
-  };
+  const CurrentPathwayProvider: FC = () => (
+    <PathwayProvider
+      pathwayCtx={{
+        updateEvaluatedPathways,
+        evaluatedPathway: currentPathway,
+        setEvaluatedPathway: setEvaluatedPathwayCallback
+      }}
+    >
+      <div>
+        <Header logo={logo} />
+        <Navigation
+          evaluatedPathways={evaluatedPathways}
+          selectPathway={selectPathway}
+          setSelectPathway={setSelectPathway}
+        />
+      </div>
+      {selectPathway ? (
+        <PathwaysList
+          evaluatedPathways={evaluatedPathways}
+          callback={setEvaluatedPathwayCallback}
+          service={service}
+          resources={patientRecords}
+        ></PathwaysList>
+      ) : (
+        <PatientView evaluatedPathway={currentPathway} />
+      )}
+    </PathwayProvider>
+  );
 
   // TODO: Once we have a mocked out FHIR client we can include FHIRClientProvider to /demo endpoint
   return !demo ? (
     <FHIRClientProvider client={client as PathwaysClient}>
-      <PatientProvider>{renderPathwayProvider()}</PatientProvider>
+      <PatientProvider>
+        <CurrentPathwayProvider />
+      </PatientProvider>
     </FHIRClientProvider>
   ) : (
     <PatientProvider patient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}>
-      {renderPathwayProvider()}
+      <CurrentPathwayProvider />
     </PatientProvider>
   );
 };
