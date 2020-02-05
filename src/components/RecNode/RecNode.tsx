@@ -46,7 +46,11 @@ const RecNode: FC<RecNodeProps> = ({ pathwayState, isActionable }) => {
             className={indexClasses.button}
             onClick={(e): void => {
               e.preventDefault();
-              setComments('sample default text');
+              setComments(
+                comments +
+                  // eslint-disable-next-line max-len
+                  `\nThe patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.`
+              );
             }}
           >
             Use Default Text
