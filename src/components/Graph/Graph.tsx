@@ -43,12 +43,7 @@ const Graph: FC<GraphProps> = ({
     [evaluatedPathway.pathway, updateEvaluatedPathways]
   );
 
-  const parentWidth =
-    (graphElement &&
-      graphElement.current &&
-      graphElement.current.parentElement &&
-      graphElement.current.parentElement.clientWidth) ||
-    0;
+  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
 
   useEffect(() => {
     setWindowWidth(parentWidth);
