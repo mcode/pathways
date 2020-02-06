@@ -3,22 +3,23 @@ import { useFHIRClient } from './FHIRClient';
 
 interface PatientProviderProps {
   children: ReactNode;
+  patient?: fhir.Patient;
 }
 
 export const PatientContext = createContext<fhir.Patient | null>(null);
 
-export const PatientProvider: FC<PatientProviderProps> = ({ children }) => {
+export const PatientProvider: FC<PatientProviderProps> = ({ children, patient }) => {
   const client = useFHIRClient();
-  const [patient, setPatient] = useState<fhir.Patient | null>(null);
+  const [currentPatient, setCurrentPatient] = useState<fhir.Patient | null>(patient || null);
 
   useEffect(() => {
-    client.patient.read().then((patient: fhir.Patient) => setPatient(patient));
+    client?.patient?.read?.().then((patient: fhir.Patient) => setCurrentPatient(patient));
   }, [client]);
 
-  return patient == null ? (
+  return currentPatient == null ? (
     <div>Loading...</div>
   ) : (
-    <PatientContext.Provider value={patient}>{children}</PatientContext.Provider>
+    <PatientContext.Provider value={currentPatient}>{children}</PatientContext.Provider>
   );
 };
 
