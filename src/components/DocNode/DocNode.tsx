@@ -2,22 +2,17 @@ import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './ExpandedNode.module.scss';
+import classes from './DocNode.module.scss';
 import indexClasses from 'styles/index.module.scss';
 
-interface ExpandedNodeProps {
+interface DocNodeProps {
   pathwayState: GuidanceState | State;
   isActionable: boolean;
   documentation: DocumentationResource | undefined;
   isGuidance: boolean;
 }
 
-const ExpandedNode: FC<ExpandedNodeProps> = ({
-  pathwayState,
-  isActionable,
-  documentation,
-  isGuidance
-}) => {
+const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance }) => {
   const [comments, setComments] = useState<string>('');
   const resource = pathwayState.action[0].resource;
   const defaultText =
@@ -35,7 +30,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState);
 
   return (
-    <div className={indexClasses.ExpandedNode}>
+    <div className={indexClasses.docNode}>
       <table className={classes.infoTable}>
         <tbody>
           {guidance}
@@ -77,12 +72,12 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   );
 };
 
-type ExpandedNodeFieldProps = {
+type DocNodeFieldProps = {
   title: string;
   description: ReactNode;
 };
 
-const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) => {
+const DocNodeField: FC<DocNodeFieldProps> = ({ title, description }) => {
   return (
     <tr>
       <td className={classes.descTitle}>{title}</td>
@@ -98,13 +93,9 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
   return [
-    <ExpandedNodeField
-      key="Notes"
-      title="Notes"
-      description={pathwayState.action[0].description}
-    />,
-    <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />,
-    <ExpandedNodeField
+    <DocNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
+    <DocNodeField key="Type" title="Type" description={resource.resourceType} />,
+    <DocNodeField
       key="System"
       title="System"
       description={
@@ -116,8 +107,8 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
         </>
       }
     />,
-    <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
-    <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
+    <DocNodeField key="Code" title="Code" description={coding[0].code} />,
+    <DocNodeField key="Display" title="Display" description={coding[0].display} />
   ];
 }
 function parseResource(resource: fhir.DomainResource): ReactElement[] {
@@ -131,7 +122,7 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
       const end = procedure.performedPeriod && procedure.performedPeriod.end;
       if (start) {
         returnValue.push(
-          <ExpandedNodeField
+          <DocNodeField
             key="Start"
             title="Start"
             description={new Date(start).toLocaleDateString('en-us')}
@@ -141,7 +132,7 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
 
       if (end) {
         returnValue.push(
-          <ExpandedNodeField
+          <DocNodeField
             key="End"
             title="End"
             description={new Date(end).toLocaleDateString('en-us')}
@@ -155,7 +146,7 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
       const date = observation.effectiveDateTime;
       date &&
         returnValue.push(
-          <ExpandedNodeField
+          <DocNodeField
             key="Date"
             title="Date"
             description={new Date(date).toLocaleTimeString('en-us')}
@@ -167,4 +158,4 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
   return returnValue;
 }
 
-export default ExpandedNode;
+export default DocNode;

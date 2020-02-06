@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import ExpandedNode from 'components/ExpandedNode';
+import DocNode from 'components/DocNode';
 import { GuidanceState, BasicActionResource, BasicMedicationRequestResource } from 'pathways-model';
 
 const testActionState: GuidanceState = {
@@ -53,15 +53,10 @@ const testMedicationRequestState: GuidanceState = {
   transitions: []
 };
 
-describe('<ExpandedNode />', () => {
-  it('renders a ExpandedNode for action state', () => {
+describe('<DocNode />', () => {
+  it('renders a DocNode for action state', () => {
     const { getByText, queryByRole, queryByText } = render(
-      <ExpandedNode
-        pathwayState={testActionState}
-        isActionable={false}
-        isGuidance={true}
-        documentation={undefined}
-      />
+      <DocNode pathwayState={testActionState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testActionState.action[0].resource as BasicActionResource;
@@ -72,21 +67,16 @@ describe('<ExpandedNode />', () => {
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
     expect(getByText(resource.code.coding[0].display)).toBeVisible();
 
-    // Form and buttons should not be displayed in an inactive ExpandedNode
+    // Form and buttons should not be displayed in an inactive DocNode
     expect(queryByRole('form')).toBeNull();
     expect(queryByText('Accept')).toBeNull();
     expect(queryByText('Decline')).toBeNull();
     expect(queryByText('Use Default Text')).toBeNull();
   });
 
-  it('renders a ExpandedNode for a medication request state', () => {
+  it('renders a DocNode for a medication request state', () => {
     const { getByText } = render(
-      <ExpandedNode
-        pathwayState={testMedicationRequestState}
-        isActionable={false}
-        isGuidance={true}
-        documentation={undefined}
-      />
+      <DocNode pathwayState={testMedicationRequestState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testMedicationRequestState.action[0]
@@ -99,17 +89,12 @@ describe('<ExpandedNode />', () => {
     expect(getByText(resource.medicationCodeableConcept.coding[0].display)).toBeVisible();
   });
 
-  it('renders an active ExpandedNode', () => {
+  it('renders an active DocNode', () => {
     const { getByText, getByRole } = render(
-      <ExpandedNode
-        pathwayState={testActionState}
-        isActionable={true}
-        isGuidance={true}
-        documentation={undefined}
-      />
+      <DocNode pathwayState={testActionState} isActionable={true} />
     );
 
-    // Form and buttons should be displayed in an active ExpandedNode
+    // Form and buttons should be displayed in an active DocNode
     expect(getByRole('form')).toBeVisible();
     expect(getByText('Accept')).toBeVisible();
     expect(getByText('Decline')).toBeVisible();
