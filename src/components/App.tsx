@@ -117,7 +117,7 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
-  const CurrentPathwayProvider: FC = () => (
+  const currentPathwayProvider = (
     <PathwayProvider
       pathwayCtx={{
         updateEvaluatedPathways,
@@ -149,13 +149,11 @@ const App: FC<AppProps> = ({ demo }) => {
   // TODO: Once we have a mocked out FHIR client we can include FHIRClientProvider to /demo endpoint
   return !demo ? (
     <FHIRClientProvider client={client as PathwaysClient}>
-      <PatientProvider>
-        <CurrentPathwayProvider />
-      </PatientProvider>
+      <PatientProvider>{currentPathwayProvider}</PatientProvider>
     </FHIRClientProvider>
   ) : (
     <PatientProvider patient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}>
-      <CurrentPathwayProvider />
+      {currentPathwayProvider}
     </PatientProvider>
   );
 };
