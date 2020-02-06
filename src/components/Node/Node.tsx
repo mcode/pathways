@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
-import DocNode from 'components/DocNode';
+import ExpandedNode from 'components/ExpandedNode';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NodeProps {
@@ -21,6 +21,15 @@ interface NodeProps {
 interface NodeIconProps {
   pathwayState: State;
 }
+
+/*
+Node type
+========
+Completed guidance
+Uncompleted guidance
+Completed branch
+Uncompleted branch
+*/
 
 const Node: FC<NodeProps> = ({
   pathwayState,
@@ -39,7 +48,7 @@ const Node: FC<NodeProps> = ({
   };
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-  const docNodeClass = isCurrentNode
+  const ExpandedNodeClass = isCurrentNode
     ? classes.childCurrent
     : isOnPatientPath
     ? classes.childOnPatientPath
@@ -55,8 +64,8 @@ const Node: FC<NodeProps> = ({
         {label}
       </div>
       {expanded && (isGuidanceState(pathwayState) || documentation) && (
-        <div className={`${classes.docNode} ${docNodeClass}`}>
-          <DocNode
+        <div className={`${classes.ExpandedNode} ${ExpandedNodeClass}`}>
+          <ExpandedNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
             documentation={documentation}
