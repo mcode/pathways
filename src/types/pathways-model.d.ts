@@ -31,6 +31,7 @@ declare module 'pathways-model' {
   }
 
   export interface BranchState extends State {
+    resourceType: string;
     mcodeElement: string;
   }
 

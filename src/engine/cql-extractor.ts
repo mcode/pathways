@@ -69,8 +69,8 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
         const nextBlock1 = cqlFormat(cqlBlock1, stateName);
         cql = cqlAdd(cql, nextBlock1);
       } else if (isConditional(state)) {
-        for (const obj in state.transitions) {
-          const condition = state.transitions[obj].condition;
+        for (const transition of state.transitions) {
+          const condition = transition.condition;
           if (condition) {
             const nextBlock2 = cqlFormat(condition.cql, condition.description);
             cql = cqlAdd(cql, nextBlock2);
