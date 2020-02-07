@@ -67,58 +67,56 @@ function renderBranch(
   documentation: DocumentationResource | undefined
 ): ReactElement[] {
   const returnElements: ReactElement[] = [];
-  if (documentation) {
-    returnElements.push(
-      <ExpandedNodeField key="Type" title="Type" description={documentation.resourceType} />,
-      <ExpandedNodeField
-        key="mCODE_Element"
-        title="mCODE Element"
-        description={pathwayState.mcodeElement}
-      />
-    );
+  returnElements.push(
+    <ExpandedNodeField key="Type" title="Type" description={pathwayState.resourceType} />,
+    <ExpandedNodeField
+      key="mCODE_Element"
+      title="mCODE Element"
+      description={pathwayState.mcodeElement}
+    />
+  );
 
-    if (documentation.resource) {
-      switch (documentation.resourceType) {
-        case 'Observation': {
-          const observation = documentation.resource as fhir.Observation;
+  if (documentation?.resource) {
+    switch (documentation.resourceType) {
+      case 'Observation': {
+        const observation = documentation.resource as fhir.Observation;
 
-          const valueCoding = observation.valueCodeableConcept?.coding;
-          valueCoding &&
-            returnElements.push(
-              <ExpandedNodeField
-                key="ValueSystem"
-                title="System"
-                description={
-                  <>
-                    {valueCoding[0].system}
-                    <a href={valueCoding[0].system} target="_blank" rel="noopener noreferrer">
-                      <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
-                    </a>
-                  </>
-                }
-              />,
-              <ExpandedNodeField key="ValueCode" title="Code" description={valueCoding[0].code} />,
-              <ExpandedNodeField
-                key="ValueDisplay"
-                title="Display"
-                description={valueCoding[0].display}
-              />
-            );
+        const valueCoding = observation.valueCodeableConcept?.coding;
+        valueCoding &&
+          returnElements.push(
+            <ExpandedNodeField
+              key="ValueSystem"
+              title="System"
+              description={
+                <>
+                  {valueCoding[0].system}
+                  <a href={valueCoding[0].system} target="_blank" rel="noopener noreferrer">
+                    <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+                  </a>
+                </>
+              }
+            />,
+            <ExpandedNodeField key="ValueCode" title="Code" description={valueCoding[0].code} />,
+            <ExpandedNodeField
+              key="ValueDisplay"
+              title="Display"
+              description={valueCoding[0].display}
+            />
+          );
 
-          const date = observation.effectiveDateTime;
-          date &&
-            returnElements.push(
-              <ExpandedNodeField
-                key="Date"
-                title="Date"
-                description={
-                  new Date(date).toLocaleDateString('en-us') +
-                  ' ' +
-                  new Date(date).toLocaleTimeString('en-us')
-                }
-              />
-            );
-        }
+        const date = observation.effectiveDateTime;
+        date &&
+          returnElements.push(
+            <ExpandedNodeField
+              key="Date"
+              title="Date"
+              description={
+                new Date(date).toLocaleDateString('en-us') +
+                ' ' +
+                new Date(date).toLocaleTimeString('en-us')
+              }
+            />
+          );
       }
     }
   } else {
