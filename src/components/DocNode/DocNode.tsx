@@ -14,15 +14,11 @@ interface DocNodeProps {
 
 const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, documentation, isGuidance }) => {
   const [comments, setComments] = useState<string>('');
-  const resource = pathwayState.action[0].resource;
+
   const defaultText =
     `The patient and I discussed the treatment plan, ` +
     `risks, benefits and alternatives.  The patient ` +
     `expressed understanding and wants to proceed.`;
-  const coding =
-    'medicationCodeableConcept' in resource
-      ? resource.medicationCodeableConcept.coding
-      : resource.code.coding;
   let fhirFields: ReactElement[] = [];
   if (documentation?.resource) {
     fhirFields = parseResource(documentation.resource);
