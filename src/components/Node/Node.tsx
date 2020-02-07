@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { GuidanceState, State, DocumentationResource } from 'pathways-model';
+import { GuidanceState, State, DocumentationResource, BranchState } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
@@ -63,13 +63,12 @@ const Node: FC<NodeProps> = ({
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {expanded && (isGuidanceState(pathwayState) || documentation) && (
+      {expanded && (
         <div className={`${classes.ExpandedNode} ${ExpandedNodeClass}`}>
           <ExpandedNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
             documentation={documentation}
-            isGuidance={isGuidanceState(pathwayState)}
           />
         </div>
       )}
@@ -92,9 +91,14 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
   return <FontAwesomeIcon icon={icon} className={classes.icon} />;
 };
 
-function isGuidanceState(state: State): boolean {
+export function isGuidanceState(state: State): boolean {
   const { action } = state as GuidanceState;
   return action ? action.length > 0 : false;
+}
+
+export function isBranchState(state: State): boolean {
+  const { mcodeElement } = state as BranchState;
+  return mcodeElement ? true : false;
 }
 
 export default Node;

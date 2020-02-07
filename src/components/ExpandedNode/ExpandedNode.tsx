@@ -1,25 +1,22 @@
 import React, { FC, ReactNode, ReactElement } from 'react';
-import { GuidanceState, DocumentationResource, State } from 'pathways-model';
+import { GuidanceState, DocumentationResource, State, BranchState } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './ExpandedNode.module.scss';
 import indexClasses from 'styles/index.module.scss';
+import { isGuidanceState, isBranchState } from 'components/Node/Node';
 
 interface ExpandedNodeProps {
-  pathwayState: GuidanceState | State;
+  pathwayState: GuidanceState | BranchState | State;
   isActionable: boolean;
   documentation: DocumentationResource | undefined;
-  isGuidance: boolean;
 }
 
-const ExpandedNode: FC<ExpandedNodeProps> = ({
-  pathwayState,
-  isActionable,
-  documentation,
-  isGuidance
-}) => {
-  const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
-  const branch = !isGuidance && renderBranch(pathwayState, documentation);
+const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, documentation }) => {
+  const guidance =
+    isGuidanceState(pathwayState) && renderGuidance(pathwayState as GuidanceState, documentation);
+  const branch =
+    isBranchState(pathwayState) && renderBranch(pathwayState as BranchState, documentation);
 
   return (
     <div className={indexClasses.ExpandedNode}>
@@ -66,70 +63,79 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
 };
 
 function renderBranch(
-  pathwayState: State,
+  pathwayState: BranchState,
   documentation: DocumentationResource | undefined
 ): ReactElement[] {
   const returnElements: ReactElement[] = [];
-  switch (
-    documentation?.resourceType // TODO: update this to not use documentation
-  ) {
-    case 'Observation': {
-      returnElements.push(
-        <ExpandedNodeField key="Type" title="Type" description="Observation" />,
-        <ExpandedNodeField
-          key="ResourceSystem"
-          title="System"
-          description={
-            <>
-              {'example.com'}
-              <a href={'example.com'} target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
-              </a>
-            </>
-          }
-        />,
-        <ExpandedNodeField key="ResourceCode" title="Code" description={'1234'} />,
-        <ExpandedNodeField key="ResourceDisplay" title="Display" description={'Sample'} />
-      );
+  if (documentation) {
+    returnElements.push(
+      <ExpandedNodeField key="Type" title="Type" description={documentation.resourceType} />,
+      <ExpandedNodeField
+        key="mCODE_Element"
+        title="mCODE Element"
+        description={pathwayState.mcodeElement}
+      />
+    );
 
-      if (documentation?.resource) {
-        returnElements.push(<hr />);
-        const observation = documentation.resource as fhir.Observation;
+    if (documentation.resource) {
+      switch (documentation.resourceType) {
+        case 'Observation': {
+          const observation = documentation.resource as fhir.Observation;
 
-        returnElements.push(<ExpandedNodeField key="ID" title="ID" description={observation.id} />);
+          const valueCoding = observation.valueCodeableConcept?.coding;
+          valueCoding &&
+            returnElements.push(
+              <ExpandedNodeField
+                key="ValueSystem"
+                title="System"
+                description={
+                  <>
+                    {valueCoding[0].system}
+                    <a href={valueCoding[0].system} target="_blank" rel="noopener noreferrer">
+                      <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+                    </a>
+                  </>
+                }
+              />,
+              <ExpandedNodeField key="ValueCode" title="Code" description={valueCoding[0].code} />,
+              <ExpandedNodeField
+                key="ValueDisplay"
+                title="Display"
+                description={valueCoding[0].display}
+              />
+            );
 
-        const date = observation.effectiveDateTime;
-        console.log(date);
-        date &&
-          returnElements.push(
-            <ExpandedNodeField
-              key="Date"
-              title="Date"
-              // TODO: include the date on this
-              description={new Date(date).toLocaleTimeString('en-us')}
-            />
-          );
-
-        const coding = observation.valueCodeableConcept?.coding;
-        coding &&
-          returnElements.push(
-            <ExpandedNodeField
-              key="ValueSystem"
-              title="System"
-              description={
-                <>
-                  {coding[0].system}
-                  <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
-                    <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
-                  </a>
-                </>
-              }
-            />,
-            <ExpandedNodeField key="ValueCode" title="Code" description={coding[0].code} />,
-            <ExpandedNodeField key="ValueDisplay" title="Display" description={coding[0].display} />
-          );
+          const date = observation.effectiveDateTime;
+          date &&
+            returnElements.push(
+              <ExpandedNodeField
+                key="Date"
+                title="Date"
+                description={
+                  new Date(date).toLocaleDateString('en-us') +
+                  ' ' +
+                  new Date(date).toLocaleTimeString('en-us')
+                }
+              />
+            );
+        }
       }
     }
+  } else {
+    returnElements.push(
+      <ExpandedNodeField
+        key="value"
+        title="Value"
+        description={
+          <>
+            missing data
+            <a href={'example.com'} rel="noopener noreferrer">
+              <FontAwesomeIcon icon="edit" className={classes.externalLink} />
+            </a>
+          </>
+        }
+      />
+    );
   }
   return returnElements;
 }
@@ -165,6 +171,7 @@ function renderGuidance(
     <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
     <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
   ];
+
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Procedure': {
