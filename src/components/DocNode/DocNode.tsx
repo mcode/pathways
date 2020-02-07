@@ -24,16 +24,15 @@ const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, documentation, 
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
   let fhirFields: ReactElement[] = [];
-  if (documentation && documentation.resource) {
+  if (documentation?.resource) {
     fhirFields = parseResource(documentation.resource);
   }
-  const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState);
 
   return (
     <div className={indexClasses.docNode}>
       <table className={classes.infoTable}>
         <tbody>
-          {guidance}
+          {isGuidance && <DocGuidance key="rec" pathwayState={pathwayState as GuidanceState} />}
           {fhirFields}
         </tbody>
       </table>
@@ -86,40 +85,46 @@ const DocNodeField: FC<DocNodeFieldProps> = ({ title, description }) => {
   );
 };
 
-function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
+type DocGuidanceProps = {
+  pathwayState: GuidanceState;
+};
+
+const DocGuidance: FC<DocGuidanceProps> = ({ pathwayState }) => {
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
-  return [
-    <DocNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
-    <DocNodeField key="Type" title="Type" description={resource.resourceType} />,
-    <DocNodeField
-      key="System"
-      title="System"
-      description={
-        <>
-          {coding[0].system}
-          <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
-          </a>
-        </>
-      }
-    />,
-    <DocNodeField key="Code" title="Code" description={coding[0].code} />,
-    <DocNodeField key="Display" title="Display" description={coding[0].display} />
-  ];
-}
+  return (
+    <>
+      <DocNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />
+      <DocNodeField key="Type" title="Type" description={resource.resourceType} />
+      <DocNodeField
+        key="System"
+        title="System"
+        description={
+          <>
+            {coding[0].system}
+            <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+              <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+            </a>
+          </>
+        }
+      />
+      <DocNodeField key="Code" title="Code" description={coding[0].code} />
+      <DocNodeField key="Display" title="Display" description={coding[0].display} />
+    </>
+  );
+};
+
+// TODO: move this function somewhere more reasonable
 function parseResource(resource: fhir.DomainResource): ReactElement[] {
   const returnValue: ReactElement[] = [];
   switch (resource.resourceType) {
     case 'Procedure': {
       const procedure = resource as fhir.Procedure;
-      const start =
-        (procedure.performedPeriod && procedure.performedPeriod.start) ||
-        procedure.performedDateTime;
-      const end = procedure.performedPeriod && procedure.performedPeriod.end;
+      const start = procedure?.performedPeriod?.start || procedure.performedDateTime;
+      const end = procedure?.performedPeriod?.end;
       if (start) {
         returnValue.push(
           <DocNodeField
@@ -149,7 +154,20 @@ function parseResource(resource: fhir.DomainResource): ReactElement[] {
           <DocNodeField
             key="Date"
             title="Date"
-            description={new Date(date).toLocaleTimeString('en-us')}
+            description={new Date(date).toLocaleDateString('en-us')}
+          />
+        );
+      break;
+    }
+    case 'MedicationRequest': {
+      const medicationRequest = resource as fhir.MedicationRequest;
+      const date = medicationRequest.authoredOn;
+      date &&
+        returnValue.push(
+          <DocNodeField
+            key="Medication"
+            title="Date"
+            description={new Date(date).toLocaleDateString('en-us')}
           />
         );
     }
