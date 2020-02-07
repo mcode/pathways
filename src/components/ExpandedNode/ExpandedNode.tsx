@@ -18,19 +18,13 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   documentation,
   isGuidance
 }) => {
-  let fhirFields: ReactElement[] = [];
-  if (documentation && documentation.resource) {
-    fhirFields = parseResource(documentation.resource);
-  }
-  const guidance = isGuidance && renderRecGuidance(pathwayState as GuidanceState);
+  const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
+  const branch = !isGuidance && renderBranch(pathwayState, documentation);
 
   return (
     <div className={indexClasses.ExpandedNode}>
       <table className={classes.infoTable}>
-        <tbody>
-          {guidance}
-          {fhirFields}
-        </tbody>
+        <tbody>{guidance || branch}</tbody>
       </table>
       {isActionable && (
         <form className={classes.commentsForm}>
@@ -71,13 +65,85 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
   );
 };
 
-function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
+function renderBranch(
+  pathwayState: State,
+  documentation: DocumentationResource | undefined
+): ReactElement[] {
+  const returnElements: ReactElement[] = [];
+  switch (
+    documentation?.resourceType // TODO: update this to not use documentation
+  ) {
+    case 'Observation': {
+      returnElements.push(
+        <ExpandedNodeField key="Type" title="Type" description="Observation" />,
+        <ExpandedNodeField
+          key="ResourceSystem"
+          title="System"
+          description={
+            <>
+              {'example.com'}
+              <a href={'example.com'} target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+              </a>
+            </>
+          }
+        />,
+        <ExpandedNodeField key="ResourceCode" title="Code" description={'1234'} />,
+        <ExpandedNodeField key="ResourceDisplay" title="Display" description={'Sample'} />
+      );
+
+      if (documentation?.resource) {
+        returnElements.push(<hr />);
+        const observation = documentation.resource as fhir.Observation;
+
+        returnElements.push(<ExpandedNodeField key="ID" title="ID" description={observation.id} />);
+
+        const date = observation.effectiveDateTime;
+        console.log(date);
+        date &&
+          returnElements.push(
+            <ExpandedNodeField
+              key="Date"
+              title="Date"
+              // TODO: include the date on this
+              description={new Date(date).toLocaleTimeString('en-us')}
+            />
+          );
+
+        const coding = observation.valueCodeableConcept?.coding;
+        coding &&
+          returnElements.push(
+            <ExpandedNodeField
+              key="ValueSystem"
+              title="System"
+              description={
+                <>
+                  {coding[0].system}
+                  <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+                    <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+                  </a>
+                </>
+              }
+            />,
+            <ExpandedNodeField key="ValueCode" title="Code" description={coding[0].code} />,
+            <ExpandedNodeField key="ValueDisplay" title="Display" description={coding[0].display} />
+          );
+      }
+    }
+  }
+  return returnElements;
+}
+
+function renderGuidance(
+  pathwayState: GuidanceState,
+  documentation: DocumentationResource | undefined
+): ReactElement[] {
   const resource = pathwayState.action[0].resource;
   const coding =
     'medicationCodeableConcept' in resource
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
-  return [
+  const returnElements = [
     <ExpandedNodeField
       key="Notes"
       title="Notes"
@@ -99,52 +165,38 @@ function renderRecGuidance(pathwayState: GuidanceState): ReactElement[] {
     <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
     <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
   ];
-}
-function parseResource(resource: fhir.DomainResource): ReactElement[] {
-  const returnValue: ReactElement[] = [];
-  switch (resource.resourceType) {
-    case 'Procedure': {
-      const procedure = resource as fhir.Procedure;
-      const start =
-        (procedure.performedPeriod && procedure.performedPeriod.start) ||
-        procedure.performedDateTime;
-      const end = procedure.performedPeriod && procedure.performedPeriod.end;
-      if (start) {
-        returnValue.push(
-          <ExpandedNodeField
-            key="Start"
-            title="Start"
-            description={new Date(start).toLocaleDateString('en-us')}
-          />
-        );
-      }
+  if (documentation?.resource) {
+    switch (documentation.resourceType) {
+      case 'Procedure': {
+        const procedure = documentation.resource as fhir.Procedure;
+        const start =
+          (procedure.performedPeriod && procedure.performedPeriod.start) ||
+          procedure.performedDateTime;
+        const end = procedure.performedPeriod && procedure.performedPeriod.end;
+        if (start) {
+          returnElements.push(
+            <ExpandedNodeField
+              key="Start"
+              title="Start"
+              description={new Date(start).toLocaleDateString('en-us')}
+            />
+          );
+        }
 
-      if (end) {
-        returnValue.push(
-          <ExpandedNodeField
-            key="End"
-            title="End"
-            description={new Date(end).toLocaleDateString('en-us')}
-          />
-        );
+        if (end) {
+          returnElements.push(
+            <ExpandedNodeField
+              key="End"
+              title="End"
+              description={new Date(end).toLocaleDateString('en-us')}
+            />
+          );
+        }
+        break;
       }
-      break;
-    }
-    case 'Observation': {
-      const observation = resource as fhir.Observation;
-      const date = observation.effectiveDateTime;
-      date &&
-        returnValue.push(
-          <ExpandedNodeField
-            key="Date"
-            title="Date"
-            description={new Date(date).toLocaleTimeString('en-us')}
-          />
-        );
     }
   }
-
-  return returnValue;
+  return returnElements;
 }
 
 export default ExpandedNode;
