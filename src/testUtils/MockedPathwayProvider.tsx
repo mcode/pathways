@@ -1,13 +1,13 @@
 import React, { FC, ReactNode } from 'react';
 import { PathwayContext } from 'components/PathwayProvider';
-import { PathwayContextInterface } from 'pathways-model';
+import { PathwayContextInterface, Pathway } from 'pathways-model';
 
 interface PathwayProviderProps {
   children: ReactNode;
   pathwayCtx: PathwayContextInterface;
 }
 
-const pathway = {
+const pathway: Pathway = {
   name: 'Test Pathway',
   library: 'mCODE.cql',
   criteria: [
@@ -17,14 +17,12 @@ const pathway = {
       cql: 'some fancy CQL statement'
     }
   ],
-  states: [
-    {
-      Start: {
-        label: 'Start',
-        transitions: []
-      }
+  states: {
+    Start: {
+      label: 'Start',
+      transitions: []
     }
-  ]
+  }
 };
 
 export const mockedPathwayCtx = {

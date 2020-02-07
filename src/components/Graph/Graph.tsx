@@ -4,8 +4,14 @@ import graphLayout from 'visualization/layout';
 import Node from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
+import {
+  EvaluatedPathway,
+  PathwayResults,
+  DocumentationResource,
+  GuidanceState
+} from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
+import { isGuidanceState } from 'components/Node/Node';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -124,7 +130,10 @@ const Graph: FC<GraphProps> = ({
     Object.keys(expanded)
       .filter(node => expanded[node])
       .forEach(e => {
-        const action = pathway.states[e].action;
+        const pathwayState = pathway.states[e];
+        const action = isGuidanceState(pathwayState)
+          ? (pathwayState as GuidanceState).action
+          : null;
 
         if (action && action.length > 0 && path) {
           const currentNode = path[path.length - 1];
