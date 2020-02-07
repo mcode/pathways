@@ -20,11 +20,12 @@ function instanceOfElmObject(object: object): object is ElmObject {
  */
 export function evaluatePatientOnPathway(
   patient: object,
-  pathway: Pathway
+  pathway: Pathway,
+  resources: object[]
 ): Promise<PathwayResults> {
   return extractNavigationCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
-    .then(patientData => pathwayData(pathway, patientData));
+    .then(patientData => pathwayData(pathway, patientData, resources));
 }
 
 /**

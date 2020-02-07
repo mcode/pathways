@@ -29,7 +29,11 @@ interface StateData {
  *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
  *  }
  */
-export function pathwayData(pathway: Pathway, patientData: PatientData): PathwayResults {
+export function pathwayData(
+  pathway: Pathway,
+  patientData: PatientData,
+  resources: object[]
+): PathwayResults {
   const startState = 'Start';
   let currentStatus;
   const patientDocumentation = [];
@@ -38,7 +42,8 @@ export function pathwayData(pathway: Pathway, patientData: PatientData): Pathway
   let stateData = nextState(pathway, patientData, startState);
   while (stateData !== null) {
     currentStatus = stateData.status;
-    if (stateData.documentation !== null) patientDocumentation.push(stateData.documentation);
+    if (stateData.documentation !== null)
+      patientDocumentation.push(retrieveResource(stateData.documentation, resources));
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
     evaluatedPathway.push(stateData.nextState);
     stateData = nextState(pathway, patientData, stateData.nextState);
@@ -224,4 +229,17 @@ function nextState(
   } else if (currentState.transitions.length > 1) {
     return getConditionalNextState(patientData, currentState, currentStateName);
   } else return null;
+}
+
+function retrieveResource(
+  doc: DocumentationResource | string,
+  resources: fhir.DomainResource[]
+): DocumentationResource | string {
+  if (typeof doc !== 'string' && resources) {
+    doc.resource = resources.find(resource => {
+      return resource.resourceType === doc.resourceType && resource.id === doc.id;
+    });
+  }
+
+  return doc;
 }

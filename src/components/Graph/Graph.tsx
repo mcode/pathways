@@ -4,7 +4,7 @@ import graphLayout from 'visualization/layout';
 import Node from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { EvaluatedPathway, PathwayResults } from 'pathways-model';
+import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
 
 interface GraphProps {
@@ -94,8 +94,7 @@ const Graph: FC<GraphProps> = ({
         resourceType: 'Bundle',
         entry: resources.map((r: object) => ({ resource: r }))
       };
-
-      evaluatePatientOnPathway(patient, pathway).then(pathwayResults => {
+      evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
         if (!cancel) setPath(pathwayResults);
       });
 
@@ -106,9 +105,11 @@ const Graph: FC<GraphProps> = ({
   }, [pathway, resources, path.length, setPath]);
 
   useEffect(() => {
-    const currentNode = path[path.length - 1];
-    if (expandCurrentNode) {
-      if (currentNode) setExpanded(currentNode, true);
+    if (path) {
+      const currentNode = path[path.length - 1];
+      if (expandCurrentNode) {
+        if (currentNode) setExpanded(currentNode, true);
+      }
     }
   }, [expandCurrentNode, path, setExpanded]);
 
@@ -120,27 +121,35 @@ const Graph: FC<GraphProps> = ({
       .forEach(e => {
         const action = pathway.states[e].action;
 
-        if (action && action.length > 0) {
+        if (action && action.length > 0 && path) {
           const currentNode = path[path.length - 1];
-
           // Adjust height depending on the action description's length and for the current node
-          const heightOffset = Math.floor(action[0].description.length / 25) * 35;
-          const height = (currentNode === e ? 455 : 270) + heightOffset;
+          const heightOffset = Math.floor(action[0].description.length / 25) * 40;
+          const height = (currentNode === e ? 455 : 345) + heightOffset;
 
           expandedNodes[e] = {
             height,
             width: 400
           };
         } else {
+          // TODO: This obviously has to be changed eventually.
+          // The nodes height should change dynamically
+          const found =
+            evaluatedPathway &&
+            evaluatedPathway.pathwayResults &&
+            evaluatedPathway.pathwayResults.documentation.find(doc => {
+              return typeof doc !== 'string' && doc.state === e;
+            });
+          const height = found ? 140 : 50;
           expandedNodes[e] = {
-            width: 400,
-            height: 50
+            height,
+            width: 400
           };
         }
       });
 
     setLayout(getGraphLayout(expandedNodes));
-  }, [expanded, getGraphLayout, pathway.states, path]);
+  }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
@@ -151,10 +160,16 @@ const Graph: FC<GraphProps> = ({
           .reduce((a, b) => Math.max(a, b), 0)
       : windowWidth;
 
+  const documentation = evaluatedPathway.pathwayResults
+    ? evaluatedPathway.pathwayResults.documentation
+    : [];
   return (
     <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
       {nodeCoordinates !== undefined
         ? Object.keys(nodeCoordinates).map(key => {
+            const docResource = documentation.find((doc): doc is DocumentationResource => {
+              return typeof doc !== 'string' && doc.state === key;
+            });
             const isCurrentNode = (): boolean => {
               return path[path.length - 1] === key;
             };
@@ -162,6 +177,7 @@ const Graph: FC<GraphProps> = ({
             return (
               <Node
                 key={key}
+                documentation={docResource}
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 isCurrentNode={isCurrentNode()}
@@ -187,7 +203,6 @@ const Graph: FC<GraphProps> = ({
         {edges !== undefined
           ? Object.keys(edges).map(edgeName => {
               const edge = edges[edgeName];
-
               return (
                 <Arrow
                   key={edgeName}

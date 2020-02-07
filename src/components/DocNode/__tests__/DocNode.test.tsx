@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import RecNode from 'components/RecNode';
+import DocNode from 'components/DocNode';
 import { GuidanceState, BasicActionResource, BasicMedicationRequestResource } from 'pathways-model';
 
 const testActionState: GuidanceState = {
@@ -53,10 +53,10 @@ const testMedicationRequestState: GuidanceState = {
   transitions: []
 };
 
-describe('<RecNode />', () => {
-  it('renders a RecNode for action state', () => {
+describe('<DocNode />', () => {
+  it('renders a DocNode for action state', () => {
     const { getByText, queryByRole, queryByText } = render(
-      <RecNode pathwayState={testActionState} isActionable={false} />
+      <DocNode pathwayState={testActionState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testActionState.action[0].resource as BasicActionResource;
@@ -67,16 +67,16 @@ describe('<RecNode />', () => {
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
     expect(getByText(resource.code.coding[0].display)).toBeVisible();
 
-    // Form and buttons should not be displayed in an inactive RecNode
+    // Form and buttons should not be displayed in an inactive DocNode
     expect(queryByRole('form')).toBeNull();
     expect(queryByText('Accept')).toBeNull();
     expect(queryByText('Decline')).toBeNull();
     expect(queryByText('Use Default Text')).toBeNull();
   });
 
-  it('renders a RecNode for a medication request state', () => {
+  it('renders a DocNode for a medication request state', () => {
     const { getByText } = render(
-      <RecNode pathwayState={testMedicationRequestState} isActionable={false} />
+      <DocNode pathwayState={testMedicationRequestState} isActionable={false} isGuidance={true} />
     );
 
     const resource = testMedicationRequestState.action[0]
@@ -89,12 +89,12 @@ describe('<RecNode />', () => {
     expect(getByText(resource.medicationCodeableConcept.coding[0].display)).toBeVisible();
   });
 
-  it('renders an active RecNode', () => {
+  it('renders an active DocNode', () => {
     const { getByText, getByRole } = render(
-      <RecNode pathwayState={testActionState} isActionable={true} />
+      <DocNode pathwayState={testActionState} isActionable={true} />
     );
 
-    // Form and buttons should be displayed in an active RecNode
+    // Form and buttons should be displayed in an active DocNode
     expect(getByRole('form')).toBeVisible();
     expect(getByText('Accept')).toBeVisible();
     expect(getByText('Decline')).toBeVisible();

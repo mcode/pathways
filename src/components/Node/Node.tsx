@@ -1,14 +1,15 @@
 import React, { FC } from 'react';
-import { GuidanceState, State } from 'pathways-model';
+import { GuidanceState, State, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
-import RecNode from 'components/RecNode';
+import DocNode from 'components/DocNode';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NodeProps {
   pathwayState: State;
+  documentation: DocumentationResource | undefined;
   isOnPatientPath: boolean;
   isCurrentNode: boolean;
   xCoordinate: number;
@@ -23,6 +24,7 @@ interface NodeIconProps {
 
 const Node: FC<NodeProps> = ({
   pathwayState,
+  documentation,
   isOnPatientPath,
   isCurrentNode,
   xCoordinate,
@@ -35,15 +37,13 @@ const Node: FC<NodeProps> = ({
     top: yCoordinate,
     left: xCoordinate
   };
-
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-  const recNodeClass = isCurrentNode
+  const docNodeClass = isCurrentNode
     ? classes.childCurrent
     : isOnPatientPath
     ? classes.childOnPatientPath
     : classes.childNotOnPatientPath;
-
   return (
     <div
       className={`${classes.node} ${backgroundColorClass} ${expanded &&
@@ -54,9 +54,14 @@ const Node: FC<NodeProps> = ({
         <NodeIcon pathwayState={pathwayState} />
         {label}
       </div>
-      {isGuidanceState(pathwayState) && expanded && (
-        <div className={`${classes.recNode} ${recNodeClass}`}>
-          <RecNode pathwayState={pathwayState as GuidanceState} isActionable={isCurrentNode} />
+      {expanded && (isGuidanceState(pathwayState) || documentation) && (
+        <div className={`${classes.docNode} ${docNodeClass}`}>
+          <DocNode
+            pathwayState={pathwayState as GuidanceState}
+            isActionable={isCurrentNode}
+            documentation={documentation}
+            isGuidance={isGuidanceState(pathwayState)}
+          />
         </div>
       )}
     </div>
