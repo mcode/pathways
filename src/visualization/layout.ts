@@ -36,13 +36,13 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
 
   nodeNames.forEach(stateName => {
     const state: State = pathway.states[stateName];
-    const expanded = nodeDimensions[stateName];
+    const nodeDimension = nodeDimensions[stateName];
 
-    if (expanded) {
+    if (nodeDimension) {
       g.setNode(stateName, {
         label: state.label,
-        width: expanded.width,
-        height: expanded.height
+        width: nodeDimension.width,
+        height: nodeDimension.height
       });
     } else {
       g.setNode(stateName, {

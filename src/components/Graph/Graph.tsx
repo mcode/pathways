@@ -1,17 +1,11 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import graphLayout from 'visualization/layout';
-import Node from '../Node';
+import { Node, NodeRef } from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import {
-  EvaluatedPathway,
-  PathwayResults,
-  DocumentationResource,
-  GuidanceState
-} from 'pathways-model';
+import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, NodeDimensions, Edge } from 'graph-model';
-import { isGuidanceState } from 'utils/nodeUtils';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -36,6 +30,7 @@ const Graph: FC<GraphProps> = ({
 }) => {
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<{ [key: string]: NodeRef }>({});
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const [path, _setPath] = useState<string[]>(
     evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
@@ -121,41 +116,25 @@ const Graph: FC<GraphProps> = ({
 
   useEffect(() => {
     const nodeDimensions: NodeDimensions = {};
-
-    Object.keys(expanded)
-      .filter(node => expanded[node])
-      .forEach(e => {
-        const pathwayState = pathway.states[e];
-        const action = isGuidanceState(pathwayState)
-          ? (pathwayState as GuidanceState).action
-          : null;
-
-        if (action && action.length > 0 && path) {
-          const currentNode = path[path.length - 1];
-          // Adjust height depending on the action description's length and for the current node
-          const heightOffset = Math.floor(action[0].description.length / 25) * 40;
-          const height = (currentNode === e ? 455 : 345) + heightOffset;
-
-          nodeDimensions[e] = {
-            height,
-            width: 400
-          };
-        } else {
-          // TODO: This obviously has to be changed eventually.
-          // The nodes height should change dynamically
-          const found =
-            evaluatedPathway &&
-            evaluatedPathway.pathwayResults &&
-            evaluatedPathway.pathwayResults.documentation.find(doc => {
-              return typeof doc !== 'string' && doc.state === e;
-            });
-          const height = found ? 140 : 50;
-          nodeDimensions[e] = {
-            height,
-            width: 400
-          };
-        }
+    console.log(nodeRefs);
+    if (nodeRefs?.current) {
+      Object.keys(nodeRefs.current).forEach(n => {
+        const nodeElement = nodeRefs.current[n];
+        const width = nodeElement.clientWidth;
+        console.log('width: ', width);
+        const height = Array.from(nodeElement.children).reduce(
+          (acc, child) => acc + child.clientHeight,
+          0
+        );
+        // const height =
+        //   nodeElement.childElementCount > 1
+        //     ? Array.from(nodeElement.children).reduce((acc, child) => acc + child.clientHeight, 0)
+        //     : nodeElement.clientHeight;
+        console.log(nodeRefs.current[n].children[0].clientHeight);
+        console.log(n, height);
+        nodeDimensions[n] = { width, height };
       });
+    }
 
     setLayout(getGraphLayout(nodeDimensions));
   }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
@@ -187,6 +166,9 @@ const Graph: FC<GraphProps> = ({
               <Node
                 key={key}
                 documentation={docResource}
+                ref={(node: NodeRef): void => {
+                  nodeRefs.current[key] = node;
+                }}
                 pathwayState={pathway.states[key]}
                 isOnPatientPath={path.includes(key)}
                 isCurrentNode={isCurrentNode()}
