@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, ReactElement } from 'react';
-import { GuidanceState, DocumentationResource, State, BranchState } from 'pathways-model';
+import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './ExpandedNode.module.scss';
@@ -7,7 +7,7 @@ import indexClasses from 'styles/index.module.scss';
 import { isGuidanceState, isBranchState } from 'components/Node/Node';
 
 interface ExpandedNodeProps {
-  pathwayState: GuidanceState | BranchState | State;
+  pathwayState: GuidanceState | State;
   isActionable: boolean;
   documentation: DocumentationResource | undefined;
 }
@@ -15,8 +15,7 @@ interface ExpandedNodeProps {
 const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, documentation }) => {
   const guidance =
     isGuidanceState(pathwayState) && renderGuidance(pathwayState as GuidanceState, documentation);
-  const branch =
-    isBranchState(pathwayState) && renderBranch(pathwayState as BranchState, documentation);
+  const branch = isBranchState(pathwayState) && renderBranch(documentation);
 
   return (
     <div className={indexClasses.ExpandedNode}>
@@ -62,19 +61,8 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
   );
 };
 
-function renderBranch(
-  pathwayState: BranchState,
-  documentation: DocumentationResource | undefined
-): ReactElement[] {
+function renderBranch(documentation: DocumentationResource | undefined): ReactElement[] {
   const returnElements: ReactElement[] = [];
-  returnElements.push(
-    <ExpandedNodeField key="Type" title="Type" description={pathwayState.resourceType} />,
-    <ExpandedNodeField
-      key="mCODE_Element"
-      title="mCODE Element"
-      description={pathwayState.mcodeElement}
-    />
-  );
 
   if (documentation?.resource) {
     switch (documentation.resourceType) {
