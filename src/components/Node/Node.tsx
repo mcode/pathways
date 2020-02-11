@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { GuidanceState, State, DocumentationResource, BranchState } from 'pathways-model';
+import { GuidanceState, State, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
@@ -21,15 +21,6 @@ interface NodeProps {
 interface NodeIconProps {
   pathwayState: State;
 }
-
-/*
-Node type
-========
-Completed guidance
-Uncompleted guidance
-Completed branch
-Uncompleted branch
-*/
 
 const Node: FC<NodeProps> = ({
   pathwayState,
@@ -97,8 +88,7 @@ export function isGuidanceState(state: State): boolean {
 }
 
 export function isBranchState(state: State): boolean {
-  const { mcodeElement } = state as BranchState;
-  return mcodeElement ? true : false;
+  return !isGuidanceState(state) && state.transitions.length > 1;
 }
 
 export default Node;
