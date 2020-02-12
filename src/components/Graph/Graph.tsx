@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import graphLayout from 'visualization/layout';
-import { Node, NodeRef } from '../Node';
-import Arrow from '../Arrow';
+import Node from 'components/Node';
+import Arrow from 'components/Arrow';
 import { evaluatePatientOnPathway } from 'engine';
 import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, NodeDimensions, Edge } from 'graph-model';
@@ -30,8 +30,9 @@ const Graph: FC<GraphProps> = ({
 }) => {
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
-  const nodeRefs = useRef<{ [key: string]: NodeRef }>({});
+  const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
+  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
   const [path, _setPath] = useState<string[]>(
     evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
   );
@@ -44,21 +45,29 @@ const Graph: FC<GraphProps> = ({
     [evaluatedPathway.pathway, updateEvaluatedPathways]
   );
 
-  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
-
-  useEffect(() => {
-    setWindowWidth(parentWidth);
-  }, [parentWidth]);
-
   // Get the layout of the graph
-  const getGraphLayout = useCallback(
-    (nodeDimensions: NodeDimensions): Layout => {
-      return graphLayout(pathway, nodeDimensions);
-    },
-    [pathway]
-  );
+  const getGraphLayout = useCallback((): Layout => {
+    const nodeDimensions: NodeDimensions = {};
 
-  const [layout, setLayout] = useState(getGraphLayout({}));
+    // Retrieve dimensions from nodeRefs
+    if (nodeRefs?.current) {
+      Object.keys(nodeRefs.current).forEach(key => {
+        const nodeElement = nodeRefs.current[key];
+        const width = nodeElement.clientWidth;
+        // nodeElement can have multiple children so calculate the sum to get the node height
+        const height = Array.from(nodeElement.children).reduce(
+          (acc, child) => acc + child.clientHeight,
+          0
+        );
+
+        nodeDimensions[key] = { width, height };
+      });
+    }
+
+    return graphLayout(pathway, nodeDimensions);
+  }, [pathway]);
+
+  const [layout, setLayout] = useState(getGraphLayout());
   const { nodeCoordinates, edges } = layout;
   const maxHeight = useMemo(() => {
     return nodeCoordinates !== undefined
@@ -114,30 +123,15 @@ const Graph: FC<GraphProps> = ({
     }
   }, [expandCurrentNode, path, setExpanded]);
 
+  // Recalculate graph layout if window size changes or if a node is expanded
   useEffect(() => {
-    const nodeDimensions: NodeDimensions = {};
-    console.log(nodeRefs);
-    if (nodeRefs?.current) {
-      Object.keys(nodeRefs.current).forEach(n => {
-        const nodeElement = nodeRefs.current[n];
-        const width = nodeElement.clientWidth;
-        console.log('width: ', width);
-        const height = Array.from(nodeElement.children).reduce(
-          (acc, child) => acc + child.clientHeight,
-          0
-        );
-        // const height =
-        //   nodeElement.childElementCount > 1
-        //     ? Array.from(nodeElement.children).reduce((acc, child) => acc + child.clientHeight, 0)
-        //     : nodeElement.clientHeight;
-        console.log(nodeRefs.current[n].children[0].clientHeight);
-        console.log(n, height);
-        nodeDimensions[n] = { width, height };
-      });
-    }
+    setWindowWidth(parentWidth);
+    setLayout(getGraphLayout());
+  }, [getGraphLayout, parentWidth]);
 
-    setLayout(getGraphLayout(nodeDimensions));
-  }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
+  useEffect(() => {
+    setLayout(getGraphLayout());
+  }, [expanded, getGraphLayout]);
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
@@ -166,7 +160,7 @@ const Graph: FC<GraphProps> = ({
               <Node
                 key={key}
                 documentation={docResource}
-                ref={(node: NodeRef): void => {
+                ref={(node: HTMLDivElement): void => {
                   nodeRefs.current[key] = node;
                 }}
                 pathwayState={pathway.states[key]}

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Ref, forwardRef } from 'react';
 import { GuidanceState, State, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -24,12 +24,7 @@ interface NodeIconProps {
   isGuidance: boolean;
 }
 
-export type NodeRef = HTMLDivElement;
-
-export const Node: FC<NodeProps & { ref: React.Ref<NodeRef> }> = React.forwardRef<
-  NodeRef,
-  NodeProps
->(
+const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivElement, NodeProps>(
   (
     {
       pathwayState,
@@ -96,3 +91,5 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   }
   return <FontAwesomeIcon icon={icon} className={classes.icon} />;
 };
+
+export default Node;
