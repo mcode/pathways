@@ -1,0 +1,65 @@
+@import '../../styles/variables';
+body {
+    div{
+        &.pathwayPopup.pathwayPopup{
+            border-radius: 10px;
+            min-width: 300px;
+            min-height:120px;
+            border: 5px solid rgba(74, 74, 74, .5);
+            background-color: $gray;
+            color:$white;
+            -moz-background-clip: padding;     /* Firefox 3.6 */
+            -webkit-background-clip: padding;  /* Safari 4? Chrome 6? */
+            background-clip: padding-box;      /* Firefox 4, Safari 5, Opera 10, IE 9 */
+
+            &.pathwayPopup.pathwayPopup::before{
+                background: $gray;
+                width: 2em;
+                height: 2em;
+                top: -.5em;
+                right: 3em;
+                box-shadow:none !important;
+                -webkit-box-shadow:none;
+            }
+        }
+    }
+}
+
+.popupWrapper {
+    cursor: pointer;
+    display:inline-block;
+    padding-right: 3.75em;
+}
+
+.popupChoice {
+    display:inline-block;
+    padding:5px;
+    margin:5px 10px 5px 0px;
+    min-width: 3em;
+    cursor:pointer;
+    background: $black;
+    text-align:center;
+    border-radius: 15%;
+    font-weight: 800;
+
+    &:hover{
+        background: #222;
+    }
+}
+
+.popupContent {
+    display:table-cell;
+}
+
+.footer {
+    float:right;
+    padding:5px;
+    min-width: 2.5em;
+    min-height: 2em;
+    cursor:pointer;
+    background: $black;
+    text-align:center;
+    border-radius: 15%;
+    font-weight: 800;
+
+}

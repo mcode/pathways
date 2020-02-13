@@ -1,9 +1,9 @@
 import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
+import PathwayPopup from '../PathwayPopup/PathwayPopup';
 import { isBranchState } from 'utils/nodeUtils';
 
 interface ExpandedNodeProps {
@@ -131,18 +131,7 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
     }
   } else {
     returnElements.push(
-      <ExpandedNodeField
-        key="value"
-        title="Value"
-        description={
-          <>
-            missing data
-            <a href={'example.com'} rel="noopener noreferrer">
-              <FontAwesomeIcon icon="edit" className={styles.externalLink} />
-            </a>
-          </>
-        }
-      />
+      <ExpandedNodeField key="value" title="Value" description={<PathwayPopup />} />
     );
   }
   return returnElements;
