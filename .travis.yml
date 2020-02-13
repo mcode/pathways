@@ -13,7 +13,9 @@ script:
   # replace the pathways service in the config file with the gh static location
   # -i means in-place
   # see https://stackoverflow.com/a/11245501
-  - sed -i "/pathwaysService:/c\  pathwaysService: 'https:\/\/mcode\.github\.io\/pathways\/static\/pathways\/'," build/config.js
+  # note also multiline string here to get around some yaml weirdness
+  - >
+      sed -i "/pathwaysService:/c\  pathwaysService: 'https://mcode.github.io/pathways/static/pathways/'," build/config.js
 
 deploy:
   provider: pages
