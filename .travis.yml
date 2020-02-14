@@ -11,11 +11,14 @@ script:
   - yarn test
   - yarn build
   # replace the pathways service in the config file with the gh static location
+  # and the cql-to-elm service with a public one
   # -i means in-place
   # see https://stackoverflow.com/a/11245501
-  # note also multiline string here to get around some yaml weirdness
+  # note multiline string here gets converted into one line, not 3
   - >
       sed -i "/pathwaysService:/c\  pathwaysService: 'https://mcode.github.io/pathways/static/pathways/'," build/config.js
+      &&
+      sed -i "/cqlToElmWebserviceUrl:/c\  cqlToElmWebserviceUrl: 'https://cql-translation-service-zfk47ib3kq-uc.a.run.app/cql/translator'," build/config.js
 
 deploy:
   provider: pages
