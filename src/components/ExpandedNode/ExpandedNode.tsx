@@ -13,6 +13,17 @@ interface ExpandedNodeProps {
   documentation: DocumentationResource | undefined;
 }
 
+const ActionButton: FC<{ type: 'accept' | 'decline' }> = ({ type }) => {
+  return (
+    <button
+      className={`${styles[type]} ${indexStyles.button}`}
+      onClick={(e): void => e.preventDefault()}
+    >
+      {type[0].toUpperCase() + type.slice(1)}
+    </button>
+  );
+};
+
 const ExpandedNode: FC<ExpandedNodeProps> = ({
   pathwayState,
   isActionable,
@@ -46,23 +57,9 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
           >
             Use Default Text
           </button>
-          <textarea
-            className={styles.comments}
-            value={comments}
-            onChange={(e): void => setComments(e.target.value)}
-          ></textarea>
-          <button
-            className={`${styles.accept} ${indexStyles.button}`}
-            onClick={(e): void => e.preventDefault()}
-          >
-            Accept
-          </button>
-          <button
-            className={`${styles.decline} ${indexStyles.button}`}
-            onClick={(e): void => e.preventDefault()}
-          >
-            Decline
-          </button>
+          <textarea className={styles.comments}></textarea>
+          <ActionButton type="accept" />
+          <ActionButton type="decline" />
         </form>
       )}
     </div>
