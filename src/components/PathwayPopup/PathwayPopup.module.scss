@@ -1,4 +1,5 @@
 @import '../../styles/variables';
+
 body {
     div{
         &.pathwayPopup.pathwayPopup{
@@ -23,43 +24,4 @@ body {
             }
         }
     }
-}
-
-.popupWrapper {
-    cursor: pointer;
-    display:inline-block;
-    padding-right: 3.75em;
-}
-
-.popupChoice {
-    display:inline-block;
-    padding:5px;
-    margin:5px 10px 5px 0px;
-    min-width: 3em;
-    cursor:pointer;
-    background: $black;
-    text-align:center;
-    border-radius: 15%;
-    font-weight: 800;
-
-    &:hover{
-        background: #222;
-    }
-}
-
-.popupContent {
-    display:table-cell;
-}
-
-.footer {
-    float:right;
-    padding:5px;
-    min-width: 2.5em;
-    min-height: 2em;
-    cursor:pointer;
-    background: $black;
-    text-align:center;
-    border-radius: 15%;
-    font-weight: 800;
-
 }
