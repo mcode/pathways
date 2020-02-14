@@ -2,8 +2,8 @@ import React, { FC, ReactNode, ReactElement } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './ExpandedNode.module.scss';
-import indexClasses from 'styles/index.module.scss';
+import styles from './ExpandedNode.module.scss';
+import indexStyles from 'styles/index.module.scss';
 import { isGuidanceState, isBranchState } from 'utils/nodeUtils';
 
 interface ExpandedNodeProps {
@@ -18,25 +18,25 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, docum
   const branch = isBranchState(pathwayState) && renderBranch(documentation);
 
   return (
-    <div className={indexClasses.expandedNode}>
-      <table className={classes.infoTable}>
+    <div className={indexStyles.expandedNode}>
+      <table className={styles.infoTable}>
         <tbody>{guidance || branch}</tbody>
       </table>
       {isActionable && (
-        <form className={classes.commentsForm}>
+        <form className={styles.commentsForm}>
           <label>Comments:</label>
-          <button className={indexClasses.button} onClick={(e): void => e.preventDefault()}>
+          <button className={indexStyles.button} onClick={(e): void => e.preventDefault()}>
             Use Default Text
           </button>
-          <textarea className={classes.comments}></textarea>
+          <textarea className={styles.comments}></textarea>
           <button
-            className={`${classes.accept} ${indexClasses.button}`}
+            className={`${styles.accept} ${indexStyles.button}`}
             onClick={(e): void => e.preventDefault()}
           >
             Accept
           </button>
           <button
-            className={`${classes.decline} ${indexClasses.button}`}
+            className={`${styles.decline} ${indexStyles.button}`}
             onClick={(e): void => e.preventDefault()}
           >
             Decline
@@ -55,8 +55,8 @@ type ExpandedNodeFieldProps = {
 const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) => {
   return (
     <tr>
-      <td className={classes.descTitle}>{title}</td>
-      <td className={classes.desc}>{description}</td>
+      <td className={styles.descTitle}>{title}</td>
+      <td className={styles.desc}>{description}</td>
     </tr>
   );
 };
@@ -79,7 +79,7 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
                 <>
                   {valueCoding[0].system}
                   <a href={valueCoding[0].system} target="_blank" rel="noopener noreferrer">
-                    <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+                    <FontAwesomeIcon icon="external-link-alt" className={styles.externalLink} />
                   </a>
                 </>
               }
@@ -116,7 +116,7 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
           <>
             missing data
             <a href={'example.com'} rel="noopener noreferrer">
-              <FontAwesomeIcon icon="edit" className={classes.externalLink} />
+              <FontAwesomeIcon icon="edit" className={styles.externalLink} />
             </a>
           </>
         }
@@ -149,7 +149,7 @@ function renderGuidance(
         <>
           {coding[0].system}
           <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon="external-link-alt" className={classes.externalLink} />
+            <FontAwesomeIcon icon="external-link-alt" className={styles.externalLink} />
           </a>
         </>
       }
