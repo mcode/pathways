@@ -209,7 +209,7 @@ function nextState(
   const currentState = pathway.states[currentStateName];
   if ('action' in currentState) {
     let resource = patientData[currentStateName];
-    if (resource.length) {
+    if (resource?.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
         nextState: formatNextState(resource, currentState),
