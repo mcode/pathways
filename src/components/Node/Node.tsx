@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
 import ExpandedNode from 'components/ExpandedNode';
+import { isGuidanceState } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NodeProps {
@@ -39,7 +40,7 @@ const Node: FC<NodeProps> = ({
   };
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-  const ExpandedNodeClass = isCurrentNode
+  const expandedNodeClass = isCurrentNode
     ? classes.childCurrent
     : isOnPatientPath
     ? classes.childOnPatientPath
@@ -55,7 +56,7 @@ const Node: FC<NodeProps> = ({
         {label}
       </div>
       {expanded && (
-        <div className={`${classes.ExpandedNode} ${ExpandedNodeClass}`}>
+        <div className={`${classes.expandedNode} ${expandedNodeClass}`}>
           <ExpandedNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
@@ -81,14 +82,5 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
   }
   return <FontAwesomeIcon icon={icon} className={classes.icon} />;
 };
-
-export function isGuidanceState(state: State): boolean {
-  const { action } = state as GuidanceState;
-  return action ? action.length > 0 : false;
-}
-
-export function isBranchState(state: State): boolean {
-  return !isGuidanceState(state) && state.transitions.length > 1;
-}
 
 export default Node;

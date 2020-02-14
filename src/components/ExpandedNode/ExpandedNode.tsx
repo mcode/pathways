@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './ExpandedNode.module.scss';
 import indexClasses from 'styles/index.module.scss';
-import { isGuidanceState, isBranchState } from 'components/Node/Node';
+import { isGuidanceState, isBranchState } from 'utils/nodeUtils';
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState | State;
@@ -18,7 +18,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, docum
   const branch = isBranchState(pathwayState) && renderBranch(documentation);
 
   return (
-    <div className={indexClasses.ExpandedNode}>
+    <div className={indexClasses.expandedNode}>
       <table className={classes.infoTable}>
         <tbody>{guidance || branch}</tbody>
       </table>

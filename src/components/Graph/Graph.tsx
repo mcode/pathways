@@ -11,7 +11,7 @@ import {
   GuidanceState
 } from 'pathways-model';
 import { Layout, ExpandedNodes, Edge } from 'graph-model';
-import { isGuidanceState } from 'components/Node/Node';
+import { isGuidanceState } from 'utils/nodeUtils';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
