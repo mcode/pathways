@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import Select from 'react-select';
 
-import classes from './DropDown.module.scss';
+import styles from './DropDown.module.scss';
 import { Option } from 'option';
 
 interface Props {
@@ -32,7 +32,7 @@ const DropDown: FC<Props> = ({
 
   if (visible)
     return (
-      <div className={classes.dropdown}>
+      <div className={styles.dropdown}>
         <div>
           <label htmlFor={id}>{label}</label>
           <button
