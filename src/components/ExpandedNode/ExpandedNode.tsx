@@ -4,7 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from '../MissingDataPopup/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
+import { ConfirmedActionButton } from 'components/ActionButton/ActionButton';
 import { isBranchState } from 'utils/nodeUtils';
+
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState | State;
@@ -12,17 +14,6 @@ interface ExpandedNodeProps {
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;
 }
-
-const ActionButton: FC<{ type: 'accept' | 'decline' }> = ({ type }) => {
-  return (
-    <button
-      className={`${styles[type]} ${indexStyles.button}`}
-      onClick={(e): void => e.preventDefault()}
-    >
-      {type[0].toUpperCase() + type.slice(1)}
-    </button>
-  );
-};
 
 const ExpandedNode: FC<ExpandedNodeProps> = ({
   pathwayState,
@@ -58,8 +49,8 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             Use Default Text
           </button>
           <textarea className={styles.comments}></textarea>
-          <ActionButton type="accept" />
-          <ActionButton type="decline" />
+          <ConfirmedActionButton type="accept" />
+          <ConfirmedActionButton type="decline" />
         </form>
       )}
     </div>
