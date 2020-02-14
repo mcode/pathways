@@ -2,6 +2,7 @@
   "name": "pathways",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://mcode.github.io/pathways",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
@@ -19,7 +20,7 @@
     "dagre": "^0.8.5",
     "eslint-plugin-only-error": "^1.0.2",
     "fhir-mapper": "^3.1.1",
-    "fhir-visualizers": "synthetichealth/fhir-visualizers",
+    "fhir-visualizers": "^0.0.1",
     "fhirclient": "^2.1.0",
     "node-sass": "^4.12.0",
     "react": "^16.10.1",

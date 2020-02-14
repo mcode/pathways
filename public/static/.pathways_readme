@@ -1,0 +1,12 @@
+Note: the "index.html" file in the pathways folder
+is intentional. The idea is that it will ensure
+consistent behavior between GitHub Pages and 
+running the app locally with react-scripts.
+
+The file should contain a JSON representation of
+the list of filenames within the folder, 
+not including index.html itself.
+Yes it's a hack -- if we named it index.json, gh-pages will 
+serve it when we GET the folder,
+but react-scripts won't; instead it will serve up its
+own list of files in the directory, including index.json.
