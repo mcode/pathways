@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
 
-import classes from './Navigation.module.scss';
+import styles from './Navigation.module.scss';
 import { EvaluatedPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
@@ -33,13 +33,13 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   }));
 
   return (
-    <nav className={classes.navigation}>
-      <div className={classes['navigation__left-panel']}>
-        <FontAwesomeIcon icon="chevron-left" className={classes.navigation__back} />
+    <nav className={styles.navigation}>
+      <div className={styles.navigation__leftPanel}>
+        <FontAwesomeIcon icon="chevron-left" className={styles.navigation__back} />
         <PatientSnapshot />
       </div>
 
-      <div className={classes['navigation__right-panel']}>
+      <div className={styles.navigation__rightPanel}>
         <DropDown
           label="Pathway:"
           id="patient-view"
