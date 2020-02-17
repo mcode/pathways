@@ -5,6 +5,8 @@
 [![Powered by Synthea](https://img.shields.io/badge/powered%20by-synthea-informational.svg)](https://github.com/synthetichealth/synthea)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
+## The purpose of this branch is to retro-fit pathways to fit the clinical trial matching use case. (representing a clincal trial as a pathway, adding in a way to handle exclusion criteria, etc.)
+
 # Camino: mCODE™-based Oncology Clinical Pathways Prototype
 Camino is a prototype SMART on FHIR application intended to demonstrate the value of mCODE, a standardized data model around cancer, through computable oncology clinical pathways. Camino uses mCODE data in the patient's record fetched from the EHR to automatically evaluate the patient's current location on a structured pathway and provides recommendations as to next steps.
 
