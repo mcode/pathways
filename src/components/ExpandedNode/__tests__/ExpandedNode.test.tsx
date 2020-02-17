@@ -1,8 +1,37 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import ExpandedNode from 'components/ExpandedNode';
-import { GuidanceState, BasicActionResource, BasicMedicationRequestResource } from 'pathways-model';
-
+import {
+  GuidanceState,
+  BasicActionResource,
+  BasicMedicationRequestResource,
+  DocumentationResource
+} from 'pathways-model';
+const testDoc: DocumentationResource = {
+  resourceType: 'Observation',
+  id: '138629',
+  status: 'final',
+  state: 'N-test',
+  resource: {
+    resourceType: 'Observation',
+    id: '138629',
+    meta: {
+      versionId: '1',
+      lastUpdated: '2020-02-10T18:55:18.991+00:00',
+      profile: [
+        'http://hl7.org/fhir/us/shr/StructureDefinition/onco-core-TNMClinicalRegionalNodesCategory'
+      ]
+    },
+    extension: [
+      {
+        url:
+          'http://hl7.org/fhir/us/shr/DSTU2/' +
+          'StructureDefinition/onco-core-RelatedCancerCondition-extension',
+        valueReference: { reference: 'Condition/1d4d5de8-097d-4c5b-bb7b-48b5fd7fb441' }
+      }
+    ]
+  }
+};
 const testActionState: GuidanceState = {
   label: 'Chemotherapy',
   action: [
@@ -105,7 +134,7 @@ describe('<ExpandedNode />', () => {
         pathwayState={testActionState}
         isActionable={true}
         isGuidance={true}
-        documentation={undefined}
+        documentation={testDoc}
       />
     );
 
