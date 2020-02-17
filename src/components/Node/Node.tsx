@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Ref, forwardRef } from 'react';
 import { GuidanceState, State, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -24,52 +24,58 @@ interface NodeIconProps {
   isGuidance: boolean;
 }
 
-const Node: FC<NodeProps> = ({
-  pathwayState,
-  documentation,
-  isOnPatientPath,
-  isCurrentNode,
-  xCoordinate,
-  yCoordinate,
-  expanded = false,
-  onClickHandler
-}) => {
-  const { label } = pathwayState;
-  const style = {
-    top: yCoordinate,
-    left: xCoordinate
-  };
-  const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
-  const currentNodeClass = isCurrentNode ? classes.current : '';
-  const expandedNodeClass = isCurrentNode
-    ? classes.childCurrent
-    : isOnPatientPath
-    ? classes.childOnPatientPath
-    : classes.childNotOnPatientPath;
-  const isGuidance = isGuidanceState(pathwayState);
-  return (
-    <div
-      className={`${classes.node} ${backgroundColorClass} ${expanded &&
-        nodeClasses.expanded} ${currentNodeClass}`}
-      style={style}
-    >
-      <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
-        <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
-        {label}
-      </div>
-      {expanded && (
-        <div className={`${classes.expandedNode} ${expandedNodeClass}`}>
-          <ExpandedNode
-            pathwayState={pathwayState as GuidanceState}
-            isActionable={isCurrentNode}
-            isGuidance={isGuidance}
-            documentation={documentation}
-          />
+const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivElement, NodeProps>(
+  (
+    {
+      pathwayState,
+      documentation,
+      isOnPatientPath,
+      isCurrentNode,
+      xCoordinate,
+      yCoordinate,
+      expanded = false,
+      onClickHandler
+    },
+    ref
+  ) => {
+    const { label } = pathwayState;
+    const style = {
+      top: yCoordinate,
+      left: xCoordinate
+    };
+    const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
+    const currentNodeClass = isCurrentNode ? classes.current : '';
+    const expandedNodeClass = isCurrentNode
+      ? classes.childCurrent
+      : isOnPatientPath
+      ? classes.childOnPatientPath
+      : classes.childNotOnPatientPath;
+    const isGuidance = isGuidanceState(pathwayState);
+    return (
+      <div
+        className={`${classes.node} ${backgroundColorClass} ${expanded &&
+          nodeClasses.expanded} ${currentNodeClass}`}
+        style={style}
+        ref={ref}
+      >
+        <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
+          <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
+          {label}
         </div>
-      )}
-    </div>
-  );
-};
+        {expanded && (
+          <div className={`${classes.expandedNode} ${expandedNodeClass}`}>
+            <ExpandedNode
+              pathwayState={pathwayState as GuidanceState}
+              isActionable={isCurrentNode}
+              isGuidance={isGuidance}
+              documentation={documentation}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+);
 
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   let icon: IconProp = 'microscope';
