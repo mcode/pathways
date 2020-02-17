@@ -10,7 +10,7 @@ import {
   DocumentationResource,
   GuidanceState
 } from 'pathways-model';
-import { Layout, DocNodes, Edge } from 'graph-model';
+import { Layout, NodeDimensions, Edge } from 'graph-model';
 import { isGuidanceState } from 'utils/nodeUtils';
 
 interface GraphProps {
@@ -57,8 +57,8 @@ const Graph: FC<GraphProps> = ({
 
   // Get the layout of the graph
   const getGraphLayout = useCallback(
-    (docNodes: DocNodes): Layout => {
-      return graphLayout(pathway, docNodes);
+    (nodeDimensions: NodeDimensions): Layout => {
+      return graphLayout(pathway, nodeDimensions);
     },
     [pathway]
   );
@@ -120,7 +120,7 @@ const Graph: FC<GraphProps> = ({
   }, [expandCurrentNode, path, setExpanded]);
 
   useEffect(() => {
-    const docNodes: DocNodes = {};
+    const nodeDimensions: NodeDimensions = {};
 
     Object.keys(expanded)
       .filter(node => expanded[node])
@@ -136,7 +136,7 @@ const Graph: FC<GraphProps> = ({
           const heightOffset = Math.floor(action[0].description.length / 25) * 40;
           const height = (currentNode === e ? 455 : 345) + heightOffset;
 
-          docNodes[e] = {
+          nodeDimensions[e] = {
             height,
             width: 400
           };
@@ -150,14 +150,14 @@ const Graph: FC<GraphProps> = ({
               return typeof doc !== 'string' && doc.state === e;
             });
           const height = found ? 140 : 50;
-          docNodes[e] = {
+          nodeDimensions[e] = {
             height,
             width: 400
           };
         }
       });
 
-    setLayout(getGraphLayout(docNodes));
+    setLayout(getGraphLayout(nodeDimensions));
   }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
 
   // maxWidth finds the edge label that is farthest to the right
