@@ -1,0 +1,23 @@
+@import '../../styles/variables';
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5em;
+  min-height: 2em;
+  cursor:pointer;
+  border-radius: 15%;
+  font-weight: 800;
+  margin-right: 0.5em;
+}
+
+.check {
+  @extend .selectButton;
+  background: $green;
+}
+
+.times {
+  @extend .selectButton;
+  background: $black;
+}

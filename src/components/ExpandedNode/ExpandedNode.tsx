@@ -48,8 +48,8 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             Use Default Text
           </button>
           <textarea className={styles.comments}></textarea>
-          <ConfirmedActionButton type="accept" />
-          <ConfirmedActionButton type="decline" />
+          <ConfirmedActionButton type="accept" size="large" />
+          <ConfirmedActionButton type="decline" size="large" />
         </form>
       )}
     </div>

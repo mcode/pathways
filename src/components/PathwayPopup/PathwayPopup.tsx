@@ -1,7 +1,6 @@
 import React, { FC, ReactElement } from 'react';
 import { Popup, StrictPopupProps } from 'semantic-ui-react';
 import styles from './PathwayPopup.module.scss';
-import { classNames } from 'react-select/src/utils';
 
 interface PathwayPopupProps {
   Content: ReactElement;

@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import styles from './MissingDataPopup.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import PathwayPopup from '../PathwayPopup/PathwayPopup';
 import nodeClasses from '../ExpandedNode/ExpandedNode.module.scss';
+import ActionButton from '../ActionButton/ActionButton';
 
 interface MissingDataPopup {
   values: string[];
@@ -63,25 +63,9 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
         </div>
       </div>
       <div className={styles.footer}>
-        <div
-          className={styles.times}
-          onClick={(): void => {
-            setOpen(false);
-          }}
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </div>
+        <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
         {showCheck && (
-          <div
-            className={styles.check}
-            onClick={(): void => {
-              setOpen(false);
-              // TODO: callback for using selected value
-              // can go here
-            }}
-          >
-            <FontAwesomeIcon icon={faCheck} />
-          </div>
+          <ActionButton size="small" type="accept" onClick={(): void => setOpen(false)} />
         )}
       </div>
     </div>
