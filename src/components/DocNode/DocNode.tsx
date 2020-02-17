@@ -4,19 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from './DocNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
-import { isGuidanceState, isBranchState } from 'utils/nodeUtils';
+import { isBranchState } from 'utils/nodeUtils';
 
 interface DocNodeProps {
   pathwayState: GuidanceState | State;
   isActionable: boolean;
+  isGuidance: boolean;
   documentation: DocumentationResource | undefined;
 }
 
-const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, documentation }) => {
+const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, isGuidance, documentation }) => {
   const [comments, setComments] = useState<string>('');
 
-  const guidance =
-    isGuidanceState(pathwayState) && renderGuidance(pathwayState as GuidanceState, documentation);
+  const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation);
 
   const defaultText =

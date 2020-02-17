@@ -21,6 +21,7 @@ interface NodeProps {
 
 interface NodeIconProps {
   pathwayState: State;
+  isGuidance: boolean;
 }
 
 const Node: FC<NodeProps> = ({
@@ -45,6 +46,7 @@ const Node: FC<NodeProps> = ({
     : isOnPatientPath
     ? classes.childOnPatientPath
     : classes.childNotOnPatientPath;
+  const isGuidance = isGuidanceState(pathwayState);
   return (
     <div
       className={`${classes.node} ${backgroundColorClass} ${expanded &&
@@ -52,7 +54,7 @@ const Node: FC<NodeProps> = ({
       style={style}
     >
       <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
-        <NodeIcon pathwayState={pathwayState} />
+        <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
         {label}
       </div>
       {expanded && (
@@ -60,6 +62,7 @@ const Node: FC<NodeProps> = ({
           <DocNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
+            isGuidance={isGuidance}
             documentation={documentation}
           />
         </div>
@@ -68,10 +71,10 @@ const Node: FC<NodeProps> = ({
   );
 };
 
-const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
+const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   let icon: IconProp = 'microscope';
   if (pathwayState.label === 'Start') icon = 'play';
-  if (isGuidanceState(pathwayState)) {
+  if (isGuidance) {
     const guidancePathwayState = pathwayState as GuidanceState;
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
