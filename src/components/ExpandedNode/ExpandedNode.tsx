@@ -23,6 +23,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 }) => {
   const [comments, setComments] = useState<string>('');
 
+  const status = documentation?.resource && renderStatusFields(documentation);
   const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
 
@@ -34,7 +35,10 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   return (
     <div className={indexStyles.expandedNode}>
       <table className={styles.infoTable}>
-        <tbody>{guidance || branch}</tbody>
+        <tbody>
+          {status}
+          {guidance || branch}
+        </tbody>
       </table>
       {isActionable && (
         <form className={styles.commentsForm}>
@@ -78,6 +82,18 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
     </tr>
   );
 };
+
+function renderStatusFields(documentation: DocumentationResource): ReactElement[] {
+  const returnValue: ReactElement[] = [];
+
+  const status = documentation.status;
+
+  const rawDate = documentation.resource?.meta?.lastUpdated;
+  const date = rawDate && new Date(rawDate).toLocaleString('en-us');
+  returnValue.push(<ExpandedNodeField key="Status" title={status} description={date} />);
+
+  return returnValue;
+}
 
 function renderBranch(
   documentation: DocumentationResource | undefined,
