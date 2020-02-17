@@ -5,7 +5,7 @@ declare module 'pathways-model' {
     library: string;
     criteria: Criteria[];
     states: {
-      [key: string]: GuidanceState | BranchState | State;
+      [key: string]: State;
     };
   }
 
