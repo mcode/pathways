@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import ExpandedNode from 'components/ExpandedNode';
+import ExpandedNode from 'components/DocNode';
 import { GuidanceState, BasicActionResource, BasicMedicationRequestResource } from 'pathways-model';
 
 const testActionState: GuidanceState = {

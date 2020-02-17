@@ -1,1 +1,1 @@
-export { default } from './ExpandedNode';
+export { default } from './DocNode';
