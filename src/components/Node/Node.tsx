@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
-import ExpandedNode from 'components/ExpandedNode';
+import DocNode from 'components/DocNode';
 import { isGuidanceState } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
@@ -40,7 +40,7 @@ const Node: FC<NodeProps> = ({
   };
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-  const expandedNodeClass = isCurrentNode
+  const docNodeClass = isCurrentNode
     ? classes.childCurrent
     : isOnPatientPath
     ? classes.childOnPatientPath
@@ -56,8 +56,8 @@ const Node: FC<NodeProps> = ({
         {label}
       </div>
       {expanded && (
-        <div className={`${classes.expandedNode} ${expandedNodeClass}`}>
-          <ExpandedNode
+        <div className={`${classes.docNode} ${docNodeClass}`}>
+          <DocNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
             documentation={documentation}

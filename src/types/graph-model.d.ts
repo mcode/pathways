@@ -41,7 +41,7 @@ declare module 'graph-model' {
     points: Coordinate[];
   }
 
-  export interface ExpandedNodes {
+  export interface DocNodes {
     [key: string]: {
       width: number;
       height: number;
