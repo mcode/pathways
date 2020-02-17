@@ -5,7 +5,7 @@ declare module 'pathways-model' {
     library: string;
     criteria: Criteria[];
     states: {
-      [key: string]: GuidanceState | BranchState;
+      [key: string]: GuidanceState | BranchState | State;
     };
   }
 
@@ -29,6 +29,11 @@ declare module 'pathways-model' {
     cql: string;
     action: Action[];
   }
+
+  // NOTE: the model also includes a BranchState (which extends State),
+  // but as of right now it has no additional fields not in State,
+  // and TypeScript does not allow "empty" interfaces so we can't add it yet.
+  // Add it here if/when we ever need it.
 
   interface Action {
     type: string;
@@ -58,11 +63,6 @@ declare module 'pathways-model' {
     system: string;
     display: string;
   }
-
-  // NOTE: the model also includes a BranchState (which extends State),
-  // but as of right now it has no additional fields not in State,
-  // and TypeScript does not allow "empty" interfaces so we can't add it yet.
-  // Add it here if/when we ever need it.
 
   interface Transition {
     transition: string;

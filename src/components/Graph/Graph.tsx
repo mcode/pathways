@@ -4,8 +4,14 @@ import graphLayout from 'visualization/layout';
 import Node from '../Node';
 import Arrow from '../Arrow';
 import { evaluatePatientOnPathway } from 'engine';
-import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
-import { Layout, ExpandedNodes, Edge } from 'graph-model';
+import {
+  EvaluatedPathway,
+  PathwayResults,
+  DocumentationResource,
+  GuidanceState
+} from 'pathways-model';
+import { Layout, NodeDimensions, Edge } from 'graph-model';
+import { isGuidanceState } from 'utils/nodeUtils';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -51,8 +57,8 @@ const Graph: FC<GraphProps> = ({
 
   // Get the layout of the graph
   const getGraphLayout = useCallback(
-    (expandedNodes: ExpandedNodes): Layout => {
-      return graphLayout(pathway, expandedNodes);
+    (nodeDimensions: NodeDimensions): Layout => {
+      return graphLayout(pathway, nodeDimensions);
     },
     [pathway]
   );
@@ -114,12 +120,15 @@ const Graph: FC<GraphProps> = ({
   }, [expandCurrentNode, path, setExpanded]);
 
   useEffect(() => {
-    const expandedNodes: ExpandedNodes = {};
+    const nodeDimensions: NodeDimensions = {};
 
     Object.keys(expanded)
       .filter(node => expanded[node])
       .forEach(e => {
-        const action = pathway.states[e].action;
+        const pathwayState = pathway.states[e];
+        const action = isGuidanceState(pathwayState)
+          ? (pathwayState as GuidanceState).action
+          : null;
 
         if (action && action.length > 0 && path) {
           const currentNode = path[path.length - 1];
@@ -127,7 +136,7 @@ const Graph: FC<GraphProps> = ({
           const heightOffset = Math.floor(action[0].description.length / 25) * 40;
           const height = (currentNode === e ? 455 : 345) + heightOffset;
 
-          expandedNodes[e] = {
+          nodeDimensions[e] = {
             height,
             width: 400
           };
@@ -141,14 +150,14 @@ const Graph: FC<GraphProps> = ({
               return typeof doc !== 'string' && doc.state === e;
             });
           const height = found ? 140 : 50;
-          expandedNodes[e] = {
+          nodeDimensions[e] = {
             height,
             width: 400
           };
         }
       });
 
-    setLayout(getGraphLayout(expandedNodes));
+    setLayout(getGraphLayout(nodeDimensions));
   }, [expanded, getGraphLayout, pathway.states, evaluatedPathway, path]);
 
   // maxWidth finds the edge label that is farthest to the right

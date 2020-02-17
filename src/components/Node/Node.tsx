@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Node.module.scss';
 import nodeClasses from 'styles/index.module.scss';
-import DocNode from 'components/DocNode';
+import ExpandedNode from 'components/ExpandedNode';
+import { isGuidanceState } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NodeProps {
@@ -20,6 +21,7 @@ interface NodeProps {
 
 interface NodeIconProps {
   pathwayState: State;
+  isGuidance: boolean;
 }
 
 const Node: FC<NodeProps> = ({
@@ -39,11 +41,12 @@ const Node: FC<NodeProps> = ({
   };
   const backgroundColorClass = isOnPatientPath ? classes.onPatientPath : classes.notOnPatientPath;
   const currentNodeClass = isCurrentNode ? classes.current : '';
-  const docNodeClass = isCurrentNode
+  const expandedNodeClass = isCurrentNode
     ? classes.childCurrent
     : isOnPatientPath
     ? classes.childOnPatientPath
     : classes.childNotOnPatientPath;
+  const isGuidance = isGuidanceState(pathwayState);
   return (
     <div
       className={`${classes.node} ${backgroundColorClass} ${expanded &&
@@ -51,16 +54,16 @@ const Node: FC<NodeProps> = ({
       style={style}
     >
       <div className={nodeClasses.nodeTitle} onClick={onClickHandler}>
-        <NodeIcon pathwayState={pathwayState} />
+        <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
         {label}
       </div>
-      {expanded && (isGuidanceState(pathwayState) || documentation) && (
-        <div className={`${classes.docNode} ${docNodeClass}`}>
-          <DocNode
+      {expanded && (
+        <div className={`${classes.expandedNode} ${expandedNodeClass}`}>
+          <ExpandedNode
             pathwayState={pathwayState as GuidanceState}
             isActionable={isCurrentNode}
+            isGuidance={isGuidance}
             documentation={documentation}
-            isGuidance={isGuidanceState(pathwayState)}
           />
         </div>
       )}
@@ -68,10 +71,10 @@ const Node: FC<NodeProps> = ({
   );
 };
 
-const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
+const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   let icon: IconProp = 'microscope';
   if (pathwayState.label === 'Start') icon = 'play';
-  if (isGuidanceState(pathwayState)) {
+  if (isGuidance) {
     const guidancePathwayState = pathwayState as GuidanceState;
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
@@ -82,10 +85,5 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState }) => {
   }
   return <FontAwesomeIcon icon={icon} className={classes.icon} />;
 };
-
-function isGuidanceState(state: State): boolean {
-  const { action } = state as GuidanceState;
-  return action ? action.length > 0 : false;
-}
 
 export default Node;

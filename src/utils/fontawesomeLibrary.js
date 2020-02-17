@@ -12,7 +12,8 @@ import {
   faMicroscope,
   faPlay,
   faPlus,
-  faMinus
+  faMinus,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -28,5 +29,6 @@ library.add(
   faMicroscope,
   faPlay,
   faPlus,
-  faMinus
+  faMinus,
+  faEdit
 );
