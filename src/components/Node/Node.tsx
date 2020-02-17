@@ -72,9 +72,11 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     }
     const isGuidance = isGuidanceState(pathwayState);
     // TODO: how do we determine whether a node has been accepted or declined?
-    // for now - if it's a guidance state on the path, accepted == has documentation
-    // if it's not guidance or not on the path, null
-    const isAccepted = isOnPatientPath && isGuidance ? documentation != null : null;
+    // for now:
+    // if it's a non-actionable guidance state on the path: accepted == has documentation
+    // if it's actionable, not guidance or not on the path: null
+    const isAccepted =
+      isOnPatientPath && isGuidance && !isActionable ? documentation != null : null;
 
     return (
       <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
