@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import PathwayPopup from '../PathwayPopup/PathwayPopup';
 import nodeClasses from '../ExpandedNode/ExpandedNode.module.scss';
-import classes from '../PathwayPopup/PathwayPopup.module.scss';
 
 interface MissingDataPopup {
   values: string[];
@@ -39,7 +38,7 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
   const [selected, setSelected] = useState<string>('');
   return (
     <div>
-      <div className={classes.popupContent}>
+      <div className={styles.popupContent}>
         Select Value:
         <div>
           {values.map(e => {
@@ -63,9 +62,9 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
           })}
         </div>
       </div>
-      <div className={classes.footer}>
+      <div className={styles.footer}>
         <div
-          className={classes.times}
+          className={styles.times}
           onClick={(): void => {
             setOpen(false);
           }}
@@ -74,7 +73,7 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
         </div>
         {showCheck && (
           <div
-            className={classes.check}
+            className={styles.check}
             onClick={(): void => {
               setOpen(false);
               // TODO: callback for using selected value

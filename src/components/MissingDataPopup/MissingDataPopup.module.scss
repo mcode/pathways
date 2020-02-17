@@ -20,29 +20,46 @@
     &:hover{
         background: #222;
     }
-    
+
     &.selected{
         background: rgb(94, 138, 160);
     }
 }
 
-.popupContent {
-    display:table-cell;
-}
-
-.footer {
-    float:right;
-    padding:5px;
-    min-width: 2.5em;
-    min-height: 2em;
-    cursor:pointer;
-    background: $black;
-    text-align:center;
-    border-radius: 15%;
-    font-weight: 800;
-}
-
 .missingDataPopup.missingDataPopup {
   min-width: 300px;
   min-height:120px;
+}
+
+.popupContent {
+  display:table-cell;
+}
+
+.footer > div{
+  float:right;
+  padding:5px;
+  min-width: 2.25em;
+  min-height: 2em;
+  cursor:pointer;
+
+  text-align:center;
+  border-radius: 15%;
+  font-weight: 800;
+
+  &.check {
+    background: rgb(56, 167, 117);
+    margin-right: 5px;
+
+    &:hover{
+      background: rgb(77, 196, 142);
+    }
+  }
+
+  &.times {
+    background: $black;
+
+    &:hover{
+      background: #222;
+    }
+  }
 }
