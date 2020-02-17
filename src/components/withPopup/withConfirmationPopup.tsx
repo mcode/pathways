@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styles from './withConfirmationPopup.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
-import PathwayPopup from '../PathwayPopup/PathwayPopup';
+import PathwayPopup from 'components/PathwayPopup';
 
 const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T> => {
   const PopupComponent: FC<T> = (props: T) => {
@@ -19,13 +19,13 @@ const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T>
       />
     );
   };
-
   return PopupComponent;
 };
 
 const PopupContent: FC = () => {
   return (
     <div>
+      Are you sure?
       <div className={styles.footer}>
         <FontAwesomeIcon icon={faCheck} />
       </div>
