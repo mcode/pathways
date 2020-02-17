@@ -28,10 +28,10 @@ const PopupContent: FC = () => {
     <div className={styles.popupContent}>
       <div>Are you sure?</div>
       <div>
-        <div className={styles.selectButton}>
+        <div className={styles.check}>
           <FontAwesomeIcon icon={faCheck} />
         </div>
-        <div className={styles.selectButton}>
+        <div className={styles.times}>
           <FontAwesomeIcon icon={faTimes} />
         </div>
       </div>

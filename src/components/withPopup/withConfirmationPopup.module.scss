@@ -28,8 +28,17 @@
   min-width: 2.5em;
   min-height: 2em;
   cursor:pointer;
-  background: $black;
   border-radius: 15%;
   font-weight: 800;
   margin-right: 0.5em;
+}
+
+.check {
+  @extend .selectButton;
+  background: $green;
+}
+
+.times {
+  @extend .selectButton;
+  background: $black;
 }
