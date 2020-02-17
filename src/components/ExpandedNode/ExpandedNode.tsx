@@ -2,18 +2,23 @@ import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import styles from './DocNode.module.scss';
+import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { isBranchState } from 'utils/nodeUtils';
 
-interface DocNodeProps {
+interface ExpandedNodeProps {
   pathwayState: GuidanceState | State;
   isActionable: boolean;
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;
 }
 
-const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, isGuidance, documentation }) => {
+const ExpandedNode: FC<ExpandedNodeProps> = ({
+  pathwayState,
+  isActionable,
+  isGuidance,
+  documentation
+}) => {
   const [comments, setComments] = useState<string>('');
 
   const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
@@ -25,7 +30,7 @@ const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, isGuidance, doc
     `expressed understanding and wants to proceed.`;
 
   return (
-    <div className={indexStyles.docNode}>
+    <div className={indexStyles.expandedNode}>
       <table className={styles.infoTable}>
         <tbody>{guidance || branch}</tbody>
       </table>
@@ -64,12 +69,12 @@ const DocNode: FC<DocNodeProps> = ({ pathwayState, isActionable, isGuidance, doc
   );
 };
 
-type DocNodeFieldProps = {
+type ExpandedNodeFieldProps = {
   title: string;
   description: ReactNode;
 };
 
-const DocNodeField: FC<DocNodeFieldProps> = ({ title, description }) => {
+const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) => {
   return (
     <tr>
       <td className={styles.descTitle}>{title}</td>
@@ -89,7 +94,7 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
         const valueCoding = observation.valueCodeableConcept?.coding;
         valueCoding &&
           returnElements.push(
-            <DocNodeField
+            <ExpandedNodeField
               key="ValueSystem"
               title="System"
               description={
@@ -101,14 +106,18 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
                 </>
               }
             />,
-            <DocNodeField key="ValueCode" title="Code" description={valueCoding[0].code} />,
-            <DocNodeField key="ValueDisplay" title="Display" description={valueCoding[0].display} />
+            <ExpandedNodeField key="ValueCode" title="Code" description={valueCoding[0].code} />,
+            <ExpandedNodeField
+              key="ValueDisplay"
+              title="Display"
+              description={valueCoding[0].display}
+            />
           );
 
         const date = observation.effectiveDateTime;
         date &&
           returnElements.push(
-            <DocNodeField
+            <ExpandedNodeField
               key="Date"
               title="Date"
               description={
@@ -122,7 +131,7 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
     }
   } else {
     returnElements.push(
-      <DocNodeField
+      <ExpandedNodeField
         key="value"
         title="Value"
         description={
@@ -149,9 +158,13 @@ function renderGuidance(
       ? resource.medicationCodeableConcept.coding
       : resource.code.coding;
   const returnElements = [
-    <DocNodeField key="Notes" title="Notes" description={pathwayState.action[0].description} />,
-    <DocNodeField key="Type" title="Type" description={resource.resourceType} />,
-    <DocNodeField
+    <ExpandedNodeField
+      key="Notes"
+      title="Notes"
+      description={pathwayState.action[0].description}
+    />,
+    <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />,
+    <ExpandedNodeField
       key="System"
       title="System"
       description={
@@ -163,8 +176,8 @@ function renderGuidance(
         </>
       }
     />,
-    <DocNodeField key="Code" title="Code" description={coding[0].code} />,
-    <DocNodeField key="Display" title="Display" description={coding[0].display} />
+    <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
+    <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
   ];
 
   if (documentation?.resource) {
@@ -177,7 +190,7 @@ function renderGuidance(
         const end = procedure.performedPeriod && procedure.performedPeriod.end;
         if (start) {
           returnElements.push(
-            <DocNodeField
+            <ExpandedNodeField
               key="Start"
               title="Start"
               description={new Date(start).toLocaleDateString('en-us')}
@@ -187,7 +200,7 @@ function renderGuidance(
 
         if (end) {
           returnElements.push(
-            <DocNodeField
+            <ExpandedNodeField
               key="End"
               title="End"
               description={new Date(end).toLocaleDateString('en-us')}
@@ -201,4 +214,4 @@ function renderGuidance(
   return returnElements;
 }
 
-export default DocNode;
+export default ExpandedNode;
