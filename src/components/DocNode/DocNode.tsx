@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, ReactElement } from 'react';
+import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -13,9 +13,16 @@ interface ExpandedNodeProps {
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, documentation }) => {
+  const [comments, setComments] = useState<string>('');
+
   const guidance =
     isGuidanceState(pathwayState) && renderGuidance(pathwayState as GuidanceState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation);
+
+  const defaultText =
+    `The patient and I discussed the treatment plan, ` +
+    `risks, benefits and alternatives.  The patient ` +
+    `expressed understanding and wants to proceed.`;
 
   return (
     <div className={indexStyles.expandedNode}>
@@ -25,7 +32,13 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({ pathwayState, isActionable, docum
       {isActionable && (
         <form className={styles.commentsForm}>
           <label>Comments:</label>
-          <button className={indexStyles.button} onClick={(e): void => e.preventDefault()}>
+          <button
+            className={indexStyles.button}
+            onClick={(e): void => {
+              e.preventDefault();
+              if (!comments.includes(defaultText)) setComments(comments + defaultText);
+            }}
+          >
             Use Default Text
           </button>
           <textarea className={styles.comments}></textarea>
