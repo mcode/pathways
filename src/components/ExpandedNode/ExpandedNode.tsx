@@ -47,7 +47,11 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
           >
             Use Default Text
           </button>
-          <textarea className={styles.comments}></textarea>
+          <textarea
+            className={styles.comments}
+            value={comments}
+            onChange={(e): void => setComments(e.target.value)}
+          ></textarea>
           <ConfirmedActionButton type="accept" size="large" />
           <ConfirmedActionButton type="decline" size="large" />
         </form>
