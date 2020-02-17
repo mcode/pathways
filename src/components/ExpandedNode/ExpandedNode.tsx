@@ -7,7 +7,6 @@ import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ActionButton/ActionButton';
 import { isBranchState } from 'utils/nodeUtils';
 
-
 interface ExpandedNodeProps {
   pathwayState: GuidanceState | State;
   isActionable: boolean;
@@ -24,7 +23,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const [comments, setComments] = useState<string>('');
 
   const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
-  const branch = isBranchState(pathwayState) && renderBranch(documentation);
+  const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
 
   const defaultText =
     `The patient and I discussed the treatment plan, ` +
@@ -71,7 +70,10 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
   );
 };
 
-function renderBranch(documentation: DocumentationResource | undefined): ReactElement[] {
+function renderBranch(
+  documentation: DocumentationResource | undefined,
+  pathwayState: State
+): ReactElement[] {
   const returnElements: ReactElement[] = [];
 
   if (documentation?.resource) {
@@ -118,11 +120,15 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
       }
     }
   } else {
+    const values: string[] = pathwayState.transitions.map(transition => {
+      const description = transition.condition?.description;
+      return description ? description : '';
+    });
     returnElements.push(
       <ExpandedNodeField
         key="value"
         title="Value"
-        description={<MissingDataPopup values={['N1', 'N0', 'N+']} />}
+        description={<MissingDataPopup values={values} />}
       />
     );
   }
