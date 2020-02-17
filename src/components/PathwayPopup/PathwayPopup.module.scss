@@ -3,8 +3,6 @@
 
 .pathwayPopup.pathwayPopup{
     border-radius: 10px;
-    min-width: 300px;
-    min-height:120px;
     border: 5px solid rgba(74, 74, 74, .5);
     background-color: $gray;
     color:$white;
@@ -13,13 +11,14 @@
     background-clip: padding-box;      /* Firefox 4, Safari 5, Opera 10, IE 9 */
 
     &.pathwayPopup.pathwayPopup::before{
-        background: $gray;
-        width: 2em;
-        height: 2em;
-        top: -.5em;
-        right: 3em;
-        box-shadow:none !important;
-        -webkit-box-shadow:none;
+      background: $gray;
+      width: 2em;
+      height: 2em;
+      top: -.5em;
+      right: 3em;
+      box-shadow:none !important;
+      -webkit-box-shadow:none;
+      z-index: -1 !important;
     }
 }
 

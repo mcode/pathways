@@ -13,6 +13,7 @@ const MissingDataPopup: FC<MissingDataPopup> = ({ values}) => {
   return (
     <PathwayPopup
       Content={<PopupContent values={values}></PopupContent>}
+      className={styles.missingDataPopup}
       Trigger={
         <div className={styles.popupWrapper}>
           missing data

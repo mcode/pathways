@@ -9,13 +9,14 @@ const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T>
     // https://github.com/Semantic-Org/Semantic-UI-React/issues/2487
     return (
       <PathwayPopup
+        className={styles.withConfirmationPopup}
         Content={<PopupContent />}
         Trigger={
           <div className={styles.triggerContainer} {...props}>
             <WrappedComponent {...props} />
           </div>
         }
-        popupPosition="bottom center"
+        popupPosition="bottom right"
       />
     );
   };
@@ -24,13 +25,15 @@ const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T>
 
 const PopupContent: FC = () => {
   return (
-    <div>
-      Are you sure?
-      <div className={styles.footer}>
-        <FontAwesomeIcon icon={faCheck} />
-      </div>
-      <div className={styles.footer}>
-        <FontAwesomeIcon icon={faTimes} />
+    <div className={styles.popupContent}>
+      <div>Are you sure?</div>
+      <div>
+        <div className={styles.selectButton}>
+          <FontAwesomeIcon icon={faCheck} />
+        </div>
+        <div className={styles.selectButton}>
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
       </div>
     </div>
   );
