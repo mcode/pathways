@@ -20,6 +20,10 @@
     &:hover{
         background: #222;
     }
+    
+    &.selected{
+        background: rgb(94, 138, 160);
+    }
 }
 
 .popupContent {

@@ -7,8 +7,8 @@ interface PathwayPopupProps {
   Content: ReactElement;
   Trigger: ReactElement;
   popupPosition: StrictPopupProps['position'];
-  open: boolean;
-  setOpen: Function;
+  open?: boolean;
+  setOpen?: Function;
   className?: string;
 }
 
@@ -28,10 +28,10 @@ const PathwayPopup: FC<PathwayPopupProps> = ({
       on="click"
       open={open}
       onOpen={(): void => {
-        setOpen(true);
+        setOpen && setOpen(true);
       }}
       onClose={(): void => {
-        setOpen(false);
+        setOpen && setOpen(false);
       }}
       pinned
       trigger={Trigger}
