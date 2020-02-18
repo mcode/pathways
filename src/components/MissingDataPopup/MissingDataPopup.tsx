@@ -16,7 +16,7 @@ const MissingDataPopup: FC<MissingDataPopup> = ({ values }) => {
       Content={<PopupContent values={values} setOpen={setOpen}></PopupContent>}
       className={styles.missingDataPopup}
       Trigger={
-        <div className={styles.popupWrapper}>
+        <div className={styles.popupTrigger}>
           missing data
           <FontAwesomeIcon icon="edit" className={nodeClasses.externalLink} />
         </div>
