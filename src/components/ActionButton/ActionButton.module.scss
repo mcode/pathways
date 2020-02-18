@@ -12,7 +12,7 @@
   margin-right: 0.5em;
 }
 
-.check {
+.accept {
   @extend .selectButton;
   background: $green;
   &:hover{
@@ -20,7 +20,7 @@
   }
 }
 
-.times {
+.decline {
   @extend .selectButton;
   background: $black;
   &:hover{

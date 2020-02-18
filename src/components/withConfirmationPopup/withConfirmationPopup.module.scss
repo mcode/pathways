@@ -33,12 +33,12 @@
   margin-right: 0.5em;
 }
 
-.check {
+.accept {
   @extend .selectButton;
   background: $green;
 }
 
-.times {
+.decline {
   @extend .selectButton;
   background: $black;
 }
