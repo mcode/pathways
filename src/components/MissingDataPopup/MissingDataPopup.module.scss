@@ -1,5 +1,14 @@
 @import '../../styles/variables';
 
+.missingDataPopup.missingDataPopup {
+  min-width: 300px;
+  min-height:120px;
+}
+
+.popupContent {
+  display:table-cell;
+}
+
 .popupTrigger {
     cursor: pointer;
     display:inline-block;
@@ -18,21 +27,12 @@
     font-weight: 800;
 
     &:hover{
-        background: #222;
+        background: $black-hover;
     }
 
     &.selected{
         background: rgb(94, 138, 160);
     }
-}
-
-.missingDataPopup.missingDataPopup {
-  min-width: 300px;
-  min-height:120px;
-}
-
-.popupContent {
-  display:table-cell;
 }
 
 .footer > div{

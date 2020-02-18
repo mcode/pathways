@@ -8,6 +8,9 @@ $gray-medium: #bbbdc0;
 $gray-lighter: #eaeef2;
 $green: #2fa874;
 
+$black-hover: lighten($black, 14%);
+$green-hover: lighten($green, 7%);
+
 
 //-------------------------- Spacing -----------------------------------------//
 $collapsedNodeHeight: 50px;

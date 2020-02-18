@@ -1,5 +1,4 @@
 @import '../../styles/variables';
-@use "sass:color";
 
 .selectButton {
   display: flex;
@@ -17,7 +16,7 @@
   @extend .selectButton;
   background: $green;
   &:hover{
-    background: lighten($green, 7%);
+    background: $green-hover;
   }
 }
 
@@ -25,6 +24,6 @@
   @extend .selectButton;
   background: $black;
   &:hover{
-    background: lighten($black, 14%);
+    background: $black-hover;
   }
 }
