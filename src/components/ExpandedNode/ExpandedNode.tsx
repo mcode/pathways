@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import MissingDataPopup from '../MissingDataPopup/MissingDataPopup';
+import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
