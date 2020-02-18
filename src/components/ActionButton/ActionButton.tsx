@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import classes from '../ExpandedNode/ExpandedNode.module.scss';
 import indexClasses from '../../styles/index.module.scss';
-import withConfirmationPopup from 'components/withConfirmationPopup';
 import styles from './ActionButton.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -40,7 +39,4 @@ const ActionButton: FC<ActionButtonProps> = ({ type, size, onClick }) => {
   }
 };
 
-const ConfirmedActionButton: FC<ActionButtonProps> = withConfirmationPopup(ActionButton);
-
 export default ActionButton;
-export { ConfirmedActionButton };

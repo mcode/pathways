@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from '../MissingDataPopup/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
-import { ConfirmedActionButton } from 'components/ActionButton';
+import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
 
 interface ExpandedNodeProps {
