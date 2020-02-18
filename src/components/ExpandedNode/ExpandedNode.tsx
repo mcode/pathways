@@ -39,7 +39,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
         <form className={styles.commentsForm}>
           <label>Comments:</label>
           <button
-            className={indexStyles.button}
+            className={`${indexStyles.button} ${styles.defaultTextButton}`}
             onClick={(e): void => {
               e.preventDefault();
               if (!comments.includes(defaultText)) setComments(comments + defaultText);
@@ -52,8 +52,12 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             value={comments}
             onChange={(e): void => setComments(e.target.value)}
           ></textarea>
-          <ConfirmedActionButton type="accept" size="large" />
-          <ConfirmedActionButton type="decline" size="large" />
+          <div className={styles.footer}>
+            <ConfirmedActionButton type="accept" size="large" />
+          </div>
+          <div className={styles.footer}>
+            <ConfirmedActionButton type="decline" size="large" />
+          </div>
         </form>
       )}
     </div>

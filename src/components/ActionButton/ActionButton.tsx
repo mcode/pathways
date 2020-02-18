@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import classes from '../ExpandedNode/ExpandedNode.module.scss';
 import indexClasses from '../../styles/index.module.scss';
 import styles from './ActionButton.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +15,12 @@ interface ActionButtonProps extends ButtonProps {
 
 const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
-    <button className={`${classes[type]} ${indexClasses.button}`} type="button" onClick={onClick}>
+    <button
+      className={`${styles.largeActionButton} ${indexClasses.button} ${type === 'decline' &&
+        styles.largeDecline}`}
+      type="button"
+      onClick={onClick}
+    >
       {type[0].toUpperCase() + type.slice(1)}
     </button>
   );
