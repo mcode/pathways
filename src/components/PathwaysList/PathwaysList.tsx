@@ -2,8 +2,8 @@ import React, { FC, ReactNode, useState } from 'react';
 import { Service } from 'pathways-objects';
 import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
 
-import classes from './PathwaysList.module.scss';
-import indexClasses from 'styles/index.module.scss';
+import styles from './PathwaysList.module.scss';
+import indexStyles from 'styles/index.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -47,14 +47,14 @@ const PathwaysList: FC<PathwaysListProps> = ({
   }
 
   return (
-    <div className={classes.pathways_list}>
+    <div className={styles.pathways_list}>
       {service.status === 'loading' ? (
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
-        <div className={classes.container}>
-          <div className={classes.header_title}>
-            <div className={classes.header_title__header}>Explore Pathways</div>
-            <div className={classes.header_title__note}>Select pathway below to view details</div>
+        <div className={styles.container}>
+          <div className={styles.header_title}>
+            <div className={styles.header_title__header}>Explore Pathways</div>
+            <div className={styles.header_title__note}>Select pathway below to view details</div>
           </div>
 
           {renderList()}
@@ -92,9 +92,9 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     setIsVisible(!isVisible);
   }
   return (
-    <div className={classes['pathway-element']} role={'list'} key={pathway.name}>
+    <div className={styles.pathwayElement} role={'list'} key={pathway.name}>
       <div
-        className={classes.title}
+        className={styles.title}
         role={'listitem'}
         onClick={(e): void => {
           pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
@@ -102,17 +102,15 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         }}
       >
         <div>{pathway.name}</div>
-        <div className={classes.expand}>
+        <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={classes.numElements}>
-          {criteria && criteria.filter(c => c.match).length}
-        </div>
+        <div className={styles.numElements}>{criteria && criteria.filter(c => c.match).length}</div>
       </div>
 
       {isVisible && (
-        <div className={classes.infoContainer}>
-          <div className={classes.details}>
+        <div className={styles.infoContainer}>
+          <div className={styles.details}>
             <p>{pathway.description}</p>
             <table>
               <tbody>
@@ -126,19 +124,16 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                     <tr key={c.elementName}>
                       <td>{c.elementName}</td>
                       <td>{c.expected}</td>
-                      <td className={c.match ? classes.matchingElement : undefined}>{c.actual}</td>
+                      <td className={c.match ? styles.matchingElement : undefined}>{c.actual}</td>
                     </tr>
                   ))}
               </tbody>
             </table>
-            <button
-              className={indexClasses.button}
-              onClick={(): void => callback(evaluatedPathway)}
-            >
+            <button className={indexStyles.button} onClick={(): void => callback(evaluatedPathway)}>
               Select Pathway
             </button>
           </div>
-          <div className={classes.pathway}>
+          <div className={styles.pathway}>
             <Graph
               resources={resources}
               evaluatedPathway={evaluatedPathway}
@@ -146,7 +141,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               expandCurrentNode={false}
               updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
             />
-            <div className={classes.controls}>
+            <div className={styles.controls}>
               <FontAwesomeIcon icon={'play'} />
               <FontAwesomeIcon icon={'plus'} />
               <FontAwesomeIcon icon={'minus'} />
