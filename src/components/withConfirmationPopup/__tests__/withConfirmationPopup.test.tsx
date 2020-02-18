@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import withConfirmationPopup from 'components/withConfirmationPopup';
 
 const containerText = 'Lorem Ipsum';
+const popupText = 'Are you sure?';
 
 const MockComponent: FC = () => {
   return <div>{containerText}</div>;
@@ -11,14 +12,16 @@ const MockComponent: FC = () => {
 const MockWithConfirmation: FC = withConfirmationPopup(MockComponent);
 
 describe('withConfirmationPopup', () => {
-  const { getByText } = render(<MockWithConfirmation />);
   it('renders the wrapped component', () => {
+    const { getByText } = render(<MockWithConfirmation />);
     expect(getByText(containerText)).toBeInTheDocument();
   });
-});
 
-// describe('whatever', () => {
-//   it('does nothing', () => {
-//     console.log('foo');
-//   });
-// });
+  it('renders the popup when clicked', () => {
+    const { getByText, queryByText } = render(<MockWithConfirmation />);
+    expect(queryByText(popupText)).toBeNull();
+    fireEvent.click(getByText(containerText));
+    expect(queryByText(popupText)).not.toBeNull();
+    expect(getByText(popupText)).toBeInTheDocument();
+  });
+});
