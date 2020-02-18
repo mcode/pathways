@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import indexStyles from 'styles/index.module.scss';
 import styles from './ActionButton.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 interface ButtonProps {
   type: 'accept' | 'decline';
@@ -29,7 +28,7 @@ const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
 const SmallActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
     <div className={type === 'accept' ? styles.accept : styles.decline} onClick={onClick}>
-      <FontAwesomeIcon icon={type === 'accept' ? faCheck : faTimes} />
+      <FontAwesomeIcon icon={type === 'accept' ? 'check' : 'times'} />
     </div>
   );
 };
