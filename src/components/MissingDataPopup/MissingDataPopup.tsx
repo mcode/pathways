@@ -3,7 +3,7 @@ import styles from './MissingDataPopup.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PathwayPopup from '../PathwayPopup/PathwayPopup';
 import nodeClasses from '../ExpandedNode/ExpandedNode.module.scss';
-import ActionButton from '../ActionButton/ActionButton';
+import ActionButton from 'components/ActionButton';
 
 interface MissingDataPopup {
   values: string[];

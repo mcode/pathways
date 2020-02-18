@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styles from './withConfirmationPopup.module.scss';
 import PathwayPopup from 'components/PathwayPopup';
-import ActionButton from '../ActionButton/ActionButton';
+import ActionButton from 'components/ActionButton';
 
 const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T> => {
   const PopupComponent: FC<T> = (props: T) => {
