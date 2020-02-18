@@ -4,12 +4,14 @@ import withConfirmationPopup from 'components/withConfirmationPopup';
 
 const containerText = 'Lorem Ipsum';
 const popupText = 'Are you sure?';
+const mockCallback = jest.fn();
 
 const MockComponent: FC = () => {
   return <div>{containerText}</div>;
 };
 
 const MockWithConfirmation: FC = withConfirmationPopup(MockComponent);
+const MockConfirmationWithCallback = withConfirmationPopup(MockComponent, mockCallback);
 
 describe('withConfirmationPopup', () => {
   it('renders the wrapped component', () => {
@@ -23,5 +25,13 @@ describe('withConfirmationPopup', () => {
     fireEvent.click(getByText(containerText));
     expect(queryByText(popupText)).not.toBeNull();
     expect(getByText(popupText)).toBeInTheDocument();
+  });
+
+  it('calls the onConfirm callback when the confirmation is accepted', () => {
+    const { getByText, getByTestId } = render(<MockConfirmationWithCallback/>);
+    fireEvent.click(getByText(containerText));
+    expect(mockCallback).not.toHaveBeenCalled();
+    fireEvent.click(getByTestId('accept'));
+    expect(mockCallback).toHaveBeenCalled();
   });
 });

@@ -27,7 +27,11 @@ const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
 
 const SmallActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
-    <div className={type === 'accept' ? styles.accept : styles.decline} onClick={onClick}>
+    <div
+      className={type === 'accept' ? styles.accept : styles.decline}
+      onClick={onClick}
+      data-testid={type}
+    >
       <FontAwesomeIcon icon={type === 'accept' ? 'check' : 'times'} />
     </div>
   );
