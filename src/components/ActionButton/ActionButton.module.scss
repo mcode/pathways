@@ -1,10 +1,11 @@
 @import '../../styles/variables';
+@use "sass:color";
 
 .selectButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.5em;
+  min-width: 2.25em;
   min-height: 2em;
   cursor:pointer;
   border-radius: 15%;
@@ -15,9 +16,15 @@
 .check {
   @extend .selectButton;
   background: $green;
+  &:hover{
+    background: lighten($green, 7%);
+  }
 }
 
 .times {
   @extend .selectButton;
   background: $black;
+  &:hover{
+    background: lighten($black, 14%);
+  }
 }
