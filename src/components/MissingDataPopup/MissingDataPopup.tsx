@@ -1,8 +1,7 @@
 import React, { FC, useState } from 'react';
 import styles from './MissingDataPopup.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import PathwayPopup from '../PathwayPopup/PathwayPopup';
-import nodeClasses from '../ExpandedNode/ExpandedNode.module.scss';
+import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
 
 interface MissingDataPopup {
@@ -18,7 +17,7 @@ const MissingDataPopup: FC<MissingDataPopup> = ({ values }) => {
       Trigger={
         <div className={styles.popupTrigger}>
           missing data
-          <FontAwesomeIcon icon="edit" className={nodeClasses.externalLink} />
+          <FontAwesomeIcon icon="edit" className={styles.externalLink} />
         </div>
       }
       open={open}
