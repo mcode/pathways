@@ -15,7 +15,6 @@ const withConfirmationPopup = <T extends object>(WrappedComponent: FC<T>): FC<T>
             <WrappedComponent {...props} />
           </div>
         }
-        popupPosition="bottom right"
       />
     );
   };

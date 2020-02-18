@@ -21,7 +21,6 @@ const MissingDataPopup: FC<MissingDataPopup> = ({ values }) => {
           <FontAwesomeIcon icon="edit" className={nodeClasses.externalLink} />
         </div>
       }
-      popupPosition="bottom right"
       open={open}
       setOpen={setOpen}
     />

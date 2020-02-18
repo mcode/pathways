@@ -5,7 +5,7 @@ import styles from './PathwayPopup.module.scss';
 interface PathwayPopupProps {
   Content: ReactElement;
   Trigger: ReactElement;
-  popupPosition: StrictPopupProps['position'];
+  popupPosition?: StrictPopupProps['position'];
   open?: boolean;
   setOpen?: Function;
   className?: string;
@@ -22,7 +22,7 @@ const PathwayPopup: FC<PathwayPopupProps> = ({
   return (
     <Popup
       content={Content}
-      position={popupPosition || 'bottom center'}
+      position={popupPosition || 'bottom right'}
       className={`${styles.pathwayPopup} ${className}`}
       on="click"
       open={open}
