@@ -3,6 +3,7 @@ import styles from './MissingDataPopup.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 interface MissingDataPopup {
   values: string[];
@@ -17,7 +18,7 @@ const MissingDataPopup: FC<MissingDataPopup> = ({ values }) => {
       Trigger={
         <div className={styles.popupTrigger}>
           missing data
-          <FontAwesomeIcon icon="edit" className={styles.externalLink} />
+          <FontAwesomeIcon icon={faEdit} className={styles.externalLink} />
         </div>
       }
       open={open}

@@ -1,6 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { usePatient } from '../PatientProvider';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+
 
 import styles from './PatientSnapshot.module.scss';
 
@@ -22,7 +24,7 @@ const PatientSnapshot: FC<{}> = () => {
 
   return (
     <div className={styles.patientSnapshot}>
-      <FontAwesomeIcon icon="user-circle" className={styles.patientSnapshot__photo} />
+      <FontAwesomeIcon icon={faUserCircle} className={styles.patientSnapshot__photo} />
 
       <div className={styles.patientSnapshot__info}>
         <div className={styles.patientName}>{name}</div>

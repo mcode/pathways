@@ -6,6 +6,7 @@ import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState | State;
@@ -99,7 +100,7 @@ function renderBranch(
                 <>
                   {valueCoding[0].system}
                   <a href={valueCoding[0].system} target="_blank" rel="noopener noreferrer">
-                    <FontAwesomeIcon icon="external-link-alt" className={styles.externalLink} />
+                    <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
                   </a>
                 </>
               }
@@ -166,7 +167,7 @@ function renderGuidance(
         <>
           {coding[0].system}
           <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon="external-link-alt" className={styles.externalLink} />
+            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
           </a>
         </>
       }

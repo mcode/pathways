@@ -9,6 +9,7 @@ import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
+import { faPlay, faPlus, faMinus, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
@@ -86,7 +87,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     evaluatePathwayCriteria(patient, pathway).then(c => setCriteria(c));
   }
 
-  const chevron: IconProp = isVisible ? 'chevron-up' : 'chevron-down';
+  const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
   function toggleVisible(): void {
     setIsVisible(!isVisible);
@@ -142,9 +143,9 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
             />
             <div className={styles.controls}>
-              <FontAwesomeIcon icon={'play'} />
-              <FontAwesomeIcon icon={'plus'} />
-              <FontAwesomeIcon icon={'minus'} />
+              <FontAwesomeIcon icon={faPlay} />
+              <FontAwesomeIcon icon={faPlus} />
+              <FontAwesomeIcon icon={faMinus} />
             </div>
           </div>
         </div>
