@@ -13,7 +13,9 @@ import {
   faPlay,
   faPlus,
   faMinus,
-  faEdit
+  faEdit,
+  faCheck,
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -30,5 +32,7 @@ library.add(
   faPlay,
   faPlus,
   faMinus,
-  faEdit
+  faEdit,
+  faCheck,
+  faTimes
 );

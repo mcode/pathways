@@ -1,0 +1,43 @@
+@import '../../styles/variables';
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25em;
+  min-height: 2em;
+  cursor:pointer;
+  border-radius: 15%;
+  font-weight: 800;
+  margin-right: 0.5em;
+}
+
+.accept {
+  @extend .selectButton;
+  background: $green;
+  &:hover{
+    background: $green-hover;
+  }
+}
+
+.decline {
+  @extend .selectButton;
+  background: $black;
+  &:hover{
+    background: $black-hover;
+  }
+}
+
+.largeActionButton {
+  padding: 10px 10px;
+  margin: 0 0 2px 5px;
+  font-size: 18px;
+  min-width: 120px;
+  &.largeDecline {
+    color: $red;
+    background-color: $white;
+    &:hover, &:focus {
+      background-color: darken($white, 10%);
+    }
+  }
+}

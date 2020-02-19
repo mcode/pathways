@@ -1,0 +1,22 @@
+@import '../../styles/variables';
+
+.pathwayPopup.pathwayPopup{
+    border-radius: 10px;
+    border: 5px solid rgba(74, 74, 74, .5);
+    background-color: $gray;
+    color:$white;
+    -moz-background-clip: padding;     /* Firefox 3.6 */
+    -webkit-background-clip: padding;  /* Safari 4? Chrome 6? */
+    background-clip: padding-box;      /* Firefox 4, Safari 5, Opera 10, IE 9 */
+
+    &.pathwayPopup.pathwayPopup::before{
+      background: $gray;
+      width: 2em;
+      height: 2em;
+      top: -.5em;
+      right: 3em;
+      box-shadow:none !important;
+      -webkit-box-shadow:none;
+      z-index: -1 !important;
+    }
+}

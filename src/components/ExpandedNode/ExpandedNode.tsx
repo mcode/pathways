@@ -1,9 +1,10 @@
 import React, { FC, ReactNode, ReactElement, useState } from 'react';
 import { GuidanceState, DocumentationResource, State } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
+import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
 
 interface ExpandedNodeProps {
@@ -22,7 +23,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const [comments, setComments] = useState<string>('');
 
   const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
-  const branch = isBranchState(pathwayState) && renderBranch(documentation);
+  const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
 
   const defaultText =
     `The patient and I discussed the treatment plan, ` +
@@ -38,7 +39,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
         <form className={styles.commentsForm}>
           <label>Comments:</label>
           <button
-            className={indexStyles.button}
+            className={`${indexStyles.button} ${styles.defaultTextButton}`}
             onClick={(e): void => {
               e.preventDefault();
               if (!comments.includes(defaultText)) setComments(comments + defaultText);
@@ -51,18 +52,12 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             value={comments}
             onChange={(e): void => setComments(e.target.value)}
           ></textarea>
-          <button
-            className={`${styles.accept} ${indexStyles.button}`}
-            onClick={(e): void => e.preventDefault()}
-          >
-            Accept
-          </button>
-          <button
-            className={`${styles.decline} ${indexStyles.button}`}
-            onClick={(e): void => e.preventDefault()}
-          >
-            Decline
-          </button>
+          <div className={styles.footer}>
+            <ConfirmedActionButton type="accept" size="large" />
+          </div>
+          <div className={styles.footer}>
+            <ConfirmedActionButton type="decline" size="large" />
+          </div>
         </form>
       )}
     </div>
@@ -83,7 +78,10 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
   );
 };
 
-function renderBranch(documentation: DocumentationResource | undefined): ReactElement[] {
+function renderBranch(
+  documentation: DocumentationResource | undefined,
+  pathwayState: State
+): ReactElement[] {
   const returnElements: ReactElement[] = [];
 
   if (documentation?.resource) {
@@ -130,18 +128,15 @@ function renderBranch(documentation: DocumentationResource | undefined): ReactEl
       }
     }
   } else {
+    const values: string[] = pathwayState.transitions.map(transition => {
+      const description = transition.condition?.description;
+      return description ? description : '';
+    });
     returnElements.push(
       <ExpandedNodeField
         key="value"
         title="Value"
-        description={
-          <>
-            missing data
-            <a href={'example.com'} rel="noopener noreferrer">
-              <FontAwesomeIcon icon="edit" className={styles.externalLink} />
-            </a>
-          </>
-        }
+        description={<MissingDataPopup values={values} />}
       />
     );
   }

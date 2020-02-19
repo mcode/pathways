@@ -1,0 +1,44 @@
+@import '../../styles/variables';
+
+.triggerContainer {
+  display: inline-block;
+}
+
+.withConfirmationPopup.withConfirmationPopup {
+  padding: 0.5em;
+}
+
+.popupContent {
+  display: flex;
+  > :first-child {
+    margin-right: 4em;
+    white-space: nowrap;
+  }
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.selectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5em;
+  min-height: 2em;
+  cursor:pointer;
+  border-radius: 15%;
+  font-weight: 800;
+  margin-right: 0.5em;
+}
+
+.accept {
+  @extend .selectButton;
+  background: $green;
+}
+
+.decline {
+  @extend .selectButton;
+  background: $black;
+}

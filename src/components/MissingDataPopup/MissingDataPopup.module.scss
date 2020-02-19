@@ -1,0 +1,45 @@
+@import '../../styles/variables';
+
+.missingDataPopup.missingDataPopup {
+  min-width: 300px;
+  min-height:120px;
+}
+
+.popupContent {
+  display:table-cell;
+}
+
+.popupTrigger {
+    cursor: pointer;
+    display:inline-block;
+    padding-right: 3.75em;
+}
+
+.popupChoice {
+    display:inline-block;
+    padding:5px;
+    margin:5px 10px 5px 0px;
+    min-width: 3em;
+    cursor:pointer;
+    background: $black;
+    text-align:center;
+    border-radius: 15%;
+    font-weight: 800;
+
+    &:hover{
+        background: $black-hover;
+    }
+
+    &.selected{
+        background: $blue;
+    }
+}
+
+.footer > div{
+  float:right;
+}
+
+.externalLink {
+  color: $blue;
+  margin-left: 8px;
+}

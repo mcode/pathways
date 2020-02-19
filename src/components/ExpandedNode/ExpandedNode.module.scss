@@ -27,37 +27,22 @@
   }
 }
 
-.commentsForm {
-  margin-top: 15px;
-
-  label {
-    font-weight: bold;
-  }
-
-  button {
+.defaultTextButton {
     padding: 5px 10px;
     margin: 0 0 2px 5px;
     float: right;
+}
 
-    &.accept {
-      font-size: 18px;
-      min-width: 120px;
-      padding: 10px;
-    }
+.commentsForm {
+  margin-top: 15px;
 
-    &.decline {
-      font-size: 18px;
-      min-width: 120px;
-      padding: 10px;
-      color: $red;
-      background-color: $white;
-
-      &:hover, &:focus {
-        background-color: darken($white, 10%);
-      }
-    }
+  > label {
+    font-weight: bold;
   }
+}
 
+.footer {
+  float: right;
 }
 
 .comments {
