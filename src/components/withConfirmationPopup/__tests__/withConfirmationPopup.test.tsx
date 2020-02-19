@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import withConfirmationPopup from 'components/withConfirmationPopup';
+import withConfirmationPopup from '../withConfirmationPopup';
 
 const containerText = 'Lorem Ipsum';
 const popupText = 'Are you sure?';
