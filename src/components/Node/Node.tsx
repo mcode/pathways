@@ -7,8 +7,13 @@ import nodeStyles from 'styles/index.module.scss';
 import ExpandedNode from 'components/ExpandedNode';
 import { isGuidanceState } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faMicroscope, faPlay, faPrescriptionBottleAlt, faCapsules, faSyringe } from '@fortawesome/free-solid-svg-icons';
-
+import {
+  faMicroscope,
+  faPlay,
+  faPrescriptionBottleAlt,
+  faCapsules,
+  faSyringe
+} from '@fortawesome/free-solid-svg-icons';
 
 interface NodeProps {
   pathwayState: State;

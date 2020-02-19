@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { usePatient } from '../PatientProvider';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
-
 import styles from './PatientSnapshot.module.scss';
 
 const getPatientName = (name: Array<fhir.HumanName> = []): string => {

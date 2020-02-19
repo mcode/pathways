@@ -9,7 +9,13 @@ import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
-import { faPlay, faPlus, faMinus, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlay,
+  faPlus,
+  faMinus,
+  faChevronUp,
+  faChevronDown
+} from '@fortawesome/free-solid-svg-icons';
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;

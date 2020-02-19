@@ -10,7 +10,6 @@ import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
-
 interface Props {
   evaluatedPathways: EvaluatedPathway[];
   selectPathway: boolean;
