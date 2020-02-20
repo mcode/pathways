@@ -14,7 +14,8 @@ const pathway = {
     {
       elementName: 'condition',
       expected: 'breast cancer',
-      cql: 'some fancy CQL statement'
+      cql: 'some fancy CQL statement',
+      exclude: false
     }
   ],
   states: [

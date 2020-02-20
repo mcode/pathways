@@ -18,6 +18,7 @@ declare module 'pathways-model' {
     elementName: string; // name of the mCODE element
     expected: string; // human readable value
     cql: string; // cql to fetch the value from a patient
+    exclude: boolean; // exclusion criteria - true, inclusion criteria - false
   }
 
   export interface State {
@@ -89,6 +90,7 @@ declare module 'pathways-model' {
     expected: string; // human readable value
     actual: string;
     match: boolean; // in case expected !== actual but they are still a match
+    exclude: boolean; // exclusion criteria - true, inclusion criteria - false
   }
 
   export interface ElmResults {

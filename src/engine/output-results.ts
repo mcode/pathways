@@ -86,7 +86,8 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Criter
       elementName: criteria.elementName,
       expected: criteria.expected,
       actual,
-      match
+      match,
+      exclude: criteria.exclude
     };
 
     result.push(criteriaResult);

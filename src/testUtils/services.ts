@@ -16,7 +16,8 @@ export const loadedService: Service<Array<Pathway>> = {
         {
           elementName: 'condition',
           expected: 'breast cancer',
-          cql: 'some fancy CQL statement'
+          cql: 'some fancy CQL statement',
+          exclude: false
         }
       ],
       states: {
@@ -34,7 +35,8 @@ export const loadedService: Service<Array<Pathway>> = {
         {
           elementName: 'condition',
           expected: 'gist cancer',
-          cql: 'some fancy CQL statement'
+          cql: 'some fancy CQL statement',
+          exclude: false
         }
       ],
       states: {
@@ -52,7 +54,8 @@ export const loadedService: Service<Array<Pathway>> = {
         {
           elementName: 'condition',
           expected: 'lung cancer',
-          cql: 'some fancy CQL statement'
+          cql: 'some fancy CQL statement',
+          exclude: false
         }
       ],
       states: {
