@@ -3,7 +3,7 @@ import { useFHIRClient } from './FHIRClient';
 
 interface PatientProviderProps {
   children: ReactNode;
-  patient?: fhir.Patient;
+  patient?: fhir.Patient | null;
 }
 
 export const PatientContext = createContext<fhir.Patient | null>(null);

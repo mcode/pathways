@@ -15,6 +15,7 @@ import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
+import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 
 interface AppProps {
   demo: boolean;
@@ -38,13 +39,12 @@ const App: FC<AppProps> = ({ demo }) => {
           setClient(client);
         });
     } else {
-      // TODO: Use mocked out FHIR client
-      setPatientRecords(demoRecords);
+      setClient(new MockedFHIRClient());
     }
   }, [demo]);
 
   useEffect(() => {
-    if (client) {
+    if (client && !demo) {
       getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
         // filters out values that are empty
         // the server might return deleted
@@ -57,8 +57,11 @@ const App: FC<AppProps> = ({ demo }) => {
 
         setPatientRecords(records);
       });
+    } else {
+      // TODO: Read patient records from MockedFHIRClient
+      setPatientRecords(demoRecords);
     }
-  }, [client]);
+  }, [client, demo]);
 
   const service = useGetPathwaysService(
     config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
@@ -116,44 +119,41 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
-  const currentPathwayProvider = (
-    <PathwayProvider
-      pathwayCtx={{
-        updateEvaluatedPathways,
-        evaluatedPathway: currentPathway,
-        setEvaluatedPathway: setEvaluatedPathwayCallback
-      }}
-    >
-      <div>
-        <Header logo={logo} />
-        <Navigation
-          evaluatedPathways={evaluatedPathways}
-          selectPathway={selectPathway}
-          setSelectPathway={setSelectPathway}
-        />
-      </div>
-      {selectPathway ? (
-        <PathwaysList
-          evaluatedPathways={evaluatedPathways}
-          callback={setEvaluatedPathwayCallback}
-          service={service}
-          resources={patientRecords}
-        ></PathwaysList>
-      ) : (
-        <PatientView evaluatedPathway={currentPathway} />
-      )}
-    </PathwayProvider>
-  );
-
-  // TODO: Once we have a mocked out FHIR client we can include FHIRClientProvider to /demo endpoint
-  return !demo ? (
+  return (
     <FHIRClientProvider client={client as PathwaysClient}>
-      <PatientProvider>{currentPathwayProvider}</PatientProvider>
+      <PatientProvider
+        patient={
+          demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
+        }
+      >
+        <PathwayProvider
+          pathwayCtx={{
+            updateEvaluatedPathways,
+            evaluatedPathway: currentPathway,
+            setEvaluatedPathway: setEvaluatedPathwayCallback
+          }}
+        >
+          <div>
+            <Header logo={logo} />
+            <Navigation
+              evaluatedPathways={evaluatedPathways}
+              selectPathway={selectPathway}
+              setSelectPathway={setSelectPathway}
+            />
+          </div>
+          {selectPathway ? (
+            <PathwaysList
+              evaluatedPathways={evaluatedPathways}
+              callback={setEvaluatedPathwayCallback}
+              service={service}
+              resources={patientRecords}
+            ></PathwaysList>
+          ) : (
+            <PatientView evaluatedPathway={currentPathway} />
+          )}
+        </PathwayProvider>
+      </PatientProvider>
     </FHIRClientProvider>
-  ) : (
-    <PatientProvider patient={demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient}>
-      {currentPathwayProvider}
-    </PatientProvider>
   );
 };
 
