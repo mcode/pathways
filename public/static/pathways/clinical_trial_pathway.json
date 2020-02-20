@@ -1,0 +1,25 @@
+{
+  "name": "Sample Clinical Trial",
+  "description": "Clinical Trial Example: Inclusion - Breast Cancer, Exclusion - HER2 Negative",
+  "library": "mCODE_Library.cql",
+  "criteria": [
+    {
+      "elementName": "Condition",
+      "expected": "Breast Cancer",
+      "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } ",
+      "exclude": false
+    },
+    {
+      "elementName": "HER2 Status",
+      "expected": "Negative",
+      "cql": "[Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 return Tuple{ value: Her2.value.text.value, match: Her2.value.text.value ~ 'Negative' } ",
+      "exclude": true
+    }
+  ],
+  "states": {
+    "Start": {
+      "label": "Start Clinical Trial",
+      "transitions": []
+    }
+  }
+}
