@@ -81,8 +81,10 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     return (
       <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
         <div className={nodeStyles.nodeTitle} onClick={onClickHandler}>
-          <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
-          {label}
+          <div className={nodeStyles.iconAndLabel}>
+            <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
+            {label}
+          </div>
           <StatusIcon accepted={isAccepted} />
         </div>
         {expanded && (
@@ -120,7 +122,11 @@ const StatusIcon: FC<StatusIconProps> = ({ accepted }) => {
     return null;
   }
   const icon = accepted ? faCheckCircle : faTimesCircle;
-  return <FontAwesomeIcon icon={icon} className={styles.icon} />;
+  return (
+    <div className={nodeStyles.statusIcon}>
+      <FontAwesomeIcon icon={icon} className={styles.icon} />
+    </div>
+  );
 };
 
 export default Node;

@@ -14,10 +14,26 @@
     height: $collapsedNodeHeight;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
   }
 }
 
 .nodeTitle {
   padding: 15px;
+  /* use the entire width of its parent 
+     so we can align something to the right */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.iconAndLabel {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.statusIcon {
+  margin-left: auto;
+  padding-left: 10px;
 }
