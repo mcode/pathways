@@ -88,6 +88,11 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
 
   const chevron: IconProp = isVisible ? 'chevron-up' : 'chevron-down';
 
+  // This should be a function somewhere - just using constants for testing I guess ??
+  const ineligible = criteria && criteria.filter(c => c.match && c.exclude).length > 0;
+  const potentially_eligible = criteria && criteria.filter(c => c.match && !c.exclude).length < criteria.filter(c => !c.exclude).length;
+  const eligible = criteria && criteria.filter(c => c.match && !c.exclude).length === criteria.filter(c => !c.exclude).length;
+
   function toggleVisible(): void {
     setIsVisible(!isVisible);
   }
@@ -106,7 +111,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
           <FontAwesomeIcon icon={chevron} />
         </div>
         <div className={classes.numElements}>
-          {criteria && criteria.filter(c => c.match).length}
+          {criteria && criteria.filter(c => c.match && !c.exclude).length}
         </div>
       </div>
 
@@ -114,12 +119,14 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         <div className={classes.infoContainer}>
           <div className={classes.details}>
             <p>{pathway.description}</p>
+            <p> {ineligible ? 'Ineligible' : potentially_eligible ? 'Potentially Eligible' : eligible ? 'Eligible' : 'error'} </p>
             <table>
               <tbody>
                 <tr>
                   <th></th>
                   <th>mCODE elements</th>
                   <th>patient elements</th>
+                  <th>criteria type</th>
                 </tr>
                 {criteria &&
                   criteria.map(c => (
@@ -127,6 +134,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                       <td>{c.elementName}</td>
                       <td>{c.expected}</td>
                       <td className={c.match ? classes.matchingElement : undefined}>{c.actual}</td>
+                      <td> {c.exclude ? 'exclusion' : 'inclusion'}</td>
                     </tr>
                   ))}
               </tbody>
