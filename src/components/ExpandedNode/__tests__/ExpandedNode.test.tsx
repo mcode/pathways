@@ -138,6 +138,11 @@ describe('<ExpandedNode />', () => {
       />
     );
 
+    expect(getByText(testDoc.status)).toBeVisible();
+    // date string from above. TODO: brittle
+    const date = new Date('2020-02-10T18:55:18.991+00:00').toLocaleString();
+    expect(getByText(date)).toBeVisible();
+
     // Form and buttons should be displayed in an active ExpandedNode
     expect(getByRole('form')).toBeVisible();
     expect(getByText('Accept')).toBeVisible();
