@@ -23,7 +23,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 }) => {
   const [comments, setComments] = useState<string>('');
 
-  const status = documentation?.resource && renderStatusFields(documentation);
+  const status = documentation?.resource && renderStatusField(documentation);
   const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
 
@@ -83,16 +83,12 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
   );
 };
 
-function renderStatusFields(documentation: DocumentationResource): ReactElement[] {
-  const returnValue: ReactElement[] = [];
-
+function renderStatusField(documentation: DocumentationResource): ReactElement {
   const status = documentation.status;
 
   const rawDate = documentation.resource?.meta?.lastUpdated;
   const date = rawDate && new Date(rawDate).toLocaleString('en-us');
-  returnValue.push(<ExpandedNodeField key="Status" title={status} description={date} />);
-
-  return returnValue;
+  return <ExpandedNodeField key="Status" title={status} description={date} />;
 }
 
 function renderBranch(
