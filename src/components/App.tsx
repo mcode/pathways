@@ -101,7 +101,6 @@ const App: FC<AppProps> = ({ demo }) => {
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div>
-        <div>{`Fetched ${patientRecords.length} resources`}</div>
         {evaluatedPathway ? (
           <Graph
             resources={patientRecords}
