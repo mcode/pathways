@@ -7,6 +7,13 @@ import nodeStyles from 'styles/index.module.scss';
 import ExpandedNode from 'components/ExpandedNode';
 import { isGuidanceState } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+  faMicroscope,
+  faPlay,
+  faPrescriptionBottleAlt,
+  faCapsules,
+  faSyringe
+} from '@fortawesome/free-solid-svg-icons';
 
 interface NodeProps {
   pathwayState: State;
@@ -78,15 +85,15 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
 );
 
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
-  let icon: IconProp = 'microscope';
-  if (pathwayState.label === 'Start') icon = 'play';
+  let icon: IconProp = faMicroscope;
+  if (pathwayState.label === 'Start') icon = faPlay;
   if (isGuidance) {
     const guidancePathwayState = pathwayState as GuidanceState;
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
-      if (resourceType === 'MedicationRequest') icon = 'prescription-bottle-alt';
-      else if (resourceType === 'MedicationAdministration') icon = 'capsules';
-      else if (resourceType === 'Procedure') icon = 'syringe';
+      if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
+      else if (resourceType === 'MedicationAdministration') icon = faCapsules;
+      else if (resourceType === 'Procedure') icon = faSyringe;
     }
   }
   return <FontAwesomeIcon icon={icon} className={styles.icon} />;
