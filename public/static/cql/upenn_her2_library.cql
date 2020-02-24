@@ -39,12 +39,16 @@ code "Abnormal estradiol (finding) code": '131064004' from "SNOMEDCT" display 'A
 
 // SNOMED Procedures
 code "Chemotherapy (procedure) code": '367336001' from "SNOMEDCT" display 'Chemotherapy (procedure)'
+code "Lumpectomy of breast (procedure) code": '392021009' from "SNOMEDCT" display 'Lumpectomy of breast (procedure)'
 code "Oophorectomy (procedure) code": '83152002' from "SNOMEDCT" display 'Oophorectomy (procedure)'
 
 
 // RXNORM Medication Request
+code "adotrastuzumab emtansine code": '1371041' from "RXNORM" display 'ado-trastuzumab emtansine'
 code "trastuzumab code": '224905' from "RXNORM" display 'trastuzumab'
 code "anastrozole code": '84857' from "RXNORM" display 'anastrozole'
+code "pertuzumab code": '1298944' from "RXNORM" display 'pertuzumab'
+code "paclitaxel code": '56946' from "RXNORM" display 'paclitaxel'
 code "tamoxifen code": '10324' from "RXNORM" display 'tamoxifen'
 code "Lupron code": '203852' from "RXNORM" display 'Lupron'
 
