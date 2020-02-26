@@ -1,0 +1,206 @@
+{
+  "name": "Early Stage HER2+ Pathway",
+  "description": "Pathway for the Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway",
+  "library": "mCODE_Library.cql",
+  "criteria": [
+    {
+      "elementName": "Condition",
+      "expected": "Breast Cancer",
+      "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } "
+    },
+    {
+      "elementName": "HER2 Status",
+      "expected": "Positive",
+      "cql": "[Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 return Tuple{ value: Her2.value.text.value, match: Her2.value.text.value ~ 'Positive' } "
+    }
+  ],
+  "states": {
+    "Start": {
+      "label": "Start",
+      "transitions": [
+        {
+          "transition": "NodeStatus"
+        }
+      ]
+    },
+    "NodeStatus": {
+      "label": "Node Status",
+      "transitions": [
+        {
+          "transition": "TumorSize",
+          "condition": {
+            "description": "N0",
+            "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\" return Tuple{ resourceType: 'Observation', id: N0.id.value , status: N0.status.value} "
+          }
+        },
+        {
+          "transition": "ChemotherapyTCHAC+TH",
+          "condition": {
+            "description": "N+",
+            "cql": " [Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
+          }
+        }
+      ]
+    },
+    "TumorSize": {
+      "label": "Tumor Size",
+      "transitions": [
+        {
+          "transition": "ChemotherapyTCHAC+TH",
+          "condition": {
+            "description": "T > 2cm",
+            "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TLarge let TLageConcept: ToConcept(TLarge.value as FHIR.CodeableConcept) where TLageConcept ~ \"T2 category (finding)\" or TLageConcept ~ \"T3 category (finding)\" or TLageConcept ~ \"T4 category (finding)\" return Tuple{ resourceType: 'Observation', id: TLarge.id.value , status: TLarge.status.value} "
+          }
+        },
+        {
+          "transition": "ChemotherapyTHWeekly",
+          "condition": {
+            "description": "T <= 2cm",
+            "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TSmall where ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T0 category (finding)\" or ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T1 category (finding)\" return Tuple{ resourceType: 'Observation', id: TSmall.id.value , status: TSmall.status.value} "
+          }
+        }
+      ]
+    },
+    "ChemotherapyTHWeekly": {
+      "label": "Chemotherapy TH Weekly",
+      "action": [
+        {
+          "type": "create",
+          "description": "Chemotherapy TH Weekly",
+          "resource": {
+            "resourceType": "Procedure",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "367336001",
+                  "display": "Chemotherapy (procedure)"
+                }
+              ],
+              "text": "Chemotherapy (procedure)"
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "transition": "PostchemotherapyTrastuzumabRequest"
+        }
+      ],
+      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+    },
+    "ChemotherapyTCHAC+TH": {
+      "label": "Chemotherapy TCH AC + TH",
+      "action": [
+        {
+          "type": "create",
+          "description": "Chemotherapy TCH AC + TH",
+          "resource": {
+            "resourceType": "Procedure",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "367336001",
+                  "display": "Chemotherapy (procedure)"
+                }
+              ],
+              "text": "Chemotherapy (procedure)"
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "transition": "PostchemotherapyTrastuzumabRequest"
+        }
+      ],
+      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+    },
+    "PostchemotherapyTrastuzumabRequest": {
+      "label": "Post-Chemotherapy Trastuzumab Request",
+      "action": [
+        {
+          "type": "create",
+          "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
+          "resource": {
+            "resourceType": "MedicationRequest",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                  "code": "224905",
+                  "display": "trastuzumab"
+                }
+              ],
+              "text": "trastuzumab"
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "transition": "PostchemotherapyTrastuzumabAdministration"
+        }
+      ],
+      "cql": "[MedicationRequest: \"trastuzumab code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value} "
+    },
+    "PostchemotherapyTrastuzumabAdministration": {
+      "label": "Post-Chemotherapy Trastuzumab Administration",
+      "action": [
+        {
+          "type": "create",
+          "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
+          "resource": {
+            "resourceType": "MedicationAdministration",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                  "code": "224905",
+                  "display": "trastuzumab"
+                }
+              ],
+              "text": "trastuzumab"
+            }
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "transition": "ERStatus"
+        }
+      ],
+      "cql": "[MedicationAdministration: \"trastuzumab code\"] Trastuzumab return Tuple{ resourceType: 'MedicationAdministration', id: Trastuzumab.id.value, status: Trastuzumab.status.value} "
+    },
+    "ERStatus": {
+      "label": "ER Status",
+      "transitions": [
+        {
+          "transition": "NoEndocrineTherapy",
+          "condition": {
+            "description": "ERNegative",
+            "cql": "[Observation: \"Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain code\"] Neg where ToConcept(Neg.value as FHIR.CodeableConcept) ~ \"Negative (qualifier value)\" return Tuple{ resourceType: 'Observation', id: Neg.id.value , status: Neg.status.value} "
+          }
+        },
+        {
+          "transition": "EndocrineTherapy",
+          "condition": {
+            "description": "ERPositive",
+            "cql": "[Observation: \"Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain code\"] Pos where ToConcept(Pos.value as FHIR.CodeableConcept) ~ \"Positive (qualifier value)\" return Tuple{ resourceType: 'Observation', id: Pos.id.value , status: Pos.status.value} "
+          }
+        }
+      ]
+    },
+    "NoEndocrineTherapy": {
+      "label": "No Endocrine Therapy",
+      "action": [],
+      "transitions": []
+    },
+    "EndocrineTherapy": {
+      "label": "Endocrine Therapy",
+      "action": [],
+      "transitions": []
+    }
+  }
+}
