@@ -11,7 +11,6 @@ const MockComponent: FC = () => {
 };
 
 const MockWithConfirmation: FC = withConfirmationPopup(MockComponent);
-const MockConfirmationWithCallback = withConfirmationPopup(MockComponent, mockCallback);
 
 describe('withConfirmationPopup', () => {
   it('renders the wrapped component', () => {
@@ -28,7 +27,7 @@ describe('withConfirmationPopup', () => {
   });
 
   it('calls the onConfirm callback when the confirmation is accepted', () => {
-    const { getByText, getByTestId } = render(<MockConfirmationWithCallback />);
+    const { getByText, getByTestId } = render(<MockWithConfirmation onConfirm={mockCallback} />);
     fireEvent.click(getByText(containerText));
     expect(mockCallback).not.toHaveBeenCalled();
     fireEvent.click(getByTestId('accept'));
