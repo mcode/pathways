@@ -28,15 +28,6 @@ interface NodeProps {
   onClickHandler?: () => void;
 }
 
-interface NodeIconProps {
-  pathwayState: State;
-  isGuidance: boolean;
-}
-
-interface StatusIconProps {
-  accepted: boolean | null;
-}
-
 const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivElement, NodeProps>(
   (
     {
@@ -75,8 +66,8 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     // for now:
     // if it's a non-actionable guidance state on the path: accepted == has documentation
     // if it's actionable, not guidance or not on the path: null
-    const isAccepted =
-      isOnPatientPath && isGuidance && !isActionable ? documentation != null : null;
+    const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
+    const isAccepted = wasActionTaken ? documentation != null : null;
 
     return (
       <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
@@ -102,6 +93,11 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
   }
 );
 
+interface NodeIconProps {
+  pathwayState: State;
+  isGuidance: boolean;
+}
+
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   let icon: IconProp = faMicroscope;
   if (pathwayState.label === 'Start') icon = faPlay;
@@ -116,6 +112,10 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   }
   return <FontAwesomeIcon icon={icon} className={styles.icon} />;
 };
+
+interface StatusIconProps {
+  accepted: boolean | null;
+}
 
 const StatusIcon: FC<StatusIconProps> = ({ accepted }) => {
   if (accepted == null) {
