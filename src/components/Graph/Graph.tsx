@@ -6,10 +6,10 @@ import Arrow from 'components/Arrow';
 import { evaluatePatientOnPathway } from 'engine';
 import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, NodeDimensions, Edge } from 'graph-model';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
-  resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
@@ -22,12 +22,12 @@ const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
 };
 
 const Graph: FC<GraphProps> = ({
-  resources,
   evaluatedPathway,
   interactive = true,
   expandCurrentNode = true,
   updateEvaluatedPathways
 }) => {
+  const resources = usePatientRecords().patientRecords;
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});

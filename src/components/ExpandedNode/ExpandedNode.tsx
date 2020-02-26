@@ -9,7 +9,7 @@ import { isBranchState } from 'utils/nodeUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface ExpandedNodeProps {
-  pathwayState: GuidanceState | State;
+  pathwayState: GuidanceState;
   isActionable: boolean;
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;

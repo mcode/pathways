@@ -9,6 +9,7 @@ import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
   faPlay,
   faPlus,
@@ -19,7 +20,6 @@ import {
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
-  resources: Array<fhir.DomainResource>;
   callback: Function;
 }
 
@@ -27,15 +27,9 @@ interface PathwaysListProps {
   evaluatedPathways: EvaluatedPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
-  resources: Array<fhir.DomainResource>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({
-  evaluatedPathways,
-  callback,
-  service,
-  resources
-}) => {
+const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
   function renderList(): ReactNode {
     return (
       <div>
@@ -44,7 +38,6 @@ const PathwaysList: FC<PathwaysListProps> = ({
             <PathwaysListElement
               evaluatedPathway={evaluatedPathway}
               callback={callback}
-              resources={resources}
               key={evaluatedPathway.pathway.name}
             />
           );
@@ -73,11 +66,8 @@ const PathwaysList: FC<PathwaysListProps> = ({
   );
 };
 
-const PathwaysListElement: FC<PathwaysListElementProps> = ({
-  evaluatedPathway,
-  resources,
-  callback
-}) => {
+const PathwaysListElement: FC<PathwaysListElementProps> = ({ evaluatedPathway, callback }) => {
+  const resources = usePatientRecords().patientRecords;
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -142,7 +132,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
           </div>
           <div className={styles.pathway}>
             <Graph
-              resources={resources}
               evaluatedPathway={evaluatedPathway}
               interactive={false}
               expandCurrentNode={false}

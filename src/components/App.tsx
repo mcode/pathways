@@ -3,9 +3,9 @@ import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
 import logo from 'camino-logo-dark.png';
-import { getPatientRecord } from '../utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
+import { PatientRecordsProvider } from './PatientRecordsProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
@@ -22,7 +22,6 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ demo }) => {
-  const [patientRecords, setPatientRecords] = useState<Array<fhir.DomainResource>>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
@@ -42,26 +41,6 @@ const App: FC<AppProps> = ({ demo }) => {
       setClient(new MockedFHIRClient());
     }
   }, [demo]);
-
-  useEffect(() => {
-    if (client && !demo) {
-      getPatientRecord(client).then((records: Array<fhir.DomainResource>) => {
-        // filters out values that are empty
-        // the server might return deleted
-        // resources that only include an
-        // id, meta, and resourceType
-        const values = ['id', 'meta', 'resourceType'];
-        records = records.filter(resource => {
-          return !Object.keys(resource).every(value => values.includes(value));
-        });
-
-        setPatientRecords(records);
-      });
-    } else {
-      // TODO: Read patient records from MockedFHIRClient
-      setPatientRecords(demoRecords);
-    }
-  }, [client, demo]);
 
   const service = useGetPathwaysService(
     config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
@@ -106,7 +85,6 @@ const App: FC<AppProps> = ({ demo }) => {
       <div>
         {evaluatedPathway ? (
           <Graph
-            resources={patientRecords}
             evaluatedPathway={evaluatedPathway}
             expandCurrentNode={true}
             updateEvaluatedPathways={updateEvaluatedPathways}
@@ -114,7 +92,7 @@ const App: FC<AppProps> = ({ demo }) => {
         ) : (
           <div>No Pathway Loaded</div>
         )}
-        <PatientRecord resources={patientRecords} />
+        <PatientRecord />
       </div>
     );
   };
@@ -126,32 +104,33 @@ const App: FC<AppProps> = ({ demo }) => {
           demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
         }
       >
-        <PathwayProvider
-          pathwayCtx={{
-            updateEvaluatedPathways,
-            evaluatedPathway: currentPathway,
-            setEvaluatedPathway: setEvaluatedPathwayCallback
-          }}
-        >
-          <div>
-            <Header logo={logo} />
-            <Navigation
-              evaluatedPathways={evaluatedPathways}
-              selectPathway={selectPathway}
-              setSelectPathway={setSelectPathway}
-            />
-          </div>
-          {selectPathway ? (
-            <PathwaysList
-              evaluatedPathways={evaluatedPathways}
-              callback={setEvaluatedPathwayCallback}
-              service={service}
-              resources={patientRecords}
-            ></PathwaysList>
-          ) : (
-            <PatientView evaluatedPathway={currentPathway} />
-          )}
-        </PathwayProvider>
+        <PatientRecordsProvider patientRecords={demo ? demoRecords : []}>
+          <PathwayProvider
+            pathwayCtx={{
+              updateEvaluatedPathways,
+              evaluatedPathway: currentPathway,
+              setEvaluatedPathway: setEvaluatedPathwayCallback
+            }}
+          >
+            <div>
+              <Header logo={logo} />
+              <Navigation
+                evaluatedPathways={evaluatedPathways}
+                selectPathway={selectPathway}
+                setSelectPathway={setSelectPathway}
+              />
+            </div>
+            {selectPathway ? (
+              <PathwaysList
+                evaluatedPathways={evaluatedPathways}
+                callback={setEvaluatedPathwayCallback}
+                service={service}
+              ></PathwaysList>
+            ) : (
+              <PatientView evaluatedPathway={currentPathway} />
+            )}
+          </PathwayProvider>
+        </PatientRecordsProvider>
       </PatientProvider>
     </FHIRClientProvider>
   );
