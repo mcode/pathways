@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { render, act, RenderResult } from '@testing-library/react';
 import Graph from '../Graph';
 import { loadedService } from 'testUtils/services';
-import { EvaluatedPathway, Pathway } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import preconvertedELM from '../../../engine/__tests__/fixtures/elm/sample_pathway.elm.json';
 import { PatientRecordsProvider } from 'components/PatientRecordsProvider';
 

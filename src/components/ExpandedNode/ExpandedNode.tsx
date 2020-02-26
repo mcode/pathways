@@ -22,14 +22,11 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   documentation
 }) => {
   const [comments, setComments] = useState<string>('');
-
-  const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
+  const guidance = isGuidance && renderGuidance(pathwayState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
 
-  const defaultText =
-    `The patient and I discussed the treatment plan, ` +
-    `risks, benefits and alternatives.  The patient ` +
-    `expressed understanding and wants to proceed.`;
+  // prettier-ignore
+  const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
   return (
     <div className={indexStyles.expandedNode}>
