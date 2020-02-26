@@ -1,6 +1,6 @@
 {
     "name": "HER2+ Early Stage Pathway",
-    "description": "Pathway for the UPenn Early Stage HER2+ Breast Cancer Pathway",
+    "description": "Pathway for the Early Stage HER2+ Breast Cancer Pathway",
     "library": "mCODE_Library.cql",
     "version": 1.0,
     "criteria": [
@@ -111,7 +111,7 @@
             }
           }
         ],
-        "cql": "[Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value }",
+        "cql": "if [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'Service[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } ",
         "transitions": [
           {
             "transition": "PaclitaxelTrastuzumab"
@@ -451,7 +451,7 @@
             }
           }
         ],
-        "cql": "[Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value }",
+        "cql": "if [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'Service[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } ",
         "transitions": [
           {
             "transition": "PathologicalResponse"

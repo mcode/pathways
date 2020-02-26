@@ -48,7 +48,7 @@
           }
         },
         {
-          "transition": "ChemoMedication",
+          "transition": "Chemo",
           "condition": {
             "description": "N = N1",
             "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N1 where ToConcept(N1.value as FHIR.CodeableConcept) ~ \"N1 category (finding)\"return Tuple{ resourceType: 'Observation', id: N1.id.value, status: N1.status.value }"
@@ -82,7 +82,7 @@
           "transition": "N-test"
         }
       ],
-      "cql": "[Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value }"
+      "cql": "if [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } "
     },
     "Radiation": {
       "label": "Radiation",
@@ -105,7 +105,7 @@
           }
         }
       ],
-      "cql": "[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value }",
+      "cql": "if [Procedure: \"Teleradiotherapy procedure (procedure) code\"] then [Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } else [ServiceRequest: \"Teleradiotherapy procedure (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } ",
       "transitions": []
     },
     "Chemo": {
@@ -129,32 +129,8 @@
           }
         }
       ],
-      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value, status: Chemo.status.value }",
+      "cql": "if [Procedure: \"Chemotherapy (procedure) code\"] then [Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value, status: Chemo.status.value } else [MedicationRequest: \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code\"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection\"return Tuple{ resourceType: 'MedicationRequest', id: ChemoMedication.id.value, status: ChemoMedication.status.value } ",
       "transitions": []
-    },
-    "ChemoMedication": {
-      "label": "ChemoMedication Request",
-      "action": [
-        {
-          "type": "create",
-          "description": "Request 10ML Doxorubicin Hydrochloride 2MG/ML Injection",
-          "resource": {
-            "resourceType": "MedicationRequest",
-            "medicationCodeableConcept": {
-              "coding": [
-                {
-                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                  "code": "1790099",
-                  "display": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
-                }
-              ],
-              "text": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
-            }
-          }
-        }
-      ],
-      "cql": "[MedicationRequest: \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code\"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection\"return Tuple{ resourceType: 'MedicationRequest', id: ChemoMedication.id.value, status: ChemoMedication.status.value }",
-      "transitions": [{ "transition": "Chemo" }]
     }
   }
 }
