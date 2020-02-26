@@ -68,7 +68,7 @@
           "type": "create",
           "description": "Chemotherapy TH Weekly",
           "resource": {
-            "resourceType": "Procedure",
+            "resourceType": "ServiceRequest",
             "code": {
               "coding": [
                 {
@@ -96,7 +96,7 @@
           "type": "create",
           "description": "Chemotherapy TCH AC + TH",
           "resource": {
-            "resourceType": "Procedure",
+            "resourceType": "ServiceRequest",
             "code": {
               "coding": [
                 {
