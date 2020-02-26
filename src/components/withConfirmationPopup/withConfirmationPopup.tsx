@@ -3,14 +3,16 @@ import styles from './withConfirmationPopup.module.scss';
 import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
 
-interface WithConfirmationPopupProps {
+type ConfirmationProps = {
   onConfirm?: () => void;
-}
+};
+
+type WithConfirmationPopupProps<T> = T & ConfirmationProps;
 
 const withConfirmationPopup = <T extends object>(
   WrappedComponent: FC<T>
-): FC<T & WithConfirmationPopupProps> => {
-  const PopupComponent: FC<T & WithConfirmationPopupProps> = ({ onConfirm, ...passed }) => {
+): FC<WithConfirmationPopupProps<T>> => {
+  const PopupComponent: FC<WithConfirmationPopupProps<T>> = ({ onConfirm, ...wrappedProps }) => {
     const [open, setOpen] = useState<boolean>(false);
     // https://github.com/Semantic-Org/Semantic-UI-React/issues/2487
     return (
@@ -20,8 +22,8 @@ const withConfirmationPopup = <T extends object>(
         open={open}
         setOpen={setOpen}
         Trigger={
-          <div className={styles.triggerContainer} {...passed}>
-            <WrappedComponent {...(passed as T)} />
+          <div className={styles.triggerContainer} {...wrappedProps}>
+            <WrappedComponent {...(wrappedProps as T)} />
           </div>
         }
       />
