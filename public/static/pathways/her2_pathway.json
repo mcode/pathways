@@ -129,11 +129,11 @@
               "coding": [
                 {
                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                  "code": "224905",
-                  "display": "trastuzumab"
+                  "code": "1922509",
+                  "display": "trastuzumab 150 MG Injection"
                 }
               ],
-              "text": "trastuzumab"
+              "text": "trastuzumab 150 MG Injection"
             }
           }
         }
@@ -143,7 +143,7 @@
           "transition": "PostchemotherapyTrastuzumabAdministration"
         }
       ],
-      "cql": "[MedicationRequest: \"trastuzumab code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value} "
+      "cql": "[MedicationRequest: \"trastuzumab 150 MG Injection code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value} "
     },
     "PostchemotherapyTrastuzumabAdministration": {
       "label": "Post-Chemotherapy Trastuzumab Administration",
