@@ -129,11 +129,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "56946",
-                    "display": "paclitaxel"
+                    "code": "583214",
+                    "display": "PACLitaxel 100 MG Injection"
                   }
                 ],
-                "text": "paclitaxel"
+                "text": "PACLitaxel 100 MG Injection"
               }
             }
           },
@@ -146,11 +146,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           }
@@ -170,11 +170,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "72962",
-                    "display": "Docetaxel"
+                    "code": "1860480",
+                    "display": "1 ML docetaxel 20 MG/ML Injection"
                   }
                 ],
-                "text": "Docetaxel"
+                "text": "1 ML docetaxel 20 MG/ML Injection"
               }
             }
           },
@@ -187,11 +187,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "40048",
-                    "display": "carboplatin"
+                    "code": "597195",
+                    "display": "Carboplatin 10 MG/ML Injectable Solution"
                   }
                 ],
-                "text": "carboplatin"
+                "text": "Carboplatin 10 MG/ML Injectable Solution"
               }
             }
           },
@@ -204,11 +204,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1298944",
-                    "display": "Pertuzumab"
+                    "code": "1298948",
+                    "display": "14 ML pertuzumab 30 MG/ML Injection"
                   }
                 ],
-                "text": "Pertuzumab"
+                "text": "14 ML pertuzumab 30 MG/ML Injection"
               }
             }
           },
@@ -221,11 +221,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "Trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "Trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           }
@@ -249,11 +249,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "3639",
-                    "display": "Doxorubicin"
+                    "code": "1790100",
+                    "display": "25 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
                   }
                 ],
-                "text": "Doxorubicin"
+                "text": "25 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
               }
             }
           },
@@ -266,11 +266,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "3002",
-                    "display": "Cyclophosphamide"
+                    "code": "1734919",
+                    "display": "Cyclophosphamide 1000 MG Injection"
                   }
                 ],
-                "text": "Cyclophosphamide"
+                "text": "Cyclophosphamide 1000 MG Injection"
               }
             }
           },
@@ -283,11 +283,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1298944",
-                    "display": "Pertuzumab"
+                    "code": "1298948",
+                    "display": "14 ML pertuzumab 30 MG/ML Injection"
                   }
                 ],
-                "text": "Pertuzumab"
+                "text": "14 ML pertuzumab 30 MG/ML Injection"
               }
             }
           },
@@ -300,11 +300,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "Trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "Trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           },
@@ -317,11 +317,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "56946",
-                    "display": "Paclitaxel"
+                    "code": "583214",
+                    "display": "PACLitaxel 100 MG Injection"
                   }
                 ],
-                "text": "Paclitaxel"
+                "text": "PACLitaxel 100 MG Injection"
               }
             }
           }
@@ -345,11 +345,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "3639",
-                    "display": "Doxorubicin"
+                    "code": "1790100",
+                    "display": "25 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
                   }
                 ],
-                "text": "Doxorubicin"
+                "text": "25 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
               }
             }
           },
@@ -362,11 +362,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "3002",
-                    "display": "Cyclophosphamide"
+                    "code": "1734919",
+                    "display": "Cyclophosphamide 1000 MG Injection"
                   }
                 ],
-                "text": "Cyclophosphamide"
+                "text": "Cyclophosphamide 1000 MG Injection"
               }
             }
           },
@@ -379,11 +379,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1298944",
-                    "display": "Pertuzumab"
+                    "code": "1298948",
+                    "display": "14 ML pertuzumab 30 MG/ML Injection"
                   }
                 ],
-                "text": "Pertuzumab"
+                "text": "14 ML pertuzumab 30 MG/ML Injection"
               }
             }
           },
@@ -396,11 +396,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "Trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "Trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           },
@@ -413,11 +413,11 @@
                 "coding": [
                   {
                     "sytem": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "56946",
-                    "display": "Paclitaxel"
+                    "code": "583214",
+                    "display": "PACLitaxel 100 MG Injection"
                   }
                 ],
-                "text": "Paclitaxel"
+                "text": "PACLitaxel 100 MG Injection"
               }
             }
           }
@@ -488,11 +488,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1371041",
-                    "display": "ado-trastuzumab emtansine"
+                    "code": "1658084",
+                    "display": "ado-trastuzumab emtansine 100 MG Injection"
                   }
                 ],
-                "text": "ado-trastuzumab emtansine"
+                "text": "ado-trastuzumab emtansine 100 MG Injection"
               }
             }
           }
@@ -531,11 +531,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           }
@@ -555,11 +555,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1298944",
-                    "display": "pertuzumab"
+                    "code": "1298948",
+                    "display": "14 ML pertuzumab 30 MG/ML Injection"
                   }
                 ],
-                "text": "pertuzumab"
+                "text": "14 ML pertuzumab 30 MG/ML Injection"
               }
             }
           },
@@ -572,11 +572,11 @@
                 "coding": [
                   {
                     "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "224905",
-                    "display": "trastuzumab"
+                    "code": "1922509",
+                    "display": "trastuzumab 150 MG Injection"
                   }
                 ],
-                "text": "trastuzumab"
+                "text": "trastuzumab 150 MG Injection"
               }
             }
           }
