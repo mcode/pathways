@@ -96,7 +96,7 @@
             "type": "create",
             "description": "Cancer Related Surgery Procedure",
             "resource": {
-              "resourceType": "Procedure",
+              "resourceType": "ServiceRequest",
               "code": {
                 "coding": [
                   {
@@ -436,7 +436,7 @@
             "type": "create",
             "description": "Cancer Related Surgery Procedure",
             "resource": {
-              "resourceType": "Procedure",
+              "resourceType": "ServiceRequest",
               "code": {
                 "coding": [
                   {
