@@ -8,6 +8,7 @@ import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import { PatientRecordsProvider } from './PatientRecordsProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
+import { NoteProvider } from './NoteProvider';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
@@ -28,6 +29,7 @@ const App: FC<AppProps> = ({ demo }) => {
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
   const [client, setClient] = useState<PathwaysClient | null>(null);
+  const [user, setUser] = useState<string>('');
 
   useEffect(() => {
     if (!demo) {
@@ -57,7 +59,23 @@ const App: FC<AppProps> = ({ demo }) => {
       setPatientRecords(demoRecords);
     }
   }, [demo]);
-
+  // gather note info
+  useEffect(() => {
+    client?.user?.read().then((user: fhir.Practitioner) => {
+      console.log(user);
+      const name =
+        user.name &&
+        [
+          user.name[0]?.prefix?.join(' '),
+          user.name[0]?.given?.join(' '),
+          user.name[0]?.family,
+          user.name[0]?.suffix?.join(' ')
+        ].join(' ');
+      if (name) {
+        setUser(name);
+      }
+    });
+  }, [client]);
   const service = useGetPathwaysService(
     config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
   );
@@ -128,23 +146,25 @@ const App: FC<AppProps> = ({ demo }) => {
               setEvaluatedPathway: setEvaluatedPathwayCallback
             }}
           >
-            <div>
-              <Header logo={logo} />
-              <Navigation
-                evaluatedPathways={evaluatedPathways}
-                selectPathway={selectPathway}
-                setSelectPathway={setSelectPathway}
-              />
-            </div>
-            {selectPathway ? (
-              <PathwaysList
-                evaluatedPathways={evaluatedPathways}
-                callback={setEvaluatedPathwayCallback}
-                service={service}
-              ></PathwaysList>
-            ) : (
-              <PatientView evaluatedPathway={currentPathway} />
-            )}
+            <NoteProvider physician={user} patient={'Dummy'} date={new Date(Date.now())}>
+              <div>
+                <Header logo={logo} />
+                <Navigation
+                  evaluatedPathways={evaluatedPathways}
+                  selectPathway={selectPathway}
+                  setSelectPathway={setSelectPathway}
+                />
+              </div>
+              {selectPathway ? (
+                <PathwaysList
+                  evaluatedPathways={evaluatedPathways}
+                  callback={setEvaluatedPathwayCallback}
+                  service={service}
+                ></PathwaysList>
+              ) : (
+                <PatientView evaluatedPathway={currentPathway} />
+              )}
+            </NoteProvider>
           </PathwayProvider>
         </PatientRecordsProvider>
       </PatientProvider>

@@ -9,7 +9,7 @@ import { isBranchState } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { useNote, Note } from 'components/NoteProvider';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -28,7 +28,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const client = useFHIRClient();
-
+  const note = useNote();
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
@@ -62,6 +62,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="accept"
               size="large"
               onConfirm={(): void => {
+                gatherInfo(note, 'Accepted', comments);
                 if (pathwayState.action.length > 0) {
                   // const resource = pathwayState.action[0].resource;
                   // temp resource copied from patient record
@@ -283,6 +284,15 @@ function renderGuidance(
     }
   }
   return returnElements;
+}
+
+function gatherInfo(note: Note | null, status: string, notes: string): void {
+  if (note) {
+    note.status = status;
+    note.notes = notes;
+  }
+
+  console.log(note);
 }
 
 export default ExpandedNode;
