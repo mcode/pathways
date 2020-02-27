@@ -6,6 +6,7 @@ import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface ExpandedNodeProps {
@@ -24,6 +25,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const [comments, setComments] = useState<string>('');
   const guidance = isGuidance && renderGuidance(pathwayState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
+  const { patientRecords, setPatientRecords } = usePatientRecords();
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';

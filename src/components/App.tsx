@@ -3,6 +3,7 @@ import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
 import logo from 'camino-logo-dark.png';
+import { getPatientRecord } from 'utils/fhirExtract';
 import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import { PatientRecordsProvider } from './PatientRecordsProvider';
@@ -22,6 +23,7 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ demo }) => {
+  const [patientRecords, setPatientRecords] = useState<fhir.DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
@@ -35,10 +37,24 @@ const App: FC<AppProps> = ({ demo }) => {
           scope: 'launch/patient openid profile'
         })
         .then(client => {
+          // TODO: MockedFHIRClient has not mocked out requests for resources yet
+          getPatientRecord(client).then((records: fhir.DomainResource[]) => {
+            // filters out values that are empty
+            // the server might return deleted
+            // resources that only include an
+            // id, meta, and resourceType
+            const values = ['id', 'meta', 'resourceType'];
+            records = records.filter(resource => {
+              return !Object.keys(resource).every(value => values.includes(value));
+            });
+
+            setPatientRecords(records);
+          });
           setClient(client);
         });
     } else {
       setClient(new MockedFHIRClient());
+      setPatientRecords(demoRecords);
     }
   }, [demo]);
 
@@ -51,7 +67,7 @@ const App: FC<AppProps> = ({ demo }) => {
       setEvaluatedPathways(
         service.payload.map(pathway => ({ pathway: pathway, pathwayResults: null }))
       );
-  }, [service, evaluatedPathways.length, client]);
+  }, [service, evaluatedPathways.length, client, patientRecords]);
 
   function setEvaluatedPathwayCallback(
     value: EvaluatedPathway | null,
@@ -104,7 +120,7 @@ const App: FC<AppProps> = ({ demo }) => {
           demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
         }
       >
-        <PatientRecordsProvider patientRecords={demo ? demoRecords : []}>
+        <PatientRecordsProvider value={{ patientRecords, setPatientRecords }}>
           <PathwayProvider
             pathwayCtx={{
               updateEvaluatedPathways,

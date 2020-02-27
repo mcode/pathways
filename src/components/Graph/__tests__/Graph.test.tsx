@@ -56,7 +56,14 @@ describe('<Graph />', () => {
     updateEvaluatedPathways: (value: EvaluatedPathway) => void
   ): RenderResult => {
     return render(
-      <PatientRecordsProvider patientRecords={[samplePatient, sampleObservation]}>
+      <PatientRecordsProvider
+        value={{
+          patientRecords: [samplePatient, sampleObservation],
+          setPatientRecords: (): void => {
+            return;
+          }
+        }}
+      >
         <Graph
           evaluatedPathway={evaluatedPathway}
           updateEvaluatedPathways={updateEvaluatedPathways}
