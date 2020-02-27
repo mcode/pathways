@@ -42,7 +42,14 @@ const PopupContent: FC<PopupContentProps> = ({ setOpen, onConfirm }) => {
     <div className={styles.popupContent}>
       <div>Are you sure?</div>
       <div>
-        <ActionButton size="small" type="accept" onClick={onConfirm} />
+        <ActionButton
+          size="small"
+          type="accept"
+          onClick={(): void => {
+            onConfirm?.();
+            setOpen(false);
+          }}
+        />
         <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
       </div>
     </div>

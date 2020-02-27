@@ -6,6 +6,7 @@ import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
+import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -26,6 +27,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const guidance = isGuidance && renderGuidance(pathwayState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
   const { patientRecords, setPatientRecords } = usePatientRecords();
+  const client = useFHIRClient();
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
@@ -56,7 +58,64 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             onChange={(e): void => setComments(e.target.value)}
           ></textarea>
           <div className={styles.footer}>
-            <ConfirmedActionButton type="accept" size="large" />
+            <ConfirmedActionButton
+              type="accept"
+              size="large"
+              onConfirm={(): void => {
+                if (pathwayState.action.length > 0) {
+                  // const resource = pathwayState.action[0].resource;
+                  // temp resource copied from patient record
+                  const resource = {
+                    resourceType: 'Procedure',
+                    id: '126500',
+                    meta: {
+                      versionId: '1',
+                      lastUpdated: '2019-08-22T17:03:11.110+00:00',
+                      profile: [
+                        'http://hl7.org/fhir/us/shr/StructureDefinition/onco-core-CancerRelatedRadiationProcedure'
+                      ]
+                    },
+                    extension: [
+                      {
+                        url:
+                          'http://hl7.org/fhir/us/shr/DSTU2/StructureDefinition/onco-core-CancerReasonReference-extension',
+                        valueReference: {
+                          reference: 'Condition/1d4d5de8-097d-4c5b-bb7b-48b5fd7fb441'
+                        }
+                      }
+                    ],
+                    subject: {
+                      reference: 'Patient/126040'
+                    },
+                    status: 'completed',
+                    code: {
+                      coding: [
+                        {
+                          system: 'http://snomed.info/sct',
+                          code: '367336001',
+                          display: 'Chemotherapy (procedure)'
+                        }
+                      ],
+                      text: 'Chemotherapy (procedure)'
+                    },
+                    reasonReference: {
+                      reference: 'Condition/126120'
+                    },
+                    performedPeriod: {
+                      start: '2018-11-08T09:02:14-05:00',
+                      end: '2018-11-08T09:30:14-05:00'
+                    },
+                    encounter: {
+                      reference: 'Encounter/126193'
+                    }
+                  };
+                  setPatientRecords([...patientRecords, resource]);
+                  // @ts-ignore
+                  client.create(resource);
+                  // console.log(resource);
+                }
+              }}
+            />
           </div>
           <div className={styles.footer}>
             <ConfirmedActionButton type="decline" size="large" />
