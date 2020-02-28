@@ -39,7 +39,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
           {guidance || branch}
         </tbody>
       </table>
-      {isActionable && (
+      {isActionable && isGuidance && (
         <form className={styles.commentsForm}>
           <label>Comments:</label>
           <button
