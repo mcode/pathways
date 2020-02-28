@@ -8,6 +8,8 @@ import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { usePatient } from 'components/PatientProvider';
+import { translatePathwayRecommendation } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNote, Note } from 'components/NoteProvider';
 interface ExpandedNodeProps {
@@ -29,6 +31,8 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const client = useFHIRClient();
   const note = useNote();
+  const patient = usePatient();
+
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
@@ -64,56 +68,16 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               onConfirm={(): void => {
                 gatherInfo(note, patientRecords, 'Accepted', comments, pathwayState);
                 if (pathwayState.action.length > 0) {
-                  // const resource = pathwayState.action[0].resource;
-                  // temp resource copied from patient record
-                  const resource = {
-                    resourceType: 'Procedure',
-                    id: '126500',
-                    meta: {
-                      versionId: '1',
-                      lastUpdated: '2019-08-22T17:03:11.110+00:00',
-                      profile: [
-                        'http://hl7.org/fhir/us/shr/StructureDefinition/onco-core-CancerRelatedRadiationProcedure'
-                      ]
-                    },
-                    extension: [
-                      {
-                        url:
-                          'http://hl7.org/fhir/us/shr/DSTU2/StructureDefinition/onco-core-CancerReasonReference-extension',
-                        valueReference: {
-                          reference: 'Condition/1d4d5de8-097d-4c5b-bb7b-48b5fd7fb441'
-                        }
-                      }
-                    ],
-                    subject: {
-                      reference: 'Patient/126040'
-                    },
-                    status: 'completed',
-                    code: {
-                      coding: [
-                        {
-                          system: 'http://snomed.info/sct',
-                          code: '367336001',
-                          display: 'Chemotherapy (procedure)'
-                        }
-                      ],
-                      text: 'Chemotherapy (procedure)'
-                    },
-                    reasonReference: {
-                      reference: 'Condition/126120'
-                    },
-                    performedPeriod: {
-                      start: '2018-11-08T09:02:14-05:00',
-                      end: '2018-11-08T09:30:14-05:00'
-                    },
-                    encounter: {
-                      reference: 'Encounter/126193'
-                    }
-                  };
+                  const resource: fhir.Resource = translatePathwayRecommendation(
+                    pathwayState.action[0].resource,
+                    patient.id as string
+                  );
+                  console.log(resource);
+
                   setPatientRecords([...patientRecords, resource]);
+                  // TODO: Remove ts-ignore once we change type of client to fhir client
                   // @ts-ignore
                   client.create(resource);
-                  // console.log(resource);
                 }
               }}
             />
@@ -322,7 +286,7 @@ function gatherInfo(
               return profile.includes(value);
             })
           ) {
-              console.log(profile);
+            console.log(profile);
             const index = elements.findIndex(value => {
               return profile.includes(value);
             });
