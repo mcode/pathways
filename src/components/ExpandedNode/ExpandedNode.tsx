@@ -34,7 +34,10 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   return (
     <div className={indexStyles.expandedNode}>
       <table className={styles.infoTable}>
-        <tbody>{guidance || branch}</tbody>
+        <tbody>
+          <StatusField documentation={documentation} />
+          {guidance || branch}
+        </tbody>
       </table>
       {isActionable && (
         <form className={styles.commentsForm}>
@@ -77,6 +80,20 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
       <td className={styles.desc}>{description}</td>
     </tr>
   );
+};
+
+type StatusFieldProps = {
+  documentation: DocumentationResource | undefined;
+};
+
+const StatusField: FC<StatusFieldProps> = ({ documentation }) => {
+  if (!documentation?.resource) {
+    return null;
+  }
+  const status = documentation.status;
+  const rawDate = documentation.resource?.meta?.lastUpdated;
+  const date = rawDate && new Date(rawDate).toLocaleString('en-us');
+  return <ExpandedNodeField key="Status" title={status} description={date} />;
 };
 
 function renderBranch(

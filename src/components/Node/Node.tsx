@@ -12,7 +12,9 @@ import {
   faPlay,
   faPrescriptionBottleAlt,
   faCapsules,
-  faSyringe
+  faSyringe,
+  faCheckCircle,
+  faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 
 interface NodeProps {
@@ -24,11 +26,6 @@ interface NodeProps {
   yCoordinate: number;
   expanded?: boolean;
   onClickHandler?: () => void;
-}
-
-interface NodeIconProps {
-  pathwayState: State;
-  isGuidance: boolean;
 }
 
 const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivElement, NodeProps>(
@@ -50,30 +47,42 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
       top: yCoordinate,
       left: xCoordinate
     };
+
     const backgroundColorClass = isOnPatientPath ? styles.onPatientPath : styles.notOnPatientPath;
-    const currentNodeClass = isCurrentNode ? styles.current : '';
-    const expandedNodeClass = isCurrentNode
-      ? styles.childCurrent
-      : isOnPatientPath
-      ? styles.childOnPatientPath
-      : styles.childNotOnPatientPath;
+    const isActionable = isCurrentNode && !documentation;
+    const topLevelClasses = [styles.node, backgroundColorClass];
+    let expandedNodeClass = '';
+    if (expanded) topLevelClasses.push(nodeStyles.expanded);
+    if (isActionable) {
+      topLevelClasses.push(styles.actionable);
+      expandedNodeClass = styles.childActionable;
+    } else {
+      expandedNodeClass = isOnPatientPath
+        ? styles.childOnPatientPath
+        : styles.childNotOnPatientPath;
+    }
     const isGuidance = isGuidanceState(pathwayState);
+    // TODO: how do we determine whether a node has been accepted or declined?
+    // for now:
+    // if it's a non-actionable guidance state on the path: accepted == has documentation
+    // if it's actionable, not guidance or not on the path: null
+    const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
+    const isAccepted = wasActionTaken ? documentation != null : null;
+
     return (
-      <div
-        className={`${styles.node} ${backgroundColorClass} ${expanded &&
-          nodeStyles.expanded} ${currentNodeClass}`}
-        style={style}
-        ref={ref}
-      >
+      <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
         <div className={nodeStyles.nodeTitle} onClick={onClickHandler}>
-          <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
-          {label}
+          <div className={nodeStyles.iconAndLabel}>
+            <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
+            {label}
+          </div>
+          <StatusIcon accepted={isAccepted} />
         </div>
         {expanded && (
           <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
             <ExpandedNode
               pathwayState={pathwayState as GuidanceState}
-              isActionable={isCurrentNode}
+              isActionable={isActionable}
               isGuidance={isGuidance}
               documentation={documentation}
             />
@@ -83,6 +92,11 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     );
   }
 );
+
+interface NodeIconProps {
+  pathwayState: State;
+  isGuidance: boolean;
+}
 
 const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
   let icon: IconProp = faMicroscope;
@@ -97,6 +111,22 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
     }
   }
   return <FontAwesomeIcon icon={icon} className={styles.icon} />;
+};
+
+interface StatusIconProps {
+  accepted: boolean | null;
+}
+
+const StatusIcon: FC<StatusIconProps> = ({ accepted }) => {
+  if (accepted == null) {
+    return null;
+  }
+  const icon = accepted ? faCheckCircle : faTimesCircle;
+  return (
+    <div className={nodeStyles.statusIcon}>
+      <FontAwesomeIcon icon={icon} className={styles.icon} />
+    </div>
+  );
 };
 
 export default Node;

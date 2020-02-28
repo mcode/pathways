@@ -24,7 +24,7 @@
   background-color: $blue;
   color: $white;
 
-  &.current {
+  &.actionable {
     background-color: $red;
   }
 
@@ -51,7 +51,7 @@
     border: 1px solid $blue;
 
   }
-  &.childCurrent {
+  &.childActionable {
     border: 1px solid $red;
   }
 
