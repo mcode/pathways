@@ -27,7 +27,7 @@ const App: FC<AppProps> = ({ demo }) => {
   const [patientRecords, _setPatientRecords] = useState<fhir.DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
-  const [evaluatePath, setEvaluatePath] = useState<boolean>(true);
+  const [evaluatePath, setEvaluatePath] = useState<boolean>(false);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
   const [client, setClient] = useState<PathwaysClient | null>(null);
   const [user, setUser] = useState<string>('');

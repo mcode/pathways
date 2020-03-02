@@ -51,6 +51,7 @@ describe('<Graph />', () => {
     issued: '2014-11-06T09:27:09.556-05:00'
   };
 
+  let evaluatePath = false;
   const renderGraph = (
     evaluatedPathway: EvaluatedPathway,
     updateEvaluatedPathways: (value: EvaluatedPathway) => void
@@ -61,6 +62,10 @@ describe('<Graph />', () => {
           patientRecords: [samplePatient, sampleObservation],
           setPatientRecords: (): void => {
             return;
+          },
+          evaluatePath: evaluatePath,
+          setEvaluatePath: (value: boolean): void => {
+            evaluatePath = value;
           }
         }}
       >
