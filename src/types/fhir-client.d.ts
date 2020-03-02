@@ -6,5 +6,6 @@ declare module 'pathways-client' {
     encounter?: Record<string, Function>;
     user?: Record<string, Function>;
     units?: Record<string, Function>;
+    create?: (resource: fhir.Resource) => Promise<fhir.Resource>;
   }
 }

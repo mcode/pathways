@@ -75,9 +75,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
                   console.log(resource);
 
                   setPatientRecords([...patientRecords, resource]);
-                  // TODO: Remove ts-ignore once we change type of client to fhir client
-                  // @ts-ignore
-                  client.create(resource);
+                  client?.create?.(resource);
                 }
               }}
             />

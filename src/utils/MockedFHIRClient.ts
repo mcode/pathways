@@ -1,9 +1,9 @@
 class MockedFHIRClient {
   patient = {};
 
-  async create(): Promise<string> {
+  async create(): Promise<fhir.Resource> {
     console.log('Mocked create');
-    return Promise.resolve('Mocked Create');
+    return Promise.resolve({});
   }
 }
 
