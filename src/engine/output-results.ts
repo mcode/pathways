@@ -39,14 +39,14 @@ export function pathwayData(
   const patientDocumentation = [];
   const evaluatedPathway = [startState];
 
-  let stateData = nextState(pathway, patientData, startState);
+  let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
     currentStatus = stateData.status;
     if (stateData.documentation !== null)
       patientDocumentation.push(retrieveResource(stateData.documentation, resources));
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
     evaluatedPathway.push(stateData.nextState);
-    stateData = nextState(pathway, patientData, stateData.nextState);
+    stateData = nextState(pathway, patientData, stateData.nextState, resources);
   }
   const currentStateName = evaluatedPathway[evaluatedPathway.length - 1];
   const currentState = pathway.states[currentStateName];
@@ -159,20 +159,32 @@ function formatNextState(resource: DocumentationResource, currentState: State): 
 function getConditionalNextState(
   patientData: PatientData,
   currentState: State,
-  currentStateName: string
+  currentStateName: string,
+  resources: fhir.DomainResource[]
 ): StateData {
   for (const transition of currentState.transitions) {
     if (transition.condition) {
-      let documentationResource =
-        'condition' in transition ? patientData[transition.condition.description] : '';
-      if (documentationResource.length) {
-        documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
+      let documentationResource: DocumentationResource | null = null;
+      if (patientData[transition.condition.description].length)
+        // TODO: add functionality for multiple resources
+        documentationResource = patientData[transition.condition.description][0];
+      else {
+        const doc = {
+          resourceType: 'DocumentReference',
+          id: '',
+          status: 'completed',
+          state: currentStateName
+        };
+        const tempResource = retrieveNote(transition.condition.description, doc, resources);
+        if (tempResource) documentationResource = tempResource;
+      }
+
+      if (documentationResource) {
         return {
           nextState: transition.transition,
           documentation: formatDocumentation(documentationResource, currentStateName),
-          status: 'status' in documentationResource ? documentationResource.status : 'unknown'
+          status: documentationResource.status
         };
-        // Is there ever a time we may hit multiple conditions?
       }
     }
   }
@@ -204,7 +216,8 @@ function noMatchingResourceForState(): StateData {
 function nextState(
   pathway: Pathway,
   patientData: PatientData,
-  currentStateName: string
+  currentStateName: string,
+  resources: fhir.DomainResource[]
 ): StateData | null {
   const currentState = pathway.states[currentStateName];
   if ('action' in currentState) {
@@ -217,6 +230,7 @@ function nextState(
         status: 'status' in resource ? resource.status : 'unknown'
       };
     } else {
+      // TODO: possibly add search for a note here
       // Action exists but has no matching resource in patientData
       return noMatchingResourceForState();
     }
@@ -227,8 +241,27 @@ function nextState(
       status: 'completed'
     };
   } else if (currentState.transitions.length > 1) {
-    return getConditionalNextState(patientData, currentState, currentStateName);
+    return getConditionalNextState(patientData, currentState, currentStateName, resources);
   } else return null;
+}
+
+function retrieveNote(
+  condition: string,
+  doc: DocumentationResource,
+  resources: fhir.DomainResource[]
+): DocumentationResource | null {
+  doc.resource = resources.find(resource => {
+    return (
+      resource.resourceType === 'DocumentReference' && resource.id === btoa(condition)
+      // TODO: use DocumentReference attachement data instead of id
+      // && resource.content.attachement.data === btoa(condition)
+    );
+  });
+
+  if (!doc.resource) return null;
+  doc.id = doc.resource.id ? doc.resource.id : 'unknown';
+
+  return doc;
 }
 
 function retrieveResource(

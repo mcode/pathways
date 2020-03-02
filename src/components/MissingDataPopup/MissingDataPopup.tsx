@@ -4,6 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { usePatient } from 'components/PatientProvider';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { useFHIRClient } from 'components/FHIRClient';
 
 interface MissingDataPopup {
   values: string[];
@@ -33,6 +36,9 @@ interface PopupContentProps {
 }
 
 const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
+  const patient = usePatient();
+  const client = useFHIRClient();
+  const { patientRecords, setPatientRecords } = usePatientRecords();
   const [showCheck, setShowCheck] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
   return (
@@ -64,11 +70,36 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
       <div className={styles.footer}>
         <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
         {showCheck && (
-          <ActionButton size="small" type="accept" onClick={(): void => setOpen(false)} />
+          <ActionButton
+            size="small"
+            type="accept"
+            onClick={(): void => {
+              setOpen(false);
+              const note = createDocumentReference(selected, patient);
+              setPatientRecords([...patientRecords, note]);
+              client?.create?.(note);
+            }}
+          />
         )}
       </div>
     </div>
   );
+};
+
+const createDocumentReference = (selected: string, patient: fhir.Patient): object => {
+  return {
+    resourceType: 'DocumentReference',
+    id: btoa(selected), // Work around for typescript accessing the data
+    status: 'current',
+    subject: 'Patient/' + patient.id,
+    context: { encounter: 'Encounter/1' },
+    content: {
+      attachement: {
+        data: btoa(selected), // Base 64 encoded data
+        contentType: 'text/plain'
+      }
+    }
+  };
 };
 
 export default MissingDataPopup;

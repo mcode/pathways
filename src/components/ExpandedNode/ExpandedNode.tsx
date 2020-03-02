@@ -175,7 +175,7 @@ function renderBranch(
       <ExpandedNodeField
         key="value"
         title="Value"
-        description={<MissingDataPopup values={values} />}
+        description={<MissingDataPopup values={values.filter((a, b) => values.indexOf(a) === b)} />}
       />
     );
   }

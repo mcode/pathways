@@ -41,9 +41,10 @@ const Graph: FC<GraphProps> = ({
   const setPath = useCallback(
     (value: PathwayResults): void => {
       _setPath(value.path);
+      patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
-    [evaluatedPathway.pathway, updateEvaluatedPathways]
+    [evaluatedPathway.pathway, updateEvaluatedPathways, patientRecords]
   );
 
   // Get the layout of the graph
@@ -106,7 +107,6 @@ const Graph: FC<GraphProps> = ({
         entry: resources.map((r: object) => ({ resource: r }))
       };
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
-        patientRecords.setEvaluatePath(false);
         if (!cancel) setPath(pathwayResults);
       });
 

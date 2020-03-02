@@ -21,7 +21,7 @@ describe('pathways evaluation engine', () => {
    * Patient 1 is T1N0 and has completed lumpectomy and radiation
    */
   it('outputs correct data for patient1', done => {
-    evaluatePatientOnPathway(patient1, pathway).then(patientPath => {
+    evaluatePatientOnPathway(patient1, pathway, []).then(patientPath => {
       expect(patientPath).toEqual(results1);
       done();
     });
@@ -31,7 +31,7 @@ describe('pathways evaluation engine', () => {
    * Patient 2 is T0N1 and has completed medication request and chemo
    */
   it('outputs correct data for patient2', done => {
-    evaluatePatientOnPathway(patient2, pathway).then(patientPath => {
+    evaluatePatientOnPathway(patient2, pathway, []).then(patientPath => {
       expect(patientPath).toEqual(results2);
       done();
     });
@@ -41,7 +41,7 @@ describe('pathways evaluation engine', () => {
    * Patient 3 is T0 with no other data
    */
   it('outputs correct data for patient3', done => {
-    evaluatePatientOnPathway(patient3, pathway).then(patientPath => {
+    evaluatePatientOnPathway(patient3, pathway, []).then(patientPath => {
       expect(patientPath).toEqual(results3);
       done();
     });
@@ -51,7 +51,7 @@ describe('pathways evaluation engine', () => {
    * Patient 4 is T0N1 and is not done with ChemoMedication
    */
   it('outputs correct data for patient4', done => {
-    evaluatePatientOnPathway(patient4, pathway).then(patientPath => {
+    evaluatePatientOnPathway(patient4, pathway, []).then(patientPath => {
       expect(patientPath).toEqual(results4);
       done();
     });
