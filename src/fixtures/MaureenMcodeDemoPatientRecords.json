@@ -7237,64 +7237,6 @@
   },
   {
     "resourceType": "Observation",
-    "id": "126124",
-    "meta": {
-      "versionId": "1",
-      "lastUpdated": "2019-08-22T17:03:11.110+00:00",
-      "profile": [
-        "http://hl7.org/fhir/us/shr/StructureDefinition/onco-core-TNMClinicalPrimaryTumorCategory"
-      ]
-    },
-    "extension": [
-      {
-        "url": "http://hl7.org/fhir/us/shr/DSTU2/StructureDefinition/onco-core-RelatedCancerCondition-extension",
-        "valueReference": {
-          "reference": "Condition/1d4d5de8-097d-4c5b-bb7b-48b5fd7fb441"
-        }
-      }
-    ],
-    "status": "final",
-    "category": {
-      "coding": [
-        {
-          "system": "http://hl7.org/fhir/observation-category",
-          "code": "imaging",
-          "display": "imaging"
-        }
-      ],
-      "text": "imaging"
-    },
-    "code": {
-      "coding": [
-        {
-          "system": "http://loinc.org",
-          "code": "21905-5",
-          "display": "Primary tumor.clinical [Class] Cancer"
-        }
-      ],
-      "text": "Primary tumor.clinical [Class] Cancer"
-    },
-    "subject": {
-      "reference": "Patient/126040"
-    },
-    "encounter": {
-      "reference": "Encounter/126119"
-    },
-    "effectiveDateTime": "2018-10-18T22:02:14-04:00",
-    "issued": "2018-10-18T22:02:14.749-04:00",
-    "valueCodeableConcept": {
-      "coding": [
-        {
-          "system": "http://snomed.info/sct",
-          "code": "23351008",
-          "display": "T1"
-        }
-      ],
-      "text": "T1"
-    }
-  },
-  {
-    "resourceType": "Observation",
     "id": "126121",
     "meta": {
       "versionId": "1",
