@@ -99,7 +99,7 @@ const Graph: FC<GraphProps> = ({
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0 && patientRecords.evaluatePath) {
+    if (resources.length > 0 && (path.length === 0 || patientRecords.evaluatePath)) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
