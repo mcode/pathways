@@ -27,7 +27,8 @@ const Graph: FC<GraphProps> = ({
   expandCurrentNode = true,
   updateEvaluatedPathways
 }) => {
-  const resources = usePatientRecords().patientRecords;
+  const patientRecords = usePatientRecords();
+  const resources = patientRecords.patientRecords;
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
@@ -98,13 +99,14 @@ const Graph: FC<GraphProps> = ({
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0 && path.length === 0) {
+    if (resources.length > 0 && patientRecords.evaluatePath) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
         entry: resources.map((r: object) => ({ resource: r }))
       };
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
+        patientRecords.setEvaluatePath(false);
         if (!cancel) setPath(pathwayResults);
       });
 
@@ -112,7 +114,7 @@ const Graph: FC<GraphProps> = ({
         cancel = true;
       };
     }
-  }, [pathway, resources, path.length, setPath]);
+  }, [pathway, resources, path.length, setPath, patientRecords]);
 
   useEffect(() => {
     if (path) {

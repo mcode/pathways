@@ -8,11 +8,17 @@ interface PatientRecordsProviderProps {
 interface PatientRecordsContextInterface {
   patientRecords: fhir.DomainResource[];
   setPatientRecords: Function;
+  evaluatePath: boolean;
+  setEvaluatePath: (value: boolean) => void;
 }
 
 export const PatientRecordsContext = createContext<PatientRecordsContextInterface>({
   patientRecords: [],
   setPatientRecords: (): void => {
+    return;
+  },
+  evaluatePath: true,
+  setEvaluatePath: (): void => {
     return;
   }
 });

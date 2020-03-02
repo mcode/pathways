@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -24,12 +24,18 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ demo }) => {
-  const [patientRecords, setPatientRecords] = useState<fhir.DomainResource[]>([]);
+  const [patientRecords, _setPatientRecords] = useState<fhir.DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
+  const [evaluatePath, setEvaluatePath] = useState<boolean>(true);
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
   const [client, setClient] = useState<PathwaysClient | null>(null);
   const [user, setUser] = useState<string>('');
+
+  const setPatientRecords = useCallback((value: fhir.DomainResource[]): void => {
+    _setPatientRecords(value);
+    setEvaluatePath(true);
+  }, []);
 
   useEffect(() => {
     if (!demo) {
@@ -58,7 +64,8 @@ const App: FC<AppProps> = ({ demo }) => {
       setClient(new MockedFHIRClient());
       setPatientRecords(demoRecords);
     }
-  }, [demo]);
+  }, [demo, setPatientRecords]);
+
   // gather note info
   useEffect(() => {
     client?.user?.read().then((user: fhir.Practitioner) => {
@@ -76,6 +83,7 @@ const App: FC<AppProps> = ({ demo }) => {
       }
     });
   }, [client]);
+
   const service = useGetPathwaysService(
     config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
   );
@@ -138,7 +146,9 @@ const App: FC<AppProps> = ({ demo }) => {
           demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
         }
       >
-        <PatientRecordsProvider value={{ patientRecords, setPatientRecords }}>
+        <PatientRecordsProvider
+          value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
+        >
           <PathwayProvider
             pathwayCtx={{
               updateEvaluatedPathways,
