@@ -62,7 +62,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="accept"
               size="large"
               onConfirm={(): void => {
-                gatherInfo(note, 'Accepted', comments);
+                gatherInfo(note, patientRecords, 'Accepted', comments, pathwayState);
                 if (pathwayState.action.length > 0) {
                   // const resource = pathwayState.action[0].resource;
                   // temp resource copied from patient record
@@ -286,13 +286,63 @@ function renderGuidance(
   return returnElements;
 }
 
-function gatherInfo(note: Note | null, status: string, notes: string): void {
+function gatherInfo(
+  note: Note | null,
+  patientRecords: fhir.DomainResource[],
+  status: string,
+  notes: string,
+  pathwayState: GuidanceState
+): void {
   if (note) {
     note.status = status;
     note.notes = notes;
+    note.treatment = pathwayState.action[0].description;
+    note.node = pathwayState.label;
+
+    const tnm: string[] = ['', '', ''];
+    patientRecords.forEach(record => {
+      if (record.meta?.profile && record.meta.profile.length) {
+        const elements = [
+          'TNMClinicalPrimaryTumorCategory',
+          'TNMClinicalRegionalNodesCategory',
+          'TNMClinicalDistantMetastasesCategory'
+        ];
+
+        const profile = record.meta.profile[0];
+        if (record.resourceType === 'Observation') {
+          if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
+            const obs = record as fhir.Observation;
+            const value = obs.valueCodeableConcept?.text;
+            const name = obs.code.text;
+            if (value && name) {
+              note.mcodeElements[name] = value;
+            }
+          } else if (
+            elements.some(value => {
+              return profile.includes(value);
+            })
+          ) {
+              console.log(profile);
+            const index = elements.findIndex(value => {
+              return profile.includes(value);
+            });
+            if (index > -1) {
+              const obs = record as fhir.Observation;
+              const value = obs.valueCodeableConcept?.text;
+              if (value) {
+                tnm[index] = value;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    note.mcodeElements['Clinical TNM'] = tnm.join(' ');
   }
 
   console.log(note);
+  console.log(pathwayState);
 }
 
 export default ExpandedNode;

@@ -6,10 +6,11 @@ export interface Note {
   date: Date;
   physician: string;
   birthdate?: Date;
-  mcodeElements?: {
+  mcodeElements: {
     [key: string]: string;
   };
   pathway?: string;
+  node?: string;
   status: string;
   treatment?: string;
   notes?: string;
@@ -29,6 +30,7 @@ export const NoteProvider: FC<NoteProviderProps> = ({ children, patient, date, p
     patient: patient,
     date: date,
     physician: physician,
+    mcodeElements: {},
     pathway: usePathwayContext().evaluatedPathway?.pathway.name,
     status: 'Pending'
   };
