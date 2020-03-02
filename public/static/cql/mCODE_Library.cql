@@ -23,6 +23,7 @@ code "Lumpectomy of breast (procedure) code": '392021009' from "SNOMEDCT" displa
 code "Teleradiotherapy procedure (procedure) code": '33195004' from "SNOMEDCT" display 'Teleradiotherapy procedure (procedure)'
 code "Chemotherapy (procedure) code": '367336001' from "SNOMEDCT" display 'Chemotherapy (procedure)'
 // RXNORM Medication Request
+code "trastuzumab 150 MG Injection code": '1922509' from "RXNORM" display 'trastuzumab 150 MG Injection'
 code "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code": '1790099' from "RXNORM" display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
 code "11p partial monosomy syndrome 4135001 code": '4135001' from SNOMEDCT display '11p partial monosomy syndrome'
@@ -47,6 +48,7 @@ concept "T1 category (finding)": {"T1 category (finding) code"} display 'T1 cate
 concept "N0 category (finding)": {"N0 category (finding) code"} display 'N0 category (finding)'
 concept "N1 category (finding)": {"N1 category (finding) code"} display 'N1 category (finding)'
 // Medication Requests
+concept "trastuzumab 150 MG Injection": {"trastuzumab 150 MG Injection code"} display 'trastuzumab 150 MG Injection'
 concept "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection": {"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"} display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
 concept "HER2 [Presence] in Breast cancer specimen by Immune stain" {"HER2 [Presence] in Breast cancer specimen by Immune stain code"} display 'HER2 [Presence] in Breast cancer specimen by Immune stain'

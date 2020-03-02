@@ -1,7 +1,7 @@
 import layout from '../layout';
 
 import samplePathway from './fixtures/pathways/sample_pathway.json';
-import upennPathway from './fixtures/pathways/upenn_her2_pathway.json';
+import her2Pathway from './fixtures/pathways/her2_pathway.json';
 import testPathway from './fixtures/pathways/graph_layout_test_pathway.json';
 import { NodeCoordinates } from 'graph-model';
 
@@ -16,8 +16,8 @@ describe('pathway graph layout', () => {
     checkLayout(nodeCoordinates);
   });
 
-  it('upenn pathway layout set correctly', () => {
-    const { nodeCoordinates } = layout(upennPathway, {});
+  it('her2 pathway layout set correctly', () => {
+    const { nodeCoordinates } = layout(her2Pathway, {});
     checkLayout(nodeCoordinates);
   });
 
