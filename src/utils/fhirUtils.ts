@@ -8,7 +8,7 @@ export function translatePathwayRecommendation(
 ): fhir.Resource {
   const { resourceType } = pathwayResource;
   const resourceProperties = {
-    // resourceType,
+    resourceType,
     id: v1(),
     intent: 'order',
     subject: { reference: `Patient/${patientId}` },
@@ -17,20 +17,17 @@ export function translatePathwayRecommendation(
   };
 
   switch (resourceType) {
-    // Should be 'ServiceRequest' once we change resource to R4 in pathway
-    case 'Procedure': {
+    case 'ServiceRequest': {
       const { code } = pathwayResource as BasicActionResource;
       return {
         ...resourceProperties,
-        code,
-        resourceType: 'ProcedureRequest'
+        code
       };
     }
     case 'MedicationRequest': {
       const { medicationCodeableConcept } = pathwayResource as BasicMedicationRequestResource;
       return {
         ...resourceProperties,
-        resourceType,
         medicationCodeableConcept
       };
     }

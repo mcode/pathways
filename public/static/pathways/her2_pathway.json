@@ -87,7 +87,7 @@
           "transition": "PostchemotherapyTrastuzumabRequest"
         }
       ],
-      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+      "cql": "if exists [Procedure: \"Chemotherapy (procedure) code\"] then [Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} else [ServiceRequest: \"Chemotherapy (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value }"
     },
     "ChemotherapyTCHAC+TH": {
       "label": "Chemotherapy TCH AC + TH",
@@ -115,7 +115,7 @@
           "transition": "PostchemotherapyTrastuzumabRequest"
         }
       ],
-      "cql": "[Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} "
+      "cql": "if exists [Procedure: \"Chemotherapy (procedure) code\"] then [Procedure: \"Chemotherapy (procedure) code\"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value , status: Chemo.status.value} else [ServiceRequest: \"Chemotherapy (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value }"
     },
     "PostchemotherapyTrastuzumabRequest": {
       "label": "Post-Chemotherapy Trastuzumab Request",
