@@ -86,19 +86,35 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
   );
 };
 
-const createDocumentReference = (selected: string, patient: fhir.Patient): object => {
+const createDocumentReference = (
+  selected: string,
+  patient: fhir.Patient
+): fhir.DocumentReference => {
   return {
     resourceType: 'DocumentReference',
     id: btoa(selected), // Work around for typescript accessing the data
     status: 'current',
-    subject: 'Patient/' + patient.id,
-    context: { encounter: 'Encounter/1' },
-    content: {
-      attachement: {
-        data: btoa(selected), // Base 64 encoded data
-        contentType: 'text/plain'
+    subject: { reference: `Patient/${patient.id}` },
+    context: { encounter: { reference: 'Encounter/1' } },
+    content: [
+      {
+        attachment: {
+          data: btoa(selected), // Base 64 encoded data
+          contentType: 'text/plain'
+        }
       }
-    }
+    ],
+    // type and indexed are required in STU3 DocumentReference but not in R4
+    type: {
+      coding: [
+        {
+          system: 'http://loinc.org',
+          code: '34108-1',
+          display: 'Outpatient Note'
+        }
+      ]
+    },
+    indexed: ''
   };
 };
 
