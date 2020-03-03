@@ -13,7 +13,10 @@ export function translatePathwayRecommendation(
     intent: 'order',
     subject: { reference: `Patient/${patientId}` },
     status: 'active',
-    authoredOn: new Date().toISOString()
+    authoredOn: new Date().toISOString(),
+    meta: {
+      lastUpdated: new Date().toISOString()
+    }
   };
 
   switch (resourceType) {
