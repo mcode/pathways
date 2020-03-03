@@ -63,7 +63,7 @@
           "type": "create",
           "description": "Issue Lumpectomy of breast procedure",
           "resource": {
-            "resourceType": "Procedure",
+            "resourceType": "ServiceRequest",
             "code": {
               "coding": [
                 {
@@ -82,7 +82,7 @@
           "transition": "N-test"
         }
       ],
-      "cql": "if [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } "
+      "cql": "if exists [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } "
     },
     "Radiation": {
       "label": "Radiation",
@@ -91,7 +91,7 @@
           "type": "create",
           "description": "Issue Teleradiotherapy procedure",
           "resource": {
-            "resourceType": "Procedure",
+            "resourceType": "ServiceRequest",
             "code": {
               "coding": [
                 {
@@ -105,7 +105,7 @@
           }
         }
       ],
-      "cql": "if [Procedure: \"Teleradiotherapy procedure (procedure) code\"] then [Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } else [ServiceRequest: \"Teleradiotherapy procedure (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } ",
+      "cql": "if exists [Procedure: \"Teleradiotherapy procedure (procedure) code\"] then [Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } else [ServiceRequest: \"Teleradiotherapy procedure (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value } ",
       "transitions": []
     },
     "Chemo": {
