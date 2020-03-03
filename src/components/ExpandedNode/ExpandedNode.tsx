@@ -9,9 +9,9 @@ import { isBranchState } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { usePatient } from 'components/PatientProvider';
-import { translatePathwayRecommendation } from 'utils/fhirUtils';
+import { translatePathwayRecommendation, createDocumentReference } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-import { useNote, Note } from 'components/NoteProvider';
+import { useNote, Note, toString } from 'components/NoteProvider';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -35,7 +35,14 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
-
+  const onConfirm = (status: string): void => {
+    if (note) {
+      const noteString = gatherInfo(note, patientRecords, status, comments, pathwayState);
+      const documentReference = createDocumentReference(noteString, patient);
+      setPatientRecords([...patientRecords, documentReference]);
+      client?.create?.(documentReference);
+    }
+  };
   return (
     <div className={indexStyles.expandedNode}>
       <table className={styles.infoTable}>
@@ -66,13 +73,12 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="accept"
               size="large"
               onConfirm={(): void => {
-                gatherInfo(note, patientRecords, 'Accepted', comments, pathwayState);
+                onConfirm('Accepted');
                 if (pathwayState.action.length > 0) {
                   const resource: fhir.Resource = translatePathwayRecommendation(
                     pathwayState.action[0].resource,
                     patient.id as string
                   );
-                  console.log(resource);
 
                   setPatientRecords([...patientRecords, resource]);
                   client?.create?.(resource);
@@ -81,7 +87,13 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             />
           </div>
           <div className={styles.footer}>
-            <ConfirmedActionButton type="decline" size="large" />
+            <ConfirmedActionButton
+              type="decline"
+              size="large"
+              onConfirm={(): void => {
+                onConfirm('Declined');
+              }}
+            />
           </div>
         </form>
       )}
@@ -249,62 +261,59 @@ function renderGuidance(
 }
 
 function gatherInfo(
-  note: Note | null,
+  note: Note,
   patientRecords: fhir.DomainResource[],
   status: string,
   notes: string,
   pathwayState: GuidanceState
-): void {
-  if (note) {
-    note.status = status;
-    note.notes = notes;
-    note.treatment = pathwayState.action[0].description;
-    note.node = pathwayState.label;
+): string {
+  note.status = status;
+  note.notes = notes;
+  note.treatment = pathwayState.action[0].description;
+  note.node = pathwayState.label;
 
-    const tnm: string[] = ['', '', ''];
-    patientRecords.forEach(record => {
-      if (record.meta?.profile && record.meta.profile.length) {
-        const elements = [
-          'TNMClinicalPrimaryTumorCategory',
-          'TNMClinicalRegionalNodesCategory',
-          'TNMClinicalDistantMetastasesCategory'
-        ];
+  const tnm: string[] = ['', '', ''];
+  patientRecords.forEach(record => {
+    // TODO: should use code bindings over
+    // profile names.
+    if (record.meta?.profile && record.meta.profile.length) {
+      const elements = [
+        'TNMClinicalPrimaryTumorCategory',
+        'TNMClinicalRegionalNodesCategory',
+        'TNMClinicalDistantMetastasesCategory'
+      ];
 
-        const profile = record.meta.profile[0];
-        if (record.resourceType === 'Observation') {
-          if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
+      const profile = record.meta.profile[0];
+      if (record.resourceType === 'Observation') {
+        if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
+          const obs = record as fhir.Observation;
+          const value = obs.valueCodeableConcept?.text;
+          const name = obs.code.text;
+          if (value && name) {
+            note.mcodeElements[name] = value;
+          }
+        } else if (
+          elements.some(value => {
+            return profile.includes(value);
+          })
+        ) {
+          const index = elements.findIndex(value => {
+            return profile.includes(value);
+          });
+          if (index > -1) {
             const obs = record as fhir.Observation;
             const value = obs.valueCodeableConcept?.text;
-            const name = obs.code.text;
-            if (value && name) {
-              note.mcodeElements[name] = value;
-            }
-          } else if (
-            elements.some(value => {
-              return profile.includes(value);
-            })
-          ) {
-            console.log(profile);
-            const index = elements.findIndex(value => {
-              return profile.includes(value);
-            });
-            if (index > -1) {
-              const obs = record as fhir.Observation;
-              const value = obs.valueCodeableConcept?.text;
-              if (value) {
-                tnm[index] = value;
-              }
+            if (value) {
+              tnm[index] = value;
             }
           }
         }
       }
-    });
+    }
+  });
 
-    note.mcodeElements['Clinical TNM'] = tnm.join(' ');
-  }
-
-  console.log(note);
-  console.log(pathwayState);
+  note.mcodeElements['Clinical TNM'] = tnm.join(' ');
+  return toString(note);
 }
 
 export default ExpandedNode;

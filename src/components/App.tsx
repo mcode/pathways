@@ -18,7 +18,7 @@ import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
-
+import { getHumanName } from 'utils/fhirUtils';
 interface AppProps {
   demo: boolean;
 }
@@ -69,15 +69,7 @@ const App: FC<AppProps> = ({ demo }) => {
   // gather note info
   useEffect(() => {
     client?.user?.read().then((user: fhir.Practitioner) => {
-      console.log(user);
-      const name =
-        user.name &&
-        [
-          user.name[0]?.prefix?.join(' '),
-          user.name[0]?.given?.join(' '),
-          user.name[0]?.family,
-          user.name[0]?.suffix?.join(' ')
-        ].join(' ');
+      const name = user.name && getHumanName(user.name);
       if (name) {
         setUser(name);
       }
@@ -156,7 +148,7 @@ const App: FC<AppProps> = ({ demo }) => {
               setEvaluatedPathway: setEvaluatedPathwayCallback
             }}
           >
-            <NoteProvider physician={user} patient={'Dummy'} date={new Date(Date.now())}>
+            <NoteProvider physician={user} date={new Date(Date.now())}>
               <div>
                 <Header logo={logo} />
                 <Navigation

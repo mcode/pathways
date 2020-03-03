@@ -7,7 +7,7 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { useFHIRClient } from 'components/FHIRClient';
-
+import { createDocumentReference } from 'utils/fhirUtils';
 interface MissingDataPopup {
   values: string[];
 }
@@ -84,38 +84,6 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
       </div>
     </div>
   );
-};
-
-const createDocumentReference = (
-  selected: string,
-  patient: fhir.Patient
-): fhir.DocumentReference => {
-  return {
-    resourceType: 'DocumentReference',
-    id: btoa(selected), // Work around for typescript accessing the data
-    status: 'current',
-    subject: { reference: `Patient/${patient.id}` },
-    context: { encounter: { reference: 'Encounter/1' } },
-    content: [
-      {
-        attachment: {
-          data: btoa(selected), // Base 64 encoded data
-          contentType: 'text/plain'
-        }
-      }
-    ],
-    // type and indexed are required in STU3 DocumentReference but not in R4
-    type: {
-      coding: [
-        {
-          system: 'http://loinc.org',
-          code: '34108-1',
-          display: 'Outpatient Note'
-        }
-      ]
-    },
-    indexed: ''
-  };
 };
 
 export default MissingDataPopup;
