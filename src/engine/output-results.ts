@@ -252,9 +252,8 @@ function retrieveNote(
 ): DocumentationResource | null {
   doc.resource = resources.find(resource => {
     return (
-      resource.resourceType === 'DocumentReference' && resource.id === btoa(condition)
-      // TODO: use DocumentReference attachement data instead of id
-      // && resource.content.attachement.data === btoa(condition)
+      resource.resourceType === 'DocumentReference' &&
+      (resource as fhir.DocumentReference).content[0].attachment.data === btoa(condition)
     );
   });
 

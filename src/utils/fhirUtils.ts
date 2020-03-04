@@ -66,10 +66,8 @@ export function createDocumentReference(
 ): fhir.DocumentReference {
   return {
     resourceType: 'DocumentReference',
-    id: btoa(selected), // Work around for typescript accessing the data
     status: 'current',
     subject: { reference: `Patient/${patient.id}` },
-    context: { encounter: { reference: 'Encounter/1' } },
     content: [
       {
         attachment: {
