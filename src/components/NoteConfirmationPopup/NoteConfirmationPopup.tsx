@@ -1,8 +1,8 @@
 import React, { FC, ReactElement, useState } from 'react';
 import { Note } from 'components/NoteProvider';
 import styles from './NoteConfirmationPopup.module.scss';
-import PathwayPopup from '../PathwayPopup';
-import ActionButton from '../ActionButton';
+import PathwayPopup from 'components/PathwayPopup';
+import ActionButton from 'components/ActionButton';
 
 interface NoteConfirmationPopupProps {
   note: Note;
