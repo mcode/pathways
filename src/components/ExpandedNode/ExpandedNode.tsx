@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, ReactElement, useState } from 'react';
-import { GuidanceState, DocumentationResource, State } from 'pathways-model';
+import { GuidanceState, DocumentationResource, State, Action } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
@@ -35,14 +35,31 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
-  const onConfirm = (status: string): void => {
+  const onConfirm = (status: string, action: Action[]): void => {
+    const newPatientRecords = [...patientRecords];
+
+    // Create DocumentReference and add to patient record(and post to FHIR server)
     if (note) {
       const noteString = gatherInfo(note, patientRecords, status, comments, pathwayState);
       const documentReference = createDocumentReference(noteString, patient);
-      setPatientRecords([...patientRecords, documentReference]);
+      newPatientRecords.push(documentReference);
       client?.create?.(documentReference);
     }
+
+    // Translate pathway recommended resource and add to patient record
+    if (action.length > 0) {
+      const resource: fhir.Resource = translatePathwayRecommendation(
+        action[0].resource,
+        patient.id as string
+      );
+
+      newPatientRecords.push(resource);
+      client?.create?.(resource);
+    }
+
+    setPatientRecords(newPatientRecords);
   };
+
   return (
     <div className={indexStyles.expandedNode}>
       <table className={styles.infoTable}>
@@ -73,16 +90,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="accept"
               size="large"
               onConfirm={(): void => {
-                onConfirm('Accepted');
-                if (pathwayState.action.length > 0) {
-                  const resource: fhir.Resource = translatePathwayRecommendation(
-                    pathwayState.action[0].resource,
-                    patient.id as string
-                  );
-
-                  setPatientRecords([...patientRecords, resource]);
-                  client?.create?.(resource);
-                }
+                onConfirm('Accepted', pathwayState.action);
               }}
             />
           </div>
@@ -91,7 +99,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="decline"
               size="large"
               onConfirm={(): void => {
-                onConfirm('Declined');
+                onConfirm('Declined', []);
               }}
             />
           </div>
