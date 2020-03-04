@@ -1,3 +1,43 @@
+@import '../../styles/variables';
+
 .notePreview {
+  background-color: $gray-lighter;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  color: $black;
   display: flex;
+  flex-direction: column;
+  min-width: 40em;
+  > div {
+    display: flex;
+  }
+}
+
+.popupActions {
+  display: flex;
+  > :first-child {
+    margin-right: 2em;
+  }
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.noteSection {
+  margin-right: 2em;
+  display: flex;
+  align-items: flex-start;
+  > b {
+    margin-right: 0.5em;
+  }
+}
+
+.popupContent {
+  display: flex;
+  flex-direction: column;
+  > div {
+    margin-bottom: 0.5em;
+  }
 }

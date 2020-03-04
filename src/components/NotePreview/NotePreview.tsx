@@ -18,22 +18,24 @@ const NoteConfirmationPopup: FC<NoteConfirmationPopupProps> = ({ trigger, onConf
       open={open}
       setOpen={setOpen}
       Content={
-        <div>
+        <div className={styles.popupContent}>
           <NotePreview {...note} />
-          <div>
-            The above note will be written into the EHR and any procedure requests will be
-            submitted. Proceed?
-          </div>{' '}
-          <div>
-            <ActionButton
-              size="small"
-              type="accept"
-              onClick={(): void => {
-                onConfirm?.();
-                setOpen(false);
-              }}
-            />
-            <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
+          <div className={styles.popupActions}>
+            <div>
+              The above note will be written into the EHR and any procedure requests will be
+              submitted. Proceed?
+            </div>
+            <div>
+              <ActionButton
+                size="small"
+                type="accept"
+                onClick={(): void => {
+                  onConfirm?.();
+                  setOpen(false);
+                }}
+              />
+              <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
+            </div>
           </div>
         </div>
       }
@@ -56,11 +58,14 @@ const NotePreview: FC<Note> = ({
 }: Note) => {
   return (
     <div className={styles.notePreview}>
-      <NoteSection sectionTitle="Date" value={date} />
-      <NoteSection sectionTitle="Physician" value={physician} />
-      <NoteSection sectionTitle="Patient" value={patient} />
-      {birthdate && <NoteSection sectionTitle="Date of Birth: " value={birthdate} />}
-      <NoteSection sectionTitle="Patient" value={patient} />
+      <div>
+        <NoteSection sectionTitle="Date" value={date} />
+        <NoteSection sectionTitle="Physician" value={physician} />
+      </div>
+      <div>
+        <NoteSection sectionTitle="Patient" value={patient} />
+        {birthdate && <NoteSection sectionTitle="Date of Birth" value={birthdate} />}
+      </div>
       {pathway && <NoteSection sectionTitle="Pathway" value={pathway} />}
       {node && <NoteSection sectionTitle="node" value={node} />}
       <NoteSection sectionTitle="Status" value={status} />
