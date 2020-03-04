@@ -29,7 +29,9 @@ const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
 const SmallActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
     <div
-      className={type === 'accept' ? styles.accept : styles.decline}
+      className={`${type === 'accept' ? styles.accept : styles.decline} ${
+        styles.smallActionButton
+      }`}
       onClick={onClick}
       data-testid={type}
     >
