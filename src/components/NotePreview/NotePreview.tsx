@@ -58,14 +58,23 @@ const NotePreview: FC<Note> = ({
 }: Note) => {
   return (
     <div className={styles.notePreview}>
-      <div>
-        <NoteSection sectionTitle="Date" value={date} />
-        <NoteSection sectionTitle="Physician" value={physician} />
-      </div>
-      <div>
-        <NoteSection sectionTitle="Patient" value={patient} />
-        {birthdate && <NoteSection sectionTitle="Date of Birth" value={birthdate} />}
-      </div>
+      <table>
+        <tr>
+          <td>
+            <NoteSection sectionTitle="Date" value={date} />
+          </td>
+          <td>
+            <NoteSection sectionTitle="Physician" value={physician} />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <NoteSection sectionTitle="Patient" value={patient} />
+          </td>
+          <td>{birthdate && <NoteSection sectionTitle="Date of Birth" value={birthdate} />}</td>
+        </tr>
+      </table>
+
       {pathway && <NoteSection sectionTitle="Pathway" value={pathway} />}
       {node && <NoteSection sectionTitle="node" value={node} />}
       <NoteSection sectionTitle="Status" value={status} />
