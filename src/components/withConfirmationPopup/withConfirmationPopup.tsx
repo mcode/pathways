@@ -4,7 +4,7 @@ import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
 
 type ConfirmationProps = {
-  onConfirm?: () => void;
+  onConfirm: () => void;
 };
 
 type WithConfirmationPopupProps<T> = T & ConfirmationProps;
@@ -34,7 +34,7 @@ const withConfirmationPopup = <T extends object>(
 
 interface PopupContentProps {
   setOpen: Function;
-  onConfirm?: () => void;
+  onConfirm: () => void;
 }
 
 const PopupContent: FC<PopupContentProps> = ({ setOpen, onConfirm }) => {
@@ -46,7 +46,7 @@ const PopupContent: FC<PopupContentProps> = ({ setOpen, onConfirm }) => {
           size="small"
           type="accept"
           onClick={(): void => {
-            onConfirm?.();
+            onConfirm();
             setOpen(false);
           }}
         />
