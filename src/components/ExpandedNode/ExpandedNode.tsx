@@ -184,6 +184,28 @@ function renderBranch(
               }
             />
           );
+        break;
+      }
+      case 'DocumentReference': {
+        const documentReference = documentation.resource as fhir.DocumentReference;
+
+        const subject = documentReference.subject;
+        subject &&
+          returnElements.push(
+            <ExpandedNodeField key="subject" title="Subject" description={subject.reference} />
+          );
+
+        const note = documentReference.content[0].attachment.data;
+        note &&
+          returnElements.push(
+            <ExpandedNodeField key="note" title="Note" description={atob(note)} />
+          );
+        break;
+      }
+      default: {
+        returnElements.push(
+          <ExpandedNodeField key="error" title="Error" description="Unsupported Resource Type" />
+        );
       }
     }
   } else {

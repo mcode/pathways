@@ -67,7 +67,10 @@ export function createDocumentReference(
 ): fhir.DocumentReference {
   return {
     resourceType: 'DocumentReference',
-    id: btoa(labelOrCondition + Math.floor(Math.random() * 1000)),
+    id: v1(),
+    meta: {
+      lastUpdated: getCurrentTime()
+    },
     status: 'current',
     subject: { reference: `Patient/${patient.id}` },
     identifier: [
@@ -96,4 +99,28 @@ export function createDocumentReference(
     },
     indexed: ''
   };
+}
+
+function getCurrentTime(): string {
+  const now = new Date();
+  return (
+    now.getFullYear() +
+    '-' +
+    withLeadingZero(now.getMonth()) +
+    '-' +
+    withLeadingZero(now.getDay()) +
+    'T' +
+    withLeadingZero(now.getUTCHours()) +
+    ':' +
+    withLeadingZero(now.getUTCMinutes()) +
+    ':' +
+    withLeadingZero(now.getUTCSeconds()) +
+    '.' +
+    now.getUTCMilliseconds() +
+    '+00:00'
+  );
+}
+
+function withLeadingZero(n: number): string {
+  return n < 10 ? '0' + n : n.toString();
 }
