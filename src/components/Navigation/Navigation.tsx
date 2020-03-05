@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
-
 import styles from './Navigation.module.scss';
 import { EvaluatedPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+// import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   evaluatedPathways: EvaluatedPathway[];
@@ -36,7 +35,8 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   return (
     <nav className={styles.navigation}>
       <div className={styles.navigation__leftPanel}>
-        <FontAwesomeIcon icon={faChevronLeft} className={styles.navigation__back} />
+        {/* Disable the back button until it is implemented
+        <FontAwesomeIcon icon={faChevronLeft} className={styles.navigation__back} /> */}
         <PatientSnapshot />
       </div>
 
