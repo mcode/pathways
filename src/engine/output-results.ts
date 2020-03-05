@@ -271,7 +271,7 @@ function retrieveNote(
     if (resource.resourceType !== 'DocumentReference') return false;
     const documentReference = resource as fhir.DocumentReference;
     if (documentReference.identifier === undefined) return false;
-    for (let identifier of documentReference.identifier) {
+    for (const identifier of documentReference.identifier) {
       if (
         identifier.system === 'pathways.documentreference' &&
         identifier.value === btoa(condition)
