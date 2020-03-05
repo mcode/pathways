@@ -42,7 +42,7 @@ const PatientSnapshot: FC<{}> = () => {
 
         <ul className={styles.patientSnapshot__list}>
           <li>
-            DOB: {patient.birthDate} ({age})
+            DOB: {patient.birthDate} (Age: {age})
           </li>
           <li>Admin. Sex: {patient.gender}</li>
           <li>Location: {address}</li>
