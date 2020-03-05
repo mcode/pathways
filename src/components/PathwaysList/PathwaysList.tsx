@@ -33,6 +33,9 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
   function renderList(): ReactNode {
     return (
       <div>
+        <div className={styles.matchedElementsLabel}>
+          <i>mCODE elements matched</i>
+        </div>
         {evaluatedPathways.map(evaluatedPathway => {
           return (
             <PathwaysListElement
