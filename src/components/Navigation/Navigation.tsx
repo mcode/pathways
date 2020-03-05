@@ -13,9 +13,10 @@ interface Props {
   evaluatedPathways: EvaluatedPathway[];
   selectPathway: boolean;
   setSelectPathway: (flag: boolean) => void;
+  onBack?: () => void;
 }
 
-const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPathway }) => {
+const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPathway, onBack }) => {
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayCtx.evaluatedPathway?.pathway;
   const value =
@@ -35,8 +36,14 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   return (
     <nav className={styles.navigation}>
       <div className={styles.navigation__leftPanel}>
-        {/* Disable the back button until it is implemented
-        <FontAwesomeIcon icon={faChevronLeft} className={styles.navigation__back} /> */}
+        {onBack && (
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            className={styles.navigation__back}
+            onClick={onBack}
+          />
+        )}
+
         <PatientSnapshot />
       </div>
 
