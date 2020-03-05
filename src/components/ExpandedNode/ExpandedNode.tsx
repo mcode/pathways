@@ -187,15 +187,19 @@ function renderBranch(
       }
     }
   } else {
-    const values: string[] = pathwayState.transitions.map(transition => {
-      const description = transition.condition?.description;
-      return description ? description : '';
-    });
+    const values: string[] = pathwayState.transitions
+      .map(transition => {
+        const description = transition.condition?.description;
+        return description ? description : '';
+      })
+      // Remove duplicate values
+      .filter((v, i, arr) => arr.indexOf(v) === i);
+
     returnElements.push(
       <ExpandedNodeField
         key="value"
         title="Value"
-        description={<MissingDataPopup values={values.filter((a, b) => values.indexOf(a) === b)} />}
+        description={<MissingDataPopup values={values} />}
       />
     );
   }
