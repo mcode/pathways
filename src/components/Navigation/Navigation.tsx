@@ -36,7 +36,8 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   return (
     <nav className={styles.navigation}>
       <div className={styles.navigation__leftPanel}>
-        <FontAwesomeIcon icon={faChevronLeft} className={styles.navigation__back} />
+        {/* Disable the back button until it is implemented
+        <FontAwesomeIcon icon={faChevronLeft} className={styles.navigation__back} /> */}
         <PatientSnapshot />
       </div>
 
