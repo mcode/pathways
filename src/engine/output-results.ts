@@ -7,7 +7,8 @@ import {
   PatientData,
   CriteriaResult,
   DocumentationResource,
-  State
+  State,
+  GuidanceState
 } from 'pathways-model';
 
 interface StateData {
@@ -169,14 +170,16 @@ function getConditionalNextState(
         // TODO: add functionality for multiple resources
         documentationResource = patientData[transition.condition.description][0];
       else {
-        const doc = {
-          resourceType: 'DocumentReference',
-          id: '',
-          status: 'completed',
-          state: currentStateName
-        };
-        const tempResource = retrieveNote(transition.condition.description, doc, resources);
-        if (tempResource) documentationResource = tempResource;
+        const documentReference = retrieveNote(transition.condition.description, resources);
+        if (documentReference) {
+          documentationResource = {
+            resourceType: 'DocumentReference',
+            id: documentReference.id ? documentReference.id : 'unknown',
+            status: documentReference.status,
+            state: currentStateName,
+            resource: documentReference
+          };
+        }
       }
 
       if (documentationResource) {
@@ -219,7 +222,7 @@ function nextState(
   currentStateName: string,
   resources: fhir.DomainResource[]
 ): StateData | null {
-  const currentState = pathway.states[currentStateName];
+  const currentState: State | GuidanceState = pathway.states[currentStateName];
   if ('action' in currentState) {
     let resource = patientData[currentStateName];
     if (resource?.length) {
@@ -230,7 +233,22 @@ function nextState(
         status: 'status' in resource ? resource.status : 'unknown'
       };
     } else {
-      // TODO: possibly add search for a note here
+      // Check for note posted on decline
+      const documentReference = retrieveNote(currentState.label, resources);
+      if (documentReference) {
+        const doc = {
+          resourceType: 'DocumentReference',
+          id: documentReference.id ? documentReference.id : 'unknown',
+          status: 'status' in documentReference ? documentReference.status : 'unknown',
+          state: currentStateName,
+          resource: documentReference
+        };
+        return {
+          nextState: formatNextState(doc, currentState),
+          documentation: formatDocumentation(doc, currentStateName),
+          status: doc.status
+        };
+      }
       // Action exists but has no matching resource in patientData
       return noMatchingResourceForState();
     }
@@ -247,20 +265,25 @@ function nextState(
 
 function retrieveNote(
   condition: string,
-  doc: DocumentationResource,
   resources: fhir.DomainResource[]
-): DocumentationResource | null {
-  doc.resource = resources.find(resource => {
-    return (
-      resource.resourceType === 'DocumentReference' &&
-      (resource as fhir.DocumentReference).content[0].attachment.data === btoa(condition)
-    );
+): fhir.DocumentReference | null {
+  const documentReference = resources.find(resource => {
+    if (resource.resourceType !== 'DocumentReference') return false;
+    const documentReference = resource as fhir.DocumentReference;
+    if (documentReference.identifier === undefined) return false;
+    for (let identifier of documentReference.identifier) {
+      if (
+        identifier.system === 'pathways.documentreference' &&
+        identifier.value === btoa(condition)
+      )
+        return true;
+    }
+    return false;
   });
 
-  if (!doc.resource) return null;
-  doc.id = doc.resource.id ? doc.resource.id : 'unknown';
+  if (!documentReference) return null;
 
-  return doc;
+  return documentReference as fhir.DocumentReference;
 }
 
 function retrieveResource(

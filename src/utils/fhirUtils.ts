@@ -61,17 +61,25 @@ export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string 
 }
 
 export function createDocumentReference(
-  selected: string,
+  data: string,
+  labelOrCondition: string,
   patient: fhir.Patient
 ): fhir.DocumentReference {
   return {
     resourceType: 'DocumentReference',
+    id: btoa(labelOrCondition + Math.floor(Math.random() * 1000)),
     status: 'current',
     subject: { reference: `Patient/${patient.id}` },
+    identifier: [
+      {
+        system: 'pathways.documentreference',
+        value: btoa(labelOrCondition)
+      }
+    ],
     content: [
       {
         attachment: {
-          data: btoa(selected), // Base 64 encoded data
+          data: btoa(data), // Base 64 encoded data
           contentType: 'text/plain'
         }
       }

@@ -41,7 +41,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
     // Create DocumentReference and add to patient record(and post to FHIR server)
     if (note) {
       const noteString = gatherInfo(note, patientRecords, status, comments, pathwayState);
-      const documentReference = createDocumentReference(noteString, patient);
+      const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
       newPatientRecords.push(documentReference);
       client?.create?.(documentReference);
     }

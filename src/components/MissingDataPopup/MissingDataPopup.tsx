@@ -75,9 +75,10 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
             type="accept"
             onClick={(): void => {
               setOpen(false);
-              const note = createDocumentReference(selected, patient);
-              setPatientRecords([...patientRecords, note]);
-              client?.create?.(note);
+              // TODO: create a real note to write to the doc reference
+              const documentReference = createDocumentReference(selected, selected, patient);
+              setPatientRecords([...patientRecords, documentReference]);
+              client?.create?.(documentReference);
             }}
           />
         )}
