@@ -35,7 +35,7 @@ export function translatePathwayRecommendation(
       };
     }
     default: {
-      return {};
+      throw Error(`Translation for ${resourceType} not implemented.`);
     }
   }
 }
