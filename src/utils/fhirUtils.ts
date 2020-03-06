@@ -1,4 +1,5 @@
-import { BasicMedicationRequestResource, BasicActionResource } from 'pathways-model';
+import { BasicMedicationRequestResource, BasicActionResource, GuidanceState } from 'pathways-model';
+import { Note, toString } from 'components/NoteProvider';
 import { v1 } from 'uuid';
 
 // translates pathway recommendation resource into suitable FHIR resource
@@ -99,6 +100,64 @@ export function createDocumentReference(
     },
     indexed: ''
   };
+}
+
+export function createNoteContent(
+  note: Note,
+  patientRecords: fhir.DomainResource[],
+  status: string,
+  notes: string,
+  pathwayState?: GuidanceState
+): string {
+  note.status = status;
+  note.notes = notes;
+  if (pathwayState) {
+    note.treatment = pathwayState.action[0].description;
+    note.node = pathwayState.label;
+  }
+
+  const tnm: string[] = ['', '', ''];
+  patientRecords.forEach(record => {
+    // TODO: should use code bindings over
+    // profile names.
+    if (record.meta?.profile && record.meta.profile.length) {
+      const elements = [
+        'TNMClinicalPrimaryTumorCategory',
+        'TNMClinicalRegionalNodesCategory',
+        'TNMClinicalDistantMetastasesCategory'
+      ];
+
+      const profile = record.meta.profile[0];
+      if (record.resourceType === 'Observation') {
+        if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
+          const obs = record as fhir.Observation;
+          const value = obs.valueCodeableConcept?.text;
+          const name = obs.code.text;
+          if (value && name) {
+            note.mcodeElements[name] = value;
+          }
+        } else if (
+          elements.some(value => {
+            return profile.includes(value);
+          })
+        ) {
+          const index = elements.findIndex(value => {
+            return profile.includes(value);
+          });
+          if (index > -1) {
+            const obs = record as fhir.Observation;
+            const value = obs.valueCodeableConcept?.text;
+            if (value) {
+              tnm[index] = value;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  note.mcodeElements['Clinical TNM'] = tnm.join(' ');
+  return toString(note);
 }
 
 function getCurrentTime(): string {

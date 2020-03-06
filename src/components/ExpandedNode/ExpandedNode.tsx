@@ -9,9 +9,13 @@ import { isBranchState } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { usePatient } from 'components/PatientProvider';
-import { translatePathwayRecommendation, createDocumentReference } from 'utils/fhirUtils';
+import {
+  translatePathwayRecommendation,
+  createDocumentReference,
+  createNoteContent
+} from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-import { useNote, Note, toString } from 'components/NoteProvider';
+import { useNote } from 'components/NoteProvider';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -40,7 +44,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
     // Create DocumentReference and add to patient record(and post to FHIR server)
     if (note) {
-      const noteString = gatherInfo(note, patientRecords, status, comments, pathwayState);
+      const noteString = createNoteContent(note, patientRecords, status, comments, pathwayState);
       const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
       newPatientRecords.push(documentReference);
       client?.create?.(documentReference);
@@ -188,18 +192,27 @@ function renderBranch(
       }
       case 'DocumentReference': {
         const documentReference = documentation.resource as fhir.DocumentReference;
-
         const subject = documentReference.subject;
         subject &&
           returnElements.push(
             <ExpandedNodeField key="subject" title="Subject" description={subject.reference} />
           );
 
-        const note = documentReference.content[0].attachment.data;
-        note &&
-          returnElements.push(
-            <ExpandedNodeField key="note" title="Note" description={atob(note)} />
-          );
+        // Display missing data value if it is available, otherwise display note content
+        const documentReferenceIdentifier = documentReference?.identifier?.find(
+          i => i.system === 'pathways.documentreference'
+        );
+
+        if (documentReferenceIdentifier) {
+          const value = atob(documentReferenceIdentifier.value as string);
+          returnElements.push(<ExpandedNodeField key="value" title="Value" description={value} />);
+        } else {
+          const note = documentReference.content[0].attachment.data;
+          note &&
+            returnElements.push(
+              <ExpandedNodeField key="note" title="Note" description={atob(note)} />
+            );
+        }
         break;
       }
       default: {
@@ -292,62 +305,6 @@ function renderGuidance(
     }
   }
   return returnElements;
-}
-
-function gatherInfo(
-  note: Note,
-  patientRecords: fhir.DomainResource[],
-  status: string,
-  notes: string,
-  pathwayState: GuidanceState
-): string {
-  note.status = status;
-  note.notes = notes;
-  note.treatment = pathwayState.action[0].description;
-  note.node = pathwayState.label;
-
-  const tnm: string[] = ['', '', ''];
-  patientRecords.forEach(record => {
-    // TODO: should use code bindings over
-    // profile names.
-    if (record.meta?.profile && record.meta.profile.length) {
-      const elements = [
-        'TNMClinicalPrimaryTumorCategory',
-        'TNMClinicalRegionalNodesCategory',
-        'TNMClinicalDistantMetastasesCategory'
-      ];
-
-      const profile = record.meta.profile[0];
-      if (record.resourceType === 'Observation') {
-        if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
-          const obs = record as fhir.Observation;
-          const value = obs.valueCodeableConcept?.text;
-          const name = obs.code.text;
-          if (value && name) {
-            note.mcodeElements[name] = value;
-          }
-        } else if (
-          elements.some(value => {
-            return profile.includes(value);
-          })
-        ) {
-          const index = elements.findIndex(value => {
-            return profile.includes(value);
-          });
-          if (index > -1) {
-            const obs = record as fhir.Observation;
-            const value = obs.valueCodeableConcept?.text;
-            if (value) {
-              tnm[index] = value;
-            }
-          }
-        }
-      }
-    }
-  });
-
-  note.mcodeElements['Clinical TNM'] = tnm.join(' ');
-  return toString(note);
 }
 
 export default ExpandedNode;

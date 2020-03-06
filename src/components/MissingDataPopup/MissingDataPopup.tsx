@@ -7,7 +7,8 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { useFHIRClient } from 'components/FHIRClient';
-import { createDocumentReference } from 'utils/fhirUtils';
+import { createDocumentReference, createNoteContent } from 'utils/fhirUtils';
+import { useNote } from 'components/NoteProvider';
 interface MissingDataPopup {
   values: string[];
 }
@@ -41,6 +42,8 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const [showCheck, setShowCheck] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
+  const note = useNote();
+
   return (
     <div>
       <div className={styles.popupContent}>
@@ -75,10 +78,13 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
             type="accept"
             onClick={(): void => {
               setOpen(false);
-              // TODO: create a real note to write to the doc reference
-              const documentReference = createDocumentReference(selected, selected, patient);
-              setPatientRecords([...patientRecords, documentReference]);
-              client?.create?.(documentReference);
+              // Create DocumentReference with selected value and add to patient record
+              if (note) {
+                const noteString = createNoteContent(note, patientRecords, 'completed', selected);
+                const documentReference = createDocumentReference(noteString, selected, patient);
+                setPatientRecords([...patientRecords, documentReference]);
+                client?.create?.(documentReference);
+              }
             }}
           />
         )}
