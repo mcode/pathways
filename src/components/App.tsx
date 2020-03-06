@@ -8,7 +8,7 @@ import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import { PatientRecordsProvider } from './PatientRecordsProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
-import { NoteProvider } from './NoteProvider';
+import { NoteDataProvider } from './NoteDataProvider';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
@@ -148,7 +148,7 @@ const App: FC<AppProps> = ({ demo }) => {
               setEvaluatedPathway: setEvaluatedPathwayCallback
             }}
           >
-            <NoteProvider physician={user} date={new Date(Date.now())}>
+            <NoteDataProvider physician={user} date={new Date(Date.now())}>
               <div>
                 <Header logo={logo} />
                 <Navigation
@@ -166,7 +166,7 @@ const App: FC<AppProps> = ({ demo }) => {
               ) : (
                 <PatientView evaluatedPathway={currentPathway} />
               )}
-            </NoteProvider>
+            </NoteDataProvider>
           </PathwayProvider>
         </PatientRecordsProvider>
       </PatientProvider>

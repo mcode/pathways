@@ -1,5 +1,5 @@
 import { BasicMedicationRequestResource, BasicActionResource, GuidanceState } from 'pathways-model';
-import { Note, toString } from 'components/NoteProvider';
+import { Note, toString } from 'components/NoteDataProvider';
 import { v1 } from 'uuid';
 
 // translates pathway recommendation resource into suitable FHIR resource

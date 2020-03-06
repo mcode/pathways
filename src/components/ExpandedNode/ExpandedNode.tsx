@@ -15,7 +15,7 @@ import {
   createNoteContent
 } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-import { useNote } from 'components/NoteProvider';
+import { useNote } from 'components/NoteDataProvider';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;

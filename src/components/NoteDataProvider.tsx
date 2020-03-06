@@ -17,7 +17,7 @@ export interface Note {
   notes?: string;
 }
 
-interface NoteProviderProps {
+interface NoteDataProviderProps {
   children: ReactNode;
   date: Date;
   physician: string;
@@ -25,7 +25,7 @@ interface NoteProviderProps {
 
 export const NoteContext = createContext<Note | null>(null);
 
-export const NoteProvider: FC<NoteProviderProps> = ({ children, date, physician }) => {
+export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
   const patient = usePatient();
   const name = patient.name ? getHumanName(patient.name) : '';
   const note: Note = {

@@ -8,7 +8,7 @@ import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { useFHIRClient } from 'components/FHIRClient';
 import { createDocumentReference, createNoteContent } from 'utils/fhirUtils';
-import { useNote } from 'components/NoteProvider';
+import { useNote } from 'components/NoteDataProvider';
 interface MissingDataPopup {
   values: string[];
 }
