@@ -137,8 +137,15 @@ const StatusField: FC<StatusFieldProps> = ({ documentation }) => {
   }
   const status = documentation.status;
   const rawDate = documentation.resource?.meta?.lastUpdated;
-  const date = rawDate && new Date(rawDate).toLocaleString('en-us');
-  return <ExpandedNodeField key="Status" title={status} description={date} />;
+  if (rawDate)
+    return (
+      <ExpandedNodeField
+        key="Status"
+        title={status}
+        description={new Date(rawDate).toLocaleString('en-us')}
+      />
+    );
+  return null;
 };
 
 function renderBranch(
@@ -153,7 +160,7 @@ function renderBranch(
         const observation = documentation.resource as fhir.Observation;
 
         const valueCoding = observation.valueCodeableConcept?.coding;
-        valueCoding &&
+        if (valueCoding) {
           returnElements.push(
             <ExpandedNodeField
               key="ValueSystem"
@@ -174,9 +181,10 @@ function renderBranch(
               description={valueCoding[0].display}
             />
           );
+        }
 
         const date = observation.effectiveDateTime;
-        date &&
+        if (date) {
           returnElements.push(
             <ExpandedNodeField
               key="Date"
@@ -188,12 +196,13 @@ function renderBranch(
               }
             />
           );
+        }
         break;
       }
       case 'DocumentReference': {
         const documentReference = documentation.resource as fhir.DocumentReference;
         const subject = documentReference.subject;
-        subject &&
+        if (subject)
           returnElements.push(
             <ExpandedNodeField key="subject" title="Subject" description={subject.reference} />
           );
@@ -208,7 +217,7 @@ function renderBranch(
           returnElements.push(<ExpandedNodeField key="value" title="Value" description={value} />);
         } else {
           const note = documentReference.content[0].attachment.data;
-          note &&
+          if (note)
             returnElements.push(
               <ExpandedNodeField key="note" title="Note" description={atob(note)} />
             );
