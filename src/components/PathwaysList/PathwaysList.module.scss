@@ -142,4 +142,13 @@ $lineHeight: 35px;
 
 .matchedElementsLabel {
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  > i {
+    margin-right: 0.5em;
+  }
+  :last-child {
+    margin-right: 3em;
+  }
 }

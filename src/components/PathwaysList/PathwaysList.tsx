@@ -15,7 +15,8 @@ import {
   faPlus,
   faMinus,
   faChevronUp,
-  faChevronDown
+  faChevronDown,
+  faCaretDown
 } from '@fortawesome/free-solid-svg-icons';
 
 interface PathwaysListElementProps {
@@ -34,7 +35,14 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
     return (
       <div>
         <div className={styles.matchedElementsLabel}>
-          <i>mCODE elements matched</i>
+          <i>
+            mCODE
+            <br />
+            elements
+            <br />
+            matched
+          </i>
+          <FontAwesomeIcon icon={faCaretDown} />
         </div>
         {evaluatedPathways.map(evaluatedPathway => {
           return (
