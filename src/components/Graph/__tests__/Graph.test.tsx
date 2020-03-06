@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
+import { render, act, RenderResult } from '@testing-library/react';
 import Graph from '../Graph';
 import { loadedService } from 'testUtils/services';
 import { EvaluatedPathway } from 'pathways-model';
 import preconvertedELM from '../../../engine/__tests__/fixtures/elm/sample_pathway.elm.json';
+import { PatientRecordsProvider } from 'components/PatientRecordsProvider';
 
 describe('<Graph />', () => {
   global.fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
@@ -50,6 +51,32 @@ describe('<Graph />', () => {
     issued: '2014-11-06T09:27:09.556-05:00'
   };
 
+  let evaluatePath = false;
+  const renderGraph = (
+    evaluatedPathway: EvaluatedPathway,
+    updateEvaluatedPathways: (value: EvaluatedPathway) => void
+  ): RenderResult => {
+    return render(
+      <PatientRecordsProvider
+        value={{
+          patientRecords: [samplePatient, sampleObservation],
+          setPatientRecords: (): void => {
+            return;
+          },
+          evaluatePath: evaluatePath,
+          setEvaluatePath: (value: boolean): void => {
+            evaluatePath = value;
+          }
+        }}
+      >
+        <Graph
+          evaluatedPathway={evaluatedPathway}
+          updateEvaluatedPathways={updateEvaluatedPathways}
+        />
+      </PatientRecordsProvider>
+    );
+  };
+
   it('uses results on evaluatedPathway', async () => {
     const mockedUpdate = jest.fn();
     const evaluatedPathway = pathwayList[0];
@@ -64,13 +91,7 @@ describe('<Graph />', () => {
 
     // eslint-disable-next-line
     await act(async () => {
-      render(
-        <Graph
-          evaluatedPathway={evaluatedPathway}
-          resources={[samplePatient, sampleObservation]}
-          updateEvaluatedPathways={mockedUpdate}
-        />
-      );
+      renderGraph(evaluatedPathway, mockedUpdate);
     });
 
     expect(mockedUpdate).toHaveBeenCalledTimes(0);
@@ -81,13 +102,7 @@ describe('<Graph />', () => {
 
     // eslint-disable-next-line
     await act(async () => {
-      render(
-        <Graph
-          evaluatedPathway={pathwayList[1]}
-          resources={[samplePatient, sampleObservation]}
-          updateEvaluatedPathways={mockedUpdate}
-        />
-      );
+      renderGraph(pathwayList[1], mockedUpdate);
     });
 
     expect(mockedUpdate).toHaveBeenCalledTimes(1);

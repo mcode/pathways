@@ -67,7 +67,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     // if it's a non-actionable guidance state on the path: accepted == has documentation
     // if it's actionable, not guidance or not on the path: null
     const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
-    const isAccepted = wasActionTaken ? documentation != null : null;
+    const isAccepted = wasActionTaken ? documentation?.resourceType !== 'DocumentReference' : null;
 
     return (
       <div className={topLevelClasses.join(' ')} style={style} ref={ref}>

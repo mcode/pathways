@@ -4,7 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
-
+import { usePatient } from 'components/PatientProvider';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { useFHIRClient } from 'components/FHIRClient';
+import { createDocumentReference, createNoteContent } from 'utils/fhirUtils';
+import { useNote } from 'components/NoteDataProvider';
 interface MissingDataPopup {
   values: string[];
 }
@@ -33,8 +37,13 @@ interface PopupContentProps {
 }
 
 const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
+  const patient = usePatient();
+  const client = useFHIRClient();
+  const { patientRecords, setPatientRecords } = usePatientRecords();
   const [showCheck, setShowCheck] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
+  const note = useNote();
+
   return (
     <div>
       <div className={styles.popupContent}>
@@ -64,7 +73,20 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
       <div className={styles.footer}>
         <ActionButton size="small" type="decline" onClick={(): void => setOpen(false)} />
         {showCheck && (
-          <ActionButton size="small" type="accept" onClick={(): void => setOpen(false)} />
+          <ActionButton
+            size="small"
+            type="accept"
+            onClick={(): void => {
+              setOpen(false);
+              // Create DocumentReference with selected value and add to patient record
+              if (note) {
+                const noteString = createNoteContent(note, patientRecords, 'completed', selected);
+                const documentReference = createDocumentReference(noteString, selected, patient);
+                setPatientRecords([...patientRecords, documentReference]);
+                client?.create?.(documentReference);
+              }
+            }}
+          />
         )}
       </div>
     </div>

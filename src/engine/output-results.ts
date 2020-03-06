@@ -7,7 +7,8 @@ import {
   PatientData,
   CriteriaResult,
   DocumentationResource,
-  State
+  State,
+  GuidanceState
 } from 'pathways-model';
 
 interface StateData {
@@ -39,14 +40,14 @@ export function pathwayData(
   const patientDocumentation = [];
   const evaluatedPathway = [startState];
 
-  let stateData = nextState(pathway, patientData, startState);
+  let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
     currentStatus = stateData.status;
     if (stateData.documentation !== null)
       patientDocumentation.push(retrieveResource(stateData.documentation, resources));
     if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
     evaluatedPathway.push(stateData.nextState);
-    stateData = nextState(pathway, patientData, stateData.nextState);
+    stateData = nextState(pathway, patientData, stateData.nextState, resources);
   }
   const currentStateName = evaluatedPathway[evaluatedPathway.length - 1];
   const currentState = pathway.states[currentStateName];
@@ -159,20 +160,34 @@ function formatNextState(resource: DocumentationResource, currentState: State): 
 function getConditionalNextState(
   patientData: PatientData,
   currentState: State,
-  currentStateName: string
+  currentStateName: string,
+  resources: fhir.DomainResource[]
 ): StateData {
   for (const transition of currentState.transitions) {
     if (transition.condition) {
-      let documentationResource =
-        'condition' in transition ? patientData[transition.condition.description] : '';
-      if (documentationResource.length) {
-        documentationResource = documentationResource[0]; // TODO: add functionality for multiple resources
+      let documentationResource: DocumentationResource | null = null;
+      if (patientData[transition.condition.description].length)
+        // TODO: add functionality for multiple resources
+        documentationResource = patientData[transition.condition.description][0];
+      else {
+        const documentReference = retrieveNote(transition.condition.description, resources);
+        if (documentReference) {
+          documentationResource = {
+            resourceType: 'DocumentReference',
+            id: documentReference.id ? documentReference.id : 'unknown',
+            status: documentReference.status,
+            state: currentStateName,
+            resource: documentReference
+          };
+        }
+      }
+
+      if (documentationResource) {
         return {
           nextState: transition.transition,
           documentation: formatDocumentation(documentationResource, currentStateName),
-          status: 'status' in documentationResource ? documentationResource.status : 'unknown'
+          status: documentationResource.status
         };
-        // Is there ever a time we may hit multiple conditions?
       }
     }
   }
@@ -204,9 +219,10 @@ function noMatchingResourceForState(): StateData {
 function nextState(
   pathway: Pathway,
   patientData: PatientData,
-  currentStateName: string
+  currentStateName: string,
+  resources: fhir.DomainResource[]
 ): StateData | null {
-  const currentState = pathway.states[currentStateName];
+  const currentState: State | GuidanceState = pathway.states[currentStateName];
   if ('action' in currentState) {
     let resource = patientData[currentStateName];
     if (resource?.length) {
@@ -217,6 +233,22 @@ function nextState(
         status: 'status' in resource ? resource.status : 'unknown'
       };
     } else {
+      // Check for note posted on decline
+      const documentReference = retrieveNote(currentState.label, resources);
+      if (documentReference) {
+        const doc = {
+          resourceType: 'DocumentReference',
+          id: documentReference.id ? documentReference.id : 'unknown',
+          status: 'status' in documentReference ? documentReference.status : 'unknown',
+          state: currentStateName,
+          resource: documentReference
+        };
+        return {
+          nextState: formatNextState(doc, currentState),
+          documentation: formatDocumentation(doc, currentStateName),
+          status: doc.status
+        };
+      }
       // Action exists but has no matching resource in patientData
       return noMatchingResourceForState();
     }
@@ -227,8 +259,31 @@ function nextState(
       status: 'completed'
     };
   } else if (currentState.transitions.length > 1) {
-    return getConditionalNextState(patientData, currentState, currentStateName);
+    return getConditionalNextState(patientData, currentState, currentStateName, resources);
   } else return null;
+}
+
+function retrieveNote(
+  condition: string,
+  resources: fhir.DomainResource[]
+): fhir.DocumentReference | null {
+  const documentReference = resources.find(resource => {
+    if (resource.resourceType !== 'DocumentReference') return false;
+    const documentReference = resource as fhir.DocumentReference;
+    if (documentReference.identifier === undefined) return false;
+    for (const identifier of documentReference.identifier) {
+      if (
+        identifier.system === 'pathways.documentreference' &&
+        identifier.value === btoa(condition)
+      )
+        return true;
+    }
+    return false;
+  });
+
+  if (!documentReference) return null;
+
+  return documentReference as fhir.DocumentReference;
 }
 
 function retrieveResource(

@@ -1,15 +1,23 @@
 import React, { FC, ReactNode, ReactElement, useState } from 'react';
-import { GuidanceState, DocumentationResource, State } from 'pathways-model';
+import { GuidanceState, DocumentationResource, State, Action } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
 import { isBranchState } from 'utils/nodeUtils';
+import { useFHIRClient } from 'components/FHIRClient';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { usePatient } from 'components/PatientProvider';
+import {
+  translatePathwayRecommendation,
+  createDocumentReference,
+  createNoteContent
+} from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { useNote } from 'components/NoteDataProvider';
 interface ExpandedNodeProps {
-  pathwayState: GuidanceState | State;
+  pathwayState: GuidanceState;
   isActionable: boolean;
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;
@@ -22,14 +30,39 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   documentation
 }) => {
   const [comments, setComments] = useState<string>('');
-
-  const guidance = isGuidance && renderGuidance(pathwayState as GuidanceState, documentation);
+  const guidance = isGuidance && renderGuidance(pathwayState, documentation);
   const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
+  const { patientRecords, setPatientRecords } = usePatientRecords();
+  const client = useFHIRClient();
+  const note = useNote();
+  const patient = usePatient();
 
-  const defaultText =
-    `The patient and I discussed the treatment plan, ` +
-    `risks, benefits and alternatives.  The patient ` +
-    `expressed understanding and wants to proceed.`;
+  // prettier-ignore
+  const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
+  const onConfirm = (status: string, action?: Action[]): void => {
+    const newPatientRecords = [...patientRecords];
+
+    // Create DocumentReference and add to patient record(and post to FHIR server)
+    if (note) {
+      const noteString = createNoteContent(note, patientRecords, status, comments, pathwayState);
+      const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
+      newPatientRecords.push(documentReference);
+      client?.create?.(documentReference);
+    }
+
+    // Translate pathway recommended resource and add to patient record
+    if (action && action.length > 0) {
+      const resource: fhir.Resource = translatePathwayRecommendation(
+        action[0].resource,
+        patient.id as string
+      );
+
+      newPatientRecords.push(resource);
+      client?.create?.(resource);
+    }
+
+    setPatientRecords(newPatientRecords);
+  };
 
   return (
     <div className={indexStyles.expandedNode}>
@@ -57,10 +90,22 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
             onChange={(e): void => setComments(e.target.value)}
           ></textarea>
           <div className={styles.footer}>
-            <ConfirmedActionButton type="accept" size="large" />
+            <ConfirmedActionButton
+              type="accept"
+              size="large"
+              onConfirm={(): void => {
+                onConfirm('Accepted', pathwayState.action);
+              }}
+            />
           </div>
           <div className={styles.footer}>
-            <ConfirmedActionButton type="decline" size="large" />
+            <ConfirmedActionButton
+              type="decline"
+              size="large"
+              onConfirm={(): void => {
+                onConfirm('Declined');
+              }}
+            />
           </div>
         </form>
       )}
@@ -92,8 +137,15 @@ const StatusField: FC<StatusFieldProps> = ({ documentation }) => {
   }
   const status = documentation.status;
   const rawDate = documentation.resource?.meta?.lastUpdated;
-  const date = rawDate && new Date(rawDate).toLocaleString('en-us');
-  return <ExpandedNodeField key="Status" title={status} description={date} />;
+  if (rawDate)
+    return (
+      <ExpandedNodeField
+        key="Status"
+        title={status}
+        description={new Date(rawDate).toLocaleString('en-us')}
+      />
+    );
+  return null;
 };
 
 function renderBranch(
@@ -108,7 +160,7 @@ function renderBranch(
         const observation = documentation.resource as fhir.Observation;
 
         const valueCoding = observation.valueCodeableConcept?.coding;
-        valueCoding &&
+        if (valueCoding) {
           returnElements.push(
             <ExpandedNodeField
               key="ValueSystem"
@@ -129,9 +181,10 @@ function renderBranch(
               description={valueCoding[0].display}
             />
           );
+        }
 
         const date = observation.effectiveDateTime;
-        date &&
+        if (date) {
           returnElements.push(
             <ExpandedNodeField
               key="Date"
@@ -143,13 +196,49 @@ function renderBranch(
               }
             />
           );
+        }
+        break;
+      }
+      case 'DocumentReference': {
+        const documentReference = documentation.resource as fhir.DocumentReference;
+        const subject = documentReference.subject;
+        if (subject)
+          returnElements.push(
+            <ExpandedNodeField key="subject" title="Subject" description={subject.reference} />
+          );
+
+        // Display missing data value if it is available, otherwise display note content
+        const documentReferenceIdentifier = documentReference?.identifier?.find(
+          i => i.system === 'pathways.documentreference'
+        );
+
+        if (documentReferenceIdentifier) {
+          const value = atob(documentReferenceIdentifier.value as string);
+          returnElements.push(<ExpandedNodeField key="value" title="Value" description={value} />);
+        } else {
+          const note = documentReference.content[0].attachment.data;
+          if (note)
+            returnElements.push(
+              <ExpandedNodeField key="note" title="Note" description={atob(note)} />
+            );
+        }
+        break;
+      }
+      default: {
+        returnElements.push(
+          <ExpandedNodeField key="error" title="Error" description="Unsupported Resource Type" />
+        );
       }
     }
   } else {
-    const values: string[] = pathwayState.transitions.map(transition => {
-      const description = transition.condition?.description;
-      return description ? description : '';
-    });
+    const values: string[] = pathwayState.transitions
+      .map(transition => {
+        const description = transition.condition?.description;
+        return description ? description : '';
+      })
+      // Remove duplicate values
+      .filter((v, i, arr) => arr.indexOf(v) === i);
+
     returnElements.push(
       <ExpandedNodeField
         key="value"

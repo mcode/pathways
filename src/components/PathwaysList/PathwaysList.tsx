@@ -9,17 +9,18 @@ import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
   faPlay,
   faPlus,
   faMinus,
   faChevronUp,
-  faChevronDown
+  faChevronDown,
+  faCaretDown
 } from '@fortawesome/free-solid-svg-icons';
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
-  resources: Array<fhir.DomainResource>;
   callback: Function;
 }
 
@@ -27,15 +28,9 @@ interface PathwaysListProps {
   evaluatedPathways: EvaluatedPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
-  resources: Array<fhir.DomainResource>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({
-  evaluatedPathways,
-  callback,
-  service,
-  resources
-}) => {
+const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
   function renderList(): ReactNode {
     return (
       <div>
@@ -44,7 +39,6 @@ const PathwaysList: FC<PathwaysListProps> = ({
             <PathwaysListElement
               evaluatedPathway={evaluatedPathway}
               callback={callback}
-              resources={resources}
               key={evaluatedPathway.pathway.name}
             />
           );
@@ -59,11 +53,22 @@ const PathwaysList: FC<PathwaysListProps> = ({
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
         <div className={styles.container}>
-          <div className={styles.header_title}>
-            <div className={styles.header_title__header}>Explore Pathways</div>
-            <div className={styles.header_title__note}>Select pathway below to view details</div>
+          <div className={styles.pathwayListHeaderContainer}>
+            <div className={styles.header_title}>
+              <div className={styles.header_title__header}>Explore Pathways</div>
+              <div className={styles.header_title__note}>Select pathway below to view details</div>
+            </div>
+            <div className={styles.matchedElementsLabel}>
+              <i>
+                mCODE
+                <br />
+                elements
+                <br />
+                matched
+              </i>
+              <FontAwesomeIcon icon={faCaretDown} />
+            </div>
           </div>
-
           {renderList()}
         </div>
       ) : (
@@ -73,11 +78,8 @@ const PathwaysList: FC<PathwaysListProps> = ({
   );
 };
 
-const PathwaysListElement: FC<PathwaysListElementProps> = ({
-  evaluatedPathway,
-  resources,
-  callback
-}) => {
+const PathwaysListElement: FC<PathwaysListElementProps> = ({ evaluatedPathway, callback }) => {
+  const resources = usePatientRecords().patientRecords;
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -142,7 +144,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
           </div>
           <div className={styles.pathway}>
             <Graph
-              resources={resources}
               evaluatedPathway={evaluatedPathway}
               interactive={false}
               expandCurrentNode={false}

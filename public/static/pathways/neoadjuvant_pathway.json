@@ -110,7 +110,7 @@
             }
           }
         ],
-        "cql": "if [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'Service[Procedure: \"Teleradiotherapy procedure (procedure) code\"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value } ",
+        "cql": "if exists [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value }",
         "transitions": [
           {
             "transition": "PaclitaxelTrastuzumab"
@@ -159,7 +159,7 @@
         "transitions": []
       },
       "ChemotherapyTCHP": {
-        "label": "Chemotherapy TCHP Regiment",
+        "label": "Chemotherapy TCHP",
         "action": [
           {
             "type": "create",
@@ -238,7 +238,7 @@
         ]
       },
       "ChemotherapyACTHP": {
-        "label": "Chemotherapy ACTHP Regiment",
+        "label": "Chemotherapy ACTHP",
         "action": [
           {
             "type": "create",
@@ -334,7 +334,7 @@
         ]
       },
       "ChemotherapyddACTHP": {
-        "label": "Chemotherapy ddACTHP Regiment",
+        "label": "Chemotherapy ddACTHP",
         "action": [
           {
             "type": "create",

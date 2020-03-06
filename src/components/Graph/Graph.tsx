@@ -6,10 +6,10 @@ import Arrow from 'components/Arrow';
 import { evaluatePatientOnPathway } from 'engine';
 import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, NodeDimensions, Edge } from 'graph-model';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
-  resources: object[];
   interactive?: boolean;
   expandCurrentNode?: boolean;
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
@@ -22,12 +22,13 @@ const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
 };
 
 const Graph: FC<GraphProps> = ({
-  resources,
   evaluatedPathway,
   interactive = true,
   expandCurrentNode = true,
   updateEvaluatedPathways
 }) => {
+  const patientRecords = usePatientRecords();
+  const resources = patientRecords.patientRecords;
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
@@ -40,9 +41,10 @@ const Graph: FC<GraphProps> = ({
   const setPath = useCallback(
     (value: PathwayResults): void => {
       _setPath(value.path);
+      patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
-    [evaluatedPathway.pathway, updateEvaluatedPathways]
+    [evaluatedPathway.pathway, updateEvaluatedPathways, patientRecords]
   );
 
   // Get the layout of the graph
@@ -98,7 +100,7 @@ const Graph: FC<GraphProps> = ({
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0 && path.length === 0) {
+    if (resources.length > 0 && (path.length === 0 || patientRecords.evaluatePath)) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -112,7 +114,7 @@ const Graph: FC<GraphProps> = ({
         cancel = true;
       };
     }
-  }, [pathway, resources, path.length, setPath]);
+  }, [pathway, resources, path.length, setPath, patientRecords]);
 
   useEffect(() => {
     if (path) {

@@ -6,7 +6,9 @@ $lineHeight: 35px;
 
 .pathways_list {
   .header_title {
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     &__header {
       font-weight: 900;
@@ -138,4 +140,22 @@ $lineHeight: 35px;
       background-color: darken($gray-lighter, 10%);
     }
   }
+}
+
+.matchedElementsLabel {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  > i {
+    margin-right: 0.5em;
+  }
+  :last-child {
+    margin-right: 3em;
+  }
+}
+
+.pathwayListHeaderContainer {
+  display: flex;
+  justify-content: space-between;
 }

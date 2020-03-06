@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { usePatient } from '../PatientProvider';
-
+import { usePatient } from 'components/PatientProvider';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
   AllergiesVisualizer,
   CarePlansVisualizer,
@@ -14,10 +14,6 @@ import {
   ReportsVisualizer
 } from 'fhir-visualizers';
 
-type PatientRecordProps = {
-  resources: ReadonlyArray<fhir.DomainResource>;
-};
-
 const getResourceByType = (
   patientRecord: ReadonlyArray<fhir.DomainResource>,
   resourceType: string
@@ -25,8 +21,9 @@ const getResourceByType = (
   return patientRecord.filter(resource => resource.resourceType === resourceType);
 };
 
-const PatientRecord: FC<PatientRecordProps> = ({ resources }) => {
+const PatientRecord: FC = () => {
   const patient = usePatient();
+  const resources = usePatientRecords().patientRecords;
 
   return (
     <div>
