@@ -39,7 +39,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
-  const onConfirm = (status: string, action: Action[]): void => {
+  const onConfirm = (status: string, action?: Action[]): void => {
     const newPatientRecords = [...patientRecords];
 
     // Create DocumentReference and add to patient record(and post to FHIR server)
@@ -51,7 +51,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
     }
 
     // Translate pathway recommended resource and add to patient record
-    if (action.length > 0) {
+    if (action && action.length > 0) {
       const resource: fhir.Resource = translatePathwayRecommendation(
         action[0].resource,
         patient.id as string
@@ -103,7 +103,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
               type="decline"
               size="large"
               onConfirm={(): void => {
-                onConfirm('Declined', []);
+                onConfirm('Declined');
               }}
             />
           </div>
