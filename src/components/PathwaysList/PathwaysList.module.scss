@@ -6,7 +6,9 @@ $lineHeight: 35px;
 
 .pathways_list {
   .header_title {
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     &__header {
       font-weight: 900;
@@ -151,4 +153,9 @@ $lineHeight: 35px;
   :last-child {
     margin-right: 3em;
   }
+}
+
+.pathwayListHeaderContainer {
+  display: flex;
+  justify-content: space-between;
 }
