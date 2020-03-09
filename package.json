@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://mcode.github.io/pathways",
   "dependencies": {
+    "@ahryman40k/ts-fhir-types": "^4.0.25",
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",

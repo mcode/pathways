@@ -1,12 +1,12 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react';
-
+import { DomainResource } from 'fhir-objects';
 interface PatientRecordsProviderProps {
   children: ReactNode;
   value: PatientRecordsContextInterface;
 }
 
 interface PatientRecordsContextInterface {
-  patientRecords: fhir.DomainResource[];
+  patientRecords: DomainResource[];
   setPatientRecords: Function;
   evaluatePath: boolean;
   setEvaluatePath: (value: boolean) => void;

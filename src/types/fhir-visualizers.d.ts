@@ -1,12 +1,13 @@
 declare module 'fhir-visualizers' {
   import React, { Component } from 'react';
+  import { Patient, DomainResource } from 'fhir-objects';
 
   type PatientVisualizerProps = {
-    patient: fhir.Patient;
+    patient: Patient;
   };
 
   type RowProps = {
-    rows: ReadonlyArray<fhir.DomainResource>;
+    rows: ReadonlyArray<DomainResource>;
   };
 
   export class PatientVisualizer extends Component<PatientVisualizerProps> {}

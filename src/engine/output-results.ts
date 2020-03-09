@@ -11,7 +11,7 @@ import {
   GuidanceState,
   CriteriaResultItem
 } from 'pathways-model';
-
+import { DocumentReference, DomainResource } from 'fhir-objects';
 interface StateData {
   documentation: DocumentationResource | string | null;
   nextState: string | null;
@@ -169,7 +169,7 @@ function getConditionalNextState(
   patientData: PatientData,
   currentState: State,
   currentStateName: string,
-  resources: fhir.DomainResource[]
+  resources: DomainResource[]
 ): StateData {
   for (const transition of currentState.transitions) {
     if (transition.condition) {
@@ -228,7 +228,7 @@ function nextState(
   pathway: Pathway,
   patientData: PatientData,
   currentStateName: string,
-  resources: fhir.DomainResource[]
+  resources: DomainResource[]
 ): StateData | null {
   const currentState: State | GuidanceState = pathway.states[currentStateName];
   if ('action' in currentState) {
@@ -271,13 +271,10 @@ function nextState(
   } else return null;
 }
 
-function retrieveNote(
-  condition: string,
-  resources: fhir.DomainResource[]
-): fhir.DocumentReference | null {
+function retrieveNote(condition: string, resources: DomainResource[]): DocumentReference | null {
   const documentReference = resources.find(resource => {
     if (resource.resourceType !== 'DocumentReference') return false;
-    const documentReference = resource as fhir.DocumentReference;
+    const documentReference = resource as DocumentReference;
     if (documentReference.identifier === undefined) return false;
     for (const identifier of documentReference.identifier) {
       if (
@@ -291,12 +288,12 @@ function retrieveNote(
 
   if (!documentReference) return null;
 
-  return documentReference as fhir.DocumentReference;
+  return documentReference as DocumentReference;
 }
 
 function retrieveResource(
   doc: DocumentationResource | string,
-  resources: fhir.DomainResource[]
+  resources: DomainResource[]
 ): DocumentationResource | string {
   if (typeof doc !== 'string' && resources) {
     doc.resource = resources.find(resource => {

@@ -1,4 +1,5 @@
 declare module 'pathways-model' {
+  import { DomainResource } from 'fhir-objects';
   export interface Pathway {
     name: string;
     description?: string;
@@ -109,7 +110,7 @@ declare module 'pathways-model' {
         value: string;
       };
     };
-    [key: string]: Array<fhir.DomainResource, string> | fhir.DomainResource;
+    [key: string]: Array<DomainResource, string> | DomainResource;
   }
 
   export interface DocumentationResource {
@@ -117,7 +118,7 @@ declare module 'pathways-model' {
     id: string;
     status: string;
     state: string;
-    resource?: fhir.DomainResource;
+    resource?: DomainResource;
   }
 
   export interface PathwayContextInterface {

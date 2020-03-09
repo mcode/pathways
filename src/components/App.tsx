@@ -19,12 +19,13 @@ import FHIR from 'fhirclient';
 import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
+import { Patient, DomainResource, Practitioner } from 'fhir-objects';
 interface AppProps {
   demo: boolean;
 }
 
 const App: FC<AppProps> = ({ demo }) => {
-  const [patientRecords, _setPatientRecords] = useState<fhir.DomainResource[]>([]);
+  const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatePath, setEvaluatePath] = useState<boolean>(false);
@@ -32,7 +33,7 @@ const App: FC<AppProps> = ({ demo }) => {
   const [client, setClient] = useState<PathwaysClient | null>(null);
   const [user, setUser] = useState<string>('');
 
-  const setPatientRecords = useCallback((value: fhir.DomainResource[]): void => {
+  const setPatientRecords = useCallback((value: DomainResource[]): void => {
     _setPatientRecords(value);
     setEvaluatePath(true);
   }, []);
@@ -46,7 +47,7 @@ const App: FC<AppProps> = ({ demo }) => {
         })
         .then(client => {
           // TODO: MockedFHIRClient has not mocked out requests for resources yet
-          getPatientRecord(client).then((records: fhir.DomainResource[]) => {
+          getPatientRecord(client).then((records: DomainResource[]) => {
             // filters out values that are empty
             // the server might return deleted
             // resources that only include an
@@ -68,7 +69,7 @@ const App: FC<AppProps> = ({ demo }) => {
 
   // gather note info
   useEffect(() => {
-    client?.user?.read().then((user: fhir.Practitioner) => {
+    client?.user?.read().then((user: Practitioner) => {
       const name = user.name && getHumanName(user.name);
       if (name) {
         setUser(name);
@@ -134,9 +135,7 @@ const App: FC<AppProps> = ({ demo }) => {
   return (
     <FHIRClientProvider client={client as PathwaysClient}>
       <PatientProvider
-        patient={
-          demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
-        }
+        patient={demo ? (demoRecords.find(r => r.resourceType === 'Patient') as Patient) : null}
       >
         <PatientRecordsProvider
           value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}

@@ -16,6 +16,7 @@ import {
 } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNote } from 'components/NoteDataProvider';
+import { Resource, DocumentReference, Observation, Procedure, Identifier } from 'fhir-objects';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -52,7 +53,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
     // Translate pathway recommended resource and add to patient record
     if (action && action.length > 0) {
-      const resource: fhir.Resource = translatePathwayRecommendation(
+      const resource: Resource = translatePathwayRecommendation(
         action[0].resource,
         patient.id as string
       );
@@ -157,7 +158,7 @@ function renderBranch(
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Observation': {
-        const observation = documentation.resource as fhir.Observation;
+        const observation = documentation.resource as Observation;
 
         const valueCoding = observation.valueCodeableConcept?.coding;
         if (valueCoding) {
@@ -196,7 +197,7 @@ function renderBranch(
         break;
       }
       case 'DocumentReference': {
-        const documentReference = documentation.resource as fhir.DocumentReference;
+        const documentReference = documentation.resource as DocumentReference;
         const subject = documentReference.subject;
         if (subject)
           returnElements.push(
@@ -204,7 +205,8 @@ function renderBranch(
           );
 
         // Display missing data value if it is available, otherwise display note content
-        const documentReferenceIdentifier = documentReference?.identifier?.find(
+        const identifierArray: Identifier[] | undefined = documentReference.identifier;
+        const documentReferenceIdentifier = identifierArray?.find(
           i => i.system === 'pathways.documentreference'
         );
 
@@ -281,7 +283,7 @@ function renderGuidance(
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Procedure': {
-        const procedure = documentation.resource as fhir.Procedure;
+        const procedure = documentation.resource as Procedure;
         const start =
           (procedure.performedPeriod && procedure.performedPeriod.start) ||
           procedure.performedDateTime;

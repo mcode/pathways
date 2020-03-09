@@ -4,8 +4,9 @@ import { usePatient } from '../PatientProvider';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './PatientSnapshot.module.scss';
+import { HumanName, Address } from 'fhir-objects';
 
-const getPatientName = (name: Array<fhir.HumanName> = []): string => {
+const getPatientName = (name: Array<HumanName> = []): string => {
   const entry = name.find(n => n.use === 'official') || name[0];
   return entry ? `${(entry.given || []).join(' ')} ${entry.family}` : 'No name';
 };
@@ -22,7 +23,7 @@ const getPatientAge = (birthDateString: string | undefined): number => {
   return age;
 };
 
-const getPatientAddress = (address: Array<fhir.Address> = []): string => {
+const getPatientAddress = (address: Array<Address> = []): string => {
   const entry = address[0];
   return entry ? [entry.city, entry.state].filter(item => !!item).join(', ') : 'No Address';
 };

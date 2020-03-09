@@ -10,6 +10,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { Resource } from 'fhir-objects';
 import {
   faPlay,
   faPlus,

@@ -1,12 +1,20 @@
 import { BasicMedicationRequestResource, BasicActionResource, GuidanceState } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
+import {
+  Patient,
+  DomainResource,
+  Resource,
+  HumanName,
+  DocumentReference,
+  Observation
+} from 'fhir-objects';
 import { v1 } from 'uuid';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
   pathwayResource: BasicMedicationRequestResource | BasicActionResource,
   patientId: string
-): fhir.Resource {
+): Resource {
   const { resourceType } = pathwayResource;
   const resourceProperties = {
     resourceType,
@@ -41,7 +49,7 @@ export function translatePathwayRecommendation(
   }
 }
 
-export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string {
+export function getHumanName(person: HumanName[]): string {
   let name = '';
   if (Array.isArray(person)) {
     name = [
@@ -50,13 +58,6 @@ export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string 
       person[0]?.family,
       person[0]?.suffix?.join(' ')
     ].join(' ');
-  } else {
-    name = [
-      person?.prefix?.join(' '),
-      person?.given?.join(' '),
-      person?.family,
-      person?.suffix?.join(' ')
-    ].join(' ');
   }
   return name;
 }
@@ -64,8 +65,8 @@ export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string 
 export function createDocumentReference(
   data: string,
   labelOrCondition: string,
-  patient: fhir.Patient
-): fhir.DocumentReference {
+  patient: Patient
+): DocumentReference {
   return {
     resourceType: 'DocumentReference',
     id: v1(),
@@ -104,7 +105,7 @@ export function createDocumentReference(
 
 export function createNoteContent(
   note: Note,
-  patientRecords: fhir.DomainResource[],
+  patientRecords: DomainResource[],
   status: string,
   notes: string,
   pathwayState?: GuidanceState
@@ -130,7 +131,7 @@ export function createNoteContent(
       const profile = record.meta.profile[0];
       if (record.resourceType === 'Observation') {
         if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
-          const obs = record as fhir.Observation;
+          const obs = record as Observation;
           const value = obs.valueCodeableConcept?.text;
           const name = obs.code.text;
           if (value && name) {
@@ -145,7 +146,7 @@ export function createNoteContent(
             return profile.includes(value);
           });
           if (index > -1) {
-            const obs = record as fhir.Observation;
+            const obs = record as Observation;
             const value = obs.valueCodeableConcept?.text;
             if (value) {
               tnm[index] = value;
