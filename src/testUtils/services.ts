@@ -1,4 +1,4 @@
-import { Pathway, CriteriaResult } from 'pathways-model';
+import { Pathway } from 'pathways-model';
 import { Service } from 'pathways-objects';
 
 export const loadingService: Service<Array<Pathway>> = {
