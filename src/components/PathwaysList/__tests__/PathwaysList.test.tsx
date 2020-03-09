@@ -1,9 +1,30 @@
-import React from 'react';
-import { render, fireEvent, getAllByRole, getAllByText } from '@testing-library/react';
+import React, { ReactComponentElement } from 'react';
+import {
+  render,
+  fireEvent,
+  getAllByRole,
+  getAllByText,
+  wait,
+  act,
+  RenderResult
+} from '@testing-library/react';
 import PathwaysList from 'components/PathwaysList';
+import { evaluatePathwayCriteria, evaluatePatientOnPathway } from 'engine';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
+import { resources, evaluatedCriteria, evaluatedPathwayResults } from 'testUtils/MockedValues';
 import { Pathway, EvaluatedPathway } from 'pathways-model';
+
+jest.mock('engine');
+
+const renderComponent = async (component: any) => {
+  let result: RenderResult | undefined;
+  await act(async () => {
+    result = render(component);
+    await wait();
+  });
+  return result;
+};
 
 describe('<PathwaysList />', () => {
   let pathwayList: EvaluatedPathway[] = [];
@@ -28,18 +49,23 @@ describe('<PathwaysList />', () => {
     expect(getByText('Loading...')).toBeVisible();
   });
 
-  it('renders list of pathways', () => {
-    const { getAllByText } = render(
+  it('renders list of pathways', async () => {
+    (evaluatePathwayCriteria as jest.Mock)
+      .mockResolvedValueOnce(evaluatedCriteria[0])
+      .mockResolvedValueOnce(evaluatedCriteria[1])
+      .mockResolvedValueOnce(evaluatedCriteria[2]);
+    const result = await renderComponent(
       <PathwaysList
         evaluatedPathways={pathwayList}
         callback={(): void => {
           return;
         }}
         service={loadedService}
-        resources={[]}
+        resources={resources}
       />
     );
-    expect(getAllByText(/test./)).toHaveLength(3);
+    if (result) expect(result.getAllByText(/test./)).toHaveLength(3);
+    else fail();
   });
 
   it('renders error', () => {
@@ -56,27 +82,39 @@ describe('<PathwaysList />', () => {
     expect(getByText('ERROR')).toBeVisible();
   });
 
-  it('responds to click events with pathway', () => {
+  it('responds to click events with pathway', async () => {
+    console.error = jest.fn(); // Prevents act warning
+    (evaluatePathwayCriteria as jest.Mock)
+      .mockResolvedValueOnce(evaluatedCriteria[0])
+      .mockResolvedValueOnce(evaluatedCriteria[1])
+      .mockResolvedValueOnce(evaluatedCriteria[2]);
+    (evaluatePatientOnPathway as jest.Mock).mockResolvedValue(evaluatedPathwayResults);
     let value = '';
     function setValue(text: string): void {
       value = text;
     }
-    const { container } = render(
+    const result = await renderComponent(
       <PathwaysList
         evaluatedPathways={pathwayList}
         callback={(pathway: Pathway): void => {
           setValue(pathway.name);
         }}
         service={loadedService}
-        resources={[]}
+        resources={resources}
       />
     );
-    getAllByRole(container, 'listitem').forEach(node => {
-      fireEvent.click(node);
-    });
-    getAllByText(container, 'Select Pathway').forEach(button => {
-      fireEvent.click(button);
-      expect(value !== '').toBeTruthy();
-    });
+    if (result) {
+      getAllByRole(result.container, 'listitem').forEach(node => {
+        act(() => {
+          fireEvent.click(node);
+        });
+      });
+      getAllByText(result.container, 'Select Pathway').forEach(button => {
+        act(() => {
+          fireEvent.click(button);
+        });
+        expect(value !== '').toBeTruthy();
+      });
+    } else fail();
   });
 });
