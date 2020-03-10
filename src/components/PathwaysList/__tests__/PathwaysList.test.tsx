@@ -17,7 +17,9 @@ import { Pathway, EvaluatedPathway } from 'pathways-model';
 
 jest.mock('engine');
 
-const renderComponent = async (component: any) => {
+const renderComponent = async (
+  component: React.ReactElement
+): Promise<RenderResult | undefined> => {
   let result: RenderResult | undefined;
   await act(async () => {
     result = render(component);
@@ -83,6 +85,7 @@ describe('<PathwaysList />', () => {
   });
 
   it('responds to click events with pathway', async () => {
+    // eslint-disable-next-line
     console.error = jest.fn(); // Prevents act warning
     (evaluatePathwayCriteria as jest.Mock)
       .mockResolvedValueOnce(evaluatedCriteria[0])
