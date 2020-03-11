@@ -58,20 +58,25 @@ const PathwaysList: FC<PathwaysListProps> = ({
   function renderList(): ReactNode {
     return (
       <div>
-        {criteria?.map(c => {
-          const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
-          if (evaluatedPathway)
-            return (
-              <PathwaysListElement
-                evaluatedPathway={evaluatedPathway}
-                callback={callback}
-                resources={resources}
-                criteria={c}
-                key={evaluatedPathway.pathway.name}
-              />
-            );
-          else return <div></div>;
-        })}
+        {criteria ? (
+          criteria.map(c => {
+            const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
+            if (evaluatedPathway)
+              return (
+                <PathwaysListElement
+                  evaluatedPathway={evaluatedPathway}
+                  callback={callback}
+                  resources={resources}
+                  criteria={c}
+                  key={evaluatedPathway.pathway.name}
+                />
+              );
+            else
+              return <div>An error occured evaluating the pathway criteria. Please try again.</div>;
+          })
+        ) : (
+          <div>Loading Pathways...</div>
+        )}
       </div>
     );
   }
