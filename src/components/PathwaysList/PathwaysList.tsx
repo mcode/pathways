@@ -31,12 +31,8 @@ interface PathwaysListProps {
   service: Service<Array<Pathway>>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({
-  evaluatedPathways,
-  callback,
-  service,
-  resources
-}) => {
+const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
+  const resources = usePatientRecords().patientRecords;
   const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
 
   if (!criteria && evaluatedPathways.length > 0 && resources && resources.length > 0) {
@@ -66,7 +62,6 @@ const PathwaysList: FC<PathwaysListProps> = ({
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
-                  resources={resources}
                   criteria={c}
                   key={evaluatedPathway.pathway.name}
                 />
@@ -120,7 +115,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
 }) => {
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
-  const resources = usePatientRecords().patientRecords;
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
