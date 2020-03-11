@@ -21,7 +21,7 @@ import {
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
-  criteria: CriteriaResult | undefined;
+  criteria?: CriteriaResult;
   callback: Function;
 }
 
