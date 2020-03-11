@@ -58,21 +58,20 @@ const PathwaysList: FC<PathwaysListProps> = ({
   function renderList(): ReactNode {
     return (
       <div>
-        {criteria &&
-          criteria.map(c => {
-            const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
-            if (evaluatedPathway)
-              return (
-                <PathwaysListElement
-                  evaluatedPathway={evaluatedPathway}
-                  callback={callback}
-                  resources={resources}
-                  criteria={c}
-                  key={evaluatedPathway.pathway.name}
-                />
-              );
-            else return <div></div>;
-          })}
+        {criteria?.map(c => {
+          const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
+          if (evaluatedPathway)
+            return (
+              <PathwaysListElement
+                evaluatedPathway={evaluatedPathway}
+                callback={callback}
+                resources={resources}
+                criteria={c}
+                key={evaluatedPathway.pathway.name}
+              />
+            );
+          else return <div></div>;
+        })}
       </div>
     );
   }
@@ -153,14 +152,13 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                   <th>mCODE elements</th>
                   <th>patient elements</th>
                 </tr>
-                {criteria &&
-                  criteria.criteriaResultItems.map(c => (
-                    <tr key={c.elementName}>
-                      <td>{c.elementName}</td>
-                      <td>{c.expected}</td>
-                      <td className={c.match ? styles.matchingElement : undefined}>{c.actual}</td>
-                    </tr>
-                  ))}
+                {criteria?.criteriaResultItems.map(c => (
+                  <tr key={c.elementName}>
+                    <td>{c.elementName}</td>
+                    <td>{c.expected}</td>
+                    <td className={c.match ? styles.matchingElement : undefined}>{c.actual}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <button className={indexStyles.button} onClick={(): void => callback(evaluatedPathway)}>
