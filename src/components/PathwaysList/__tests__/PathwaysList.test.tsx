@@ -12,8 +12,9 @@ import PathwaysList from 'components/PathwaysList';
 import { evaluatePathwayCriteria, evaluatePatientOnPathway } from 'engine';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
-import { resources, evaluatedCriteria, evaluatedPathwayResults } from 'testUtils/MockedValues';
+import { evaluatedCriteria, evaluatedPathwayResults } from 'testUtils/MockedValues';
 import { Pathway, EvaluatedPathway } from 'pathways-model';
+import MockedPatientRecordsProvider from 'testUtils/MockedPatientRecordsProvider';
 
 jest.mock('engine');
 
@@ -22,7 +23,7 @@ const renderComponent = async (
 ): Promise<RenderResult | undefined> => {
   let result: RenderResult | undefined;
   await act(async () => {
-    result = render(component);
+    result = render(<MockedPatientRecordsProvider>{component}</MockedPatientRecordsProvider>);
     await wait();
   });
   return result;
@@ -45,7 +46,6 @@ describe('<PathwaysList />', () => {
           return;
         }}
         service={loadingService}
-        resources={[]}
       />
     );
     expect(getByText('Loading...')).toBeVisible();
@@ -63,7 +63,6 @@ describe('<PathwaysList />', () => {
           return;
         }}
         service={loadedService}
-        resources={resources}
       />
     );
     expect(result?.getAllByText(/test./)).toHaveLength(3);
@@ -77,7 +76,6 @@ describe('<PathwaysList />', () => {
           return;
         }}
         service={errorService}
-        resources={[]}
       />
     );
     expect(getByText('ERROR')).toBeVisible();
@@ -102,7 +100,6 @@ describe('<PathwaysList />', () => {
           setValue(pathway.name);
         }}
         service={loadedService}
-        resources={resources}
       />
     );
     if (result) {
