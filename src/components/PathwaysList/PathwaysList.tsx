@@ -47,7 +47,9 @@ const PathwaysList: FC<PathwaysListProps> = ({
     };
 
     // Evaluate pathway criteria for each pathway
-    const criteriaPromises = evaluatedPathways.map(pathway => evaluatePathwayCriteria(patient, pathway.pathway));
+    const criteriaPromises = evaluatedPathways.map(pathway =>
+      evaluatePathwayCriteria(patient, pathway.pathway)
+    );
     Promise.all(criteriaPromises).then(criteriaResults => {
       setCriteria(criteriaResults.sort((a, b) => b.matches - a.matches));
     });
