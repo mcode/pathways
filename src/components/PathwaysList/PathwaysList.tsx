@@ -139,7 +139,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={styles.numElements}>{criteria && criteria.matches}</div>
+        <div className={styles.numElements}>{criteria?.matches}</div>
       </div>
 
       {isVisible && (
