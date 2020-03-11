@@ -66,8 +66,7 @@ describe('<PathwaysList />', () => {
         resources={resources}
       />
     );
-    if (result) expect(result.getAllByText(/test./)).toHaveLength(3);
-    else fail();
+    expect(result?.getAllByText(/test./)).toHaveLength(3);
   });
 
   it('renders error', () => {
