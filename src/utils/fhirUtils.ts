@@ -7,20 +7,11 @@ import {
   DocumentReference,
   Observation,
   ServiceRequest,
+  MedicationRequest,
   Request
 } from 'fhir-objects';
 import { v1 } from 'uuid';
-import { R4 } from '@ahryman40k/ts-fhir-types';
 
-interface MedProperties {
-  id: string;
-  resourceType: 'MedicationRequest';
-  intent: string;
-  subject: object;
-  status: string;
-  authoredOn: string;
-  meta: object;
-}
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
   pathwayResource: Request,
@@ -45,15 +36,14 @@ export function translatePathwayRecommendation(
       return {
         ...resourceProperties,
         code
-      };
+      } as Request;
     }
     case 'MedicationRequest': {
-      const { medicationCodeableConcept } = pathwayResource as R4.IMedicationRequest;
-      const propertiesMed: MedProperties = resourceProperties as MedProperties;
+      const { medicationCodeableConcept } = pathwayResource as MedicationRequest;
       return {
-        ...propertiesMed,
+        ...resourceProperties,
         medicationCodeableConcept
-      };
+      } as Request;
     }
     default: {
       throw Error(`Translation for ${resourceType} not implemented.`);
