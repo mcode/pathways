@@ -1,10 +1,21 @@
 import React, { FC, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePatient } from '../PatientProvider';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
-
-import styles from './PatientSnapshot.module.scss';
 import { HumanName, Address } from 'fhir-objects';
+
+import { usePatient } from '../PatientProvider';
+import styles from './PatientSnapshot.module.scss';
+
+const useStyles = makeStyles(
+  theme => ({
+    'patient-snapshot-list': {
+      color: theme.palette.text.primary
+    }
+  }),
+  { name: 'PatientSnapshot' }
+);
 
 const getPatientName = (name: Array<HumanName> = []): string => {
   const entry = name.find(n => n.use === 'official') || name[0];
@@ -29,6 +40,7 @@ const getPatientAddress = (address: Array<Address> = []): string => {
 };
 
 const PatientSnapshot: FC<{}> = () => {
+  const classes = useStyles();
   const patient = usePatient();
   const name = useMemo(() => getPatientName(patient.name), [patient]);
   const address = useMemo(() => getPatientAddress(patient.address), [patient]);
@@ -41,7 +53,7 @@ const PatientSnapshot: FC<{}> = () => {
       <div className={styles.patientSnapshot__info}>
         <div className={styles.patientName}>{name}</div>
 
-        <ul className={styles.patientSnapshot__list}>
+        <ul className={clsx(styles.patientSnapshot__list, classes['patient-snapshot-list'])}>
           <li>
             DOB: {patient.birthDate} (Age: {age})
           </li>

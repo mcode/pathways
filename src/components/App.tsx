@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
+
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -13,6 +14,7 @@ import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
+import ThemeProvider from './ThemeProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
@@ -133,43 +135,47 @@ const App: FC<AppProps> = ({ demo }) => {
   };
 
   return (
-    <FHIRClientProvider client={client as PathwaysClient}>
-      <PatientProvider
-        patient={demo ? (demoRecords.find(r => r.resourceType === 'Patient') as Patient) : null}
-      >
-        <PatientRecordsProvider
-          value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
+    <ThemeProvider>
+      <FHIRClientProvider client={client as PathwaysClient}>
+        <PatientProvider
+          patient={
+            demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
+          }
         >
-          <PathwayProvider
-            pathwayCtx={{
-              updateEvaluatedPathways,
-              evaluatedPathway: currentPathway,
-              setEvaluatedPathway: setEvaluatedPathwayCallback
-            }}
+          <PatientRecordsProvider
+            value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
           >
-            <NoteDataProvider physician={user} date={new Date(Date.now())}>
-              <div>
-                <Header logo={logo} />
-                <Navigation
-                  evaluatedPathways={evaluatedPathways}
-                  selectPathway={selectPathway}
-                  setSelectPathway={setSelectPathway}
-                />
-              </div>
-              {selectPathway ? (
-                <PathwaysList
-                  evaluatedPathways={evaluatedPathways}
-                  callback={setEvaluatedPathwayCallback}
-                  service={service}
-                ></PathwaysList>
-              ) : (
-                <PatientView evaluatedPathway={currentPathway} />
-              )}
-            </NoteDataProvider>
-          </PathwayProvider>
-        </PatientRecordsProvider>
-      </PatientProvider>
-    </FHIRClientProvider>
+            <PathwayProvider
+              pathwayCtx={{
+                updateEvaluatedPathways,
+                evaluatedPathway: currentPathway,
+                setEvaluatedPathway: setEvaluatedPathwayCallback
+              }}
+            >
+              <NoteDataProvider physician={user} date={new Date(Date.now())}>
+                <div>
+                  <Header logo={logo} />
+                  <Navigation
+                    evaluatedPathways={evaluatedPathways}
+                    selectPathway={selectPathway}
+                    setSelectPathway={setSelectPathway}
+                  />
+                </div>
+                {selectPathway ? (
+                  <PathwaysList
+                    evaluatedPathways={evaluatedPathways}
+                    callback={setEvaluatedPathwayCallback}
+                    service={service}
+                  ></PathwaysList>
+                ) : (
+                  <PatientView evaluatedPathway={currentPathway} />
+                )}
+              </NoteDataProvider>
+            </PathwayProvider>
+          </PatientRecordsProvider>
+        </PatientProvider>
+      </FHIRClientProvider>
+    </ThemeProvider>
   );
 };
 

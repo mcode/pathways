@@ -57,6 +57,7 @@
   }
 
   &.childNotOnPatientPath {
-    border: 1px solid $gray-lighter;
+    border-width: 1px;
+    border-style: solid;
   }
 }
