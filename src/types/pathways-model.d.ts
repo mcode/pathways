@@ -1,5 +1,5 @@
 declare module 'pathways-model' {
-  import { DomainResource } from 'fhir-objects';
+  import { DomainResource, Request } from 'fhir-objects';
   export interface Pathway {
     name: string;
     description?: string;
@@ -39,32 +39,8 @@ declare module 'pathways-model' {
   interface Action {
     type: string;
     description: string;
-    resource: BasicActionResource | BasicMedicationRequestResource; // TODO: FHIR resources
+    resource: Request;
   }
-
-  interface BasicResource {
-    resourceType: string;
-  }
-
-  interface BasicMedicationRequestResource extends BasicResource {
-    medicationCodeableConcept: Coding;
-  }
-
-  interface BasicActionResource extends BasicResource {
-    code: Coding;
-  }
-
-  interface Coding {
-    coding: Code[];
-    text?: string;
-  }
-
-  interface Code {
-    code: string;
-    system: string;
-    display: string;
-  }
-
   interface Transition {
     transition: string;
     condition?: {

@@ -1,24 +1,35 @@
-import { BasicMedicationRequestResource, BasicActionResource, GuidanceState } from 'pathways-model';
+import { GuidanceState } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
   DomainResource,
-  Resource,
   HumanName,
   DocumentReference,
-  Observation
+  Observation,
+  ServiceRequest,
+  Request
 } from 'fhir-objects';
 import { v1 } from 'uuid';
+import { R4 } from '@ahryman40k/ts-fhir-types';
 
+interface MedProperties {
+  id: string;
+  resourceType: 'MedicationRequest';
+  intent: string;
+  subject: object;
+  status: string;
+  authoredOn: string;
+  meta: object;
+}
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
-  pathwayResource: BasicMedicationRequestResource | BasicActionResource,
+  pathwayResource: Request,
   patientId: string
-): Resource {
+): Request {
   const { resourceType } = pathwayResource;
   const resourceProperties = {
-    resourceType,
     id: v1(),
+    resourceType,
     intent: 'order',
     subject: { reference: `Patient/${patientId}` },
     status: 'active',
@@ -30,16 +41,17 @@ export function translatePathwayRecommendation(
 
   switch (resourceType) {
     case 'ServiceRequest': {
-      const { code } = pathwayResource as BasicActionResource;
+      const { code } = pathwayResource as ServiceRequest;
       return {
         ...resourceProperties,
         code
       };
     }
     case 'MedicationRequest': {
-      const { medicationCodeableConcept } = pathwayResource as BasicMedicationRequestResource;
+      const { medicationCodeableConcept } = pathwayResource as R4.IMedicationRequest;
+      const propertiesMed: MedProperties = resourceProperties as MedProperties;
       return {
-        ...resourceProperties,
+        ...propertiesMed,
         medicationCodeableConcept
       };
     }

@@ -16,7 +16,15 @@ import {
 } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNote } from 'components/NoteDataProvider';
-import { Resource, DocumentReference, Observation, Procedure, Identifier } from 'fhir-objects';
+import {
+  Resource,
+  DocumentReference,
+  Observation,
+  Procedure,
+  Identifier,
+  MedicationRequest,
+  ServiceRequest
+} from 'fhir-objects';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -248,15 +256,20 @@ function renderBranch(
   return returnElements;
 }
 
+function isMedicationRequest(
+  request: MedicationRequest | ServiceRequest
+): request is MedicationRequest {
+  return (request as MedicationRequest).medicationCodeableConcept !== undefined;
+}
 function renderGuidance(
   pathwayState: GuidanceState,
   documentation: DocumentationResource | undefined
 ): ReactElement[] {
   const resource = pathwayState.action[0].resource;
-  const coding =
-    'medicationCodeableConcept' in resource
-      ? resource.medicationCodeableConcept.coding
-      : resource.code.coding;
+  const coding = isMedicationRequest(resource)
+    ? resource?.medicationCodeableConcept?.coding
+    : resource?.code?.coding;
+
   const returnElements = [
     <ExpandedNodeField
       key="Notes"
@@ -269,15 +282,15 @@ function renderGuidance(
       title="System"
       description={
         <>
-          {coding[0].system}
-          <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+          {coding && coding[0].system}
+          <a href={coding && coding[0].system} target="_blank" rel="noopener noreferrer">
             <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
           </a>
         </>
       }
     />,
-    <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
-    <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
+    <ExpandedNodeField key="Code" title="Code" description={coding && coding[0].code} />,
+    <ExpandedNodeField key="Display" title="Display" description={coding && coding[0].display} />
   ];
 
   if (documentation?.resource) {

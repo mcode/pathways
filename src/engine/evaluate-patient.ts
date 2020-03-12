@@ -5,7 +5,7 @@ import { pathwayData, criteriaData } from './output-results';
 import { Pathway, PatientData, PathwayResults, ElmResults, CriteriaResult } from 'pathways-model';
 import { getFixture } from './cql-extractor';
 import { extractCQLInclude } from 'utils/regexes';
-
+import { DomainResource, Bundle } from 'fhir-objects';
 function instanceOfElmObject(object: object): object is ElmObject {
   return 'main' in object;
 }
@@ -19,9 +19,9 @@ function instanceOfElmObject(object: object): object is ElmObject {
  *                  clinical pathway
  */
 export function evaluatePatientOnPathway(
-  patient: object,
+  patient: Bundle,
   pathway: Pathway,
-  resources: object[]
+  resources: DomainResource[]
 ): Promise<PathwayResults> {
   return extractNavigationCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
@@ -36,9 +36,10 @@ export function evaluatePatientOnPathway(
  *         the expected value and actual value for one criteria item
  */
 export function evaluatePathwayCriteria(
-  patient: object,
+  patient: Bundle,
   pathway: Pathway
-): Promise<CriteriaResult> {
+): Promise<CriteriaResult[]> {
+    console.log(patient);
   return extractCriteriaCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
     .then(patientData => criteriaData(pathway, patientData));
@@ -51,7 +52,7 @@ export function evaluatePathwayCriteria(
  * @return the raw, unprocessed patientResults
  *         derived from executing the CQL against the given patient
  */
-function processCQLCommon(patient: object, cql: string): Promise<PatientData> {
+function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
   // Likely need an intermediary step that gathers the CQL files needed
   // example function gatherCQL
   return gatherCQL(cql)

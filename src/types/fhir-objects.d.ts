@@ -15,4 +15,8 @@ declare module 'fhir-objects' {
   export type Practitioner = fhir.Practitioner | R4.IPractitioner;
   export type Procedure = fhir.Procedure | R4.IProcedure;
   export type Resource = fhir.Resource | ResourceR4;
+  export type Bundle = fhir.Bundle | R4.IBundle;
+  export type ServiceRequest = fhir.ProcedureRequest | R4.IServiceRequest;
+  export type MedicationRequest = fhir.MedicationRequest | R4.IMedicationRequest;
+  export type Request = ServiceRequest | MedicationRequest;
 }

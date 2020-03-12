@@ -7,6 +7,7 @@ import { evaluatePatientOnPathway } from 'engine';
 import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathways-model';
 import { Layout, NodeDimensions, Edge } from 'graph-model';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { DomainResource } from 'fhir-objects';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -104,7 +105,8 @@ const Graph: FC<GraphProps> = ({
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
-        entry: resources.map((r: object) => ({ resource: r }))
+        type: 'searchset',
+        entry: resources.map((r: DomainResource) => ({ resource: r }))
       };
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
         if (!cancel) setPath(pathwayResults);

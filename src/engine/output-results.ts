@@ -34,7 +34,7 @@ interface StateData {
 export function pathwayData(
   pathway: Pathway,
   patientData: PatientData,
-  resources: object[]
+  resources: DomainResource[]
 ): PathwayResults {
   const startState = 'Start';
   let currentStatus;
