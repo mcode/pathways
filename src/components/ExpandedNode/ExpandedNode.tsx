@@ -189,11 +189,7 @@ function renderBranch(
             <ExpandedNodeField
               key="Date"
               title="Date"
-              description={
-                new Date(date).toLocaleDateString('en-us') +
-                ' ' +
-                new Date(date).toLocaleTimeString('en-us')
-              }
+              description={new Date(date).toLocaleString('en-us')}
             />
           );
         }
@@ -295,11 +291,7 @@ function renderGuidance(
             <ExpandedNodeField
               key="Start"
               title="Start"
-              description={
-                new Date(start).toLocaleDateString('en-us') +
-                ' ' +
-                new Date(start).toLocaleTimeString('en-us')
-              }
+              description={new Date(start).toLocaleString('en-us')}
             />
           );
         }
@@ -309,11 +301,7 @@ function renderGuidance(
             <ExpandedNodeField
               key="End"
               title="End"
-              description={
-                new Date(end).toLocaleDateString('en-us') +
-                ' ' +
-                new Date(end).toLocaleTimeString('en-us')
-              }
+              description={new Date(end).toLocaleString('en-us')}
             />
           );
         }
