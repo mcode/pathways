@@ -1,5 +1,5 @@
 import React, { FC, ReactElement, useState } from 'react';
-import { Note } from 'components/NoteProvider';
+import { Note } from 'components/NoteDataProvider';
 import styles from './NoteConfirmationPopup.module.scss';
 import PathwayPopup from 'components/PathwayPopup';
 import ActionButton from 'components/ActionButton';
