@@ -1,0 +1,278 @@
+{
+  "resourceType": "PlanDefinition",
+  "url": "pathways.mitre.org/her2_early_stage",
+  "name": "her2_early_stage",
+  "title": "Early Stage HER2+ (Draft)",
+  "library": "mCODE_Library.cql",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+        "code": "workflow-definition",
+        "display": "Workflow Definition"
+      }
+    ]
+  },
+  "status": "draft",
+  "experimental": "true",
+  "date": "2020-03-12T14:00:00.00",
+  "publisher": "Camino",
+  "description": "Pathway for the Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway. This is a draft pathway.",
+  "contained": [
+    {
+      "resourceType": "ActivityDefinition",
+      "id": "chemotherpay-tchacth-definition",
+      "url": "chemotherapy-tchacth-definition",
+      "version": "1.0.0",
+      "name": "chemotherapy-tchacth-definition",
+      "title": "AcitvityDefinition for Chemotherapy TCH AC + TH Regimen",
+      "status":"draft",
+      "experimental":"true",
+      "date":"2020-03-12T14:00:00.00",
+      "publisher":"Camino",
+      "description": "Activity definition for the Chemotherapy TCH AC + TH Regimen",
+      "kind": "ServiceRequest",
+      "productCodableConcept": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "367336001",
+              "display": "Chemotherapy (procedure)"
+            }
+          ],
+          "text": "Chemotherapy (procedure)"
+      }
+    },
+    {
+      "resourceType":"ActivityDefinition",
+      "id": "chemotherapy-thweekly-definition",
+      "url": "chemotherapy-thweekly-definition",
+      "version": "1.0.0",
+      "name": "chemotherapy-thweekly-definition",
+      "title": "ActivityDefinition for the Chemotherapy TH Weekly Regimen",
+      "status":"draft",
+      "experimental":"true",
+      "date":"2020-03-12T14:00:00.00",
+      "publisher":"Camino",
+      "description": "Activity definition for the Chemotherapy TH Weekly Regimen",
+      "kind": "ServiceRequest",
+      "productCodableConcept":{
+        "coding":[
+          {
+            "system": "http://snomed.info/sct",
+            "code": "367336001",
+            "display": "Chemotherapy (procedure)"
+          }
+        ],
+        "text":"Chemotherapy (procedure)"
+      }
+    },
+    {
+      "resourceType": "ActivityDefinition",
+      "id": "postchemo-trastuzumab-definition",
+      "url": "postchemo-trastuzumab-definition",
+      "verison": "1.0.0",
+      "name": "postchemo-trastuzumab-definition",
+      "title": "ActivityDefinition for post-chemotherapy trastuzumab",
+      "status": "draft",
+      "experimental": "true",
+      "date":"2020-03-12T14:00:00.00",
+      "publisher":"Camino",
+      "description": "Activity definition for post-chemotherapy trastuzumab",
+      "kind": "MedicationRequest",
+      "productCodableConcept":{
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1922509",
+            "display": "trastuzumab"
+          }
+        ],
+        "text": "trastuzumab"
+      }
+    }
+  ],
+  "action": [
+    {
+      "id": "start",
+      "title": "Start",
+      "relatedAction": [
+        {
+          "actionId": "#node-status",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "node-status",
+      "title": "Node Status",
+      "relatedAction": [
+        {
+          "actionId": "#start",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#tumor-size",
+          "relationship": "before-start"
+        },
+        {
+          "actionId": "#chemotherapy-tchacth",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "tumor-size",
+      "title": "Tumor Size",
+      "condition": [
+        {
+          "kind": "applicability",
+          "expression": {
+            "language": "CQL",
+            "expression": "N0"
+          }
+        }
+      ],
+      "relatedAction": [
+        {
+          "actionId": "#node-status",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#chemotherapy-tchacth",
+          "relationship": "before-start"
+        },
+        {
+          "actionId": "#chemotherapy-thweekly",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "chemotherapy-tchacth",
+      "title": "Chemotherapy TCH AC + TH",
+      "condition": [
+        {
+          "kind":"applicability",
+          "expression":{
+            "language": "CQL",
+            "expression": "N+ OR T2+"
+          }
+        }
+      ],
+      "action": [
+        {
+          "id": "chemotherapy-tchacth-request",
+          "title": "ServiceRequest for Chemotherapy TCH AC + TH Regimen",
+          "definitionCanonical": "#chemotherapy-tchacth-definition" 
+        }
+      ],
+      "relatedAction":[
+        {
+          "actionId": "#node-status",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#tumor-size",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#postchemo-trastuzumab",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "chemotherapy-thweekly",
+      "title": "Chemotherapy TH Weekly",
+      "condition": [
+        {
+          "kind":"applicability",
+          "expression":{
+            "language": "CQL",
+            "expression": "T2-"
+          }
+        }
+      ],
+      "action": [
+        {
+          "id": "chemotherapy-thweekly-request",
+          "title": "ServiceRequest for Chemotherapy TH Weekly Regimen",
+          "definitionCanonical": "#chemotherapy-thweekly-definition" 
+        }
+      ],
+      "relatedAction":[
+        {
+          "actionId": "#tumor-size",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#postchemo-trastuzumab",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "postchemo-trastuzumab",
+      "title": "Post-Chemotherapy Trastuzumab",
+      "action":[
+        {
+          "id": "postchemo-trastuzumab-request",
+          "title": "MedicationRequest for Trastuzumab after chemotherapy regimen is complete",
+          "definitionCanonical": "#postchemo-trastuzumab-definition" 
+        }
+      ],
+      "relatedAction":[
+        {
+          "actionId": "#chemotherapy-tchacth",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#chemotherapy-thweekly",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#er-status",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "er-status",
+      "title": "ER Status",
+      "relatedAction":[
+        {
+          "actionId": "#postchemo-trastuzumab",
+          "relationship": "after-end"
+        },
+        {
+          "actionId": "#no-endocrine-therapy",
+          "relationship": "before-start"
+        },
+        {
+          "actionId": "#endocrine-therapy",
+          "relationship": "before-start"
+        }
+      ]
+    },
+    {
+      "id": "no-endocrine-therapy",
+      "title": "No Endocrine Therapy",
+      "condition":[
+        {
+          "kind": "applicability",
+          "expression":{
+            "language":"CQL",
+            "expression": "ERNegative"
+          }
+        }
+      ],
+      "relatedAction": [
+        {
+          "actionId": "#er-status",
+          "relationship":"after-end"
+        }
+      ]
+    }
+  ]
+}
