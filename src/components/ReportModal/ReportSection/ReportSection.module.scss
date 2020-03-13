@@ -1,0 +1,17 @@
+.fieldContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  > * {
+    flex: 0 0 30%;
+  }
+}
+
+.field {
+  margin-right: 2em;
+  display: flex;
+  align-items: flex-start;
+  > b {
+    margin-right: 0.5em;
+  }
+}
