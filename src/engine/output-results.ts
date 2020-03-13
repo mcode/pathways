@@ -8,7 +8,8 @@ import {
   CriteriaResult,
   DocumentationResource,
   State,
-  GuidanceState
+  GuidanceState,
+  CriteriaResultItem
 } from 'pathways-model';
 
 interface StateData {
@@ -65,11 +66,12 @@ export function pathwayData(
  * Engine function to take in the ELM patient results and output data relating to the pathway criteria
  * @param pathway - the entire pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
- * @return returns a list of CriteriaResults, each containing the expected and actual value for one data element
+ * @return returns CriteriaResult containing the expected and actual value for one data element
  */
-export function criteriaData(pathway: Pathway, patientData: PatientData): CriteriaResult[] {
-  const result: CriteriaResult[] = [];
+export function criteriaData(pathway: Pathway, patientData: PatientData): CriteriaResult {
+  const resultItems: CriteriaResultItem[] = [];
 
+  let matches = 0;
   pathway.criteria.forEach(criteria => {
     let evaluationResult = patientData[criteria.elementName];
     if (Array.isArray(evaluationResult)) {
@@ -83,17 +85,23 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Criter
       match = evaluationResult['match'];
     }
 
-    const criteriaResult = {
+    if (match) matches += 1;
+
+    const criteriaResultItem = {
       elementName: criteria.elementName,
       expected: criteria.expected,
       actual,
       match
     };
 
-    result.push(criteriaResult);
+    resultItems.push(criteriaResultItem);
   });
 
-  return result;
+  return {
+    pathwayName: pathway.name,
+    matches: matches,
+    criteriaResultItems: resultItems
+  };
 }
 
 /**
