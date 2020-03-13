@@ -295,7 +295,11 @@ function renderGuidance(
             <ExpandedNodeField
               key="Start"
               title="Start"
-              description={new Date(start).toLocaleDateString('en-us')}
+              description={
+                new Date(start).toLocaleDateString('en-us') +
+                ' ' +
+                new Date(start).toLocaleTimeString('en-us')
+              }
             />
           );
         }
@@ -305,7 +309,11 @@ function renderGuidance(
             <ExpandedNodeField
               key="End"
               title="End"
-              description={new Date(end).toLocaleDateString('en-us')}
+              description={
+                new Date(end).toLocaleDateString('en-us') +
+                ' ' +
+                new Date(end).toLocaleTimeString('en-us')
+              }
             />
           );
         }
