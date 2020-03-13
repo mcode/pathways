@@ -1,6 +1,7 @@
 import { pathwayData, criteriaData } from '../output-results';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
+import { resources } from 'testUtils/MockedValues';
 
 describe('pathway results translator', () => {
   /**
@@ -50,7 +51,7 @@ describe('pathway results translator', () => {
       Chemo: [],
       ChemoMedication: []
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('Radiation');
     expect(patientPath.currentStatus).toBe('not-done');
@@ -126,7 +127,7 @@ describe('pathway results translator', () => {
       Chemo: [],
       ChemoMedication: []
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('Surgery');
     expect(patientPath.currentStatus).toBe('in-progress');
@@ -176,7 +177,7 @@ describe('pathway results translator', () => {
       Chemo: [],
       ChemoMedication: []
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('N-test');
     expect(patientPath.currentStatus).toBe('not-done');
@@ -247,7 +248,7 @@ describe('pathway results translator', () => {
         }
       ]
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('Chemo');
     expect(patientPath.currentStatus).toBe('completed');
@@ -323,7 +324,7 @@ describe('pathway results translator', () => {
         }
       ]
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('Chemo');
     expect(patientPath.currentStatus).toBe('not-done');
@@ -392,7 +393,7 @@ describe('pathway results translator', () => {
       Chemo: [],
       ChemoMedication: []
     };
-    const patientPath = pathwayData(pathway, patientData, []);
+    const patientPath = pathwayData(pathway, patientData, resources);
 
     expect(patientPath.currentState).toBe('Radiation');
     expect(patientPath.currentStatus).toBe('not-done');
@@ -440,14 +441,18 @@ describe('criteria results translator', () => {
 
     const results = criteriaData(pathway, patientData);
 
-    expect(results).toEqual([
-      {
-        elementName: 'Condition',
-        expected: 'Breast Cancer',
-        actual: 'Malignant neoplasm of breast (disorder)',
-        match: true
-      }
-    ]);
+    expect(results).toEqual({
+      pathwayName: 'test_breast_cancer',
+      matches: 1,
+      criteriaResultItems: [
+        {
+          elementName: 'Condition',
+          expected: 'Breast Cancer',
+          actual: 'Malignant neoplasm of breast (disorder)',
+          match: true
+        }
+      ]
+    });
   });
 
   it('nonmatching patient produces correct results', () => {
@@ -467,13 +472,17 @@ describe('criteria results translator', () => {
 
     const results = criteriaData(pathway, patientData);
 
-    expect(results).toEqual([
-      {
-        elementName: 'Condition',
-        expected: 'Breast Cancer',
-        actual: 'Gastrointestinal stromal tumor (disorder)',
-        match: false
-      }
-    ]);
+    expect(results).toEqual({
+      pathwayName: 'test_breast_cancer',
+      matches: 0,
+      criteriaResultItems: [
+        {
+          elementName: 'Condition',
+          expected: 'Breast Cancer',
+          actual: 'Gastrointestinal stromal tumor (disorder)',
+          match: false
+        }
+      ]
+    });
   });
 });

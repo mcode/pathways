@@ -21,6 +21,7 @@ import {
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
+  criteria?: CriteriaResult;
   callback: Function;
 }
 
@@ -31,18 +32,46 @@ interface PathwaysListProps {
 }
 
 const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
+  const resources = usePatientRecords().patientRecords;
+  const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
+
+  if (!criteria && evaluatedPathways.length > 0 && resources && resources.length > 0) {
+    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+    const patient = {
+      resourceType: 'Bundle',
+      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
+    };
+
+    // Evaluate pathway criteria for each pathway
+    const criteriaPromises = evaluatedPathways.map(pathway =>
+      evaluatePathwayCriteria(patient, pathway.pathway)
+    );
+    Promise.all(criteriaPromises).then(criteriaResults => {
+      setCriteria(criteriaResults.sort((a, b) => b.matches - a.matches));
+    });
+  }
+
   function renderList(): ReactNode {
     return (
       <div>
-        {evaluatedPathways.map(evaluatedPathway => {
-          return (
-            <PathwaysListElement
-              evaluatedPathway={evaluatedPathway}
-              callback={callback}
-              key={evaluatedPathway.pathway.name}
-            />
-          );
-        })}
+        {criteria ? (
+          criteria.map(c => {
+            const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
+            if (evaluatedPathway)
+              return (
+                <PathwaysListElement
+                  evaluatedPathway={evaluatedPathway}
+                  callback={callback}
+                  criteria={c}
+                  key={evaluatedPathway.pathway.name}
+                />
+              );
+            else
+              return <div>An error occured evaluating the pathway criteria. Please try again.</div>;
+          })
+        ) : (
+          <div>Loading Pathways...</div>
+        )}
       </div>
     );
   }
@@ -69,7 +98,8 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
               <FontAwesomeIcon icon={faCaretDown} />
             </div>
           </div>
-          {renderList()}
+
+          {criteria?.length !== 0 && renderList()}
         </div>
       ) : (
         <div>ERROR</div>
@@ -78,28 +108,21 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
   );
 };
 
-const PathwaysListElement: FC<PathwaysListElementProps> = ({ evaluatedPathway, callback }) => {
-  const resources = usePatientRecords().patientRecords;
+const PathwaysListElement: FC<PathwaysListElementProps> = ({
+  evaluatedPathway,
+  criteria,
+  callback
+}) => {
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
-
-  const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
-
-  if (criteria == null && resources != null && resources.length > 0) {
-    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
-    const patient = {
-      resourceType: 'Bundle',
-      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
-    };
-    evaluatePathwayCriteria(patient, pathway).then(c => setCriteria(c));
-  }
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
   function toggleVisible(): void {
     setIsVisible(!isVisible);
   }
+
   return (
     <div className={styles.pathwayElement} role={'list'} key={pathway.name}>
       <div
@@ -114,7 +137,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ evaluatedPathway, c
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={styles.numElements}>{criteria && criteria.filter(c => c.match).length}</div>
+        <div className={styles.numElements}>{criteria?.matches}</div>
       </div>
 
       {isVisible && (
@@ -128,14 +151,13 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({ evaluatedPathway, c
                   <th>mCODE elements</th>
                   <th>patient elements</th>
                 </tr>
-                {criteria &&
-                  criteria.map(c => (
-                    <tr key={c.elementName}>
-                      <td>{c.elementName}</td>
-                      <td>{c.expected}</td>
-                      <td className={c.match ? styles.matchingElement : undefined}>{c.actual}</td>
-                    </tr>
-                  ))}
+                {criteria?.criteriaResultItems.map(c => (
+                  <tr key={c.elementName}>
+                    <td>{c.elementName}</td>
+                    <td>{c.expected}</td>
+                    <td className={c.match ? styles.matchingElement : undefined}>{c.actual}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <button className={indexStyles.button} onClick={(): void => callback(evaluatedPathway)}>

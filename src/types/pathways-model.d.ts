@@ -81,7 +81,7 @@ declare module 'pathways-model' {
     path: string[];
   }
 
-  export interface CriteriaResult {
+  export interface CriteriaResultItem {
     // doesn't extend Criteria because we don't care about the cql here,
     // and don't want to make it optional in Criteria
 
@@ -89,6 +89,12 @@ declare module 'pathways-model' {
     expected: string; // human readable value
     actual: string;
     match: boolean; // in case expected !== actual but they are still a match
+  }
+
+  export interface CriteriaResult {
+    pathwayName: string;
+    matches: number;
+    criteriaResultItems: CriteriaResultItem[];
   }
 
   export interface ElmResults {
