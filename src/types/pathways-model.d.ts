@@ -1,5 +1,5 @@
 declare module 'pathways-model' {
-  import { DomainResource, Request } from 'fhir-objects';
+  import { DomainResource, MedicationRequest, ServiceRequest } from 'fhir-objects';
   export interface Pathway {
     name: string;
     description?: string;
@@ -39,7 +39,7 @@ declare module 'pathways-model' {
   interface Action {
     type: string;
     description: string;
-    resource: Request;
+    resource: MedicationRequest | ServiceRequest;
   }
   interface Transition {
     transition: string;
