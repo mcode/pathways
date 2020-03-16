@@ -38,7 +38,7 @@ export function evaluatePatientOnPathway(
 export function evaluatePathwayCriteria(
   patient: Bundle,
   pathway: Pathway
-): Promise<CriteriaResult[]> {
+): Promise<CriteriaResult> {
   return extractCriteriaCQL(pathway)
     .then(cql => processCQLCommon(patient, cql))
     .then(patientData => criteriaData(pathway, patientData));
