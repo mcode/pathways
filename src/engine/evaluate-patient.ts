@@ -23,9 +23,15 @@ export function evaluatePatientOnPathway(
   pathway: Pathway,
   resources: DomainResource[]
 ): Promise<PathwayResults> {
-  return extractNavigationCQL(pathway)
-    .then(cql => processCQLCommon(patient, cql))
-    .then(patientData => pathwayData(pathway, patientData, resources));
+  if (pathway.elm && pathway.elm.navigational) {
+    const patientData = processELMCommon(patient, pathway.elm.navigational);
+    const pathwayResults = pathwayData(pathway, patientData, resources);
+    return Promise.resolve(pathwayResults);
+  } else {
+    return extractNavigationCQL(pathway)
+      .then(cql => processCQLCommon(patient, cql))
+      .then(patientData => pathwayData(pathway, patientData, resources));
+  }
 }
 
 /**
@@ -39,9 +45,15 @@ export function evaluatePathwayCriteria(
   patient: Bundle,
   pathway: Pathway
 ): Promise<CriteriaResult> {
-  return extractCriteriaCQL(pathway)
-    .then(cql => processCQLCommon(patient, cql))
-    .then(patientData => criteriaData(pathway, patientData));
+  if (pathway.elm && pathway.elm.criteria) {
+    const patientData = processELMCommon(patient, pathway.elm.criteria);
+    const criteriaResults = criteriaData(pathway, patientData);
+    return Promise.resolve(criteriaResults);
+  } else {
+    return extractCriteriaCQL(pathway)
+      .then(cql => processCQLCommon(patient, cql))
+      .then(patientData => criteriaData(pathway, patientData));
+  }
 }
 
 /**
@@ -67,21 +79,23 @@ function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
         return convertBasicCQL(cql);
       }
     })
-    .then(elm => {
-      let elmResults: ElmResults = {
-        patientResults: {}
-      };
-      if (instanceOfElmObject(elm)) {
-        elmResults = executeElm(patient, elm.main, elm.libraries);
-      } else {
-        elmResults = executeElm(patient, elm);
-      }
+    .then(elm => processELMCommon(patient, elm));
+}
 
-      // TODO - update pathwaysData to take multiple patients
-      const patientIds = Object.keys(elmResults.patientResults);
-      const patientData = elmResults.patientResults[patientIds[0]];
-      return patientData;
-    });
+function processELMCommon(patient: object, elm: object): PatientData {
+  let elmResults: ElmResults = {
+    patientResults: {}
+  };
+  if (instanceOfElmObject(elm)) {
+    elmResults = executeElm(patient, elm.main, elm.libraries);
+  } else {
+    elmResults = executeElm(patient, elm);
+  }
+
+  // TODO - update pathwaysData to take multiple patients
+  const patientIds = Object.keys(elmResults.patientResults);
+  const patientData = elmResults.patientResults[patientIds[0]];
+  return patientData;
 }
 
 // example function that would gather library CQL files

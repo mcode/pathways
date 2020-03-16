@@ -8,6 +8,12 @@ declare module 'pathways-model' {
     states: {
       [key: string]: GuidanceState | BranchState | State;
     };
+    elm?: PathwayELM; // TODO: should not be optional when done
+  }
+
+  export interface PathwayELM {
+    navigational?: object;
+    criteria?: object;
   }
 
   export interface EvaluatedPathway {
