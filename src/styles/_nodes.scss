@@ -20,7 +20,6 @@
 }
 
 .nodeTitle {
-  cursor: pointer;
   padding: 15px;
   /* use the entire width of its parent 
      so we can align something to the right */
@@ -28,6 +27,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.clickable {
+    cursor: pointer;
 }
 
 .iconAndLabel {

@@ -71,7 +71,10 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
 
     return (
       <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
-        <div className={nodeStyles.nodeTitle} onClick={onClickHandler}>
+        <div
+          className={`${nodeStyles.nodeTitle} ${onClickHandler && nodeStyles.clickable}`}
+          onClick={onClickHandler}
+        >
           <div className={nodeStyles.iconAndLabel}>
             <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
             {label}
