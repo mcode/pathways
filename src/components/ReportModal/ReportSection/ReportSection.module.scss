@@ -1,8 +1,12 @@
+@import '../../../styles/variables';
+
 .fieldContainer {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  width: 90%;
   > * {
+    width: 50%;
     flex: 0 0 30%;
   }
 }
@@ -14,4 +18,19 @@
   > b {
     margin-right: 0.5em;
   }
+}
+
+.sectionContainer {
+  display: flex;
+}
+
+.sectionIconContainer {
+  flex-basis: 0;
+  padding: 0.2em;
+  border-right: 0.1em solid $white;
+  width: 10%;
+}
+
+.icon {
+  font-size: 3em;
 }

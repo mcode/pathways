@@ -21,6 +21,13 @@
   flex-direction: column;
 
   > :first-child {
+    margin-top: 1em;
+    margin-bottom: 1em;
     align-self: center;
+  }
+
+  > * {
+    margin-top: 1em;
+    margin-bottom: 1em;
   }
 }

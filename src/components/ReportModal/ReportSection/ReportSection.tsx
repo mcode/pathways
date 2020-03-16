@@ -10,8 +10,10 @@ interface ReportSectionProps {
 
 const ReportSection: FC<ReportSectionProps> = ({ icon, fields }) => {
   return (
-    <div>
-      <FontAwesomeIcon icon={icon} className={styles.icon} />
+    <div className={styles.sectionContainer}>
+      <div className={styles.sectionIconContainer}>
+        <FontAwesomeIcon icon={icon} className={styles.icon} />
+      </div>
       <div className={styles.fieldContainer}>
         {fields.map(field => (
           <ReportField sectionTitle={field.name} value={field.value} />
@@ -42,8 +44,10 @@ interface PhysicianNotesProps {
 
 const PhysicianNotesSection: FC<PhysicianNotesProps> = ({ icon, notes }) => {
   return (
-    <div>
-      <FontAwesomeIcon icon={icon} className={styles.icon} />
+    <div className={styles.sectionContainer}>
+      <div className={styles.sectionIconContainer}>
+        <FontAwesomeIcon icon={icon} className={styles.icon} />
+      </div>
       <div className={styles.field}>
         <b>Physician Notes: </b>
         <span>notes</span>
