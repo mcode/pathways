@@ -8,6 +8,7 @@
   top: 15%;
 
   // Style the modal itself
+  padding: 2em;
   border-radius: 1em;
   border: 0.5em solid rgba($gray, 0.5);
   background-color: $gray;
@@ -21,8 +22,6 @@
   flex-direction: column;
 
   > :first-child {
-    margin-top: 1em;
-    margin-bottom: 1em;
     align-self: center;
   }
 
