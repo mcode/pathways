@@ -30,3 +30,9 @@
     margin-bottom: 1em;
   }
 }
+
+.sectionContainer {
+  display: grid;
+  grid-auto-rows: 1fr;
+  grid-row-gap: 2em;
+}

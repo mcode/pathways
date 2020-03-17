@@ -5,6 +5,8 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 90%;
+  justify-content: space-between;
+  margin-left: 2em;
   > * {
     width: 50%;
     flex: 0 0 30%;
@@ -14,7 +16,9 @@
 .field {
   margin-right: 2em;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  padding-bottom: 0.1em;
+  line-height: 0.8;
   > b {
     margin-right: 0.5em;
   }
@@ -27,10 +31,8 @@
 .sectionIconContainer {
   display: inline-flex;
   align-items: center;
-  flex-basis: 0;
-  padding: 0.2em;
   border-right: 0.1em solid $white;
-  width: 10%;
+  width: 3em;
 }
 
 .icon {

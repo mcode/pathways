@@ -29,10 +29,12 @@ const ReportModal: FC = () => {
   return (
     <div className={styles.reportModal}>
       <h1>{reportName}</h1>
-      <ReportSection icon={faUser} fields={patientSection} />
-      <ReportSection icon={faNotesMedical} fields={observationField} />
-      <ReportSection icon={faRoute} fields={pathwaySection} />
-      {note?.notes && <PhysicianNotesSection icon={faStickyNote} notes={note?.notes} />}
+      <div className={styles.sectionContainer}>
+        <ReportSection icon={faUser} fields={patientSection} />
+        <ReportSection icon={faNotesMedical} fields={observationField} />
+        <ReportSection icon={faRoute} fields={pathwaySection} />
+        {note?.notes && <PhysicianNotesSection icon={faStickyNote} notes={note?.notes} />}
+      </div>
     </div>
   );
 };
