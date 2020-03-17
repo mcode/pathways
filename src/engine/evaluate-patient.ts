@@ -59,7 +59,7 @@ export function evaluatePathwayCriteria(
 /**
  * Common logic to execute the given CQL against the given Patient.
  * @param patient - Patient's record as FHIR data
- * @param pathway - entire Pathway object
+ * @param cql - aggregated CQL from a pathway
  * @return the raw, unprocessed patientResults
  *         derived from executing the CQL against the given patient
  */
@@ -82,6 +82,13 @@ function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
     .then(elm => processELMCommon(patient, elm));
 }
 
+/**
+ * Common logic to execute the given ELM against the given Patient.
+ * @param patient - Patient's record as FHIR data
+ * @param elm - resulting ELM from converting the CQL in a pathway
+ * @return the raw, unprocessed patientResults
+ *         derived from executing the ELM against the given patient
+ */
 function processELMCommon(patient: object, elm: object): PatientData {
   let elmResults: ElmResults = {
     patientResults: {}
