@@ -32,9 +32,16 @@
   display: inline-flex;
   align-items: center;
   border-right: 0.1em solid $white;
-  width: 3em;
+  min-width: 3em;
 }
 
 .icon {
   font-size: 2em;
+}
+
+.notesField {
+  margin-left: 2em;
+  > b {
+    margin-bottom: 0.5em;
+  }
 }

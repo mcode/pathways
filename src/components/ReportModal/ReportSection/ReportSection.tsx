@@ -48,9 +48,9 @@ const PhysicianNotesSection: FC<PhysicianNotesProps> = ({ icon, notes }) => {
       <div className={styles.sectionIconContainer}>
         <FontAwesomeIcon icon={icon} className={styles.icon} />
       </div>
-      <div className={styles.field}>
-        <b>Physician Notes: </b>
-        <span>{notes}</span>
+      <div className={styles.notesField}>
+          <b>Physician Notes: </b>
+          <div>{notes}</div>
       </div>
     </div>
   );
