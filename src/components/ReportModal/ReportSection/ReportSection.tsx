@@ -50,7 +50,7 @@ const PhysicianNotesSection: FC<PhysicianNotesProps> = ({ icon, notes }) => {
       </div>
       <div className={styles.field}>
         <b>Physician Notes: </b>
-        <span>notes</span>
+        <span>{notes}</span>
       </div>
     </div>
   );
