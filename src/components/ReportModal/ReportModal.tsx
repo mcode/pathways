@@ -35,6 +35,9 @@ const ReportModal: FC = () => {
         <ReportSection icon={faRoute} fields={pathwaySection} />
         {note?.notes && <PhysicianNotesSection icon={faStickyNote} notes={note?.notes} />}
       </div>
+      <i>
+        The above note will be written into the EHR and any procedure requests will be submitted.
+      </i>
     </div>
   );
 };
