@@ -89,7 +89,7 @@ function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
  * @return the raw, unprocessed patientResults
  *         derived from executing the ELM against the given patient
  */
-function processELMCommon(patient: object, elm: object): PatientData {
+function processELMCommon(patient: Bundle, elm: object): PatientData {
   let elmResults: ElmResults = {
     patientResults: {}
   };
