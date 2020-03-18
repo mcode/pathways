@@ -10,6 +10,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { Resource } from 'fhir-objects';
 import {
   faPlay,
   faPlus,
@@ -39,6 +40,7 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
     // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
     const patient = {
       resourceType: 'Bundle',
+      type: 'searchset',
       entry: resources.map((r: fhir.Resource) => ({ resource: r }))
     };
 

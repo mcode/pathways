@@ -13,9 +13,9 @@ import {
   ProceduresVisualizer,
   ReportsVisualizer
 } from 'fhir-visualizers';
-
+import { DomainResource } from 'fhir-objects';
 const getResourceByType = (
-  patientRecord: ReadonlyArray<fhir.DomainResource>,
+  patientRecord: ReadonlyArray<DomainResource>,
   resourceType: string
 ): ReadonlyArray<object> => {
   return patientRecord.filter(resource => resource.resourceType === resourceType);

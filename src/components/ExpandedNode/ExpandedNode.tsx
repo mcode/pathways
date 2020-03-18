@@ -16,6 +16,15 @@ import {
 } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNote } from 'components/NoteDataProvider';
+import {
+  Resource,
+  DocumentReference,
+  Observation,
+  Procedure,
+  Identifier,
+  MedicationRequest,
+  ServiceRequest
+} from 'fhir-objects';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -52,7 +61,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
 
     // Translate pathway recommended resource and add to patient record
     if (action && action.length > 0) {
-      const resource: fhir.Resource = translatePathwayRecommendation(
+      const resource: Resource = translatePathwayRecommendation(
         action[0].resource,
         patient.id as string
       );
@@ -157,7 +166,7 @@ function renderBranch(
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Observation': {
-        const observation = documentation.resource as fhir.Observation;
+        const observation = documentation.resource as Observation;
 
         const valueCoding = observation.valueCodeableConcept?.coding;
         if (valueCoding) {
@@ -196,7 +205,7 @@ function renderBranch(
         break;
       }
       case 'DocumentReference': {
-        const documentReference = documentation.resource as fhir.DocumentReference;
+        const documentReference = documentation.resource as DocumentReference;
         const subject = documentReference.subject;
         if (subject)
           returnElements.push(
@@ -204,7 +213,8 @@ function renderBranch(
           );
 
         // Display missing data value if it is available, otherwise display note content
-        const documentReferenceIdentifier = documentReference?.identifier?.find(
+        const identifierArray: Identifier[] | undefined = documentReference.identifier;
+        const documentReferenceIdentifier = identifierArray?.find(
           i => i.system === 'pathways.documentreference'
         );
 
@@ -246,15 +256,20 @@ function renderBranch(
   return returnElements;
 }
 
+function isMedicationRequest(
+  request: MedicationRequest | ServiceRequest
+): request is MedicationRequest {
+  return (request as MedicationRequest).medicationCodeableConcept !== undefined;
+}
 function renderGuidance(
   pathwayState: GuidanceState,
   documentation: DocumentationResource | undefined
 ): ReactElement[] {
   const resource = pathwayState.action[0].resource;
-  const coding =
-    'medicationCodeableConcept' in resource
-      ? resource.medicationCodeableConcept.coding
-      : resource.code.coding;
+  const coding = isMedicationRequest(resource)
+    ? resource?.medicationCodeableConcept?.coding
+    : resource?.code?.coding;
+
   const returnElements = [
     <ExpandedNodeField
       key="Notes"
@@ -267,21 +282,21 @@ function renderGuidance(
       title="System"
       description={
         <>
-          {coding[0].system}
-          <a href={coding[0].system} target="_blank" rel="noopener noreferrer">
+          {coding && coding[0].system}
+          <a href={coding && coding[0].system} target="_blank" rel="noopener noreferrer">
             <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
           </a>
         </>
       }
     />,
-    <ExpandedNodeField key="Code" title="Code" description={coding[0].code} />,
-    <ExpandedNodeField key="Display" title="Display" description={coding[0].display} />
+    <ExpandedNodeField key="Code" title="Code" description={coding && coding[0].code} />,
+    <ExpandedNodeField key="Display" title="Display" description={coding && coding[0].display} />
   ];
 
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Procedure': {
-        const procedure = documentation.resource as fhir.Procedure;
+        const procedure = documentation.resource as Procedure;
         const start =
           (procedure.performedPeriod && procedure.performedPeriod.start) ||
           procedure.performedDateTime;

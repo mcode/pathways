@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { PatientContext } from 'components/PatientProvider';
-
+import { Patient } from 'fhir-objects';
 interface PatientProviderProps {
   children: ReactNode;
-  patient?: fhir.Patient; // fhir.Patient | null;
+  patient?: Patient; // Patient | null;
 }
 
 export const mockedPatient = {

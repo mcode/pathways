@@ -1,16 +1,25 @@
-import { BasicMedicationRequestResource, BasicActionResource, GuidanceState } from 'pathways-model';
+import { GuidanceState } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
+import {
+  Patient,
+  DomainResource,
+  HumanName,
+  DocumentReference,
+  Observation,
+  ServiceRequest,
+  MedicationRequest
+} from 'fhir-objects';
 import { v1 } from 'uuid';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
-  pathwayResource: BasicMedicationRequestResource | BasicActionResource,
+  pathwayResource: MedicationRequest | ServiceRequest,
   patientId: string
-): fhir.Resource {
+): MedicationRequest | ServiceRequest {
   const { resourceType } = pathwayResource;
   const resourceProperties = {
-    resourceType,
     id: v1(),
+    resourceType,
     intent: 'order',
     subject: { reference: `Patient/${patientId}` },
     status: 'active',
@@ -22,18 +31,18 @@ export function translatePathwayRecommendation(
 
   switch (resourceType) {
     case 'ServiceRequest': {
-      const { code } = pathwayResource as BasicActionResource;
+      const { code } = pathwayResource as ServiceRequest;
       return {
         ...resourceProperties,
         code
-      };
+      } as ServiceRequest;
     }
     case 'MedicationRequest': {
-      const { medicationCodeableConcept } = pathwayResource as BasicMedicationRequestResource;
+      const { medicationCodeableConcept } = pathwayResource as MedicationRequest;
       return {
         ...resourceProperties,
         medicationCodeableConcept
-      };
+      } as MedicationRequest;
     }
     default: {
       throw Error(`Translation for ${resourceType} not implemented.`);
@@ -41,7 +50,7 @@ export function translatePathwayRecommendation(
   }
 }
 
-export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string {
+export function getHumanName(person: HumanName[]): string {
   let name = '';
   if (Array.isArray(person)) {
     name = [
@@ -50,13 +59,6 @@ export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string 
       person[0]?.family,
       person[0]?.suffix?.join(' ')
     ].join(' ');
-  } else {
-    name = [
-      person?.prefix?.join(' '),
-      person?.given?.join(' '),
-      person?.family,
-      person?.suffix?.join(' ')
-    ].join(' ');
   }
   return name;
 }
@@ -64,8 +66,8 @@ export function getHumanName(person: fhir.HumanName | fhir.HumanName[]): string 
 export function createDocumentReference(
   data: string,
   labelOrCondition: string,
-  patient: fhir.Patient
-): fhir.DocumentReference {
+  patient: Patient
+): DocumentReference {
   return {
     resourceType: 'DocumentReference',
     id: v1(),
@@ -104,7 +106,7 @@ export function createDocumentReference(
 
 export function createNoteContent(
   note: Note,
-  patientRecords: fhir.DomainResource[],
+  patientRecords: DomainResource[],
   status: string,
   notes: string,
   pathwayState?: GuidanceState
@@ -130,7 +132,7 @@ export function createNoteContent(
       const profile = record.meta.profile[0];
       if (record.resourceType === 'Observation') {
         if (profile.includes('TumorMarkerTest') && record.resourceType === 'Observation') {
-          const obs = record as fhir.Observation;
+          const obs = record as Observation;
           const value = obs.valueCodeableConcept?.text;
           const name = obs.code.text;
           if (value && name) {
@@ -145,7 +147,7 @@ export function createNoteContent(
             return profile.includes(value);
           });
           if (index > -1) {
-            const obs = record as fhir.Observation;
+            const obs = record as Observation;
             const value = obs.valueCodeableConcept?.text;
             if (value) {
               tnm[index] = value;
