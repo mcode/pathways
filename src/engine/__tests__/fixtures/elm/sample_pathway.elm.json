@@ -172,6 +172,14 @@
                "name" : "SNOMEDCT"
             }
          }, {
+            "name" : "Teleradiotherapy (other) procedure (procedure) code",
+            "id" : "331950040",
+            "display" : "Teleradiotherapy (other) procedure (procedure)",
+            "accessLevel" : "Public",
+            "codeSystem" : {
+               "name" : "SNOMEDCT"
+            }
+         }, {
             "name" : "Chemotherapy (procedure) code",
             "id" : "367336001",
             "display" : "Chemotherapy (procedure)",
@@ -844,6 +852,64 @@
                            "source" : {
                               "path" : "status",
                               "scope" : "Radiation",
+                              "type" : "Property"
+                           }
+                        }
+                     } ]
+                  }
+               }
+            }
+         }, {
+            "name" : "OtherRadiation",
+            "context" : "Patient",
+            "accessLevel" : "Public",
+            "expression" : {
+               "type" : "Query",
+               "source" : [ {
+                  "alias" : "OtherRadiation",
+                  "expression" : {
+                     "dataType" : "{http://hl7.org/fhir}Procedure",
+                     "codeProperty" : "code",
+                     "type" : "Retrieve",
+                     "codes" : {
+                        "type" : "ToList",
+                        "operand" : {
+                           "name" : "Teleradiotherapy (other) procedure (procedure) code",
+                           "type" : "CodeRef"
+                        }
+                     }
+                  }
+               } ],
+               "relationship" : [ ],
+               "return" : {
+                  "expression" : {
+                     "type" : "Tuple",
+                     "element" : [ {
+                        "name" : "resourceType",
+                        "value" : {
+                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                           "value" : "Procedure",
+                           "type" : "Literal"
+                        }
+                     }, {
+                        "name" : "id",
+                        "value" : {
+                           "path" : "value",
+                           "type" : "Property",
+                           "source" : {
+                              "path" : "id",
+                              "scope" : "OtherRadiation",
+                              "type" : "Property"
+                           }
+                        }
+                     }, {
+                        "name" : "status",
+                        "value" : {
+                           "path" : "value",
+                           "type" : "Property",
+                           "source" : {
+                              "path" : "status",
+                              "scope" : "OtherRadiation",
                               "type" : "Property"
                            }
                         }

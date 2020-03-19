@@ -2,7 +2,9 @@
   "patientId": "664c8ded-bb1a-4893-b3ee-90d64fdb7f56",
   "currentStates": ["N-test"],
   "documentation": [
-    "direct",
+    {
+      "state": "Start"
+    },
     {
       "resourceType": "Observation",
       "id": "c958f03c-2f53-4c83-b583-92e5331dff22",

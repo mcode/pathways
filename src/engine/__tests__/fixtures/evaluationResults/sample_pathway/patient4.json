@@ -2,7 +2,9 @@
   "patientId": "06da3260-0780-4e95-b3aa-33600e793a48",
   "currentStates": ["Chemo"],
   "documentation": [
-    "direct",
+    {
+      "state": "Start"
+    },
     {
       "resourceType": "Observation",
       "id": "4631d473-6a50-497e-9651-ff6b3196d796",

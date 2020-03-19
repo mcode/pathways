@@ -2,7 +2,9 @@
   "patientId": "9cbc5bf7-7f16-424c-aebe-af0670f92c27",
   "currentStates": ["Radiation"],
   "documentation": [
-    "direct",
+    {
+      "state": "Start"
+    },
     {
       "resourceType": "Observation",
       "id": "fc4bd5bf-40be-4407-8679-9e15e342762b",
