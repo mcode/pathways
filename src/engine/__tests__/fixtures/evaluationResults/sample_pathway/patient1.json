@@ -1,8 +1,6 @@
 {
   "patientId": "9cbc5bf7-7f16-424c-aebe-af0670f92c27",
-  "currentState": ["Radiation"],
-  "currentStatus": "completed",
-  "nextRecommendation": "pathway terminal",
+  "currentStates": ["Radiation"],
   "documentation": [
     "direct",
     {

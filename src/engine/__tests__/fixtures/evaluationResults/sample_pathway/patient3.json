@@ -1,21 +1,6 @@
 {
   "patientId": "664c8ded-bb1a-4893-b3ee-90d64fdb7f56",
-  "currentState": ["N-test"],
-  "currentStatus": "not-done",
-  "nextRecommendation": [
-    {
-      "state": "Radiation",
-      "conditionDescription": "N = N0"
-    },
-    {
-      "state": "OtherRadiation",
-      "conditionDescription": "N = N0"
-    },
-    {
-      "state": "ChemoMedication",
-      "conditionDescription": "N = N1"
-    }
-  ],
+  "currentStates": ["N-test"],
   "documentation": [
     "direct",
     {
@@ -25,5 +10,5 @@
       "state": "T-test"
     }
   ],
-  "path": ["Start", "T-test", "N-test"]
+  "path": ["Start", "T-test"]
 }

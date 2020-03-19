@@ -1,8 +1,6 @@
 {
   "patientId": "06da3260-0780-4e95-b3aa-33600e793a48",
-  "currentState": ["Chemo"],
-  "currentStatus": "not-done",
-  "nextRecommendation": "pathway terminal",
+  "currentStates": ["Chemo"],
   "documentation": [
     "direct",
     {
@@ -24,5 +22,5 @@
       "state": "ChemoMedication"
     }
   ],
-  "path": ["Start", "T-test", "N-test", "ChemoMedication", "Chemo"]
+  "path": ["Start", "T-test", "N-test", "ChemoMedication"]
 }

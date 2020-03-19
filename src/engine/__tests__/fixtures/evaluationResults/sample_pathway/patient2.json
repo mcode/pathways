@@ -1,8 +1,6 @@
 {
   "patientId": "5cadf7d1-60ab-40c3-b2c4-5fa77610579d",
-  "currentState": ["Chemo"],
-  "currentStatus": "completed",
-  "nextRecommendation": "pathway terminal",
+  "currentStates": ["Chemo"],
   "documentation": [
     "direct",
     {
