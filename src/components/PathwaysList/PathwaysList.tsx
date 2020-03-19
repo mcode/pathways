@@ -1,4 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { Service } from 'pathways-objects';
 import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
 
@@ -19,6 +21,18 @@ import {
   faChevronDown,
   faCaretDown
 } from '@fortawesome/free-solid-svg-icons';
+
+const useStyles = makeStyles(
+  theme => ({
+    'pathway-element': {
+      backgroundColor: theme.palette.background.default
+    },
+    title: {
+      color: theme.palette.text.primary
+    }
+  }),
+  { name: 'PathwaysList' }
+);
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
@@ -115,6 +129,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   criteria,
   callback
 }) => {
+  const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -126,9 +141,13 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   }
 
   return (
-    <div className={styles.pathwayElement} role={'list'} key={pathway.name}>
+    <div
+      className={clsx(styles.pathwayElement, classes['pathway-element'])}
+      role={'list'}
+      key={pathway.name}
+    >
       <div
-        className={styles.title}
+        className={clsx(styles.title, classes.title)}
         role={'listitem'}
         onClick={(e): void => {
           pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);

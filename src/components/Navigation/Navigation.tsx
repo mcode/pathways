@@ -1,5 +1,8 @@
 import React, { FC } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import PatientSnapshot from 'components/PatientSnapshot';
 import DropDown from 'components/DropDown';
@@ -7,7 +10,16 @@ import styles from './Navigation.module.scss';
 import { EvaluatedPathway } from 'pathways-model';
 import { Option } from 'option';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+
+const useStyles = makeStyles(
+  theme => ({
+    navigation: {
+      backgroundColor: theme.palette.background.default,
+      color: theme.palette.text.primary
+    }
+  }),
+  { name: 'Navigation' }
+);
 
 interface Props {
   evaluatedPathways: EvaluatedPathway[];
@@ -17,6 +29,7 @@ interface Props {
 }
 
 const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPathway, onBack }) => {
+  const classes = useStyles();
   const pathwayCtx = usePathwayContext();
   const pathway = pathwayCtx.evaluatedPathway?.pathway;
   const value =
@@ -34,7 +47,7 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   }));
 
   return (
-    <nav className={styles.navigation}>
+    <nav className={clsx(styles.navigation, classes.navigation)}>
       <div className={styles.navigation__leftPanel}>
         {onBack && (
           <FontAwesomeIcon

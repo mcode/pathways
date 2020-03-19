@@ -1,4 +1,6 @@
 import React, { FC, Ref, forwardRef } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { GuidanceState, State, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -16,6 +18,19 @@ import {
   faCheckCircle,
   faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
+
+const useStyles = makeStyles(
+  theme => ({
+    'not-on-patient-path': {
+      backgroundColor: theme.palette.background.default,
+      color: theme.palette.text.primary
+    },
+    'child-not-on-patient-path': {
+      borderColor: theme.palette.background.default
+    }
+  }),
+  { name: 'Node' }
+);
 
 interface NodeProps {
   pathwayState: State;
@@ -42,15 +57,19 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     },
     ref
   ) => {
+    const classes = useStyles();
     const { label } = pathwayState;
     const style = {
       top: yCoordinate,
       left: xCoordinate
     };
 
-    const backgroundColorClass = isOnPatientPath ? styles.onPatientPath : styles.notOnPatientPath;
+    const backgroundColorClass = isOnPatientPath
+      ? styles.onPatientPath
+      : clsx(styles.notOnPatientPath, classes['not-on-patient-path']);
     const isActionable = isCurrentNode && !documentation;
     const topLevelClasses = [styles.node, backgroundColorClass];
+
     let expandedNodeClass = '';
     if (expanded) topLevelClasses.push(nodeStyles.expanded);
     if (isActionable) {
@@ -59,7 +78,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivEle
     } else {
       expandedNodeClass = isOnPatientPath
         ? styles.childOnPatientPath
-        : styles.childNotOnPatientPath;
+        : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
     }
     const isGuidance = isGuidanceState(pathwayState);
     // TODO: how do we determine whether a node has been accepted or declined?
