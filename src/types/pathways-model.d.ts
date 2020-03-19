@@ -51,9 +51,7 @@ declare module 'pathways-model' {
 
   export interface PathwayResults {
     patientId: string;
-    currentState: string[];
-    currentStatus: string | undefined;
-    nextRecommendation: string | object;
+    currentStates: string[];
     documentation: Array<DocumentationResource | string>;
     path: string[];
   }
