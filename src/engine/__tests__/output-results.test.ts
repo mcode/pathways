@@ -48,6 +48,7 @@ describe('pathway results translator', () => {
           id: '4'
         }
       ],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
@@ -55,7 +56,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['Radiation']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -122,6 +125,7 @@ describe('pathway results translator', () => {
         }
       ],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
@@ -129,7 +133,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['Surgery']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -170,6 +176,7 @@ describe('pathway results translator', () => {
       'N = N1': [],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
@@ -177,7 +184,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['N-test']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -218,6 +227,7 @@ describe('pathway results translator', () => {
       ],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [
         {
           resourceType: 'Procedure',
@@ -237,7 +247,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['Chemo']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -298,6 +310,7 @@ describe('pathway results translator', () => {
       ],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: [
         {
@@ -311,7 +324,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['Chemo']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -379,7 +394,9 @@ describe('pathway results translator', () => {
 
     expect(patientPath.currentStates).toStrictEqual(['Radiation', 'OtherRadiation']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
