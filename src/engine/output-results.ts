@@ -54,7 +54,7 @@ export function pathwayData(
   const currentState = pathway.states[currentStateName];
   return {
     patientId: patientData.Patient.id.value,
-    currentState: currentStateName,
+    currentState: [currentStateName],
     currentStatus: currentStatus,
     nextRecommendation: nextStateRecommendation(currentState),
     path: evaluatedPathway,

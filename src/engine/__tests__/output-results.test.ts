@@ -53,7 +53,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Radiation');
+    expect(patientPath.currentState).toStrictEqual(['Radiation']);
     expect(patientPath.currentStatus).toBe('not-done');
     expect(patientPath.nextRecommendation).toBe('pathway terminal');
     expect(patientPath.documentation).toEqual([
@@ -129,7 +129,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Surgery');
+    expect(patientPath.currentState).toStrictEqual(['Surgery']);
     expect(patientPath.currentStatus).toBe('in-progress');
     expect(patientPath.nextRecommendation).toBe('N-test');
     expect(patientPath.documentation).toEqual([
@@ -179,7 +179,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('N-test');
+    expect(patientPath.currentState).toStrictEqual(['N-test']);
     expect(patientPath.currentStatus).toBe('not-done');
     expect(patientPath.nextRecommendation).toEqual([
       {
@@ -250,7 +250,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Chemo');
+    expect(patientPath.currentState).toStrictEqual(['Chemo']);
     expect(patientPath.currentStatus).toBe('completed');
     expect(patientPath.nextRecommendation).toBe('pathway terminal');
     expect(patientPath.documentation).toEqual([
@@ -326,7 +326,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Chemo');
+    expect(patientPath.currentState).toStrictEqual(['Chemo']);
     expect(patientPath.currentStatus).toBe('not-done');
     expect(patientPath.nextRecommendation).toBe('pathway terminal');
     expect(patientPath.documentation).toEqual([
@@ -395,7 +395,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Radiation');
+    expect(patientPath.currentState).toStrictEqual(['Radiation']);
     expect(patientPath.currentStatus).toBe('not-done');
     expect(patientPath.nextRecommendation).toBe('pathway terminal');
     expect(patientPath.documentation).toEqual([

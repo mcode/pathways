@@ -1,6 +1,6 @@
 {
   "patientId": "664c8ded-bb1a-4893-b3ee-90d64fdb7f56",
-  "currentState": "N-test",
+  "currentState": ["N-test"],
   "currentStatus": "not-done",
   "nextRecommendation": [
     {
