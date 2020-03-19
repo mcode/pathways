@@ -187,6 +187,10 @@ describe('pathway results translator', () => {
         conditionDescription: 'N = N0'
       },
       {
+        state: 'OtherRadiation',
+        conditionDescription: 'N = N0'
+      },
+      {
         state: 'ChemoMedication',
         conditionDescription: 'N = N1'
       }
@@ -420,6 +424,64 @@ describe('pathway results translator', () => {
       }
     ]);
     expect(patientPath.path).toEqual(['Start', 'T-test', 'Surgery', 'N-test', 'Radiation']);
+  });
+
+  /**
+   * Test patientPath7 is a pathway which ends with two options for radiation
+   *
+   * patient is T0N0 and has two options for radiation treatment
+   */
+  it('patientPath7 produces correct results', () => {
+    const patientData = {
+      Patient: {
+        id: {
+          value: '1'
+        }
+      },
+      'T = T0': [
+        {
+          resourceType: 'Observation',
+          status: 'final',
+          id: '1'
+        }
+      ],
+      'T = T1': [],
+      'N = N0': [
+        {
+          resourceType: 'Observation',
+          status: 'final',
+          id: '2'
+        }
+      ],
+      'N = N1': [],
+      Surgery: [],
+      Radiation: [],
+      OtherRadiation: [],
+      Chemo: [],
+      ChemoMedication: []
+    };
+    const patientPath = pathwayData(pathway, patientData, resources);
+    console.log(patientPath);
+
+    expect(patientPath.currentState).toStrictEqual(['Radiation', 'OtherRadiation']);
+    expect(patientPath.currentStatus).toBe('not-done');
+    expect(patientPath.nextRecommendation).toBe('pathway terminal');
+    expect(patientPath.documentation).toEqual([
+      'direct',
+      {
+        resourceType: 'Observation',
+        status: 'final',
+        id: '1',
+        state: 'T-test'
+      },
+      {
+        resourceType: 'Observation',
+        status: 'final',
+        id: '2',
+        state: 'N-test'
+      }
+    ]);
+    expect(patientPath.path).toEqual(['Start', 'T-test', 'N-test']);
   });
 });
 

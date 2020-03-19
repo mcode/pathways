@@ -8,6 +8,10 @@
       "conditionDescription": "N = N0"
     },
     {
+      "state": "OtherRadiation",
+      "conditionDescription": "N = N0"
+    },
+    {
       "state": "ChemoMedication",
       "conditionDescription": "N = N1"
     }
