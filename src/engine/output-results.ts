@@ -48,7 +48,7 @@ export function pathwayData(
       // Check if any of them have been done
       currentStates = [];
       // console.log(patientData);
-      for (let stateName of stateData.nextStates) {
+      for (const stateName of stateData.nextStates) {
         // TODO: this if statement will fail for conditional states
         if (patientData[stateName].length) {
           // TODO: there is a possibility multiple states match
@@ -158,8 +158,8 @@ function getConditionalNextState(
   currentStateName: string,
   resources: DomainResource[]
 ): StateData | null {
-  let documentation: DocumentationResource[] = [];
-  let nextStates: string[] = [];
+  const documentation: DocumentationResource[] = [];
+  const nextStates: string[] = [];
   for (const transition of currentState.transitions) {
     if (transition.condition) {
       let currentTransitionDocumentation: DocumentationResource | null = null;

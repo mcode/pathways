@@ -53,9 +53,7 @@ export const evaluatedCriteria: CriteriaResult[] = [
 
 export const evaluatedPathwayResults: PathwayResults = {
   patientId: '1',
-  currentState: 'Start',
-  currentStatus: 'not-done',
-  nextRecommendation: 'T-test',
+  currentStates: ['Start'],
   documentation: [],
   path: ['Start']
 };
