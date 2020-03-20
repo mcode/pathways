@@ -1,9 +1,10 @@
 {
   "resourceType": "PlanDefinition",
   "url": "pathways.mitre.org/her2_early_stage",
-  "name": "her2_early_stage",
+  "name": "Her2_early_stage",
   "title": "Early Stage HER2+ (Draft)",
-  "library": "mCODE_Library.cql",
+  "library": ["Library/mCODE"],
+  "version": "1.0.0",
   "type": {
     "coding": [
       {
@@ -14,8 +15,8 @@
     ]
   },
   "status": "draft",
-  "experimental": "true",
-  "date": "2020-03-12T14:00:00.00",
+  "experimental": true,
+  "date": "2020-03-12T14:00:00.00+00:00",
   "publisher": "Camino",
   "description": "Pathway for the Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway. This is a draft pathway.",
   "contained": [
@@ -24,15 +25,18 @@
       "id": "chemotherpay-tchacth-definition",
       "url": "chemotherapy-tchacth-definition",
       "version": "1.0.0",
-      "name": "chemotherapy-tchacth-definition",
+      "meta": {
+        "profile": ["http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-activitydefinition"]
+      },
+      "name": "Chemotherapy_tchacth_definition",
       "title": "AcitvityDefinition for Chemotherapy TCH AC + TH Regimen",
       "status":"draft",
-      "experimental":"true",
-      "date":"2020-03-12T14:00:00.00",
+      "experimental": true,
+      "date":"2020-03-12T14:00:00.00+00:00",
       "publisher":"Camino",
       "description": "Activity definition for the Chemotherapy TCH AC + TH Regimen",
       "kind": "ServiceRequest",
-      "productCodableConcept": {
+      "productCodeableConcept": {
           "coding": [
             {
               "system": "http://snomed.info/sct",
@@ -48,15 +52,18 @@
       "id": "chemotherapy-thweekly-definition",
       "url": "chemotherapy-thweekly-definition",
       "version": "1.0.0",
-      "name": "chemotherapy-thweekly-definition",
+      "meta": {
+        "profile": ["http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-activitydefinition"]
+      },
+      "name": "Chemotherapy_thweekly_definition",
       "title": "ActivityDefinition for the Chemotherapy TH Weekly Regimen",
       "status":"draft",
-      "experimental":"true",
-      "date":"2020-03-12T14:00:00.00",
+      "experimental": true,
+      "date":"2020-03-12T14:00:00.00+00:00",
       "publisher":"Camino",
       "description": "Activity definition for the Chemotherapy TH Weekly Regimen",
       "kind": "ServiceRequest",
-      "productCodableConcept":{
+      "productCodeableConcept":{
         "coding":[
           {
             "system": "http://snomed.info/sct",
@@ -71,21 +78,24 @@
       "resourceType": "ActivityDefinition",
       "id": "postchemo-trastuzumab-definition",
       "url": "postchemo-trastuzumab-definition",
-      "verison": "1.0.0",
-      "name": "postchemo-trastuzumab-definition",
+      "version": "1.0.0",
+      "meta": {
+        "profile": ["http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-activitydefinition"]
+      },
+      "name": "Postchemo_trastuzumab_definition",
       "title": "ActivityDefinition for post-chemotherapy trastuzumab",
       "status": "draft",
-      "experimental": "true",
-      "date":"2020-03-12T14:00:00.00",
+      "experimental": true,
+      "date":"2020-03-12T14:00:00.00+00:00",
       "publisher":"Camino",
       "description": "Activity definition for post-chemotherapy trastuzumab",
       "kind": "MedicationRequest",
-      "productCodableConcept":{
+      "productCodeableConcept":{
         "coding": [
           {
             "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
             "code": "1922509",
-            "display": "trastuzumab"
+            "display": "trastuzumab 150 MG Injection"
           }
         ],
         "text": "trastuzumab"
@@ -96,9 +106,19 @@
     {
       "id": "start",
       "title": "Start",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Start state of the pathway",
       "relatedAction": [
         {
-          "actionId": "#node-status",
+          "actionId": "node-status",
           "relationship": "before-start"
         }
       ]
@@ -106,17 +126,27 @@
     {
       "id": "node-status",
       "title": "Node Status",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Branch node based on the Node size",
       "relatedAction": [
         {
-          "actionId": "#start",
+          "actionId": "start",
           "relationship": "after-end"
         },
         {
-          "actionId": "#tumor-size",
+          "actionId": "tumor-size",
           "relationship": "before-start"
         },
         {
-          "actionId": "#chemotherapy-tchacth",
+          "actionId": "chemotherapy-tchacth",
           "relationship": "before-start"
         }
       ]
@@ -124,26 +154,36 @@
     {
       "id": "tumor-size",
       "title": "Tumor Size",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Branch node based on the Tumor size",
       "condition": [
         {
           "kind": "applicability",
           "expression": {
-            "language": "CQL",
+            "language": "text/cql",
             "expression": "N0"
           }
         }
       ],
       "relatedAction": [
         {
-          "actionId": "#node-status",
+          "actionId": "node-status",
           "relationship": "after-end"
         },
         {
-          "actionId": "#chemotherapy-tchacth",
+          "actionId": "chemotherapy-tchacth",
           "relationship": "before-start"
         },
         {
-          "actionId": "#chemotherapy-thweekly",
+          "actionId": "chemotherapy-thweekly",
           "relationship": "before-start"
         }
       ]
@@ -151,11 +191,21 @@
     {
       "id": "chemotherapy-tchacth",
       "title": "Chemotherapy TCH AC + TH",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Guidance state representing the Chemotherapy TCH AC + TH regimen",
       "condition": [
         {
           "kind":"applicability",
           "expression":{
-            "language": "CQL",
+            "language": "text/cql",
             "expression": "N+ OR T2+"
           }
         }
@@ -164,20 +214,30 @@
         {
           "id": "chemotherapy-tchacth-request",
           "title": "ServiceRequest for Chemotherapy TCH AC + TH Regimen",
+          "code": [{
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+                "code": "guideline-based-care",
+                "display": "Guideline-based Care"
+              }
+            ]
+          }],
+          "description": "Action representing the service request chemotherapy",
           "definitionCanonical": "#chemotherapy-tchacth-definition" 
         }
       ],
       "relatedAction":[
         {
-          "actionId": "#node-status",
+          "actionId": "node-status",
           "relationship": "after-end"
         },
         {
-          "actionId": "#tumor-size",
+          "actionId": "tumor-size",
           "relationship": "after-end"
         },
         {
-          "actionId": "#postchemo-trastuzumab",
+          "actionId": "postchemo-trastuzumab",
           "relationship": "before-start"
         }
       ]
@@ -185,11 +245,21 @@
     {
       "id": "chemotherapy-thweekly",
       "title": "Chemotherapy TH Weekly",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Guidance state representing the Chemotherapy TH Weekly regimen",
       "condition": [
         {
           "kind":"applicability",
           "expression":{
-            "language": "CQL",
+            "language": "text/cql",
             "expression": "T2-"
           }
         }
@@ -198,16 +268,26 @@
         {
           "id": "chemotherapy-thweekly-request",
           "title": "ServiceRequest for Chemotherapy TH Weekly Regimen",
+          "code": [{
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+                "code": "guideline-based-care",
+                "display": "Guideline-based Care"
+              }
+            ]
+          }],
+          "description": "Action representing the service request chemotherapy",
           "definitionCanonical": "#chemotherapy-thweekly-definition" 
         }
       ],
       "relatedAction":[
         {
-          "actionId": "#tumor-size",
+          "actionId": "tumor-size",
           "relationship": "after-end"
         },
         {
-          "actionId": "#postchemo-trastuzumab",
+          "actionId": "postchemo-trastuzumab",
           "relationship": "before-start"
         }
       ]
@@ -215,24 +295,44 @@
     {
       "id": "postchemo-trastuzumab",
       "title": "Post-Chemotherapy Trastuzumab",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Guidance state representing post chemotherapy trastuzumab",
       "action":[
         {
           "id": "postchemo-trastuzumab-request",
           "title": "MedicationRequest for Trastuzumab after chemotherapy regimen is complete",
+          "code": [{
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+                "code": "guideline-based-care",
+                "display": "Guideline-based Care"
+              }
+            ]
+          }],
+          "description": "Action representing the medication request for post chemotherapy trastuzumab",
           "definitionCanonical": "#postchemo-trastuzumab-definition" 
         }
       ],
       "relatedAction":[
         {
-          "actionId": "#chemotherapy-tchacth",
+          "actionId": "chemotherapy-tchacth",
           "relationship": "after-end"
         },
         {
-          "actionId": "#chemotherapy-thweekly",
+          "actionId": "chemotherapy-thweekly",
           "relationship": "after-end"
         },
         {
-          "actionId": "#er-status",
+          "actionId": "er-status",
           "relationship": "before-start"
         }
       ]
@@ -240,17 +340,27 @@
     {
       "id": "er-status",
       "title": "ER Status",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Branch node for ER positive or negative",
       "relatedAction":[
         {
-          "actionId": "#postchemo-trastuzumab",
+          "actionId": "postchemo-trastuzumab",
           "relationship": "after-end"
         },
         {
-          "actionId": "#no-endocrine-therapy",
+          "actionId": "no-endocrine-therapy",
           "relationship": "before-start"
         },
         {
-          "actionId": "#endocrine-therapy",
+          "actionId": "endocrine-therapy",
           "relationship": "before-start"
         }
       ]
@@ -258,18 +368,57 @@
     {
       "id": "no-endocrine-therapy",
       "title": "No Endocrine Therapy",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Guidance state representing no endocrine therapy",
       "condition":[
         {
           "kind": "applicability",
           "expression":{
-            "language":"CQL",
+            "language":"text/cql",
             "expression": "ERNegative"
           }
         }
       ],
       "relatedAction": [
         {
-          "actionId": "#er-status",
+          "actionId": "er-status",
+          "relationship":"after-end"
+        }
+      ]
+    },
+    {
+      "id": "endocrine-therapy",
+      "title": "Endocrine Therapy",
+      "code": [{
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/uv/cpg/CodeSystem/cpg-common-process",
+            "code": "guideline-based-care",
+            "display": "Guideline-based Care"
+          }
+        ]
+      }],
+      "description": "Guidance state representing endocrine therapy",
+      "condition":[
+        {
+          "kind": "applicability",
+          "expression":{
+            "language":"text/cql",
+            "expression": "ERPositive"
+          }
+        }
+      ],
+      "relatedAction": [
+        {
+          "actionId": "er-status",
           "relationship":"after-end"
         }
       ]
