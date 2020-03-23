@@ -80,6 +80,29 @@ const Graph: FC<GraphProps> = ({
       : 0;
   }, [nodeCoordinates]);
 
+  // If a node has a negative x value, shift nodes and edges to the right by that value
+  const minX =
+    nodeCoordinates !== undefined
+      ? Object.values(nodeCoordinates)
+          .map(x => x.x + windowWidth / 2)
+          .reduce((a, b) => Math.min(a, b))
+      : 0;
+
+  if (minX < 0) {
+    const toAdd = minX * -1;
+    Object.keys(nodeCoordinates).forEach(key => {
+      const node = nodeCoordinates[key];
+      node.x += toAdd;
+    });
+
+    Object.keys(edges).forEach(key => {
+      const edge = edges[key];
+
+      edge.points.forEach(p => (p.x += toAdd));
+      if (edge.label) edge.label.x += toAdd;
+    });
+  }
+
   const initialExpandedState = useMemo(() => {
     return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
