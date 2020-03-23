@@ -47,10 +47,8 @@ export function pathwayData(
       // There are multiple transitions
       // Check if any of them have been done
       currentStates = [];
-      // console.log(patientData);
       for (const stateName of stateData.nextStates) {
-        // TODO: this if statement will fail for conditional states
-        if (patientData[stateName].length) {
+        if (!patientData[stateName] || patientData[stateName].length) {
           // TODO: there is a possibility multiple states match
           currentStates.push(stateName);
         }

@@ -35,13 +35,13 @@ const Graph: FC<GraphProps> = ({
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
-  const [path, _setPath] = useState<string[]>(
-    evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
+  const [pathwayResults, _setPathwayResults] = useState<PathwayResults | null>(
+    evaluatedPathway.pathwayResults
   );
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
-      _setPath(value.path);
+      _setPathwayResults(value);
       patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
@@ -120,11 +120,12 @@ const Graph: FC<GraphProps> = ({
     });
   }, []);
 
+  // Evaluate patient on the pathway
   useEffect(() => {
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0 && (path.length === 0 || patientRecords.evaluatePath)) {
+    if (resources.length > 0 && (!pathwayResults || patientRecords.evaluatePath)) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -139,16 +140,18 @@ const Graph: FC<GraphProps> = ({
         cancel = true;
       };
     }
-  }, [pathway, resources, path.length, setPath, patientRecords]);
+  }, [pathway, resources, pathwayResults, setPath, patientRecords]);
 
+  // Expand all the current nodes by default if allowed
   useEffect(() => {
-    if (path) {
-      const currentNode = path[path.length - 1];
-      if (expandCurrentNode) {
-        if (currentNode) setExpanded(currentNode, true);
+    if (pathwayResults) {
+      for (const currentNode of pathwayResults.currentStates) {
+        if (expandCurrentNode) {
+          if (currentNode) setExpanded(currentNode, true);
+        }
       }
     }
-  }, [expandCurrentNode, path, setExpanded]);
+  }, [expandCurrentNode, pathwayResults, setExpanded]);
 
   // Recalculate graph layout if window size changes or if a node is expanded
   useEffect(() => {
@@ -188,9 +191,6 @@ const Graph: FC<GraphProps> = ({
             const docResource = documentation.find((doc): doc is DocumentationResource => {
               return typeof doc !== 'string' && doc.state === key;
             });
-            const isCurrentNode = (): boolean => {
-              return path[path.length - 1] === key;
-            };
             const onClickHandler = interactive ? (): void => setExpanded(key) : undefined;
             return (
               <Node
@@ -200,8 +200,13 @@ const Graph: FC<GraphProps> = ({
                   nodeRefs.current[key] = node;
                 }}
                 pathwayState={pathway.states[key]}
-                isOnPatientPath={path.includes(key)}
-                isCurrentNode={isCurrentNode()}
+                isOnPatientPath={
+                  pathwayResults
+                    ? pathwayResults.path.includes(key) ||
+                      pathwayResults.currentStates.includes(key)
+                    : false
+                }
+                isCurrentNode={pathwayResults ? pathwayResults.currentStates.includes(key) : false}
                 xCoordinate={nodeCoordinates[key].x + windowWidth / 2}
                 yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
@@ -230,7 +235,9 @@ const Graph: FC<GraphProps> = ({
                   key={edgeName}
                   edge={edge}
                   edgeName={edgeName}
-                  isOnPatientPath={isEdgeOnPatientPath(path, edge)}
+                  isOnPatientPath={
+                    pathwayResults ? isEdgeOnPatientPath(pathwayResults.path, edge) : false
+                  }
                   widthOffset={windowWidth / 2}
                 />
               );
