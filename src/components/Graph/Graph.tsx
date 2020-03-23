@@ -149,8 +149,16 @@ const Graph: FC<GraphProps> = ({
   const documentation = evaluatedPathway.pathwayResults
     ? evaluatedPathway.pathwayResults.documentation
     : [];
+
   return (
-    <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
+    <div
+      ref={graphElement}
+      style={{
+        height: maxHeight + 150 + 'px',
+        position: 'relative',
+        overflow: 'auto'
+      }}
+    >
       {nodeCoordinates !== undefined
         ? Object.keys(nodeCoordinates).map(key => {
             const docResource = documentation.find((doc): doc is DocumentationResource => {
