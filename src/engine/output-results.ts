@@ -269,7 +269,7 @@ function retrieveNote(condition: string, resources: DomainResource[]): DocumentR
 }
 
 function retrieveResource(doc: Documentation, resources: DomainResource[]): Documentation {
-  if (doc.hasOwnProperty('resourceType') && resources) {
+  if ('resourceType' in doc && resources) {
     (doc as DocumentationResource).resource = resources.find(resource => {
       return (
         resource.resourceType === (doc as DocumentationResource).resourceType &&
