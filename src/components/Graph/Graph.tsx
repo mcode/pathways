@@ -162,12 +162,12 @@ const Graph: FC<GraphProps> = ({
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
-    edges !== undefined
+    (edges !== undefined
       ? Object.values(edges)
           .map(e => e.label)
           .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
           .reduce((a, b) => Math.max(a, b), 0)
-      : windowWidth;
+      : windowWidth) + 5;
 
   const documentation = evaluatedPathway.pathwayResults
     ? evaluatedPathway.pathwayResults.documentation
@@ -179,7 +179,8 @@ const Graph: FC<GraphProps> = ({
       style={{
         height: maxHeight + 150 + 'px',
         position: 'relative',
-        overflow: 'auto'
+        overflow: 'auto',
+        marginRight: '5px'
       }}
     >
       {nodeCoordinates !== undefined
