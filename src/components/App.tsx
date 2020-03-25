@@ -151,7 +151,7 @@ const App: FC<AppProps> = ({ demo }) => {
   function getDemoId(): number {
     // parse the url for the id of the patient to use
     const url = window.document.location.href;
-    let params = url.split('?');
+    const params = url.split('?');
     const urlParams = new URLSearchParams(params[1]);
 
     // return the id or 0 if an id was not provided
