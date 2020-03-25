@@ -11056,5 +11056,40 @@
         "country": "US"
       }
     ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "bf3a3740-6ede-11ea-b54f-a56b1b126c99",
+    "meta": {
+      "lastUpdated": "2020-02-03T21:22:35.828+00:00"
+    },
+    "status": "current",
+    "subject": {
+      "reference": "Patient/126040"
+    },
+    "identifier": [
+      {
+        "system": "pathways.documentreference",
+        "value": "VCA8PSAyY20="
+      }
+    ],
+    "content": [
+      {
+        "attachment": {
+          "data": "RGF0ZTogV2VkIE1hciAyNSAyMDIwCgpQYXRpZW50OiBNcnMuIE1hdXJlZW4yMSBNY09kZTA5MCBKRAoKQmlydGhkYXRlOiAxOTY4LTEwLTMwCgpQaHlzaWNpYW46IAoKSEVSMiBSZWNlcHRvcjogUG9zaXRpdmUKRXN0cm9nZW4gUmVjZXB0b3I6IE5lZ2F0aXZlClByb2dlc3Rlcm9uZSBSZWNlcHRvcjogUG9zaXRpdmUKQ2xpbmljYWwgVE5NOiAgTjAgTTAKClBhdGh3YXk6IEVhcmx5IFN0YWdlIEhFUjIrIChEcmFmdCkKCk5vZGU6IHVuZGVmaW5lZAoKU3RhdHVzOiBjb21wbGV0ZWQKClRyZWF0bWVudDogdW5kZWZpbmVkCgpOb3RlczogVCA8PSAyY20KICA=",
+          "contentType": "text/plain"
+        }
+      }
+    ],
+    "type": {
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "34108-1",
+          "display": "Outpatient Note"
+        }
+      ]
+    },
+    "indexed": ""
   }
 ]
