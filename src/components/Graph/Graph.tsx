@@ -177,7 +177,7 @@ const Graph: FC<GraphProps> = ({
     <div
       ref={graphElement}
       style={{
-        height: maxHeight + 150 + 'px',
+        height: interactive ? maxHeight + 150 : 'inherit',
         position: 'relative',
         overflow: 'auto',
         marginRight: '5px'
