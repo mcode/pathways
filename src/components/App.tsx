@@ -18,7 +18,7 @@ import ThemeProvider from './ThemeProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
-import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
+import { DemoRecords } from 'fixtures/DemoData';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
@@ -69,7 +69,7 @@ const App: FC<AppProps> = ({ demo }) => {
         });
     } else {
       setClient(new MockedFHIRClient());
-      setPatientRecords(demoRecords);
+      setPatientRecords(DemoRecords[getDemoId()]);
     }
   }, [demo, setPatientRecords]);
 
@@ -148,12 +148,26 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
+  function getDemoId(): number {
+    // parse the url for the id of the patient to use
+    const url = window.document.location.href;
+    let params = url.split('?');
+    const urlParams = new URLSearchParams(params[1]);
+
+    // return the id or 0 if an id was not provided
+    return Number(urlParams.get('id')) - 1 >= 0 ? Number(urlParams.get('id')) - 1 : 0;
+  }
+
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
         <PatientProvider
           patient={
-            demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
+            demo
+              ? (DemoRecords[getDemoId()].find(
+                  (r: { resourceType: string }) => r.resourceType === 'Patient'
+                ) as fhir.Patient)
+              : null
           }
         >
           <PatientRecordsProvider
