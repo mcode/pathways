@@ -1,0 +1,79 @@
+@import '../../styles/variables';
+
+// ----------  TITLE SPACING  --------- //
+$verticalPadding: 20px;
+$lineHeight: 30px;
+
+.record {
+    position: absolute;
+    top: 165px; // TODO: make this nav + header height
+    color: $white;
+    z-index: 2;
+
+    .recordToggle {
+        display: inline-flex;
+        float: left;
+        width: 65px;
+        height: 65px;
+        font-size: 2.5em;
+        align-items: center;
+        justify-content: center;
+        background-color: $blue;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .sidebar {
+        float: left;
+        width: 650px;
+        height: 800px; // TODO: make this max screen height
+        padding: 25px;
+        background-color: $gray;
+        overflow-y: scroll;
+    }
+
+    .element {
+        display: block;
+        margin-bottom: 1vh;
+        font-size: 1.1em;
+        text-transform: uppercase;
+        background-color: $blue;
+    
+        .title {
+          padding: $verticalPadding 0 $verticalPadding 30px;
+          height: 2*$verticalPadding + $lineHeight;
+          line-height: $lineHeight;
+          width: 100%;
+          font-weight:700;
+    
+          div {
+            display: inline-block;
+          }
+    
+          .expand {
+            float: right;
+            margin-right: 25px;
+            font-size: 1.2em;
+          }
+    
+          &:hover, &:focus {
+            cursor: pointer;
+          }
+        }
+    
+        .elementContainer {
+          padding-left: 15px;
+          width: 100%;
+          height: 250px;
+          color: $black;
+          background-color: $gray-lighter;
+          overflow: scroll;
+        }
+    
+        &:hover, &:focus{
+          background-color: darken($blue, 10%);
+        }
+      }
+}
