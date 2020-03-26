@@ -47,18 +47,26 @@ export function pathwayData(
       // There are multiple transitions
       // Check if any of them have been done
       currentStates = [];
+      const completedStates: string[] = [];
       for (const stateName of stateData.nextStates) {
-        if (!patientData[stateName] || patientData[stateName].length) {
-          // TODO: there is a possibility multiple states match
+        const documentReference = retrieveNote(pathway.states[stateName].label, resources);
+        if (!documentReference && (!patientData[stateName] || !patientData[stateName].length)) {
           currentStates.push(stateName);
+        } else {
+          completedStates.push(stateName);
         }
       }
 
-      if (currentStates.length === 0) {
+      if (completedStates.length !== 0) {
+        currentStates = completedStates;
+      } else if (currentStates.length === 0) {
         currentStates = stateData.nextStates;
         break;
       }
-      stateData = nextState(pathway, patientData, currentStates[0], resources);
+
+      // TODO: there is a possibility multiple states match
+      const currentStateName = completedStates.length ? completedStates[0] : currentStates[0];
+      stateData = nextState(pathway, patientData, currentStateName, resources);
     }
   }
   return {

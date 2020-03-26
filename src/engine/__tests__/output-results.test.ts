@@ -54,6 +54,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
+    console.log(patientPath);
     expect(patientPath.currentStates).toStrictEqual(['Radiation']);
     expect(patientPath.documentation).toEqual([
       {

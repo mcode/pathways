@@ -133,6 +133,7 @@ const Graph: FC<GraphProps> = ({
         entry: resources.map((r: DomainResource) => ({ resource: r }))
       };
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
+        console.log(pathwayResults);
         if (!cancel) setPath(pathwayResults);
       });
 
