@@ -162,12 +162,12 @@ const Graph: FC<GraphProps> = ({
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
-    (edges !== undefined
+    edges !== undefined
       ? Object.values(edges)
           .map(e => e.label)
           .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
           .reduce((a, b) => Math.max(a, b), 0)
-      : windowWidth) + 5;
+      : windowWidth;
 
   const documentation = evaluatedPathway.pathwayResults
     ? evaluatedPathway.pathwayResults.documentation
@@ -213,7 +213,8 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          width: maxWidth,
+          // Adding 5 pixels to maxWidth so that the rightmost edge label is not cut off
+          width: maxWidth + 5,
           height: maxHeight,
           zIndex: 1,
           top: 0,
