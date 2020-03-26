@@ -125,7 +125,7 @@
           "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
           "resource": {
             "resourceType": "MedicationRequest",
-            "code": {
+            "medicationCodeableConcept": {
               "coding": [
                 {
                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
