@@ -80,6 +80,29 @@ const Graph: FC<GraphProps> = ({
       : 0;
   }, [nodeCoordinates]);
 
+  // If a node has a negative x value, shift nodes and edges to the right by that value
+  const minX =
+    nodeCoordinates !== undefined
+      ? Object.values(nodeCoordinates)
+          .map(x => x.x + windowWidth / 2)
+          .reduce((a, b) => Math.min(a, b))
+      : 0;
+
+  if (minX < 0) {
+    const toAdd = minX * -1;
+    Object.keys(nodeCoordinates).forEach(key => {
+      const node = nodeCoordinates[key];
+      node.x += toAdd;
+    });
+
+    Object.keys(edges).forEach(key => {
+      const edge = edges[key];
+
+      edge.points.forEach(p => (p.x += toAdd));
+      if (edge.label) edge.label.x += toAdd;
+    });
+  }
+
   const initialExpandedState = useMemo(() => {
     return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
@@ -149,8 +172,17 @@ const Graph: FC<GraphProps> = ({
   const documentation = evaluatedPathway.pathwayResults
     ? evaluatedPathway.pathwayResults.documentation
     : [];
+
   return (
-    <div ref={graphElement} style={{ height: maxHeight + 150 + 'px', position: 'relative' }}>
+    <div
+      ref={graphElement}
+      style={{
+        height: interactive ? maxHeight + 150 : 'inherit',
+        position: 'relative',
+        overflow: 'auto',
+        marginRight: '5px'
+      }}
+    >
       {nodeCoordinates !== undefined
         ? Object.keys(nodeCoordinates).map(key => {
             const docResource = documentation.find((doc): doc is DocumentationResource => {
@@ -181,7 +213,8 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          width: maxWidth,
+          // Adding 5 pixels to maxWidth so that the rightmost edge label is not cut off
+          width: maxWidth + 5,
           height: maxHeight,
           zIndex: 1,
           top: 0,
