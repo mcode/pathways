@@ -16,10 +16,16 @@ interface GraphProps {
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
-const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
-  const startIndex = path.indexOf(edge.start);
-  const endIndex = path.indexOf(edge.end);
-  return startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex;
+const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
+  const startIndex = pathwayResults.path.indexOf(edge.start);
+  const endIndex = pathwayResults.path.indexOf(edge.end);
+  if (startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex) return true;
+  else if (
+    startIndex === pathwayResults.path.length - 1 &&
+    pathwayResults.currentStates.includes(edge.end)
+  )
+    return true;
+  else return false;
 };
 
 const Graph: FC<GraphProps> = ({
@@ -237,7 +243,7 @@ const Graph: FC<GraphProps> = ({
                   edge={edge}
                   edgeName={edgeName}
                   isOnPatientPath={
-                    pathwayResults ? isEdgeOnPatientPath(pathwayResults.path, edge) : false
+                    pathwayResults ? isEdgeOnPatientPath(pathwayResults, edge) : false
                   }
                   widthOffset={windowWidth / 2}
                 />
