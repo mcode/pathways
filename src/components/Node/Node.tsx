@@ -33,6 +33,7 @@ const useStyles = makeStyles(
 );
 
 interface NodeProps {
+  _key: string;
   pathwayState: State;
   documentation: DocumentationResource | undefined;
   isOnPatientPath: boolean;
@@ -40,79 +41,87 @@ interface NodeProps {
   xCoordinate: number;
   yCoordinate: number;
   expanded?: boolean;
-  onClickHandler?: () => void;
+  setExpanded: (key: string, expand?: boolean) => void;
+  interactive: boolean;
 }
 
-const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = forwardRef<HTMLDivElement, NodeProps>(
-  (
-    {
-      pathwayState,
-      documentation,
-      isOnPatientPath,
-      isCurrentNode,
-      xCoordinate,
-      yCoordinate,
-      expanded = false,
-      onClickHandler
-    },
-    ref
-  ) => {
-    const classes = useStyles();
-    const { label } = pathwayState;
-    const style = {
-      top: yCoordinate,
-      left: xCoordinate
-    };
+const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = React.memo(
+  forwardRef<HTMLDivElement, NodeProps>(
+    (
+      {
+        _key,
+        pathwayState,
+        documentation,
+        isOnPatientPath,
+        isCurrentNode,
+        xCoordinate,
+        yCoordinate,
+        expanded = false,
+        setExpanded,
+        interactive
+      },
+      ref
+    ) => {
+      const { label } = pathwayState;
+      const style = {
+        top: yCoordinate,
+        left: xCoordinate
+      };
 
-    const backgroundColorClass = isOnPatientPath
-      ? styles.onPatientPath
-      : clsx(styles.notOnPatientPath, classes['not-on-patient-path']);
-    const isActionable = isCurrentNode && !documentation;
-    const topLevelClasses = [styles.node, backgroundColorClass];
+      const classes = useStyles();
+      const backgroundColorClass = isOnPatientPath
+        ? styles.onPatientPath
+        : clsx(styles.notOnPatientPath, classes['not-on-patient-path']);
+      const isActionable = isCurrentNode && !documentation;
+      const topLevelClasses = [styles.node, backgroundColorClass];
+      let expandedNodeClass = '';
+      if (expanded) topLevelClasses.push(nodeStyles.expanded);
+      if (isActionable) {
+        topLevelClasses.push(styles.actionable);
+        expandedNodeClass = styles.childActionable;
+      } else {
+        expandedNodeClass = isOnPatientPath
+          ? styles.childOnPatientPath
+          : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
+      }
+      const isGuidance = isGuidanceState(pathwayState);
+      // TODO: how do we determine whether a node has been accepted or declined?
+      // for now:
+      // if it's a non-actionable guidance state on the path: accepted == has documentation
+      // if it's actionable, not guidance or not on the path: null
+      const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
+      const isAccepted = wasActionTaken
+        ? documentation?.resourceType !== 'DocumentReference'
+        : null;
 
-    let expandedNodeClass = '';
-    if (expanded) topLevelClasses.push(nodeStyles.expanded);
-    if (isActionable) {
-      topLevelClasses.push(styles.actionable);
-      expandedNodeClass = styles.childActionable;
-    } else {
-      expandedNodeClass = isOnPatientPath
-        ? styles.childOnPatientPath
-        : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
-    }
-    const isGuidance = isGuidanceState(pathwayState);
-    // TODO: how do we determine whether a node has been accepted or declined?
-    // for now:
-    // if it's a non-actionable guidance state on the path: accepted == has documentation
-    // if it's actionable, not guidance or not on the path: null
-    const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
-    const isAccepted = wasActionTaken ? documentation?.resourceType !== 'DocumentReference' : null;
-
-    return (
-      <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
-        <div
-          className={`${nodeStyles.nodeTitle} ${onClickHandler && nodeStyles.clickable}`}
-          onClick={onClickHandler}
-        >
-          <div className={nodeStyles.iconAndLabel}>
-            <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
-            {label}
+      return (
+        <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
+          <div
+            className={`${nodeStyles.nodeTitle} ${interactive && nodeStyles.clickable}`}
+            onClick={(): void => {
+              interactive && setExpanded(_key);
+            }}
+          >
+            <div className={nodeStyles.iconAndLabel}>
+              <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
+              {label}
+            </div>
+            <StatusIcon accepted={isAccepted} />
           </div>
-          <StatusIcon accepted={isAccepted} />
+          {expanded && (
+            <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
+              <ExpandedNode
+                pathwayState={pathwayState as GuidanceState}
+                isActionable={isActionable}
+                isGuidance={isGuidance}
+                documentation={documentation}
+              />
+            </div>
+          )}
         </div>
-        {expanded && (
-          <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
-            <ExpandedNode
-              pathwayState={pathwayState as GuidanceState}
-              isActionable={isActionable}
-              isGuidance={isGuidance}
-              documentation={documentation}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
+      );
+    }
+  )
 );
 
 interface NodeIconProps {

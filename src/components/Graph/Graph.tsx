@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { pure } from 'recompose';
 
 import graphLayout from 'visualization/layout';
 import Node from 'components/Node';
@@ -50,7 +51,7 @@ const Graph: FC<GraphProps> = ({
       patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
-    [evaluatedPathway.pathway, updateEvaluatedPathways, patientRecords]
+    [path, patientRecords, updateEvaluatedPathways, evaluatedPathway.pathway]
   );
 
   // Get the layout of the graph
@@ -108,12 +109,14 @@ const Graph: FC<GraphProps> = ({
     });
   }
 
-  const initialExpandedState = useMemo(() => {
-    return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
+  const layoutKeys = Object.keys(layout);
+  const initialExpandedState = layoutKeys.reduce(
+    (acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
       return acc;
-    }, {});
-  }, [layout]);
+    },
+    {}
+  );
 
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
     initialExpandedState
@@ -207,6 +210,7 @@ const Graph: FC<GraphProps> = ({
             return (
               <Node
                 key={key}
+                _key={key}
                 documentation={docResource}
                 ref={(node: HTMLDivElement): void => {
                   nodeRefs.current[key] = node;
@@ -226,7 +230,8 @@ const Graph: FC<GraphProps> = ({
                 xCoordinate={nodeCoordinates[key].x + parentWidth / 2}
                 yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
-                onClickHandler={onClickHandler}
+                setExpanded={setExpanded}
+                interactive={interactive}
               />
             );
           })

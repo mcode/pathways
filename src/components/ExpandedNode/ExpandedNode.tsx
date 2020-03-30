@@ -25,6 +25,7 @@ import {
   MedicationRequest,
   ServiceRequest
 } from 'fhir-objects';
+import { pure } from 'recompose';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -326,5 +327,4 @@ function renderGuidance(
   }
   return returnElements;
 }
-
-export default ExpandedNode;
+export default pure(ExpandedNode);
