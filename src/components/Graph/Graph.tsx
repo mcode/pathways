@@ -171,7 +171,6 @@ const Graph: FC<GraphProps> = ({
     const graphContainer = document.getElementById('graphContainer');
     const headerHeight = document.getElementById('header')?.clientHeight;
     const navHeight = document.getElementById('navigation')?.clientHeight;
-    console.log(graphContainer);
     if (graphContainer && navHeight && headerHeight)
       graphContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
   }, []);
@@ -196,6 +195,7 @@ const Graph: FC<GraphProps> = ({
       className={styles.root}
       style={{
         height: interactive ? maxHeight + 150 : 'inherit',
+        width: maxWidth + 'px',
         position: 'relative',
         overflow: 'auto',
         marginRight: '5px'

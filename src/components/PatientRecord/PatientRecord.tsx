@@ -59,7 +59,6 @@ const PatientRecord: FC = () => {
     const recordContainer = document.getElementById('recordContainer');
     const headerHeight = document.getElementById('header')?.clientHeight;
     const navHeight = document.getElementById('navigation')?.clientHeight;
-    console.log(recordContainer);
     if (recordContainer && navHeight && headerHeight)
       recordContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
   }, [isExpanded]);
@@ -69,7 +68,7 @@ const PatientRecord: FC = () => {
       <div className={styles.record} id="recordContainer">
         <div className={styles.sidebar}>
           {resourceTypes.map(resourceType => (
-            <PatientRecordElement resourceType={resourceType} />
+            <PatientRecordElement resourceType={resourceType} key={resourceType} />
           ))}
         </div>
 
