@@ -26,7 +26,6 @@ $lineHeight: 30px;
     .sidebar {
         float: left;
         width: 650px;
-        height: calc(100vh - 165px); // TODO: make this max screen height
         padding: 25px;
         background-color: $gray;
         overflow-y: scroll;

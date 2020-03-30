@@ -182,6 +182,8 @@ const Graph: FC<GraphProps> = ({
   return (
     <div
       ref={graphElement}
+      id="graph-root"
+      className={styles.root}
       style={{
         height: interactive ? maxHeight + 150 : 'inherit',
         position: 'relative',

@@ -50,8 +50,7 @@ const PatientRecord: FC = () => {
     'Immunization'
   ];
 
-  const expand = () => {
-    console.log('expanding!');
+  const expand = (): void => {
     setIsExpanded(!isExpanded);
   };
 
@@ -87,7 +86,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
 
-  const visualizer = (resourceType: string) => {
+  const visualizer = (resourceType: string): JSX.Element | undefined => {
     resourceType = resourceType.toLowerCase();
     if (resourceType === 'patient') return <PatientVisualizer patient={patient} />;
     else if (resourceType === 'condition')
