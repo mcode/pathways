@@ -13,57 +13,57 @@ function instanceOfElmObject(object: object): object is ElmObject {
 /**
  * Function to run each of the engine files in series to execute
  * the automated pathway
- * @param patient - Patient's record as FHIR data
+ * @param patientRecord - Patient's record as FHIR data
  * @param pathway - entire Pathway object
  * @return Information on the patient's current status within the
  *                  clinical pathway
  */
 export function evaluatePatientOnPathway(
-  patient: Bundle,
+  patientRecord: Bundle,
   pathway: Pathway,
   resources: DomainResource[]
 ): Promise<PathwayResults> {
   if (pathway.elm && pathway.elm.navigational) {
-    const patientData = processELMCommon(patient, pathway.elm.navigational);
+    const patientData = processELMCommon(patientRecord, pathway.elm.navigational);
     const pathwayResults = pathwayData(pathway, patientData, resources);
     return Promise.resolve(pathwayResults);
   } else {
     return extractNavigationCQL(pathway)
-      .then(cql => processCQLCommon(patient, cql))
+      .then(cql => processCQLCommon(patientRecord, cql))
       .then(patientData => pathwayData(pathway, patientData, resources));
   }
 }
 
 /**
  * Evaluate the pathway criteria against the given patient.
- * @param patient - Patient's record as FHIR data
+ * @param patientRecord - Patient's record as FHIR data
  * @param pathway - entire Pathway object
  * @return a list of CriteriaResults, each containing
  *         the expected value and actual value for one criteria item
  */
 export function evaluatePathwayCriteria(
-  patient: Bundle,
+  patientRecord: Bundle,
   pathway: Pathway
 ): Promise<CriteriaResult> {
   if (pathway.elm && pathway.elm.criteria) {
-    const patientData = processELMCommon(patient, pathway.elm.criteria);
+    const patientData = processELMCommon(patientRecord, pathway.elm.criteria);
     const criteriaResults = criteriaData(pathway, patientData);
     return Promise.resolve(criteriaResults);
   } else {
     return extractCriteriaCQL(pathway)
-      .then(cql => processCQLCommon(patient, cql))
+      .then(cql => processCQLCommon(patientRecord, cql))
       .then(patientData => criteriaData(pathway, patientData));
   }
 }
 
 /**
  * Common logic to execute the given CQL against the given Patient.
- * @param patient - Patient's record as FHIR data
+ * @param patientRecord - Patient's record as FHIR data
  * @param cql - aggregated CQL from a pathway
  * @return the raw, unprocessed patientResults
  *         derived from executing the CQL against the given patient
  */
-function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
+function processCQLCommon(patientRecord: Bundle, cql: string): Promise<PatientData> {
   // Likely need an intermediary step that gathers the CQL files needed
   // example function gatherCQL
   return gatherCQL(cql)
@@ -79,24 +79,24 @@ function processCQLCommon(patient: Bundle, cql: string): Promise<PatientData> {
         return convertBasicCQL(cql);
       }
     })
-    .then(elm => processELMCommon(patient, elm));
+    .then(elm => processELMCommon(patientRecord, elm));
 }
 
 /**
  * Common logic to execute the given ELM against the given Patient.
- * @param patient - Patient's record as FHIR data
+ * @param patientRecord - Patient's record as FHIR data
  * @param elm - resulting ELM from converting the CQL in a pathway
  * @return the raw, unprocessed patientResults
  *         derived from executing the ELM against the given patient
  */
-function processELMCommon(patient: Bundle, elm: object): PatientData {
+function processELMCommon(patientRecord: Bundle, elm: object): PatientData {
   let elmResults: ElmResults = {
     patientResults: {}
   };
   if (instanceOfElmObject(elm)) {
-    elmResults = executeElm(patient, elm.main, elm.libraries);
+    elmResults = executeElm(patientRecord, elm.main, elm.libraries);
   } else {
-    elmResults = executeElm(patient, elm);
+    elmResults = executeElm(patientRecord, elm);
   }
 
   // TODO - update pathwaysData to take multiple patients
