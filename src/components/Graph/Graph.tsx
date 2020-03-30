@@ -8,6 +8,7 @@ import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathway
 import { Layout, NodeDimensions, Edge } from 'graph-model';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
+import styles from './Graph.module.scss';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -257,6 +258,7 @@ const Graph: FC<GraphProps> = ({
 };
 
 function useWindowWidth(): number {
+  // TODO: This needs to calculate the width of the parent element ('graph-root'), not the browser
   const getWidth = (): number => window.innerWidth;
   const [windowWidth, setWindowWidth] = useState(getWidth);
 

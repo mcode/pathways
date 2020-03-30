@@ -63,6 +63,7 @@ const PatientRecord: FC = () => {
             <PatientRecordElement resourceType={resourceType} />
           ))}
         </div>
+
         <div className={styles.recordToggle} onClick={expand}>
           <FontAwesomeIcon icon={faChevronLeft} />
         </div>
@@ -108,6 +109,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
     else if (resourceType === 'immunization')
       return <ImmunizationsVisualizer rows={getResourceByType(resources, 'Immunization')} />;
   };
+
   return (
     <div className={styles.element}>
       <div className={styles.title} onClick={(): void => setIsExpanded(!isExpanded)}>

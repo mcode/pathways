@@ -5,10 +5,8 @@ $verticalPadding: 20px;
 $lineHeight: 30px;
 
 .record {
-    position: absolute;
-    top: 165px; // TODO: make this nav + header height
+    display: flex;
     color: $white;
-    z-index: 2;
 
     .recordToggle {
         display: inline-flex;

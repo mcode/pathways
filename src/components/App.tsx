@@ -22,6 +22,8 @@ import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { Patient, DomainResource, Practitioner } from 'fhir-objects';
+import styles from './App.module.scss';
+
 interface AppProps {
   demo: boolean;
 }
@@ -119,7 +121,9 @@ const App: FC<AppProps> = ({ demo }) => {
 
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
-      <div>
+      <div className={styles.display}>
+        <PatientRecord />
+
         {evaluatedPathway ? (
           <Graph
             evaluatedPathway={evaluatedPathway}
@@ -129,7 +133,6 @@ const App: FC<AppProps> = ({ demo }) => {
         ) : (
           <div>No Pathway Loaded</div>
         )}
-        <PatientRecord />
       </div>
     );
   };
@@ -153,14 +156,14 @@ const App: FC<AppProps> = ({ demo }) => {
               }}
             >
               <NoteDataProvider physician={user} date={new Date(Date.now())}>
-                <div>
-                  <Header logo={logo} />
-                  <Navigation
-                    evaluatedPathways={evaluatedPathways}
-                    selectPathway={selectPathway}
-                    setSelectPathway={setSelectPathway}
-                  />
-                </div>
+                <Header logo={logo} />
+
+                <Navigation
+                  evaluatedPathways={evaluatedPathways}
+                  selectPathway={selectPathway}
+                  setSelectPathway={setSelectPathway}
+                />
+
                 {selectPathway ? (
                   <PathwaysList
                     evaluatedPathways={evaluatedPathways}
