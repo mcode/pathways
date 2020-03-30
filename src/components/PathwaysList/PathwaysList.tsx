@@ -186,12 +186,14 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </button>
           </div>
           <div className={styles.pathway}>
-            <Graph
-              evaluatedPathway={evaluatedPathway}
-              interactive={false}
-              expandCurrentNode={false}
-              updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
-            />
+            <div style={{ height: '100%', overflow: 'scroll' }}>
+              <Graph
+                evaluatedPathway={evaluatedPathway}
+                interactive={false}
+                expandCurrentNode={false}
+                updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
+              />
+            </div>
             <div className={styles.controls}>
               <FontAwesomeIcon icon={faPlay} />
               <FontAwesomeIcon icon={faPlus} />

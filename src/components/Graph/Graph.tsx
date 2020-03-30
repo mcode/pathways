@@ -197,7 +197,6 @@ const Graph: FC<GraphProps> = ({
         height: interactive ? maxHeight + 150 : 'inherit',
         width: maxWidth + 'px',
         position: 'relative',
-        overflow: 'auto',
         marginRight: '5px'
       }}
     >
