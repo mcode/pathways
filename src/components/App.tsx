@@ -125,11 +125,13 @@ const App: FC<AppProps> = ({ demo }) => {
         <PatientRecord />
 
         {evaluatedPathway ? (
-          <Graph
-            evaluatedPathway={evaluatedPathway}
-            expandCurrentNode={true}
-            updateEvaluatedPathways={updateEvaluatedPathways}
-          />
+          <div id="graphContainer" className={styles.graph}>
+            <Graph
+              evaluatedPathway={evaluatedPathway}
+              expandCurrentNode={true}
+              updateEvaluatedPathways={updateEvaluatedPathways}
+            />
+          </div>
         ) : (
           <div>No Pathway Loaded</div>
         )}

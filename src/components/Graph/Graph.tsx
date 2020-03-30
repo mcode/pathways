@@ -166,6 +166,16 @@ const Graph: FC<GraphProps> = ({
     setLayout(getGraphLayout());
   }, [expanded, getGraphLayout]);
 
+  // Set the height of the graph container
+  useEffect(() => {
+    const graphContainer = document.getElementById('graphContainer');
+    const headerHeight = document.getElementById('header')?.clientHeight;
+    const navHeight = document.getElementById('navigation')?.clientHeight;
+    console.log(graphContainer);
+    if (graphContainer && navHeight && headerHeight)
+      graphContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
+  }, []);
+
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =
     edges !== undefined

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
@@ -54,9 +54,19 @@ const PatientRecord: FC = () => {
     setIsExpanded(!isExpanded);
   };
 
+  // Set the height of the patient record container
+  useEffect(() => {
+    const recordContainer = document.getElementById('recordContainer');
+    const headerHeight = document.getElementById('header')?.clientHeight;
+    const navHeight = document.getElementById('navigation')?.clientHeight;
+    console.log(recordContainer);
+    if (recordContainer && navHeight && headerHeight)
+      recordContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
+  }, [isExpanded]);
+
   if (isExpanded) {
     return (
-      <div className={styles.record}>
+      <div className={styles.record} id="recordContainer">
         <div className={styles.sidebar}>
           {resourceTypes.map(resourceType => (
             <PatientRecordElement resourceType={resourceType} />
