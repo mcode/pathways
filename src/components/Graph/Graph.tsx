@@ -1,6 +1,4 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { pure } from 'recompose';
-
 import graphLayout from 'visualization/layout';
 import Node from 'components/Node';
 import Arrow from 'components/Arrow';
@@ -69,7 +67,32 @@ const Graph: FC<GraphProps> = ({
           0
         );
 
-        nodeDimensions[key] = { width, height };
+      return graphLayout(pathway, nodeDimensions);
+    }, [pathway]);
+
+    const [layout, setLayout] = useState(getGraphLayout());
+    const { nodeCoordinates, edges } = layout;
+    const maxHeight = useMemo(() => {
+      return nodeCoordinates !== undefined
+        ? Object.values(nodeCoordinates)
+            .map(x => x.y)
+            .reduce((a, b) => Math.max(a, b))
+        : 0;
+    }, [nodeCoordinates]);
+
+    // If a node has a negative x value, shift nodes and edges to the right by that value
+    const minX =
+      nodeCoordinates !== undefined
+        ? Object.values(nodeCoordinates)
+            .map(x => x.x + windowWidth / 2)
+            .reduce((a, b) => Math.min(a, b))
+        : 0;
+
+    if (minX < 0) {
+      const toAdd = minX * -1;
+      Object.keys(nodeCoordinates).forEach(key => {
+        const node = nodeCoordinates[key];
+        node.x += toAdd;
       });
     }
 
@@ -122,11 +145,8 @@ const Graph: FC<GraphProps> = ({
     initialExpandedState
   );
 
-  const setExpanded = useCallback((key: string, expand?: boolean): void => {
-    _setExpanded(prevState => {
-      return { ...prevState, [key]: !prevState[key] };
-    });
-  }, []);
+      Object.keys(edges).forEach(key => {
+        const edge = edges[key];
 
   // Evaluate patient on the pathway
   useEffect(() => {
@@ -143,10 +163,6 @@ const Graph: FC<GraphProps> = ({
       evaluatePatientOnPathway(patient, pathway, resources).then(pathwayResults => {
         if (!cancel) setPath(pathwayResults);
       });
-
-      return (): void => {
-        cancel = true;
-      };
     }
   }, [pathway, resources, evaluatedPathway.pathwayResults, setPath, patientRecords]);
 
@@ -239,18 +255,20 @@ const Graph: FC<GraphProps> = ({
       <svg
         xmlns="http://www.w3.org/2000/svg"
         style={{
-          // Adding 5 pixels to maxWidth so that the rightmost edge label is not cut off
-          width: maxWidth + 5,
-          height: maxHeight,
-          zIndex: 1,
-          top: 0,
-          left: 0,
-          overflow: 'visible'
+          height: interactive ? maxHeight + 150 : 'inherit',
+          position: 'relative',
+          overflow: 'auto',
+          marginRight: '5px'
         }}
       >
-        {edges !== undefined
-          ? Object.keys(edges).map(edgeName => {
-              const edge = edges[edgeName];
+        {nodeCoordinates !== undefined
+          ? Object.keys(nodeCoordinates).map(key => {
+              const docResource = documentation.find((doc): doc is DocumentationResource => {
+                return typeof doc !== 'string' && doc.state === key;
+              });
+              const isCurrentNode = (): boolean => {
+                return path[path.length - 1] === key;
+              };
               return (
                 <Arrow
                   key={edgeName}
@@ -266,9 +284,36 @@ const Graph: FC<GraphProps> = ({
               );
             })
           : []}
-      </svg>
-    </div>
-  );
-};
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          style={{
+            // Adding 5 pixels to maxWidth so that the rightmost edge label is not cut off
+            width: maxWidth + 5,
+            height: maxHeight,
+            zIndex: 1,
+            top: 0,
+            left: 0,
+            overflow: 'visible'
+          }}
+        >
+          {edges !== undefined
+            ? Object.keys(edges).map(edgeName => {
+                const edge = edges[edgeName];
+                return (
+                  <Arrow
+                    key={edgeName}
+                    edge={edge}
+                    edgeName={edgeName}
+                    isOnPatientPath={isEdgeOnPatientPath(path, edge)}
+                    widthOffset={windowWidth / 2}
+                  />
+                );
+              })
+            : []}
+        </svg>
+      </div>
+    );
+  }
+);
 
 export default Graph;
