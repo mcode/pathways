@@ -18,7 +18,6 @@ import ThemeProvider from './ThemeProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
-import { DemoRecords } from 'fixtures/DemoData';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
@@ -26,9 +25,10 @@ import styles from './App.module.scss';
 
 interface AppProps {
   demo: boolean;
+  id: string;
 }
 
-const App: FC<AppProps> = ({ demo }) => {
+const App: FC<AppProps> = ({ demo, id }) => {
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
@@ -43,6 +43,8 @@ const App: FC<AppProps> = ({ demo }) => {
     _setPatientRecords(value);
     setEvaluatePath(true);
   }, []);
+
+  const demoData = require('../../public/static/demoData/' + id + '.json');
 
   useEffect(() => {
     if (!demo) {
@@ -69,7 +71,7 @@ const App: FC<AppProps> = ({ demo }) => {
         });
     } else {
       setClient(new MockedFHIRClient());
-      setPatientRecords(DemoRecords[getDemoId()]);
+      setPatientRecords(demoData);
     }
   }, [demo, setPatientRecords]);
 
@@ -148,23 +150,13 @@ const App: FC<AppProps> = ({ demo }) => {
     );
   };
 
-  function getDemoId(): number {
-    // parse the url for the id of the patient to use
-    const url = window.document.location.href;
-    const params = url.split('?');
-    const urlParams = new URLSearchParams(params[1]);
-
-    // return the id or 0 if an id was not provided
-    return Number(urlParams.get('id')) - 1 >= 0 ? Number(urlParams.get('id')) - 1 : 0;
-  }
-
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
         <PatientProvider
           patient={
             demo
-              ? (DemoRecords[getDemoId()].find(
+              ? (demoData.find(
                   (r: { resourceType: string }) => r.resourceType === 'Patient'
                 ) as fhir.Patient)
               : null
