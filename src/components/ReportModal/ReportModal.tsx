@@ -3,6 +3,7 @@ import { useNote } from 'components/NoteDataProvider';
 import ReportSection, { PhysicianNotesSection } from './ReportSection';
 import styles from './ReportModal.module.scss';
 import { faUser, faNotesMedical, faRoute, faStickyNote } from '@fortawesome/free-solid-svg-icons';
+import ActionButton from 'components/ActionButton';
 
 const ReportModal: FC = () => {
   const note = useNote();
@@ -10,11 +11,11 @@ const ReportModal: FC = () => {
   const patientSection = [
     { name: 'Date', value: note?.date },
     { name: 'Patient', value: note?.patient },
-    { name: 'Date of Birth:', value: note?.birthdate} ,
+    { name: 'Date of Birth:', value: note?.birthdate },
     { name: 'Physician', value: note?.physician }
   ];
   const observationField = [
-    { name: 'Primary Cancer:', value: 'Intraductal Cance of the Breast'},
+    { name: 'Primary Cancer:', value: 'Intraductal Cance of the Breast' },
     { name: 'Laterality', value: 'Right' },
     { name: 'Clinical TNM', value: 'cT1 N0 M0' },
     { name: 'Estrogen Receptor', value: 'Positive' },
@@ -35,9 +36,15 @@ const ReportModal: FC = () => {
         <ReportSection icon={faRoute} fields={pathwaySection} />
         {note?.notes && <PhysicianNotesSection icon={faStickyNote} notes={note?.notes} />}
       </div>
-      <i>
-        The above note will be written into the EHR and any procedure requests will be submitted.
-      </i>
+      <div className={styles.confirmationSection}>
+        <i>
+          The above note will be written into the EHR and any procedure requests will be submitted.
+        </i>
+        <div className={styles.confirmationButtonGroup}>
+          <ActionButton size="medium" type="accept" />
+          <ActionButton size="medium" type="decline" />
+        </div>
+      </div>
     </div>
   );
 };
