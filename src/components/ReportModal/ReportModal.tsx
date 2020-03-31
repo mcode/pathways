@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { useNote } from 'components/NoteDataProvider';
 import ReportSection, { PhysicianNotesSection } from './ReportSection';
 import styles from './ReportModal.module.scss';
@@ -19,14 +19,16 @@ const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
     { name: 'Date of Birth:', value: note?.birthdate },
     { name: 'Physician', value: note?.physician }
   ];
+
   const observationField = [
-    { name: 'Primary Cancer:', value: 'Intraductal Cance of the Breast' },
-    { name: 'Laterality', value: 'Right' },
-    { name: 'Clinical TNM', value: 'cT1 N0 M0' },
-    { name: 'Estrogen Receptor', value: 'Positive' },
-    { name: 'Progesterone Receptor', value: 'Negative' },
-    { name: 'HER2 Receptor', value: 'Postive' }
+    { name: 'Primary Cancer:', value: undefined },
+    { name: 'Laterality', value: undefined },
+    { name: 'Clinical TNM', value: undefined },
+    { name: 'Estrogen Receptor', value: undefined },
+    { name: 'Progesterone Receptor', value: undefined },
+    { name: 'HER2 Receptor', value: undefined }
   ];
+
   const pathwaySection = [
     { name: 'Pathway Selected', value: note?.pathway },
     { name: 'Recommendation', value: note?.node },
