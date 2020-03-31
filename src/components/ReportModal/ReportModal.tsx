@@ -1,11 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useNote } from 'components/NoteDataProvider';
 import ReportSection, { PhysicianNotesSection } from './ReportSection';
 import styles from './ReportModal.module.scss';
 import { faUser, faNotesMedical, faRoute, faStickyNote } from '@fortawesome/free-solid-svg-icons';
 import ActionButton from 'components/ActionButton';
 
-const ReportModal: FC = () => {
+interface ReportModalInterface {
+  onConfirm: () => void;
+  onDecline: () => void;
+}
+
+const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   const note = useNote();
   const reportName = `${note?.pathway} Report`;
   const patientSection = [
@@ -41,8 +46,8 @@ const ReportModal: FC = () => {
           The above note will be written into the EHR and any procedure requests will be submitted.
         </i>
         <div className={styles.confirmationButtonGroup}>
-          <ActionButton size="medium" type="accept" />
-          <ActionButton size="medium" type="decline" />
+          <ActionButton size="medium" type="accept" onClick={onConfirm} />
+          <ActionButton size="medium" type="decline" onClick={onDecline} />
         </div>
       </div>
     </div>
