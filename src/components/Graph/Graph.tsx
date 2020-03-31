@@ -14,7 +14,6 @@ interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
   interactive?: boolean;
   expandCurrentNode?: boolean;
-  headerElement?: React.RefObject<HTMLDivElement>;
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
@@ -34,7 +33,6 @@ const Graph: FC<GraphProps> = ({
   evaluatedPathway,
   interactive = true,
   expandCurrentNode = true,
-  headerElement = null,
   updateEvaluatedPathways
 }) => {
   const patientRecords = usePatientRecords();

@@ -138,7 +138,6 @@ const App: FC<AppProps> = ({ demo }) => {
             <Graph
               evaluatedPathway={evaluatedPathway}
               expandCurrentNode={true}
-              headerElement={headerElement}
               updateEvaluatedPathways={updateEvaluatedPathways}
             />
           </div>
