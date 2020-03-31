@@ -16,7 +16,7 @@ const ReportSection: FC<ReportSectionProps> = ({ icon, fields }) => {
       </div>
       <div className={styles.fieldContainer}>
         {fields.map(field => (
-          <ReportField sectionTitle={field.name} value={field.value} />
+          <ReportField sectionTitle={field.name} value={field.value} key={field.name} />
         ))}
       </div>
     </div>
