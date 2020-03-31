@@ -47,7 +47,7 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
   }));
 
   return (
-    <nav className={clsx(styles.navigation, classes.navigation)} id="navigation">
+    <nav className={clsx(styles.navigation, classes.navigation)}>
       <div className={styles.navigation__leftPanel}>
         {onBack && (
           <FontAwesomeIcon

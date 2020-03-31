@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback } from 'react';
+import React, { FC, useState, useEffect, useCallback, useRef } from 'react';
 
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
@@ -36,6 +36,8 @@ const App: FC<AppProps> = ({ demo }) => {
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
   const [client, setClient] = useState<PathwaysClient | null>(null);
   const [user, setUser] = useState<string>('');
+  const headerElement = useRef<HTMLDivElement>(null);
+  const graphContainerElement = useRef<HTMLDivElement>(null);
 
   const setPatientRecords = useCallback((value: DomainResource[]): void => {
     _setPatientRecords(value);
@@ -92,6 +94,13 @@ const App: FC<AppProps> = ({ demo }) => {
       );
   }, [service, evaluatedPathways.length, client, patientRecords]);
 
+  // Set the height of the graph container
+  useEffect(() => {
+    if (graphContainerElement?.current && headerElement?.current)
+      graphContainerElement.current.style.height =
+        window.innerHeight - headerElement.current.clientHeight + 'px';
+  }, [selectPathway]);
+
   function setEvaluatedPathwayCallback(
     value: EvaluatedPathway | null,
     selectPathway = false
@@ -122,13 +131,14 @@ const App: FC<AppProps> = ({ demo }) => {
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div className={styles.display}>
-        <PatientRecord />
+        <PatientRecord headerElement={headerElement} />
 
         {evaluatedPathway ? (
-          <div id="graphContainer" className={styles.graph}>
+          <div ref={graphContainerElement} className={styles.graph}>
             <Graph
               evaluatedPathway={evaluatedPathway}
               expandCurrentNode={true}
+              headerElement={headerElement}
               updateEvaluatedPathways={updateEvaluatedPathways}
             />
           </div>
@@ -158,13 +168,15 @@ const App: FC<AppProps> = ({ demo }) => {
               }}
             >
               <NoteDataProvider physician={user} date={new Date(Date.now())}>
-                <Header logo={logo} />
+                <div ref={headerElement}>
+                  <Header logo={logo} />
 
-                <Navigation
-                  evaluatedPathways={evaluatedPathways}
-                  selectPathway={selectPathway}
-                  setSelectPathway={setSelectPathway}
-                />
+                  <Navigation
+                    evaluatedPathways={evaluatedPathways}
+                    selectPathway={selectPathway}
+                    setSelectPathway={setSelectPathway}
+                  />
+                </div>
 
                 {selectPathway ? (
                   <PathwaysList

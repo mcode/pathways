@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
@@ -31,11 +31,16 @@ const getResourceByType = (
   return patientRecord.filter(resource => resource.resourceType === resourceType);
 };
 
+interface PatientRecordProps {
+  headerElement: React.RefObject<HTMLDivElement>;
+}
+
 interface PatientRecordElementProps {
   resourceType: string;
 }
 
-const PatientRecord: FC = () => {
+const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
+  const recordContainerElement = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const resourceTypes = [
     'Patient',
@@ -56,16 +61,14 @@ const PatientRecord: FC = () => {
 
   // Set the height of the patient record container
   useEffect(() => {
-    const recordContainer = document.getElementById('recordContainer');
-    const headerHeight = document.getElementById('header')?.clientHeight;
-    const navHeight = document.getElementById('navigation')?.clientHeight;
-    if (recordContainer && navHeight && headerHeight)
-      recordContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
-  }, [isExpanded]);
+    if (recordContainerElement?.current && headerElement?.current)
+      recordContainerElement.current.style.height =
+        window.innerHeight - headerElement.current.clientHeight + 'px';
+  }, [isExpanded, headerElement]);
 
   if (isExpanded) {
     return (
-      <div className={styles.record} id="recordContainer">
+      <div className={styles.record} ref={recordContainerElement}>
         <div className={styles.sidebar}>
           {resourceTypes.map(resourceType => (
             <PatientRecordElement resourceType={resourceType} key={resourceType} />

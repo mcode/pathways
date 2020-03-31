@@ -14,6 +14,7 @@ interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
   interactive?: boolean;
   expandCurrentNode?: boolean;
+  headerElement?: React.RefObject<HTMLDivElement>;
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
@@ -33,6 +34,7 @@ const Graph: FC<GraphProps> = ({
   evaluatedPathway,
   interactive = true,
   expandCurrentNode = true,
+  headerElement = null,
   updateEvaluatedPathways
 }) => {
   const patientRecords = usePatientRecords();
@@ -165,15 +167,6 @@ const Graph: FC<GraphProps> = ({
   useEffect(() => {
     setLayout(getGraphLayout());
   }, [expanded, getGraphLayout]);
-
-  // Set the height of the graph container
-  useEffect(() => {
-    const graphContainer = document.getElementById('graphContainer');
-    const headerHeight = document.getElementById('header')?.clientHeight;
-    const navHeight = document.getElementById('navigation')?.clientHeight;
-    if (graphContainer && navHeight && headerHeight)
-      graphContainer.style.height = window.innerHeight - (navHeight + headerHeight) + 'px';
-  }, []);
 
   // maxWidth finds the edge label that is farthest to the right
   const maxWidth: number =

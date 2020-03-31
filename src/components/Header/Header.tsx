@@ -29,7 +29,7 @@ const Header: FC<HeaderProps> = (props: HeaderProps) => {
   };
 
   return (
-    <header className={styles.header} id="header">
+    <header className={styles.header}>
       <img src={props.logo} alt="logo" />
       <button onClick={handleClick} aria-controls="options-menu" aria-haspopup="true">
         <FontAwesomeIcon icon={faCog} />
