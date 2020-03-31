@@ -21,7 +21,7 @@ import FHIR from 'fhirclient';
 import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
-import { Patient, DomainResource, Practitioner } from 'fhir-objects';
+import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
 
 interface AppProps {

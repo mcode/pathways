@@ -9,6 +9,7 @@ import { Layout, NodeDimensions, Edge } from 'graph-model';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
 import styles from './Graph.module.scss';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -160,12 +161,17 @@ const Graph: FC<GraphProps> = ({
     }
   }, [expandCurrentNode, evaluatedPathway.pathwayResults, setExpanded]);
 
-  // Recalculate graph layout if window size changes or if a node is expanded
+  // Recalculate graph layout if graph container size changes
   useEffect(() => {
-    setParentWidth(graphElement?.current?.parentElement?.clientWidth ?? 0);
-    setLayout(getGraphLayout());
+    if (graphElement.current?.parentElement) {
+      new ResizeSensor(graphElement.current.parentElement, function() {
+        setParentWidth(graphElement.current?.parentElement?.clientWidth ?? 0);
+        setLayout(getGraphLayout());
+      });
+    }
   }, [getGraphLayout]);
 
+  // Recalculate graph layout if a node is expanded
   useEffect(() => {
     setLayout(getGraphLayout());
   }, [expanded, getGraphLayout]);
