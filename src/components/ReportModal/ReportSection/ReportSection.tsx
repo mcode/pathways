@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import styles from './ReportSection.module.scss';
+import shortid from 'shortid';
 
 interface ReportSectionProps {
   icon: IconDefinition;
@@ -15,9 +16,11 @@ const ReportSection: FC<ReportSectionProps> = ({ icon, fields }) => {
         <FontAwesomeIcon icon={icon} className={styles.icon} />
       </div>
       <div className={styles.fieldContainer}>
-        {fields.map(field => (
-          <ReportField sectionTitle={field.name} value={field.value} key={field.name} />
-        ))}
+        {fields
+          .filter(field => field.name)
+          .map(field => (
+            <ReportField sectionTitle={field.name} value={field.value} key={shortid.generate()} />
+          ))}
       </div>
     </div>
   );
