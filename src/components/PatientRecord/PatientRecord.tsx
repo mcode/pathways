@@ -94,43 +94,43 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
 const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) => {
   const patient = usePatient();
   const resources = usePatientRecords().patientRecords;
+  const resourcesByType = getResourceByType(resources, resourceType);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
+  const resourceCount: string =
+    resourceType !== 'Patient' ? '(' + resourcesByType.length + ')' : '';
 
-  const visualizer = (resourceType: string): JSX.Element | undefined => {
-    resourceType = resourceType.toLowerCase();
-    if (resourceType === 'patient') return <PatientVisualizer patient={patient} />;
-    else if (resourceType === 'condition')
-      return <ConditionsVisualizer rows={getResourceByType(resources, 'Condition')} />;
-    else if (resourceType === 'observation')
-      return <ObservationsVisualizer rows={getResourceByType(resources, 'Observation')} />;
-    else if (resourceType === 'diagnosticreport')
-      return <ReportsVisualizer rows={getResourceByType(resources, 'DiagnosticReport')} />;
-    else if (resourceType === 'medicationrequest')
-      return <MedicationsVisualizer rows={getResourceByType(resources, 'MedicationRequest')} />;
-    else if (resourceType === 'allergyintolerance')
-      return <AllergiesVisualizer rows={getResourceByType(resources, 'AllergyIntolerance')} />;
-    else if (resourceType === 'careplan')
-      return <CarePlansVisualizer rows={getResourceByType(resources, 'CarePlan')} />;
-    else if (resourceType === 'procedure')
-      return <ProceduresVisualizer rows={getResourceByType(resources, 'Procedure')} />;
-    else if (resourceType === 'encounter')
-      return <EncountersVisualizer rows={getResourceByType(resources, 'Encounter')} />;
-    else if (resourceType === 'immunization')
-      return <ImmunizationsVisualizer rows={getResourceByType(resources, 'Immunization')} />;
+  const visualizer = (): JSX.Element | undefined => {
+    if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
+    else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'Observation')
+      return <ObservationsVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'DiagnosticReport')
+      return <ReportsVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'MedicationRequest')
+      return <MedicationsVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'AllergyIntolerance')
+      return <AllergiesVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'CarePlan') return <CarePlansVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'Procedure') return <ProceduresVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'Encounter') return <EncountersVisualizer rows={resourcesByType} />;
+    else if (resourceType === 'Immunization')
+      return <ImmunizationsVisualizer rows={resourcesByType} />;
   };
 
   return (
     <div className={styles.element}>
       <div className={styles.title} onClick={(): void => setIsExpanded(!isExpanded)}>
-        <div>{resourceType}</div>
+        <div>
+          {resourceType} {resourceCount}
+        </div>
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
       </div>
 
-      {isExpanded && <div className={styles.elementContainer}>{visualizer(resourceType)}</div>}
+      {isExpanded && <div className={styles.elementContainer}>{visualizer()}</div>}
     </div>
   );
 };
