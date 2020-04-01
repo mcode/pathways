@@ -1,10 +1,10 @@
 {
   "patientId": "5cadf7d1-60ab-40c3-b2c4-5fa77610579d",
-  "currentState": "Chemo",
-  "currentStatus": "completed",
-  "nextRecommendation": "pathway terminal",
+  "currentStates": ["Chemo"],
   "documentation": [
-    "direct",
+    {
+      "state": "Start"
+    },
     {
       "resourceType": "Observation",
       "id": "14000e57-ee21-4433-bc38-0c60211a43bc",

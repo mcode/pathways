@@ -9,12 +9,14 @@ import {
   DocumentationResource,
   State,
   GuidanceState,
-  CriteriaResultItem
+  CriteriaResultItem,
+  Documentation
 } from 'pathways-model';
 import { DocumentReference, DomainResource } from 'fhir-objects';
+
 interface StateData {
-  documentation: DocumentationResource | string | null;
-  nextState: string | null;
+  documentation: Documentation;
+  nextStates: string[];
   status: string;
 }
 
@@ -22,14 +24,7 @@ interface StateData {
  * Engine function to take in the ELM patient results and output data relating to the patient's pathway
  * @param pathway - the entire pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
- * @return returns a JSON object describing where the patient is on the given pathway
- *  {
- *    currentState - the name of the state patient is currently in
- *    currentStatus - the status of the patient in the current state (from FHIR resource)
- *          A status of unknown could be the resource returned an unknown status or the resource has no status at all
- *    path - list of the names of states in the patient's pathway
- *    documentation - list of documentation for the trace of the pathway (documentation is corresponding resource)
- *  }
+ * @return returns PathwayResults describing
  */
 export function pathwayData(
   pathway: Pathway,
@@ -37,28 +32,48 @@ export function pathwayData(
   resources: DomainResource[]
 ): PathwayResults {
   const startState = 'Start';
-  let currentStatus;
   const patientDocumentation = [];
-  const evaluatedPathway = [startState];
 
+  let currentStates = ['Start'];
   let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
-    currentStatus = stateData.status;
-    if (stateData.documentation !== null)
-      patientDocumentation.push(retrieveResource(stateData.documentation, resources));
-    if (stateData.nextState === null) break; // The position of this line is important to maintain consistency for different scenarios
-    evaluatedPathway.push(stateData.nextState);
-    stateData = nextState(pathway, patientData, stateData.nextState, resources);
+    if (stateData.documentation === null) break;
+    patientDocumentation.push(retrieveResource(stateData.documentation, resources));
+    if (stateData.nextStates.length === 0) break;
+    else if (stateData.nextStates.length === 1) {
+      currentStates = stateData.nextStates;
+      stateData = nextState(pathway, patientData, stateData.nextStates[0], resources);
+    } else {
+      // There are multiple transitions
+      // Check if any of them have been done
+      currentStates = [];
+      const completedStates: string[] = [];
+      for (const stateName of stateData.nextStates) {
+        const documentReference = retrieveNote(pathway.states[stateName].label, resources);
+        if (!documentReference && (!patientData[stateName] || !patientData[stateName].length)) {
+          currentStates.push(stateName);
+        } else {
+          completedStates.push(stateName);
+        }
+      }
+
+      if (completedStates.length !== 0) {
+        currentStates = completedStates;
+      } else if (currentStates.length === 0) {
+        currentStates = stateData.nextStates;
+        break;
+      }
+
+      // TODO: there is a possibility multiple states match
+      const currentStateName = completedStates.length ? completedStates[0] : currentStates[0];
+      stateData = nextState(pathway, patientData, currentStateName, resources);
+    }
   }
-  const currentStateName = evaluatedPathway[evaluatedPathway.length - 1];
-  const currentState = pathway.states[currentStateName];
   return {
     patientId: patientData.Patient.id.value,
-    currentState: currentStateName,
-    currentStatus: currentStatus,
-    nextRecommendation: nextStateRecommendation(currentState),
-    path: evaluatedPathway,
-    documentation: patientDocumentation
+    currentStates: currentStates,
+    documentation: patientDocumentation,
+    path: patientDocumentation.map(documentationResource => documentationResource.state)
   };
 }
 
@@ -105,28 +120,6 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Criter
 }
 
 /**
- * Helper function to set the next recommendation
- * @param state - the current state in the pathway (where the patient is)
- * @return "pathway terminal" if state is the end of the pathway
- *        the name of the next state in a direct transition
- *        an object describing possible transitions and descriptions
- */
-function nextStateRecommendation(state: State): string | object {
-  const transitions = state.transitions;
-  if (transitions.length === 0) return 'pathway terminal';
-  else if (transitions.length === 1) return transitions[0].transition;
-  else {
-    return transitions.map(transition => {
-      return {
-        state: transition.transition,
-        conditionDescription:
-          'condition' in transition ? transition.condition && transition.condition.description : ''
-      };
-    });
-  }
-}
-
-/**
  * Helper function to format the documentation and include the related state
  * @param resource - the resource returned by the CQL execution
  * @param state - the current state name
@@ -148,13 +141,13 @@ function formatDocumentation(
  * @param currentState - the current state
  * @return the next state name or null
  */
-function formatNextState(resource: DocumentationResource, currentState: State): string | null {
+function formatNextState(resource: DocumentationResource, currentState: State): string[] {
   if (resource.resourceType === 'MedicationRequest') {
-    return currentState.transitions.length !== 0 ? currentState.transitions[0].transition : null;
+    return currentState.transitions.length !== 0 ? [currentState.transitions[0].transition] : [];
   } else {
     return resource.status === 'completed' && currentState.transitions.length !== 0
-      ? currentState.transitions[0].transition
-      : null;
+      ? [currentState.transitions[0].transition]
+      : [];
   }
 }
 
@@ -170,17 +163,19 @@ function getConditionalNextState(
   currentState: State,
   currentStateName: string,
   resources: DomainResource[]
-): StateData {
+): StateData | null {
+  const documentation: DocumentationResource[] = [];
+  const nextStates: string[] = [];
   for (const transition of currentState.transitions) {
     if (transition.condition) {
-      let documentationResource: DocumentationResource | null = null;
+      let currentTransitionDocumentation: DocumentationResource | null = null;
       if (patientData[transition.condition.description].length)
         // TODO: add functionality for multiple resources
-        documentationResource = patientData[transition.condition.description][0];
+        currentTransitionDocumentation = patientData[transition.condition.description][0];
       else {
         const documentReference = retrieveNote(transition.condition.description, resources);
         if (documentReference) {
-          documentationResource = {
+          currentTransitionDocumentation = {
             resourceType: 'DocumentReference',
             id: documentReference.id ? documentReference.id : 'unknown',
             status: documentReference.status,
@@ -190,30 +185,20 @@ function getConditionalNextState(
         }
       }
 
-      if (documentationResource) {
-        return {
-          nextState: transition.transition,
-          documentation: formatDocumentation(documentationResource, currentStateName),
-          status: documentationResource.status
-        };
+      if (currentTransitionDocumentation) {
+        nextStates.push(transition.transition);
+        documentation.push(currentTransitionDocumentation);
       }
     }
   }
 
-  // No matching resource in the patient data to move from state
-  return noMatchingResourceForState();
-}
-
-/**
- * No resource exists for the next state
- * @return empty object
- */
-function noMatchingResourceForState(): StateData {
-  return {
-    nextState: null,
-    documentation: null,
-    status: 'not-done'
-  };
+  if (nextStates.length && documentation.length)
+    return {
+      nextStates: nextStates,
+      documentation: formatDocumentation(documentation[0], currentStateName),
+      status: documentation[0].status
+    };
+  else return null;
 }
 
 /**
@@ -236,7 +221,7 @@ function nextState(
     if (resource?.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
-        nextState: formatNextState(resource, currentState),
+        nextStates: formatNextState(resource, currentState),
         documentation: formatDocumentation(resource, currentStateName),
         status: 'status' in resource ? resource.status : 'unknown'
       };
@@ -252,18 +237,18 @@ function nextState(
           resource: documentReference
         };
         return {
-          nextState: formatNextState(doc, currentState),
+          nextStates: formatNextState(doc, currentState),
           documentation: formatDocumentation(doc, currentStateName),
           status: doc.status
         };
       }
       // Action exists but has no matching resource in patientData
-      return noMatchingResourceForState();
+      return null;
     }
   } else if (currentState.transitions.length === 1) {
     return {
-      nextState: currentState.transitions[0].transition,
-      documentation: 'direct',
+      nextStates: [currentState.transitions[0].transition],
+      documentation: { state: currentStateName },
       status: 'completed'
     };
   } else if (currentState.transitions.length > 1) {
@@ -291,13 +276,13 @@ function retrieveNote(condition: string, resources: DomainResource[]): DocumentR
   return documentReference as DocumentReference;
 }
 
-function retrieveResource(
-  doc: DocumentationResource | string,
-  resources: DomainResource[]
-): DocumentationResource | string {
-  if (typeof doc !== 'string' && resources) {
-    doc.resource = resources.find(resource => {
-      return resource.resourceType === doc.resourceType && resource.id === doc.id;
+function retrieveResource(doc: Documentation, resources: DomainResource[]): Documentation {
+  if ('resourceType' in doc && resources) {
+    (doc as DocumentationResource).resource = resources.find(resource => {
+      return (
+        resource.resourceType === (doc as DocumentationResource).resourceType &&
+        resource.id === (doc as DocumentationResource).id
+      );
     });
   }
 

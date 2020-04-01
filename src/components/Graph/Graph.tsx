@@ -16,10 +16,16 @@ interface GraphProps {
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
-const isEdgeOnPatientPath = (path: string[], edge: Edge): boolean => {
-  const startIndex = path.indexOf(edge.start);
-  const endIndex = path.indexOf(edge.end);
-  return startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex;
+const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
+  const startIndex = pathwayResults.path.indexOf(edge.start);
+  const endIndex = pathwayResults.path.indexOf(edge.end);
+  if (startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex) return true;
+  else if (
+    startIndex === pathwayResults.path.length - 1 &&
+    pathwayResults.currentStates.includes(edge.end)
+  )
+    return true;
+  else return false;
 };
 
 const Graph: FC<GraphProps> = ({
@@ -35,13 +41,9 @@ const Graph: FC<GraphProps> = ({
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
   const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
   const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
-  const [path, _setPath] = useState<string[]>(
-    evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
-  );
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
-      _setPath(value.path);
       patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
@@ -120,11 +122,12 @@ const Graph: FC<GraphProps> = ({
     });
   }, []);
 
+  // Evaluate patient on the pathway
   useEffect(() => {
     // Keeps track of whether the current useEffect cycle has ended
     let cancel = false;
 
-    if (resources.length > 0 && (path.length === 0 || patientRecords.evaluatePath)) {
+    if (resources.length > 0 && (!evaluatedPathway.pathwayResults || patientRecords.evaluatePath)) {
       // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
       const patient = {
         resourceType: 'Bundle',
@@ -139,16 +142,18 @@ const Graph: FC<GraphProps> = ({
         cancel = true;
       };
     }
-  }, [pathway, resources, path.length, setPath, patientRecords]);
+  }, [pathway, resources, evaluatedPathway.pathwayResults, setPath, patientRecords]);
 
+  // Expand all the current nodes by default if allowed
   useEffect(() => {
-    if (path) {
-      const currentNode = path[path.length - 1];
-      if (expandCurrentNode) {
-        if (currentNode) setExpanded(currentNode, true);
+    if (evaluatedPathway.pathwayResults) {
+      for (const currentNode of evaluatedPathway.pathwayResults.currentStates) {
+        if (expandCurrentNode) {
+          if (currentNode) setExpanded(currentNode, true);
+        }
       }
     }
-  }, [expandCurrentNode, path, setExpanded]);
+  }, [expandCurrentNode, evaluatedPathway.pathwayResults, setExpanded]);
 
   // Recalculate graph layout if window size changes or if a node is expanded
   useEffect(() => {
@@ -188,9 +193,6 @@ const Graph: FC<GraphProps> = ({
             const docResource = documentation.find((doc): doc is DocumentationResource => {
               return typeof doc !== 'string' && doc.state === key;
             });
-            const isCurrentNode = (): boolean => {
-              return path[path.length - 1] === key;
-            };
             const onClickHandler = interactive ? (): void => setExpanded(key) : undefined;
             return (
               <Node
@@ -200,8 +202,17 @@ const Graph: FC<GraphProps> = ({
                   nodeRefs.current[key] = node;
                 }}
                 pathwayState={pathway.states[key]}
-                isOnPatientPath={path.includes(key)}
-                isCurrentNode={isCurrentNode()}
+                isOnPatientPath={
+                  evaluatedPathway.pathwayResults
+                    ? evaluatedPathway.pathwayResults.path.includes(key) ||
+                      evaluatedPathway.pathwayResults.currentStates.includes(key)
+                    : false
+                }
+                isCurrentNode={
+                  evaluatedPathway.pathwayResults
+                    ? evaluatedPathway.pathwayResults.currentStates.includes(key)
+                    : false
+                }
                 xCoordinate={nodeCoordinates[key].x + windowWidth / 2}
                 yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
@@ -230,7 +241,11 @@ const Graph: FC<GraphProps> = ({
                   key={edgeName}
                   edge={edge}
                   edgeName={edgeName}
-                  isOnPatientPath={isEdgeOnPatientPath(path, edge)}
+                  isOnPatientPath={
+                    evaluatedPathway.pathwayResults
+                      ? isEdgeOnPatientPath(evaluatedPathway.pathwayResults, edge)
+                      : false
+                  }
                   widthOffset={windowWidth / 2}
                 />
               );

@@ -23,8 +23,6 @@ code "Lumpectomy of breast (procedure) code": '392021009' from "SNOMEDCT" displa
 code "Teleradiotherapy procedure (procedure) code": '33195004' from "SNOMEDCT" display 'Teleradiotherapy procedure (procedure)'
 code "Chemotherapy (procedure) code": '367336001' from "SNOMEDCT" display 'Chemotherapy (procedure)'
 // RXNORM Medication Request
-code "14 ML pertuzumab 30 MG/ML Injection code": '1298948' from "RXNORM" display '14 ML pertuzumab 30 MG/ML Injection'
-code "Cyclophosphamide 1000 MG Injection code": '1734919' from "RXNORM" display 'Cyclophosphamide 1000 MG Injection'
 code "trastuzumab 150 MG Injection code": '1922509' from "RXNORM" display 'trastuzumab 150 MG Injection'
 code "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code": '1790099' from "RXNORM" display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
@@ -50,8 +48,6 @@ concept "T1 category (finding)": {"T1 category (finding) code"} display 'T1 cate
 concept "N0 category (finding)": {"N0 category (finding) code"} display 'N0 category (finding)'
 concept "N1 category (finding)": {"N1 category (finding) code"} display 'N1 category (finding)'
 // Medication Requests
-concept "14 ML pertuzumab 30 MG/ML Injection": {"14 ML pertuzumab 30 MG/ML Injection code"} display '14 ML pertuzumab 30 MG/ML Injection'
-concept "Cyclophosphamide 1000 MG Injection": {"Cyclophosphamide 1000 MG Injection code"} display 'Cyclophosphamide 1000 MG Injection'
 concept "trastuzumab 150 MG Injection": {"trastuzumab 150 MG Injection code"} display 'trastuzumab 150 MG Injection'
 concept "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection": {"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"} display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
@@ -97,3 +93,33 @@ define function ToConcept(concept FHIR.CodeableConcept):
             display: concept.text.value
         }
 // End Header
+
+define "T = T0":
+    [Observation: "Primary tumor.clinical [Class] Cancer code"] T0 where ToConcept(T0.value as FHIR.CodeableConcept) ~ "T0 category (finding)"return Tuple{ resourceType: 'Observation', id: T0.id.value, status: T0.status.value }
+
+define "T = T1":
+    [Observation: "Primary tumor.clinical [Class] Cancer code"] T1 where ToConcept(T1.value as FHIR.CodeableConcept) ~ "T1 category (finding)"return Tuple{ resourceType: 'Observation', id: T1.id.value, status: T1.status.value }
+
+define "N = N0":
+    [Observation: "Regional lymph nodes.clinical [Class] Cancer code"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ "N0 category (finding)"return Tuple{ resourceType: 'Observation', id: N0.id.value, status: N0.status.value }
+
+define "N = N0":
+    [Observation: "Regional lymph nodes.clinical [Class] Cancer code"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ "N0 category (finding)"return Tuple{ resourceType: 'Observation', id: N0.id.value, status: N0.status.value }
+
+define "N = N1":
+    [Observation: "Regional lymph nodes.clinical [Class] Cancer code"] N1 where ToConcept(N1.value as FHIR.CodeableConcept) ~ "N1 category (finding)"return Tuple{ resourceType: 'Observation', id: N1.id.value, status: N1.status.value }
+
+define "Surgery":
+    [Procedure: "Lumpectomy of breast (procedure) code"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value, startTime: Lumpectomy.performedPeriod.start, endTime: Lumpectomy.performedPeriod.end }
+
+define "Radiation":
+    [Procedure: "Teleradiotherapy procedure (procedure) code"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value }
+
+define "OtherRadiation":
+    [Procedure: "Teleradiotherapy procedure (procedure) code"] Radiation return Tuple{ resourceType: 'Procedure', id: Radiation.id.value, status: Radiation.status.value }
+
+define "Chemo":
+    [Procedure: "Chemotherapy (procedure) code"] Chemo return Tuple{ resourceType: 'Procedure', id: Chemo.id.value, status: Chemo.status.value }
+
+define "ChemoMedication":
+    [MedicationRequest: "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"] ChemoMedication where ToConcept(ChemoMedication.medication as FHIR.CodeableConcept) ~ "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"return Tuple{ resourceType: 'MedicationRequest', id: ChemoMedication.id.value, status: ChemoMedication.status.value }

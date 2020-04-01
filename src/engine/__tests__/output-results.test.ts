@@ -48,16 +48,17 @@ describe('pathway results translator', () => {
           id: '4'
         }
       ],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Radiation');
-    expect(patientPath.currentStatus).toBe('not-done');
-    expect(patientPath.nextRecommendation).toBe('pathway terminal');
+    expect(patientPath.currentStates).toStrictEqual(['Radiation']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -124,16 +125,17 @@ describe('pathway results translator', () => {
         }
       ],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Surgery');
-    expect(patientPath.currentStatus).toBe('in-progress');
-    expect(patientPath.nextRecommendation).toBe('N-test');
+    expect(patientPath.currentStates).toStrictEqual(['Surgery']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -174,25 +176,17 @@ describe('pathway results translator', () => {
       'N = N1': [],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('N-test');
-    expect(patientPath.currentStatus).toBe('not-done');
-    expect(patientPath.nextRecommendation).toEqual([
-      {
-        state: 'Radiation',
-        conditionDescription: 'N = N0'
-      },
-      {
-        state: 'ChemoMedication',
-        conditionDescription: 'N = N1'
-      }
-    ]);
+    expect(patientPath.currentStates).toStrictEqual(['N-test']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -200,7 +194,7 @@ describe('pathway results translator', () => {
         state: 'T-test'
       }
     ]);
-    expect(patientPath.path).toEqual(['Start', 'T-test', 'N-test']);
+    expect(patientPath.path).toEqual(['Start', 'T-test']);
   });
 
   /**
@@ -233,6 +227,7 @@ describe('pathway results translator', () => {
       ],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [
         {
           resourceType: 'Procedure',
@@ -250,11 +245,11 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Chemo');
-    expect(patientPath.currentStatus).toBe('completed');
-    expect(patientPath.nextRecommendation).toBe('pathway terminal');
+    expect(patientPath.currentStates).toStrictEqual(['Chemo']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -315,6 +310,7 @@ describe('pathway results translator', () => {
       ],
       Surgery: [],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: [
         {
@@ -326,11 +322,11 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Chemo');
-    expect(patientPath.currentStatus).toBe('not-done');
-    expect(patientPath.nextRecommendation).toBe('pathway terminal');
+    expect(patientPath.currentStates).toStrictEqual(['Chemo']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -350,12 +346,12 @@ describe('pathway results translator', () => {
         state: 'ChemoMedication'
       }
     ]);
-    expect(patientPath.path).toEqual(['Start', 'T-test', 'N-test', 'ChemoMedication', 'Chemo']);
+    expect(patientPath.path).toEqual(['Start', 'T-test', 'N-test', 'ChemoMedication']);
   });
 
   /**
    * Test patientPath6 is a pathway which ends on an action with no resource
-   * in the health file corresponding to that action
+   * in the health file corresponding to that action. There are two options
    *
    * patient is T1N0, has completed lumpectomy surgey, and has no resource for radiation therapy
    */
@@ -390,16 +386,17 @@ describe('pathway results translator', () => {
         }
       ],
       Radiation: [],
+      OtherRadiation: [],
       Chemo: [],
       ChemoMedication: []
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentState).toBe('Radiation');
-    expect(patientPath.currentStatus).toBe('not-done');
-    expect(patientPath.nextRecommendation).toBe('pathway terminal');
+    expect(patientPath.currentStates).toStrictEqual(['Radiation', 'OtherRadiation']);
     expect(patientPath.documentation).toEqual([
-      'direct',
+      {
+        state: 'Start'
+      },
       {
         resourceType: 'Observation',
         status: 'final',
@@ -419,7 +416,7 @@ describe('pathway results translator', () => {
         state: 'N-test'
       }
     ]);
-    expect(patientPath.path).toEqual(['Start', 'T-test', 'Surgery', 'N-test', 'Radiation']);
+    expect(patientPath.path).toEqual(['Start', 'T-test', 'Surgery', 'N-test']);
   });
 });
 

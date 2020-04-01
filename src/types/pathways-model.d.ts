@@ -51,10 +51,8 @@ declare module 'pathways-model' {
 
   export interface PathwayResults {
     patientId: string;
-    currentState: string;
-    currentStatus: string | undefined;
-    nextRecommendation: string | object;
-    documentation: Array<DocumentationResource | string>;
+    currentStates: string[];
+    documentation: Documentation[];
     path: string[];
   }
 
@@ -89,11 +87,14 @@ declare module 'pathways-model' {
     [key: string]: Array<DomainResource, string> | DomainResource;
   }
 
-  export interface DocumentationResource {
+  export interface Documentation {
+    state: string;
+  }
+
+  export interface DocumentationResource extends Documentation {
     resourceType: string;
     id: string;
     status: string;
-    state: string;
     resource?: DomainResource;
   }
 
