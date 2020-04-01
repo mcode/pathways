@@ -23,6 +23,8 @@ code "Lumpectomy of breast (procedure) code": '392021009' from "SNOMEDCT" displa
 code "Teleradiotherapy procedure (procedure) code": '33195004' from "SNOMEDCT" display 'Teleradiotherapy procedure (procedure)'
 code "Chemotherapy (procedure) code": '367336001' from "SNOMEDCT" display 'Chemotherapy (procedure)'
 // RXNORM Medication Request
+code "14 ML pertuzumab 30 MG/ML Injection code": '1298948' from "RXNORM" display '14 ML pertuzumab 30 MG/ML Injection'
+code "Cyclophosphamide 1000 MG Injection code": '1734919' from "RXNORM" display 'Cyclophosphamide 1000 MG Injection'
 code "trastuzumab 150 MG Injection code": '1922509' from "RXNORM" display 'trastuzumab 150 MG Injection'
 code "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code": '1790099' from "RXNORM" display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
@@ -48,6 +50,8 @@ concept "T1 category (finding)": {"T1 category (finding) code"} display 'T1 cate
 concept "N0 category (finding)": {"N0 category (finding) code"} display 'N0 category (finding)'
 concept "N1 category (finding)": {"N1 category (finding) code"} display 'N1 category (finding)'
 // Medication Requests
+concept "14 ML pertuzumab 30 MG/ML Injection": {"14 ML pertuzumab 30 MG/ML Injection code"} display '14 ML pertuzumab 30 MG/ML Injection'
+concept "Cyclophosphamide 1000 MG Injection": {"Cyclophosphamide 1000 MG Injection code"} display 'Cyclophosphamide 1000 MG Injection'
 concept "trastuzumab 150 MG Injection": {"trastuzumab 150 MG Injection code"} display 'trastuzumab 150 MG Injection'
 concept "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection": {"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"} display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
 
