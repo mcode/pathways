@@ -56,4 +56,18 @@ describe('pathways evaluation engine', () => {
       done();
     });
   });
+
+  it('does not call cql-to-elm webservice when ELM is provided', done => {
+    // same as above, just a new object to count calls
+    const fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
+    global.fetch = fetch;
+
+    const pathwayWithElm = JSON.parse(JSON.stringify(pathway)); // deep clone
+    pathwayWithElm.elm = { navigational: preconvertedELM };
+    evaluatePatientOnPathway(patient1, pathwayWithElm, []).then(patientPath => {
+      expect(patientPath).toEqual(results1);
+      expect(fetch).not.toHaveBeenCalled();
+      done();
+    });
+  });
 });
