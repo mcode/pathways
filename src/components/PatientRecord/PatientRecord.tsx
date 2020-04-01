@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, RefObject } from 'react';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import {
@@ -32,11 +32,16 @@ const getResourceByType = (
 };
 
 interface PatientRecordProps {
-  headerElement: React.RefObject<HTMLDivElement>;
+  headerElement: RefObject<HTMLDivElement>;
 }
 
 interface PatientRecordElementProps {
   resourceType: string;
+}
+
+interface VisualizerProps {
+  resourceType: string;
+  resourcesByType: readonly object[];
 }
 
 const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
@@ -92,7 +97,6 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
 };
 
 const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) => {
-  const patient = usePatient();
   const resources = usePatientRecords().patientRecords;
   const resourcesByType = getResourceByType(resources, resourceType);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -100,24 +104,6 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
   const resourceCount: string =
     resourceType !== 'Patient' ? '(' + resourcesByType.length + ')' : '';
-
-  const visualizer = (): JSX.Element | undefined => {
-    if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
-    else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'Observation')
-      return <ObservationsVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'DiagnosticReport')
-      return <ReportsVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'MedicationRequest')
-      return <MedicationsVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'AllergyIntolerance')
-      return <AllergiesVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'CarePlan') return <CarePlansVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'Procedure') return <ProceduresVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'Encounter') return <EncountersVisualizer rows={resourcesByType} />;
-    else if (resourceType === 'Immunization')
-      return <ImmunizationsVisualizer rows={resourcesByType} />;
-  };
 
   return (
     <div className={styles.element}>
@@ -130,9 +116,31 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
         </div>
       </div>
 
-      {isExpanded && <div className={styles.elementContainer}>{visualizer()}</div>}
+      {isExpanded && (
+        <div className={styles.elementContainer}>
+          <Visualizer resourceType={resourceType} resourcesByType={resourcesByType} />
+        </div>
+      )}
     </div>
   );
+};
+
+const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
+  const patient = usePatient();
+  if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
+  else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'Observation') return <ObservationsVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'DiagnosticReport') return <ReportsVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'MedicationRequest')
+    return <MedicationsVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'AllergyIntolerance')
+    return <AllergiesVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'CarePlan') return <CarePlansVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'Procedure') return <ProceduresVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'Encounter') return <EncountersVisualizer rows={resourcesByType} />;
+  else if (resourceType === 'Immunization')
+    return <ImmunizationsVisualizer rows={resourcesByType} />;
+  else return <div>Unsupported Resource</div>;
 };
 
 export default PatientRecord;
