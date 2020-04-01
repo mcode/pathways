@@ -23,15 +23,11 @@ export function evaluatePatientOnPathway(
   pathway: Pathway,
   resources: DomainResource[]
 ): Promise<PathwayResults> {
-  if (pathway.elm && pathway.elm.navigational) {
-    const patientData = processELMCommon(patientRecord, pathway.elm.navigational);
-    const pathwayResults = pathwayData(pathway, patientData, resources);
-    return Promise.resolve(pathwayResults);
-  } else {
-    return extractNavigationCQL(pathway)
-      .then(cql => processCQLCommon(patientRecord, cql))
-      .then(patientData => pathwayData(pathway, patientData, resources));
-  }
+  const patientDataPromise = pathway.elm?.navigational
+    ? processELMCommon(patientRecord, pathway.elm.navigational)
+    : extractNavigationCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+
+  return patientDataPromise.then(patientData => pathwayData(pathway, patientData, resources));
 }
 
 /**
@@ -45,15 +41,11 @@ export function evaluatePathwayCriteria(
   patientRecord: Bundle,
   pathway: Pathway
 ): Promise<CriteriaResult> {
-  if (pathway.elm && pathway.elm.criteria) {
-    const patientData = processELMCommon(patientRecord, pathway.elm.criteria);
-    const criteriaResults = criteriaData(pathway, patientData);
-    return Promise.resolve(criteriaResults);
-  } else {
-    return extractCriteriaCQL(pathway)
-      .then(cql => processCQLCommon(patientRecord, cql))
-      .then(patientData => criteriaData(pathway, patientData));
-  }
+  const patientDataPromise = pathway.elm?.criteria
+    ? processELMCommon(patientRecord, pathway.elm.criteria)
+    : extractCriteriaCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+
+  return patientDataPromise.then(patientData => criteriaData(pathway, patientData));
 }
 
 /**
@@ -89,20 +81,24 @@ function processCQLCommon(patientRecord: Bundle, cql: string): Promise<PatientDa
  * @return the raw, unprocessed patientResults
  *         derived from executing the ELM against the given patient
  */
-function processELMCommon(patientRecord: Bundle, elm: object): PatientData {
-  let elmResults: ElmResults = {
-    patientResults: {}
-  };
-  if (instanceOfElmObject(elm)) {
-    elmResults = executeElm(patientRecord, elm.main, elm.libraries);
-  } else {
-    elmResults = executeElm(patientRecord, elm);
-  }
+function processELMCommon(patientRecord: Bundle, elm: object): Promise<PatientData> {
+  // this is not inherently async,
+  // but we wrap it in a promise to make the code cleaner elsewhere
+  return new Promise((resolve, reject) => {
+    let elmResults: ElmResults = {
+      patientResults: {}
+    };
+    if (instanceOfElmObject(elm)) {
+      elmResults = executeElm(patientRecord, elm.main, elm.libraries);
+    } else {
+      elmResults = executeElm(patientRecord, elm);
+    }
 
-  // TODO - update pathwaysData to take multiple patients
-  const patientIds = Object.keys(elmResults.patientResults);
-  const patientData = elmResults.patientResults[patientIds[0]];
-  return patientData;
+    // TODO - update pathwaysData to take multiple patients
+    const patientIds = Object.keys(elmResults.patientResults);
+    const patientData = elmResults.patientResults[patientIds[0]];
+    resolve(patientData);
+  });
 }
 
 // example function that would gather library CQL files
