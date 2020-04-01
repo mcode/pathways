@@ -44,9 +44,6 @@ const Graph: FC<GraphProps> = ({
   const [parentWidth, setParentWidth] = useState<number>(
     graphElement?.current?.parentElement?.clientWidth ?? 0
   );
-  const [path, _setPath] = useState<string[]>(
-    evaluatedPathway.pathwayResults ? evaluatedPathway.pathwayResults.path : []
-  );
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
