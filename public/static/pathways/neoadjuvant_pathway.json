@@ -703,6 +703,22 @@
                      "name" : "SNOMEDCT"
                   }
                }, {
+                  "name" : "14 ML pertuzumab 30 MG/ML Injection code",
+                  "id" : "1298948",
+                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "accessLevel" : "Public",
+                  "codeSystem" : {
+                     "name" : "RXNORM"
+                  }
+               }, {
+                  "name" : "Cyclophosphamide 1000 MG Injection code",
+                  "id" : "1734919",
+                  "display" : "Cyclophosphamide 1000 MG Injection",
+                  "accessLevel" : "Public",
+                  "codeSystem" : {
+                     "name" : "RXNORM"
+                  }
+               }, {
                   "name" : "trastuzumab 150 MG Injection code",
                   "id" : "1922509",
                   "display" : "trastuzumab 150 MG Injection",
@@ -820,6 +836,20 @@
                   "accessLevel" : "Public",
                   "code" : [ {
                      "name" : "N1 category (finding) code"
+                  } ]
+               }, {
+                  "name" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "accessLevel" : "Public",
+                  "code" : [ {
+                     "name" : "14 ML pertuzumab 30 MG/ML Injection code"
+                  } ]
+               }, {
+                  "name" : "Cyclophosphamide 1000 MG Injection",
+                  "display" : "Cyclophosphamide 1000 MG Injection",
+                  "accessLevel" : "Public",
+                  "code" : [ {
+                     "name" : "Cyclophosphamide 1000 MG Injection code"
                   } ]
                }, {
                   "name" : "trastuzumab 150 MG Injection",
@@ -1539,13 +1569,75 @@
                      "source" : [ {
                         "alias" : "MR",
                         "expression" : {
-                           "type" : "Null"
+                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
+                           "codeProperty" : "medication",
+                           "type" : "Retrieve",
+                           "codes" : {
+                              "type" : "ToList",
+                              "operand" : {
+                                 "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code",
+                                 "type" : "CodeRef"
+                              }
+                           }
                         }
                      } ],
                      "relationship" : [ ],
+                     "where" : {
+                        "type" : "Equivalent",
+                        "operand" : [ {
+                           "name" : "ToConcept",
+                           "type" : "FunctionRef",
+                           "operand" : [ {
+                              "strict" : false,
+                              "type" : "As",
+                              "operand" : {
+                                 "path" : "medication",
+                                 "scope" : "MR",
+                                 "type" : "Property"
+                              },
+                              "asTypeSpecifier" : {
+                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
+                                 "type" : "NamedTypeSpecifier"
+                              }
+                           } ]
+                        }, {
+                           "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
+                           "type" : "ConceptRef"
+                        } ]
+                     },
                      "return" : {
                         "expression" : {
-                           "type" : "Null"
+                           "type" : "Tuple",
+                           "element" : [ {
+                              "name" : "resourceType",
+                              "value" : {
+                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                                 "value" : "MedicationRequest",
+                                 "type" : "Literal"
+                              }
+                           }, {
+                              "name" : "id",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "id",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           }, {
+                              "name" : "status",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "status",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           } ]
                         }
                      }
                   }
@@ -1558,18 +1650,303 @@
                      "source" : [ {
                         "alias" : "MR",
                         "expression" : {
-                           "type" : "Null"
+                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
+                           "codeProperty" : "medication",
+                           "type" : "Retrieve",
+                           "codes" : {
+                              "type" : "ToList",
+                              "operand" : {
+                                 "name" : "Cyclophosphamide 1000 MG Injection code",
+                                 "type" : "CodeRef"
+                              }
+                           }
                         }
                      } ],
                      "relationship" : [ ],
+                     "where" : {
+                        "type" : "Equivalent",
+                        "operand" : [ {
+                           "name" : "ToConcept",
+                           "type" : "FunctionRef",
+                           "operand" : [ {
+                              "strict" : false,
+                              "type" : "As",
+                              "operand" : {
+                                 "path" : "medication",
+                                 "scope" : "MR",
+                                 "type" : "Property"
+                              },
+                              "asTypeSpecifier" : {
+                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
+                                 "type" : "NamedTypeSpecifier"
+                              }
+                           } ]
+                        }, {
+                           "name" : "Cyclophosphamide 1000 MG Injection",
+                           "type" : "ConceptRef"
+                        } ]
+                     },
                      "return" : {
                         "expression" : {
-                           "type" : "Null"
+                           "type" : "Tuple",
+                           "element" : [ {
+                              "name" : "resourceType",
+                              "value" : {
+                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                                 "value" : "MedicationRequest",
+                                 "type" : "Literal"
+                              }
+                           }, {
+                              "name" : "id",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "id",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           }, {
+                              "name" : "status",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "status",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           } ]
                         }
                      }
                   }
                }, {
                   "name" : "ChemotherapyddACTHP",
+                  "context" : "Patient",
+                  "accessLevel" : "Public",
+                  "expression" : {
+                     "type" : "Query",
+                     "source" : [ {
+                        "alias" : "MR",
+                        "expression" : {
+                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
+                           "codeProperty" : "medication",
+                           "type" : "Retrieve",
+                           "codes" : {
+                              "type" : "ToList",
+                              "operand" : {
+                                 "name" : "14 ML pertuzumab 30 MG/ML Injection code",
+                                 "type" : "CodeRef"
+                              }
+                           }
+                        }
+                     } ],
+                     "relationship" : [ ],
+                     "where" : {
+                        "type" : "Equivalent",
+                        "operand" : [ {
+                           "name" : "ToConcept",
+                           "type" : "FunctionRef",
+                           "operand" : [ {
+                              "strict" : false,
+                              "type" : "As",
+                              "operand" : {
+                                 "path" : "medication",
+                                 "scope" : "MR",
+                                 "type" : "Property"
+                              },
+                              "asTypeSpecifier" : {
+                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
+                                 "type" : "NamedTypeSpecifier"
+                              }
+                           } ]
+                        }, {
+                           "name" : "14 ML pertuzumab 30 MG/ML Injection",
+                           "type" : "ConceptRef"
+                        } ]
+                     },
+                     "return" : {
+                        "expression" : {
+                           "type" : "Tuple",
+                           "element" : [ {
+                              "name" : "resourceType",
+                              "value" : {
+                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                                 "value" : "MedicationRequest",
+                                 "type" : "Literal"
+                              }
+                           }, {
+                              "name" : "id",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "id",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           }, {
+                              "name" : "status",
+                              "value" : {
+                                 "path" : "value",
+                                 "type" : "Property",
+                                 "source" : {
+                                    "path" : "status",
+                                    "scope" : "MR",
+                                    "type" : "Property"
+                                 }
+                              }
+                           } ]
+                        }
+                     }
+                  }
+               }, {
+                  "name" : "Surgery2",
+                  "context" : "Patient",
+                  "accessLevel" : "Public",
+                  "expression" : {
+                     "type" : "If",
+                     "condition" : {
+                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
+                        "type" : "As",
+                        "operand" : {
+                           "type" : "Exists",
+                           "operand" : {
+                              "dataType" : "{http://hl7.org/fhir}Procedure",
+                              "codeProperty" : "code",
+                              "type" : "Retrieve",
+                              "codes" : {
+                                 "type" : "ToList",
+                                 "operand" : {
+                                    "name" : "Lumpectomy of breast (procedure) code",
+                                    "type" : "CodeRef"
+                                 }
+                              }
+                           }
+                        }
+                     },
+                     "then" : {
+                        "type" : "Query",
+                        "source" : [ {
+                           "alias" : "Lumpectomy",
+                           "expression" : {
+                              "dataType" : "{http://hl7.org/fhir}Procedure",
+                              "codeProperty" : "code",
+                              "type" : "Retrieve",
+                              "codes" : {
+                                 "type" : "ToList",
+                                 "operand" : {
+                                    "name" : "Lumpectomy of breast (procedure) code",
+                                    "type" : "CodeRef"
+                                 }
+                              }
+                           }
+                        } ],
+                        "relationship" : [ ],
+                        "return" : {
+                           "expression" : {
+                              "type" : "Tuple",
+                              "element" : [ {
+                                 "name" : "resourceType",
+                                 "value" : {
+                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                                    "value" : "Procedure",
+                                    "type" : "Literal"
+                                 }
+                              }, {
+                                 "name" : "id",
+                                 "value" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "id",
+                                       "scope" : "Lumpectomy",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              }, {
+                                 "name" : "status",
+                                 "value" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "status",
+                                       "scope" : "Lumpectomy",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              } ]
+                           }
+                        }
+                     },
+                     "else" : {
+                        "type" : "Query",
+                        "source" : [ {
+                           "alias" : "Request",
+                           "expression" : {
+                              "dataType" : "{http://hl7.org/fhir}ServiceRequest",
+                              "codeProperty" : "code",
+                              "type" : "Retrieve",
+                              "codes" : {
+                                 "type" : "ToList",
+                                 "operand" : {
+                                    "name" : "Lumpectomy of breast (procedure) code",
+                                    "type" : "CodeRef"
+                                 }
+                              }
+                           }
+                        } ],
+                        "relationship" : [ ],
+                        "return" : {
+                           "expression" : {
+                              "type" : "Tuple",
+                              "element" : [ {
+                                 "name" : "resourceType",
+                                 "value" : {
+                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
+                                    "value" : "ServiceRequest",
+                                    "type" : "Literal"
+                                 }
+                              }, {
+                                 "name" : "id",
+                                 "value" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "id",
+                                       "scope" : "Request",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              }, {
+                                 "name" : "status",
+                                 "value" : {
+                                    "path" : "value",
+                                    "type" : "Property",
+                                    "source" : {
+                                       "path" : "status",
+                                       "scope" : "Request",
+                                       "type" : "Property"
+                                    }
+                                 }
+                              } ]
+                           }
+                        }
+                     }
+                  }
+               }, {
+                  "name" : "Complete",
+                  "context" : "Patient",
+                  "accessLevel" : "Public"
+               }, {
+                  "name" : "Partial/Stable/Progressive",
+                  "context" : "Patient",
+                  "accessLevel" : "Public"
+               }, {
+                  "name" : "AdotrastuzumabEmtansine",
                   "context" : "Patient",
                   "accessLevel" : "Public",
                   "expression" : {
@@ -1588,17 +1965,48 @@
                      }
                   }
                }, {
-                  "name" : "Surgery2",
+                  "name" : "Trastuzumab",
                   "context" : "Patient",
                   "accessLevel" : "Public",
                   "expression" : {
-                     "type" : "Null"
+                     "type" : "Query",
+                     "source" : [ {
+                        "alias" : "MR",
+                        "expression" : {
+                           "type" : "Null"
+                        }
+                     } ],
+                     "relationship" : [ ],
+                     "return" : {
+                        "expression" : {
+                           "type" : "Null"
+                        }
+                     }
+                  }
+               }, {
+                  "name" : "PertuzumabTrastuzumab",
+                  "context" : "Patient",
+                  "accessLevel" : "Public",
+                  "expression" : {
+                     "type" : "Query",
+                     "source" : [ {
+                        "alias" : "MR",
+                        "expression" : {
+                           "type" : "Null"
+                        }
+                     } ],
+                     "relationship" : [ ],
+                     "return" : {
+                        "expression" : {
+                           "type" : "Null"
+                        }
+                     }
                   }
                } ]
             }
          }
       },
-      "criteria":{
+      "criteria": {
          "library" : {
             "identifier" : {
                "id" : "mCODEResources",
@@ -1713,6 +2121,22 @@
                   "accessLevel" : "Public",
                   "codeSystem" : {
                      "name" : "SNOMEDCT"
+                  }
+               }, {
+                  "name" : "14 ML pertuzumab 30 MG/ML Injection code",
+                  "id" : "1298948",
+                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "accessLevel" : "Public",
+                  "codeSystem" : {
+                     "name" : "RXNORM"
+                  }
+               }, {
+                  "name" : "Cyclophosphamide 1000 MG Injection code",
+                  "id" : "1734919",
+                  "display" : "Cyclophosphamide 1000 MG Injection",
+                  "accessLevel" : "Public",
+                  "codeSystem" : {
+                     "name" : "RXNORM"
                   }
                }, {
                   "name" : "trastuzumab 150 MG Injection code",
@@ -1832,6 +2256,20 @@
                   "accessLevel" : "Public",
                   "code" : [ {
                      "name" : "N1 category (finding) code"
+                  } ]
+               }, {
+                  "name" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
+                  "accessLevel" : "Public",
+                  "code" : [ {
+                     "name" : "14 ML pertuzumab 30 MG/ML Injection code"
+                  } ]
+               }, {
+                  "name" : "Cyclophosphamide 1000 MG Injection",
+                  "display" : "Cyclophosphamide 1000 MG Injection",
+                  "accessLevel" : "Public",
+                  "code" : [ {
+                     "name" : "Cyclophosphamide 1000 MG Injection code"
                   } ]
                }, {
                   "name" : "trastuzumab 150 MG Injection",
