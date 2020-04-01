@@ -163,7 +163,7 @@
         "action": [
           {
             "type": "create",
-            "description": "Trastuzumab Medication request",
+            "description": "Doxorubicin Medication request",
             "resource": {
               "resourceType": "MedicationRequest",
               "medicationCodeableConcept": {
