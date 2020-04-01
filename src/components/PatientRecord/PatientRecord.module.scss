@@ -35,14 +35,16 @@ $lineHeight: 30px;
         display: block;
         margin-bottom: 1vh;
         font-size: 1.1em;
-        text-transform: uppercase;
         background-color: $blue;
     
         .title {
           padding: $verticalPadding 0 $verticalPadding 30px;
           height: 2*$verticalPadding + $lineHeight;
           line-height: $lineHeight;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
           width: 100%;
+          font-size: 1.2em;
           font-weight:700;
     
           div {
