@@ -45,12 +45,6 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
     setEvaluatePath(true);
   }, []);
 
-  // console.log('App.tsx - demoData birthday is: ' + demoData[0].birthDate);
-  // if (patientRecords !== demoData) {
-  //   console.log('updating record')
-  //   setPatientRecords(demoData);
-  // }
-
   useEffect(() => {
     if (!demo) {
       FHIR.oauth2
@@ -76,23 +70,21 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
           setClient(client);
         });
     } else {
-      console.log('in use effect')
+      console.log('in use effect');
       setClient(new MockedFHIRClient());
+      // fix url to not be hardcoded
       let url = 'http://localhost:3000/static/demoData/' + demoId + '.json';
-    console.log('index.js - fetch: ' + url);
-    console.log(demoId)
-      // console.log(useParams().id)
-    fetch(url)
-      .then(cql => cql.json())
-      .then(result => {
-        console.log('index.js - fetch done');
-        // setDemoData(result);
-        // return <App demo={true} demoData={result} />;
-        console.log(result)
-        const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
-        setPatientRecords(result);
-        setPatient(resultPatient);
-      });
+      console.log('index.js - fetch: ' + url);
+      console.log(demoId);
+      fetch(url)
+        .then(data => data.json())
+        .then(result => {
+          console.log('index.js - fetch done');
+          console.log('App.tsx - result birthday is: ' + result[0].birthDate);
+          const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
+          setPatientRecords(result);
+          setPatient(resultPatient);
+        });
     }
   }, [demo, demoId, setPatientRecords]);
 
@@ -175,9 +167,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
-        <PatientProvider
-          value={{ patient, setPatient }}
-        >
+        <PatientProvider value={{ patient, setPatient }}>
           <PatientRecordsProvider
             value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
           >
