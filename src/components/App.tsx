@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback } from 'react';
+import React, { FC, useState, useEffect, useCallback, useRef } from 'react';
 
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
@@ -21,7 +21,9 @@ import FHIR from 'fhirclient';
 import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
-import { Patient, DomainResource, Practitioner } from 'fhir-objects';
+import { DomainResource, Practitioner } from 'fhir-objects';
+import styles from './App.module.scss';
+
 interface AppProps {
   demo: boolean;
 }
@@ -34,6 +36,8 @@ const App: FC<AppProps> = ({ demo }) => {
   const [evaluatedPathways, setEvaluatedPathways] = useState<EvaluatedPathway[]>([]);
   const [client, setClient] = useState<PathwaysClient | null>(null);
   const [user, setUser] = useState<string>('');
+  const headerElement = useRef<HTMLDivElement>(null);
+  const graphContainerElement = useRef<HTMLDivElement>(null);
 
   const setPatientRecords = useCallback((value: DomainResource[]): void => {
     _setPatientRecords(value);
@@ -90,6 +94,13 @@ const App: FC<AppProps> = ({ demo }) => {
       );
   }, [service, evaluatedPathways.length, client, patientRecords]);
 
+  // Set the height of the graph container
+  useEffect(() => {
+    if (graphContainerElement?.current && headerElement?.current)
+      graphContainerElement.current.style.height =
+        window.innerHeight - headerElement.current.clientHeight + 'px';
+  }, [selectPathway]);
+
   function setEvaluatedPathwayCallback(
     value: EvaluatedPathway | null,
     selectPathway = false
@@ -119,17 +130,20 @@ const App: FC<AppProps> = ({ demo }) => {
 
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
-      <div>
+      <div className={styles.display}>
+        <PatientRecord headerElement={headerElement} />
+
         {evaluatedPathway ? (
-          <Graph
-            evaluatedPathway={evaluatedPathway}
-            expandCurrentNode={true}
-            updateEvaluatedPathways={updateEvaluatedPathways}
-          />
+          <div ref={graphContainerElement} className={styles.graph}>
+            <Graph
+              evaluatedPathway={evaluatedPathway}
+              expandCurrentNode={true}
+              updateEvaluatedPathways={updateEvaluatedPathways}
+            />
+          </div>
         ) : (
           <div>No Pathway Loaded</div>
         )}
-        <PatientRecord />
       </div>
     );
   };
@@ -153,14 +167,16 @@ const App: FC<AppProps> = ({ demo }) => {
               }}
             >
               <NoteDataProvider physician={user} date={new Date(Date.now())}>
-                <div>
+                <div ref={headerElement}>
                   <Header logo={logo} />
+
                   <Navigation
                     evaluatedPathways={evaluatedPathways}
                     selectPathway={selectPathway}
                     setSelectPathway={setSelectPathway}
                   />
                 </div>
+
                 {selectPathway ? (
                   <PathwaysList
                     evaluatedPathways={evaluatedPathways}

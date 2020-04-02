@@ -8,6 +8,8 @@ import { EvaluatedPathway, PathwayResults, DocumentationResource } from 'pathway
 import { Layout, NodeDimensions, Edge } from 'graph-model';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
+import styles from './Graph.module.scss';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -39,8 +41,9 @@ const Graph: FC<GraphProps> = ({
   const pathway = evaluatedPathway.pathway;
   const graphElement = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<{ [key: string]: HTMLDivElement }>({});
-  const [windowWidth, setWindowWidth] = useState<number>(useWindowWidth());
-  const parentWidth = graphElement?.current?.parentElement?.clientWidth ?? 0;
+  const [parentWidth, setParentWidth] = useState<number>(
+    graphElement?.current?.parentElement?.clientWidth ?? 0
+  );
 
   const setPath = useCallback(
     (value: PathwayResults): void => {
@@ -86,7 +89,7 @@ const Graph: FC<GraphProps> = ({
   const minX =
     nodeCoordinates !== undefined
       ? Object.values(nodeCoordinates)
-          .map(x => x.x + windowWidth / 2)
+          .map(x => x.x + parentWidth / 2)
           .reduce((a, b) => Math.min(a, b))
       : 0;
 
@@ -155,12 +158,17 @@ const Graph: FC<GraphProps> = ({
     }
   }, [expandCurrentNode, evaluatedPathway.pathwayResults, setExpanded]);
 
-  // Recalculate graph layout if window size changes or if a node is expanded
+  // Recalculate graph layout if graph container size changes
   useEffect(() => {
-    setWindowWidth(parentWidth);
-    setLayout(getGraphLayout());
-  }, [getGraphLayout, parentWidth]);
+    if (graphElement.current?.parentElement) {
+      new ResizeSensor(graphElement.current.parentElement, function() {
+        setParentWidth(graphElement.current?.parentElement?.clientWidth ?? 0);
+        setLayout(getGraphLayout());
+      });
+    }
+  }, [getGraphLayout]);
 
+  // Recalculate graph layout if a node is expanded
   useEffect(() => {
     setLayout(getGraphLayout());
   }, [expanded, getGraphLayout]);
@@ -170,9 +178,9 @@ const Graph: FC<GraphProps> = ({
     edges !== undefined
       ? Object.values(edges)
           .map(e => e.label)
-          .map(l => (l ? l.x + l.text.length * 10 + windowWidth / 2 : 0))
+          .map(l => (l ? l.x + l.text.length * 10 + parentWidth / 2 : 0))
           .reduce((a, b) => Math.max(a, b), 0)
-      : windowWidth;
+      : parentWidth;
 
   const documentation = evaluatedPathway.pathwayResults
     ? evaluatedPathway.pathwayResults.documentation
@@ -181,10 +189,12 @@ const Graph: FC<GraphProps> = ({
   return (
     <div
       ref={graphElement}
+      id="graph-root"
+      className={styles.root}
       style={{
         height: interactive ? maxHeight + 150 : 'inherit',
+        width: maxWidth + 'px',
         position: 'relative',
-        overflow: 'auto',
         marginRight: '5px'
       }}
     >
@@ -213,7 +223,7 @@ const Graph: FC<GraphProps> = ({
                     ? evaluatedPathway.pathwayResults.currentStates.includes(key)
                     : false
                 }
-                xCoordinate={nodeCoordinates[key].x + windowWidth / 2}
+                xCoordinate={nodeCoordinates[key].x + parentWidth / 2}
                 yCoordinate={nodeCoordinates[key].y}
                 expanded={expanded[key]}
                 onClickHandler={onClickHandler}
@@ -246,7 +256,7 @@ const Graph: FC<GraphProps> = ({
                       ? isEdgeOnPatientPath(evaluatedPathway.pathwayResults, edge)
                       : false
                   }
-                  widthOffset={windowWidth / 2}
+                  widthOffset={parentWidth / 2}
                 />
               );
             })
@@ -255,19 +265,5 @@ const Graph: FC<GraphProps> = ({
     </div>
   );
 };
-
-function useWindowWidth(): number {
-  const getWidth = (): number => window.innerWidth;
-  const [windowWidth, setWindowWidth] = useState(getWidth);
-
-  useEffect(() => {
-    const handleResize = (): void => setWindowWidth(getWidth);
-
-    window.addEventListener('resize', handleResize);
-    return (): void => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-
-  return windowWidth;
-}
 
 export default Graph;
