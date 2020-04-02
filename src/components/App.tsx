@@ -22,7 +22,6 @@ import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
-
 interface AppProps {
   demo: boolean;
   demoId: any;
@@ -70,17 +69,11 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
           setClient(client);
         });
     } else {
-      console.log('in use effect');
       setClient(new MockedFHIRClient());
-      // fix url to not be hardcoded
-      let url = 'http://localhost:3000/static/demoData/' + demoId + '.json';
-      console.log('index.js - fetch: ' + url);
-      console.log(demoId);
+      let url = config.get('demoPatientUrl') + demoId + '.json';
       fetch(url)
         .then(data => data.json())
         .then(result => {
-          console.log('index.js - fetch done');
-          console.log('App.tsx - result birthday is: ' + result[0].birthDate);
           const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
           setPatientRecords(result);
           setPatient(resultPatient);
