@@ -1,27 +1,37 @@
 import React, { FC, createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useFHIRClient } from './FHIRClient';
+// import { useFHIRClient } from './FHIRClient';
 import { Patient } from 'fhir-objects';
 interface PatientProviderProps {
   children: ReactNode;
-  patient?: Patient | null;
+  value: PatientContextInterface;
 }
 
-export const PatientContext = createContext<Patient | null>(null);
+interface PatientContextInterface {
+  patient: Patient | null;
+  setPatient: Function;
+}
 
-export const PatientProvider: FC<PatientProviderProps> = ({ children, patient }) => {
-  const client = useFHIRClient();
-  const [currentPatient, setCurrentPatient] = useState<Patient | null>(patient || null);
+export const PatientContext = createContext<PatientContextInterface>({
+  patient: null,
+  setPatient: (): void => {
+    return;
+  }
+});
 
-  useEffect(() => {
-    client?.patient?.read?.().then((patient: Patient) => setCurrentPatient(patient));
-  }, [client]);
+export const PatientProvider: FC<PatientProviderProps> = ({ children, value }) => {
+  // const client = useFHIRClient();
+  // const [currentPatient, setCurrentPatient] = useState<Patient | null>(patient || null);
 
-  return currentPatient == null ? (
+  // useEffect(() => {
+  //   client?.patient?.read?.().then((patient: Patient) => setCurrentPatient(patient));
+  // }, [client]);
+
+  return value.patient == null ? (
     <div>Loading...</div>
   ) : (
-    <PatientContext.Provider value={currentPatient}>{children}</PatientContext.Provider>
+    <PatientContext.Provider value={value}>{children}</PatientContext.Provider>
   );
 };
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-export const usePatient = (): Patient => useContext(PatientContext)!;
+export const usePatient = (): PatientContextInterface => useContext(PatientContext)!;

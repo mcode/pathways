@@ -37,7 +37,7 @@ interface PopupContentProps {
 }
 
 const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
-  const patient = usePatient();
+  const patient = usePatient().patient as fhir.Patient;
   const client = useFHIRClient();
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const [showCheck, setShowCheck] = useState<boolean>(false);

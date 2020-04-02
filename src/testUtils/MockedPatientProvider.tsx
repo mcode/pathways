@@ -1,9 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import { PatientContext } from 'components/PatientProvider';
-import { Patient } from 'fhir-objects';
 interface PatientProviderProps {
   children: ReactNode;
-  patient?: Patient; // Patient | null;
 }
 
 export const mockedPatient = {
@@ -18,8 +16,17 @@ export const mockedPatient = {
   ]
 };
 
-const MockedPatientProvider: FC<PatientProviderProps> = ({ patient = null, children }) => (
-  <PatientContext.Provider value={patient || mockedPatient}>{children}</PatientContext.Provider>
+const MockedPatientProvider: FC<PatientProviderProps> = ({ children }) => (
+  <PatientContext.Provider
+    value={{
+      patient: mockedPatient,
+      setPatient: (): void => {
+        return;
+      }
+    }}
+  >
+    {children}
+  </PatientContext.Provider>
 );
 
 export default MockedPatientProvider;
