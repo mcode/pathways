@@ -1,4 +1,4 @@
-import React, { FC, createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { FC, createContext, useContext, ReactNode } from 'react';
 // import { useFHIRClient } from './FHIRClient';
 import { Patient } from 'fhir-objects';
 interface PatientProviderProps {
@@ -19,13 +19,6 @@ export const PatientContext = createContext<PatientContextInterface>({
 });
 
 export const PatientProvider: FC<PatientProviderProps> = ({ children, value }) => {
-  // const client = useFHIRClient();
-  // const [currentPatient, setCurrentPatient] = useState<Patient | null>(patient || null);
-
-  // useEffect(() => {
-  //   client?.patient?.read?.().then((patient: Patient) => setCurrentPatient(patient));
-  // }, [client]);
-
   return value.patient == null ? (
     <div>Loading...</div>
   ) : (

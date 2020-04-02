@@ -24,7 +24,7 @@ import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
 interface AppProps {
   demo: boolean;
-  demoId: any;
+  demoId: string;
 }
 
 const App: FC<AppProps> = ({ demo, demoId }) => {
@@ -70,7 +70,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
         });
     } else {
       setClient(new MockedFHIRClient());
-      let url = config.get('demoPatientUrl') + demoId + '.json';
+      const url = config.get('demoPatientUrl') + demoId + '.json';
       fetch(url)
         .then(data => data.json())
         .then(result => {
