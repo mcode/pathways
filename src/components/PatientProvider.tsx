@@ -1,5 +1,4 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react';
-// import { useFHIRClient } from './FHIRClient';
 import { Patient } from 'fhir-objects';
 interface PatientProviderProps {
   children: ReactNode;

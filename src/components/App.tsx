@@ -136,7 +136,6 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
     evaluatedPathway: EvaluatedPathway | null;
   }
 
-  console.log('App.tsx - data used');
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div className={styles.display}>
