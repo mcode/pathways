@@ -169,7 +169,7 @@ function getConditionalNextState(
   for (const transition of currentState.transitions) {
     if (transition.condition) {
       let currentTransitionDocumentation: DocumentationResource | null = null;
-      if (patientData[transition.condition.description].length)
+      if (patientData[transition.condition.description]?.length)
         // TODO: add functionality for multiple resources
         currentTransitionDocumentation = patientData[transition.condition.description][0];
       else {
