@@ -25,10 +25,10 @@ import styles from './App.module.scss';
 
 interface AppProps {
   demo: boolean;
-  id: string;
+  demoData: any;
 }
 
-const App: FC<AppProps> = ({ demo, id }) => {
+const App: FC<AppProps> = ({ demo, demoData }) => {
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
@@ -44,7 +44,11 @@ const App: FC<AppProps> = ({ demo, id }) => {
     setEvaluatePath(true);
   }, []);
 
-  const demoData = require('../../public/static/demoData/' + id + '.json');
+  console.log('App.tsx - demoData birthday is: ' + demoData[0].birthDate);
+  if (patientRecords !== demoData) {
+    console.log('updating record')
+    setPatientRecords(demoData);
+  }
 
   useEffect(() => {
     if (!demo) {
@@ -70,6 +74,7 @@ const App: FC<AppProps> = ({ demo, id }) => {
           setClient(client);
         });
     } else {
+      console.log('in use effect')
       setClient(new MockedFHIRClient());
       setPatientRecords(demoData);
     }
@@ -130,6 +135,7 @@ const App: FC<AppProps> = ({ demo, id }) => {
     evaluatedPathway: EvaluatedPathway | null;
   }
 
+  console.log('App.tsx - data used');
   const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
     return (
       <div className={styles.display}>
