@@ -18,10 +18,7 @@ ReactDOM.render(
           <App demo={true} demoId={props.match.params.id} key={props.match.params.id} />
         )}
       ></Route>
-      <Route
-        path="/demo"
-        render={props => <App demo={true} demoId={'MaureenDemo'} key={props.match.params.id} />}
-      ></Route>
+      <Route path="/demo" render={props => <App demo={true} demoId={'MaureenDemo'} />}></Route>
     </Switch>
   </Router>,
   rootElement
