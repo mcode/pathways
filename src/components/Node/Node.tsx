@@ -1,4 +1,4 @@
-import React, { FC, Ref, forwardRef } from 'react';
+import React, { FC, Ref, forwardRef, memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { GuidanceState, State, DocumentationResource } from 'pathways-model';
@@ -45,7 +45,7 @@ interface NodeProps {
   interactive: boolean;
 }
 
-const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = React.memo(
+const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
   forwardRef<HTMLDivElement, NodeProps>(
     (
       {

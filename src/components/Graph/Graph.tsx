@@ -47,7 +47,7 @@ const Graph: FC<GraphProps> = ({
       patientRecords.setEvaluatePath(false);
       updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
     },
-    [path, patientRecords, updateEvaluatedPathways, evaluatedPathway.pathway]
+    [patientRecords, updateEvaluatedPathways, evaluatedPathway.pathway]
   );
 
   // Get the layout of the graph

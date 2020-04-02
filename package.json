@@ -17,7 +17,6 @@
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "@types/react-select": "^3.0.5",
-    "@types/recompose": "^0.30.7",
     "@types/uuid": "^7.0.0",
     "@welldone-software/why-did-you-render": "^4.0.5",
     "clsx": "^1.1.0",
