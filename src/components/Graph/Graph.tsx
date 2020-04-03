@@ -1,8 +1,17 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  FC,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  memo
+} from 'react';
 import graphLayout from 'visualization/layout';
 import { evaluatePatientOnPathway } from 'engine';
-import { EvaluatedPathway, PathwayResults } from 'pathways-model';
-import { Layout, NodeDimensions } from 'graph-model';
+import { EvaluatedPathway, PathwayResults, DocumentationResource, Pathway } from 'pathways-model';
+import { Layout, NodeDimensions, NodeCoordinates, Edges, Edge } from 'graph-model';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
 import styles from './Graph.module.scss';

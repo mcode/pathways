@@ -35,15 +35,12 @@ interface ExpandedNodeProps {
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
   ({ pathwayState, isActionable, isGuidance, documentation }) => {
     const [comments, setComments] = useState<string>('');
-    const guidance = isGuidance && renderGuidance(pathwayState, documentation);
-    const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
     const { patientRecords, setPatientRecords } = usePatientRecords();
     const client = useFHIRClient();
     const note = useNote();
     const patient = usePatient().patient as fhir.Patient;
 
     // prettier-ignore
-    const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
     const onConfirm = (status: string, action?: Action[]): void => {
       const newPatientRecords = [...patientRecords];
 
@@ -70,51 +67,15 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     return (
-      <div className={indexStyles.expandedNode}>
-        <table className={styles.infoTable}>
-          <tbody>
-            <StatusField documentation={documentation} />
-            {guidance || branch}
-          </tbody>
-        </table>
-        {isActionable && isGuidance && (
-          <form className={styles.commentsForm}>
-            <label>Comments:</label>
-            <button
-              className={`${indexStyles.button} ${styles.defaultTextButton}`}
-              onClick={(e): void => {
-                e.preventDefault();
-                if (!comments.includes(defaultText)) setComments(comments + defaultText);
-              }}
-            >
-              Use Default Text
-            </button>
-            <textarea
-              className={styles.comments}
-              value={comments}
-              onChange={(e): void => setComments(e.target.value)}
-            ></textarea>
-            <div className={styles.footer}>
-              <ConfirmedActionButton
-                type="accept"
-                size="large"
-                onConfirm={(): void => {
-                  onConfirm('Accepted', pathwayState.action);
-                }}
-              />
-            </div>
-            <div className={styles.footer}>
-              <ConfirmedActionButton
-                type="decline"
-                size="large"
-                onConfirm={(): void => {
-                  onConfirm('Declined');
-                }}
-              />
-            </div>
-          </form>
-        )}
-      </div>
+      <ExpandedNodeRender
+        isGuidance={isGuidance}
+        isActionable={isActionable}
+        pathwayState={pathwayState}
+        documentation={documentation}
+        setComments={setComments}
+        comments={comments}
+        onConfirm={onConfirm}
+      />
     );
   }
 );
@@ -323,4 +284,70 @@ function renderGuidance(
   }
   return returnElements;
 }
+
+interface RenderProps {
+  documentation: DocumentationResource | undefined;
+  pathwayState: GuidanceState;
+  isGuidance: boolean;
+  isActionable: boolean;
+  comments: string;
+  setComments: (value: string) => void;
+  onConfirm: (status: string, action?: Action[]) => void;
+}
+const ExpandedNodeRender: FC<RenderProps> = memo(
+  ({ documentation, pathwayState, isGuidance, isActionable, comments, setComments, onConfirm }) => {
+    const guidance = isGuidance && renderGuidance(pathwayState, documentation);
+    const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
+    const defaultText =
+      'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
+    return (
+      <div className={indexStyles.expandedNode}>
+        <table className={styles.infoTable}>
+          <tbody>
+            <StatusField documentation={documentation} />
+            {guidance || branch}
+          </tbody>
+        </table>
+        {isActionable && isGuidance && (
+          <form className={styles.commentsForm}>
+            <label>Comments:</label>
+            <button
+              className={`${indexStyles.button} ${styles.defaultTextButton}`}
+              onClick={(e): void => {
+                e.preventDefault();
+                if (!comments.includes(defaultText)) setComments(comments + defaultText);
+              }}
+            >
+              Use Default Text
+            </button>
+            <textarea
+              className={styles.comments}
+              value={comments}
+              onChange={(e): void => setComments(e.target.value)}
+            ></textarea>
+            <div className={styles.footer}>
+              <ConfirmedActionButton
+                type="accept"
+                size="large"
+                onConfirm={(): void => {
+                  onConfirm('Accepted', pathwayState.action);
+                }}
+              />
+            </div>
+            <div className={styles.footer}>
+              <ConfirmedActionButton
+                type="decline"
+                size="large"
+                onConfirm={(): void => {
+                  onConfirm('Declined');
+                }}
+              />
+            </div>
+          </form>
+        )}
+      </div>
+    );
+  }
+);
+
 export default ExpandedNode;
