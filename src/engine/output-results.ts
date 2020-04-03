@@ -38,8 +38,12 @@ export function pathwayData(
   let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
     if (stateData.documentation === null) break;
-    const documentation = retrieveResource(stateData.documentation, resources);
+    const documentation = stateData.documentation;
     documentation.onPath = true;
+    (documentation as DocumentationResource).resource = retrieveResource(
+      stateData.documentation,
+      resources
+    );
     patientDocumentation[stateData.documentation.state] = documentation;
     if (stateData.nextStates.length === 0) break;
     else if (stateData.nextStates.length === 1) {
@@ -74,7 +78,7 @@ export function pathwayData(
   return {
     patientId: patientData.Patient.id.value,
     currentStates: currentStates,
-    documentation: patientDocumentation
+    documentation: getAllDocumentation(pathway, patientData, resources, patientDocumentation)
   };
 }
 
@@ -118,6 +122,81 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Criter
     matches: matches,
     criteriaResultItems: resultItems
   };
+}
+
+/**
+ * Helper function to obtain documentation for any states not on the path
+ * @param pathway - the entire pathway
+ * @param patientData - the data on the patient
+ * @param resources - the patient resources
+ * @param patientDocumentation - the documentation dictionary from states on the patient path
+ */
+function getAllDocumentation(
+  pathway: Pathway,
+  patientData: PatientData,
+  resources: DomainResource[],
+  patientDocumentation: { [key: string]: Documentation }
+): { [key: string]: Documentation } {
+  const statesWithDocumentation = Object.entries(patientDocumentation)
+    .filter(entry => {
+      const [, doc] = entry;
+      return doc.onPath === true;
+    })
+    .map(entry => {
+      const [, doc] = entry;
+      return doc.state;
+    });
+  for (const [stateName, state] of Object.entries(pathway.states)) {
+    if (!statesWithDocumentation.includes(stateName)) {
+      if ('action' in state) {
+        // If action check for resource
+        if (patientData[stateName] && patientData[stateName].length) {
+          const documentation = patientData[stateName][0];
+          documentation.state = stateName;
+          documentation.onPath = false;
+          (documentation as DocumentationResource).resource = retrieveResource(
+            documentation,
+            resources
+          );
+          patientDocumentation[stateName] = documentation;
+        }
+      } else {
+        // Tranisition element must check each transition in patient data for existence
+        for (const transition of (state as State).transitions) {
+          if (!transition.condition) continue;
+
+          if (
+            patientData[transition.condition.description] &&
+            patientData[transition.condition.description].length
+          ) {
+            const documentation = patientData[transition.condition.description][0];
+            documentation.state = stateName;
+            documentation.onPath = false;
+            (documentation as DocumentationResource).resource = retrieveResource(
+              documentation,
+              resources
+            );
+            patientDocumentation[stateName] = documentation;
+          } else {
+            // Check for document reference note
+            const documentReference = retrieveNote(transition.condition.description, resources);
+            if (documentReference) {
+              const documentation = {
+                resourceType: 'DocumentReference',
+                status: documentReference.status,
+                id: documentReference.id,
+                state: stateName,
+                onPath: false,
+                resource: documentReference
+              };
+              patientDocumentation[stateName] = documentation;
+            }
+          }
+        }
+      }
+    }
+  }
+  return patientDocumentation;
 }
 
 /**
@@ -259,6 +338,12 @@ function nextState(
   } else return null;
 }
 
+/**
+ * Helper function to retrieve DocumentReference note if one exists.
+ * @param condition - the transition condition description for the note
+ * @param resources - list of patient resources
+ * @return DocumentReference for the transition condition or null if none found
+ */
 function retrieveNote(condition: string, resources: DomainResource[]): DocumentReference | null {
   const documentReference = resources.find(resource => {
     if (resource.resourceType !== 'DocumentReference') return false;
@@ -279,9 +364,19 @@ function retrieveNote(condition: string, resources: DomainResource[]): DocumentR
   return documentReference as DocumentReference;
 }
 
-function retrieveResource(doc: Documentation, resources: DomainResource[]): Documentation {
+/**
+ * Helper function to retrieve a resource for documentation if one exists.
+ * @param doc - the docuumentation to find a resource for
+ * @param resources - the list of patient resources
+ * @return DomainResource for the documentation or undefined if none found
+ */
+function retrieveResource(
+  doc: Documentation,
+  resources: DomainResource[]
+): DomainResource | undefined {
+  let resource: DomainResource | undefined = undefined;
   if ('resourceType' in doc && resources) {
-    (doc as DocumentationResource).resource = resources.find(resource => {
+    resource = resources.find(resource => {
       return (
         resource.resourceType === (doc as DocumentationResource).resourceType &&
         resource.id === (doc as DocumentationResource).id
@@ -289,5 +384,5 @@ function retrieveResource(doc: Documentation, resources: DomainResource[]): Docu
     });
   }
 
-  return doc;
+  return resource;
 }

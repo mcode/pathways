@@ -148,6 +148,13 @@ describe('pathway results translator', () => {
         state: 'T-test',
         onPath: true
       },
+      'N-test': {
+        resourceType: 'Observation',
+        status: 'final',
+        id: '2',
+        state: 'N-test',
+        onPath: false
+      },
       Surgery: {
         resourceType: 'Procedure',
         status: 'in-progress',
@@ -161,7 +168,7 @@ describe('pathway results translator', () => {
   /**
    * Test patientPath3 is a pathway which ends on a conditional instead of an action
    *
-   * patient is T0 with no further data
+   * patient is T0 with no further data on path but completed chemo procedure (not on path)
    */
   it('patientPath3 produces correct results', () => {
     const patientData = {
@@ -183,7 +190,13 @@ describe('pathway results translator', () => {
       Surgery: [],
       Radiation: [],
       OtherRadiation: [],
-      Chemo: [],
+      Chemo: [
+        {
+          resourceType: 'Procedure',
+          status: 'final',
+          id: '2'
+        }
+      ],
       ChemoMedication: []
     };
     const patientPath = pathwayData(pathway, patientData, resources);
@@ -200,6 +213,13 @@ describe('pathway results translator', () => {
         id: '1',
         state: 'T-test',
         onPath: true
+      },
+      Chemo: {
+        resourceType: 'Procedure',
+        status: 'final',
+        id: '2',
+        state: 'Chemo',
+        onPath: false
       }
     });
   });
