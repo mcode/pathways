@@ -32,13 +32,16 @@ export function pathwayData(
   resources: DomainResource[]
 ): PathwayResults {
   const startState = 'Start';
-  const patientDocumentation = [];
+  const patientDocumentation: { [key: string]: Documentation } = {};
 
-  let currentStates = ['Start'];
+  let currentStates = [startState];
   let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
     if (stateData.documentation === null) break;
-    patientDocumentation.push(retrieveResource(stateData.documentation, resources));
+    patientDocumentation[stateData.documentation.state] = retrieveResource(
+      stateData.documentation,
+      resources
+    );
     if (stateData.nextStates.length === 0) break;
     else if (stateData.nextStates.length === 1) {
       currentStates = stateData.nextStates;
@@ -73,7 +76,10 @@ export function pathwayData(
     patientId: patientData.Patient.id.value,
     currentStates: currentStates,
     documentation: patientDocumentation,
-    path: patientDocumentation.map(documentationResource => documentationResource.state)
+    path: Object.entries(patientDocumentation).map(documentationDict => {
+      const [, documentationResource] = documentationDict;
+      return documentationResource.state;
+    })
   };
 }
 

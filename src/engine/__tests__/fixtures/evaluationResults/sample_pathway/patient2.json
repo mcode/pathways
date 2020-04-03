@@ -1,34 +1,34 @@
 {
   "patientId": "5cadf7d1-60ab-40c3-b2c4-5fa77610579d",
   "currentStates": ["Chemo"],
-  "documentation": [
-    {
+  "documentation": {
+    "Start": {
       "state": "Start"
     },
-    {
+    "T-test": {
       "resourceType": "Observation",
       "id": "14000e57-ee21-4433-bc38-0c60211a43bc",
       "status": "final",
       "state": "T-test"
     },
-    {
+    "N-test": {
       "resourceType": "Observation",
       "id": "2466b495-5519-422f-adf7-47e300264802",
       "status": "final",
       "state": "N-test"
     },
-    {
+    "ChemoMedication": {
       "resourceType": "MedicationRequest",
       "id": "793caa90-7c39-4788-a139-ee1dee797188",
       "status": "completed",
       "state": "ChemoMedication"
     },
-    {
+    "Chemo": {
       "resourceType": "Procedure",
       "id": "924d9023-5abf-4e05-9926-650a85109c90",
       "status": "completed",
       "state": "Chemo"
     }
-  ],
+  },
   "path": ["Start", "T-test", "N-test", "ChemoMedication", "Chemo"]
 }
