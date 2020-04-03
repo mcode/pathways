@@ -198,7 +198,7 @@ const Graph: FC<GraphProps> = memo(
 
     const documentation = evaluatedPathway.pathwayResults
       ? evaluatedPathway.pathwayResults.documentation
-      : [];
+      : {};
 
     return (
       <GraphMemo
@@ -225,7 +225,7 @@ interface GraphMemoProps {
   interactive: boolean;
   maxHeight: number;
   nodeCoordinates: NodeCoordinates;
-  documentation: (string | Documentation)[];
+  documentation: { [key: string]: Documentation };
   edges: Edges;
   evaluatedPathway: EvaluatedPathway;
   nodeRefs: React.MutableRefObject<{
@@ -269,35 +269,31 @@ const GraphMemo: FC<GraphMemoProps> = memo(
         }}
       >
         {nodeCoordinates !== undefined
-          ? Object.keys(nodeCoordinates).map(key => {
-              const docResource = documentation.find((doc): doc is DocumentationResource => {
-                return typeof doc !== 'string' && doc.state === key;
-              });
-              const onClickHandler = useCallback(() => {
-                return interactive ? setExpanded(key) : undefined;
-              }, [key]);
+          ? Object.keys(nodeCoordinates).map(nodeName => {
+              const docResource = documentation[nodeName] as DocumentationResource;
+              const onClickHandler = interactive ? (): void => setExpanded(nodeName) : undefined;
               return (
                 <Node
-                  key={key}
+                  key={nodeName}
                   documentation={docResource}
                   ref={(node: HTMLDivElement): void => {
-                    nodeRefs.current[key] = node;
+                    nodeRefs.current[nodeName] = node;
                   }}
-                  pathwayState={pathway.states[key]}
+                  pathwayState={pathway.states[nodeName]}
                   isOnPatientPath={
                     evaluatedPathway.pathwayResults
-                      ? evaluatedPathway.pathwayResults.path.includes(key) ||
-                        evaluatedPathway.pathwayResults.currentStates.includes(key)
+                      ? evaluatedPathway.pathwayResults.path.includes(nodeName) ||
+                        evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
                       : false
                   }
                   isCurrentNode={
                     evaluatedPathway.pathwayResults
-                      ? evaluatedPathway.pathwayResults.currentStates.includes(key)
+                      ? evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
                       : false
                   }
-                  xCoordinate={nodeCoordinates[key].x + parentWidth / 2}
-                  yCoordinate={nodeCoordinates[key].y}
-                  expanded={expanded[key]}
+                  xCoordinate={nodeCoordinates[nodeName].x + parentWidth / 2}
+                  yCoordinate={nodeCoordinates[nodeName].y}
+                  expanded={expanded[nodeName]}
                   onClickHandler={onClickHandler}
                 />
               );
