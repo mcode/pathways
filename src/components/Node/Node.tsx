@@ -89,6 +89,12 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       const isAccepted = wasActionTaken
         ? documentation?.resourceType !== 'DocumentReference'
         : null;
+      let status = null;
+      if ('action' in pathwayState) {
+        status = isAccepted;
+      } else if (!isCurrentNode && documentation !== null) {
+        status = true;
+      }
 
       return (
         <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
@@ -100,7 +106,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
               <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
               {label}
             </div>
-            <StatusIcon accepted={isAccepted} />
+            <StatusIcon status={isAccepted} />
           </div>
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
@@ -139,14 +145,14 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
 };
 
 interface StatusIconProps {
-  accepted: boolean | null;
+  status: boolean | null;
 }
 
-const StatusIcon: FC<StatusIconProps> = ({ accepted }) => {
-  if (accepted == null) {
+const StatusIcon: FC<StatusIconProps> = ({ status }) => {
+  if (status == null) {
     return null;
   }
-  const icon = accepted ? faCheckCircle : faTimesCircle;
+  const icon = status ? faCheckCircle : faTimesCircle;
   return (
     <div className={nodeStyles.statusIcon}>
       <FontAwesomeIcon icon={icon} className={styles.icon} />
