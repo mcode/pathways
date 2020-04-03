@@ -44,7 +44,7 @@ export function pathwayData(
       stateData.documentation,
       resources
     );
-    patientDocumentation[stateData.documentation.state] = documentation;
+    patientDocumentation[stateData.documentation.state] = { ...documentation };
     if (stateData.nextStates.length === 0) break;
     else if (stateData.nextStates.length === 1) {
       currentStates = stateData.nextStates;
@@ -158,7 +158,7 @@ function getAllDocumentation(
             documentation,
             resources
           );
-          patientDocumentation[stateName] = documentation;
+          patientDocumentation[stateName] = { ...documentation };
         }
       } else {
         // Tranisition element must check each transition in patient data for existence
@@ -176,7 +176,7 @@ function getAllDocumentation(
               documentation,
               resources
             );
-            patientDocumentation[stateName] = documentation;
+            patientDocumentation[stateName] = { ...documentation };
           } else {
             // Check for document reference note
             const documentReference = retrieveNote(transition.condition.description, resources);
@@ -189,7 +189,7 @@ function getAllDocumentation(
                 onPath: false,
                 resource: documentReference
               };
-              patientDocumentation[stateName] = documentation;
+              patientDocumentation[stateName] = { ...documentation };
             }
           }
         }
