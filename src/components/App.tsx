@@ -23,11 +23,10 @@ import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
 interface AppProps {
-  demo: boolean;
-  demoId: string;
+  demoId?: string;
 }
 
-const App: FC<AppProps> = ({ demo, demoId }) => {
+const App: FC<AppProps> = ({ demoId }) => {
   const [patient, setPatient] = useState<fhir.Patient | null>(null);
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
@@ -45,7 +44,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
   }, []);
 
   useEffect(() => {
-    if (!demo) {
+    if (demoId === null) {
       FHIR.oauth2
         .init({
           clientId: 'Input client id you get when you register the app',
@@ -70,7 +69,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
         });
     } else {
       setClient(new MockedFHIRClient());
-      const url = config.get('demoPatientUrl') + demoId + '.json';
+      const url = config.get('demoPatients') + demoId + '.json';
       fetch(url)
         .then(data => data.json())
         .then(result => {
@@ -79,7 +78,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
           setPatient(resultPatient);
         });
     }
-  }, [demo, demoId, setPatientRecords]);
+  }, [demoId, setPatientRecords]);
 
   // gather note info
   useEffect(() => {
@@ -92,7 +91,7 @@ const App: FC<AppProps> = ({ demo, demoId }) => {
   }, [client]);
 
   const service = useGetPathwaysService(
-    config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
+    config.get(demoId === null ? 'demoPathwaysService' : 'pathwaysService')
   );
 
   useEffect(() => {
