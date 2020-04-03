@@ -3,26 +3,29 @@
   "currentStates": ["Chemo"],
   "documentation": {
     "Start": {
-      "state": "Start"
+      "state": "Start",
+      "onPath": true
     },
     "T-test": {
       "resourceType": "Observation",
       "id": "4631d473-6a50-497e-9651-ff6b3196d796",
       "status": "final",
-      "state": "T-test"
+      "state": "T-test",
+      "onPath": true
     },
     "N-test": {
       "resourceType": "Observation",
       "id": "90e9cdbf-371a-4716-8bac-3b7a207e20a2",
       "status": "final",
-      "state": "N-test"
+      "state": "N-test",
+      "onPath": true
     },
     "ChemoMedication": {
       "resourceType": "MedicationRequest",
       "id": "ff997fba-63bb-4115-bb0f-d42a21115517",
       "status": "active",
-      "state": "ChemoMedication"
+      "state": "ChemoMedication",
+      "onPath": true
     }
-  },
-  "path": ["Start", "T-test", "N-test", "ChemoMedication"]
+  }
 }

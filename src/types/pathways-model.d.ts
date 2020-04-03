@@ -62,7 +62,6 @@ declare module 'pathways-model' {
     documentation: {
       [key: string]: Documentation;
     };
-    path: string[];
   }
 
   export interface CriteriaResultItem {
@@ -98,6 +97,7 @@ declare module 'pathways-model' {
 
   export interface Documentation {
     state: string;
+    onPath: boolean;
   }
 
   export interface DocumentationResource extends Documentation {

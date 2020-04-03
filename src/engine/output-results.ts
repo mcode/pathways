@@ -38,10 +38,9 @@ export function pathwayData(
   let stateData = nextState(pathway, patientData, startState, resources);
   while (stateData !== null) {
     if (stateData.documentation === null) break;
-    patientDocumentation[stateData.documentation.state] = retrieveResource(
-      stateData.documentation,
-      resources
-    );
+    const documentation = retrieveResource(stateData.documentation, resources);
+    documentation.onPath = true;
+    patientDocumentation[stateData.documentation.state] = documentation;
     if (stateData.nextStates.length === 0) break;
     else if (stateData.nextStates.length === 1) {
       currentStates = stateData.nextStates;
@@ -75,11 +74,7 @@ export function pathwayData(
   return {
     patientId: patientData.Patient.id.value,
     currentStates: currentStates,
-    documentation: patientDocumentation,
-    path: Object.entries(patientDocumentation).map(documentationDict => {
-      const [, documentationResource] = documentationDict;
-      return documentationResource.state;
-    })
+    documentation: patientDocumentation
   };
 }
 
@@ -186,7 +181,8 @@ function getConditionalNextState(
             id: documentReference.id ? documentReference.id : 'unknown',
             status: documentReference.status,
             state: currentStateName,
-            resource: documentReference
+            resource: documentReference,
+            onPath: true
           };
         }
       }
@@ -240,7 +236,8 @@ function nextState(
           id: documentReference.id ? documentReference.id : 'unknown',
           status: 'status' in documentReference ? documentReference.status : 'unknown',
           state: currentStateName,
-          resource: documentReference
+          resource: documentReference,
+          onPath: true
         };
         return {
           nextStates: formatNextState(doc, currentState),
@@ -254,7 +251,7 @@ function nextState(
   } else if (currentState.transitions.length === 1) {
     return {
       nextStates: [currentState.transitions[0].transition],
-      documentation: { state: currentStateName },
+      documentation: { state: currentStateName, onPath: true },
       status: 'completed'
     };
   } else if (currentState.transitions.length > 1) {

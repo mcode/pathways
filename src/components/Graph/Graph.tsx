@@ -33,14 +33,24 @@ interface GraphProps {
   updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
+const getPath = (pathwayResults: PathwayResults): string[] => {
+  return Object.entries(pathwayResults.documentation)
+    .filter(entry => {
+      const [, doc] = entry;
+      return doc.onPath === true;
+    })
+    .map(entry => {
+      const [, doc] = entry;
+      return doc.state;
+    });
+};
+
 const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
-  const startIndex = pathwayResults.path.indexOf(edge.start);
-  const endIndex = pathwayResults.path.indexOf(edge.end);
+  const path = getPath(pathwayResults);
+  const startIndex = path.indexOf(edge.start);
+  const endIndex = path.indexOf(edge.end);
   if (startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex) return true;
-  else if (
-    startIndex === pathwayResults.path.length - 1 &&
-    pathwayResults.currentStates.includes(edge.end)
-  )
+  else if (startIndex === path.length - 1 && pathwayResults.currentStates.includes(edge.end))
     return true;
   else return false;
 };
@@ -282,7 +292,7 @@ const GraphMemo: FC<GraphMemoProps> = memo(
                   pathwayState={pathway.states[nodeName]}
                   isOnPatientPath={
                     evaluatedPathway.pathwayResults
-                      ? evaluatedPathway.pathwayResults.path.includes(nodeName) ||
+                      ? getPath(evaluatedPathway.pathwayResults).includes(nodeName) ||
                         evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
                       : false
                   }
@@ -299,6 +309,7 @@ const GraphMemo: FC<GraphMemoProps> = memo(
               );
             })
           : []}
+
         <svg
           xmlns="http://www.w3.org/2000/svg"
           style={{

@@ -3,14 +3,15 @@
   "currentStates": ["N-test"],
   "documentation": {
     "Start": {
-      "state": "Start"
+      "state": "Start",
+      "onPath": true
     },
     "T-test": {
       "resourceType": "Observation",
       "id": "c958f03c-2f53-4c83-b583-92e5331dff22",
       "status": "final",
-      "state": "T-test"
+      "state": "T-test",
+      "onPath": true
     }
-  },
-  "path": ["Start", "T-test"]
+  }
 }
