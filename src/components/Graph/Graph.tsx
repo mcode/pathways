@@ -139,14 +139,22 @@ const Graph: FC<GraphProps> = ({
     });
   }
 
-  const layoutKeys = Object.keys(layout);
-  const initialExpandedState = layoutKeys.reduce(
-    (acc: { [key: string]: boolean }, curr: string) => {
+  const layoutKeys = Object.keys(layout).toString();
+  //   const initialExpandedState = layoutKeys.reduce(
+  //     (acc: { [key: string]: boolean }, curr: string) => {
+  //       acc[curr] = false;
+  //       return acc;
+  //     },
+  //     {}
+  //   );
+
+  const initialExpandedState = useMemo(() => {
+    return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
       return acc;
-    },
-    {}
-  );
+    }, {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layoutKeys]);
 
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
     initialExpandedState
@@ -276,6 +284,9 @@ const Graph: FC<GraphProps> = ({
               const isCurrentNode = (): boolean => {
                 return path[path.length - 1] === key;
               };
+              const onClickHandler = useCallback(() => {
+                return interactive ? setExpanded(key) : undefined;
+              }, [key]);
               return (
                 <Arrow
                   key={edgeName}

@@ -33,7 +33,6 @@ const useStyles = makeStyles(
 );
 
 interface NodeProps {
-  _key: string;
   pathwayState: State;
   documentation: DocumentationResource | undefined;
   isOnPatientPath: boolean;
@@ -41,15 +40,13 @@ interface NodeProps {
   xCoordinate: number;
   yCoordinate: number;
   expanded?: boolean;
-  setExpanded: (key: string, expand?: boolean) => void;
-  interactive: boolean;
+  onClickHandler?: () => void;
 }
 
 const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
   forwardRef<HTMLDivElement, NodeProps>(
     (
       {
-        _key,
         pathwayState,
         documentation,
         isOnPatientPath,
@@ -57,8 +54,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         xCoordinate,
         yCoordinate,
         expanded = false,
-        setExpanded,
-        interactive
+        onClickHandler
       },
       ref
     ) => {
@@ -97,10 +93,8 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       return (
         <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
           <div
-            className={`${nodeStyles.nodeTitle} ${interactive && nodeStyles.clickable}`}
-            onClick={(): void => {
-              interactive && setExpanded(_key);
-            }}
+            className={`${nodeStyles.nodeTitle} ${onClickHandler && nodeStyles.clickable}`}
+            onClick={onClickHandler}
           >
             <div className={nodeStyles.iconAndLabel}>
               <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
