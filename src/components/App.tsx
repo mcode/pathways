@@ -91,7 +91,7 @@ const App: FC<AppProps> = ({ demoId }) => {
   }, [client]);
 
   const service = useGetPathwaysService(
-    config.get(demoId === null ? 'demoPathwaysService' : 'pathwaysService')
+    config.get(demoId !== null ? 'demoPathwaysService' : 'pathwaysService')
   );
 
   useEffect(() => {
