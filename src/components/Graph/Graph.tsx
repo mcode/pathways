@@ -140,20 +140,11 @@ const Graph: FC<GraphProps> = ({
   }
 
   const layoutKeys = Object.keys(layout).toString();
-  //   const initialExpandedState = layoutKeys.reduce(
-  //     (acc: { [key: string]: boolean }, curr: string) => {
-  //       acc[curr] = false;
-  //       return acc;
-  //     },
-  //     {}
-  //   );
-
   const initialExpandedState = useMemo(() => {
-    return Object.keys(layout).reduce((acc: { [key: string]: boolean }, curr: string) => {
+    return layoutKeys.split(',').reduce((acc: { [key: string]: boolean }, curr: string) => {
       acc[curr] = false;
       return acc;
     }, {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layoutKeys]);
 
   const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
