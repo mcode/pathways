@@ -11,8 +11,12 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(
   <Router>
     <Switch>
-      <Route exact path="/" render={() => <App demo={false} />}></Route>
-      <Route path="/demo" render={() => <App demo={true} />}></Route>
+      <Route exact path="/" render={() => <App demoId={null} />}></Route>
+      <Route
+        path="/demo/:id"
+        render={props => <App demoId={props.match.params.id} key={props.match.params.id} />}
+      ></Route>
+      <Route path="/demo" render={() => <App demoId={'Maureen'} />}></Route>
     </Switch>
   </Router>,
   rootElement

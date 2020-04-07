@@ -41,7 +41,7 @@ const getPatientAddress = (address: Array<Address> = []): string => {
 
 const PatientSnapshot: FC<{}> = () => {
   const classes = useStyles();
-  const patient = usePatient();
+  const patient = usePatient().patient as fhir.Patient;
   const name = useMemo(() => getPatientName(patient.name), [patient]);
   const address = useMemo(() => getPatientAddress(patient.address), [patient]);
   const age = useMemo(() => getPatientAge(patient.birthDate), [patient]);

@@ -44,7 +44,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = ({
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const client = useFHIRClient();
   const note = useNote();
-  const patient = usePatient();
+  const patient = usePatient().patient as fhir.Patient;
 
   // prettier-ignore
   const defaultText = 'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';

@@ -126,7 +126,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
 };
 
 const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
-  const patient = usePatient();
+  const patient = usePatient().patient as fhir.Patient;
   if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
   else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
   else if (resourceType === 'Observation') return <ObservationsVisualizer rows={resourcesByType} />;

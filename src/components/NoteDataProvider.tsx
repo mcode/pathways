@@ -26,7 +26,7 @@ interface NoteDataProviderProps {
 export const NoteContext = createContext<Note | null>(null);
 
 export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
-  const patient = usePatient();
+  const patient = usePatient().patient as fhir.Patient;
   const name = patient.name ? getHumanName(patient.name) : '';
   const note: Note = {
     patient: name,

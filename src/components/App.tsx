@@ -18,17 +18,16 @@ import ThemeProvider from './ThemeProvider';
 import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
-import demoRecords from 'fixtures/MaureenMcodeDemoPatientRecords.json';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
-
 interface AppProps {
-  demo: boolean;
+  demoId?: string;
 }
 
-const App: FC<AppProps> = ({ demo }) => {
+const App: FC<AppProps> = ({ demoId }) => {
+  const [patient, setPatient] = useState<fhir.Patient | null>(null);
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
@@ -45,7 +44,7 @@ const App: FC<AppProps> = ({ demo }) => {
   }, []);
 
   useEffect(() => {
-    if (!demo) {
+    if (demoId === null) {
       FHIR.oauth2
         .init({
           clientId: 'Input client id you get when you register the app',
@@ -65,13 +64,21 @@ const App: FC<AppProps> = ({ demo }) => {
 
             setPatientRecords(records);
           });
+          client.patient?.read?.().then((resultPatient: fhir.Patient) => setPatient(resultPatient));
           setClient(client);
         });
     } else {
       setClient(new MockedFHIRClient());
-      setPatientRecords(demoRecords);
+      const url = config.get('demoPatients') + demoId + '.json';
+      fetch(url)
+        .then(data => data.json())
+        .then(result => {
+          const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
+          setPatientRecords(result);
+          setPatient(resultPatient);
+        });
     }
-  }, [demo, setPatientRecords]);
+  }, [demoId, setPatientRecords]);
 
   // gather note info
   useEffect(() => {
@@ -84,7 +91,7 @@ const App: FC<AppProps> = ({ demo }) => {
   }, [client]);
 
   const service = useGetPathwaysService(
-    config.get(demo ? 'demoPathwaysService' : 'pathwaysService')
+    config.get(demoId !== null ? 'demoPathwaysService' : 'pathwaysService')
   );
 
   useEffect(() => {
@@ -151,11 +158,7 @@ const App: FC<AppProps> = ({ demo }) => {
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
-        <PatientProvider
-          patient={
-            demo ? (demoRecords.find(r => r.resourceType === 'Patient') as fhir.Patient) : null
-          }
-        >
+        <PatientProvider value={{ patient, setPatient }}>
           <PatientRecordsProvider
             value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
           >
