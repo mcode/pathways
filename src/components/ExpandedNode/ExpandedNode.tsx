@@ -285,7 +285,7 @@ function renderGuidance(
   return returnElements;
 }
 
-interface RenderProps {
+interface ExpandedNodeRenderProps {
   documentation: DocumentationResource | undefined;
   pathwayState: GuidanceState;
   isGuidance: boolean;
@@ -294,7 +294,7 @@ interface RenderProps {
   setComments: (value: string) => void;
   onConfirm: (status: string, action?: Action[]) => void;
 }
-const ExpandedNodeRender: FC<RenderProps> = memo(
+const ExpandedNodeRender: FC<ExpandedNodeRenderProps> = memo(
   ({ documentation, pathwayState, isGuidance, isActionable, comments, setComments, onConfirm }) => {
     const guidance = isGuidance && renderGuidance(pathwayState, documentation);
     const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
