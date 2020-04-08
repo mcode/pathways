@@ -195,7 +195,7 @@ const App: FC<AppProps> = ({ demoId }) => {
                     evaluatedPathways={evaluatedPathways}
                     callback={setEvaluatedPathwayCallback}
                     service={service}
-                  ></PathwaysList>
+                  />
                 ) : (
                   <PatientView evaluatedPathway={currentPathway} />
                 )}

@@ -7,7 +7,8 @@ import {
   DocumentReference,
   Observation,
   ServiceRequest,
-  MedicationRequest
+  MedicationRequest,
+  CarePlan
 } from 'fhir-objects';
 import { v1 } from 'uuid';
 
@@ -184,4 +185,14 @@ function getCurrentTime(): string {
 
 function withLeadingZero(n: number): string {
   return n < 10 ? '0' + n : n.toString();
+}
+
+export function createCarePlan(title: string, patient: Patient): CarePlan {
+  return {
+    title,
+    resourceType: 'CarePlan',
+    status: 'active',
+    intent: 'plan',
+    subject: { reference: `Patient/${patient.id}` }
+  };
 }

@@ -12,7 +12,8 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
-import { Resource } from 'fhir-objects';
+import { CarePlan, Patient } from 'fhir-objects';
+import { createCarePlan } from 'utils/fhirUtils';
 import {
   faPlay,
   faPlus,
@@ -21,6 +22,8 @@ import {
   faChevronDown,
   faCaretDown
 } from '@fortawesome/free-solid-svg-icons';
+import { usePatient } from 'components/PatientProvider';
+import { useFHIRClient } from 'components/FHIRClient';
 
 const useStyles = makeStyles(
   theme => ({
@@ -38,6 +41,7 @@ interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
   criteria?: CriteriaResult;
   callback: Function;
+  selected: boolean;
 }
 
 interface PathwaysListProps {
@@ -73,13 +77,15 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
         {criteria ? (
           criteria.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
+            const pathwayName = evaluatedPathway?.pathway.name;
             if (evaluatedPathway)
               return (
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  key={evaluatedPathway.pathway.name}
+                  selected={pathwayName === selectedPathway}
+                  key={pathwayName}
                 />
               );
             else
@@ -92,6 +98,21 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
     );
   }
 
+  const getSelectedPathway = (): string | undefined => {
+    // Get all active CarePlan resource titles
+    const carePlanTitles = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+      .filter(r => r.status === 'active')
+      .map(r => r.title);
+
+    // Check to see if any of the pathway names are in carePlanTitles
+    const selectedPathway = evaluatedPathways
+      .map(p => p.pathway.name)
+      .find(n => carePlanTitles.includes(n));
+
+    return selectedPathway;
+  };
+
+  const selectedPathway = getSelectedPathway();
   return (
     <div className={styles.pathways_list}>
       {service.status === 'loading' ? (
@@ -127,12 +148,16 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
 const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
-  callback
+  callback,
+  selected
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const { patientRecords, setPatientRecords } = usePatientRecords();
+  const patient = usePatient().patient as Patient;
+  const client = useFHIRClient();
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
@@ -181,7 +206,16 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                 ))}
               </tbody>
             </table>
-            <button className={indexStyles.button} onClick={(): void => callback(evaluatedPathway)}>
+            <button
+              className={indexStyles.button}
+              onClick={(): void => {
+                const carePlan = createCarePlan(pathway.name, patient);
+
+                setPatientRecords([...patientRecords, carePlan]);
+                client?.create?.(carePlan);
+                callback(evaluatedPathway);
+              }}
+            >
               Select Pathway
             </button>
           </div>
