@@ -34,15 +34,9 @@ interface GraphProps {
 }
 
 const getPath = (pathwayResults: PathwayResults): string[] => {
-  return Object.entries(pathwayResults.documentation)
-    .filter(entry => {
-      const [, doc] = entry;
-      return doc.onPath === true;
-    })
-    .map(entry => {
-      const [, doc] = entry;
-      return doc.state;
-    });
+  return Object.values(pathwayResults.documentation)
+    .filter(doc => doc.onPath)
+    .map(doc => doc.state);
 };
 
 const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {

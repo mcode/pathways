@@ -137,15 +137,9 @@ function getAllDocumentation(
   resources: DomainResource[],
   patientDocumentation: { [key: string]: Documentation }
 ): { [key: string]: Documentation } {
-  const statesWithDocumentation = Object.entries(patientDocumentation)
-    .filter(entry => {
-      const [, doc] = entry;
-      return doc.onPath === true;
-    })
-    .map(entry => {
-      const [, doc] = entry;
-      return doc.state;
-    });
+  const statesWithDocumentation = Object.values(patientDocumentation)
+    .filter(doc => doc.onPath)
+    .map(doc => doc.state);
   for (const [stateName, state] of Object.entries(pathway.states)) {
     if (!statesWithDocumentation.includes(stateName)) {
       if ('action' in state) {
