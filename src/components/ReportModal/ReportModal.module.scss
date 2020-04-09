@@ -21,6 +21,9 @@
   display: flex;
   flex-direction: column;
 
+  // Need z-index so that it is displayed over other nodes outside the stacking context
+  z-index: 1;
+
   > :first-child {
     align-self: center;
   }

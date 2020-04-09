@@ -21,7 +21,7 @@ const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   ];
 
   const observationField = [
-    { name: 'Primary Cancer:', value: undefined },
+    { name: 'Primary Cancer', value: undefined },
     { name: 'Laterality', value: undefined },
     { name: 'Clinical TNM', value: undefined },
     { name: 'Estrogen Receptor', value: undefined },
