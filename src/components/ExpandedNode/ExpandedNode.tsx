@@ -67,7 +67,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     return (
-      <ExpandedNodeRender
+      <ExpandedNodeMemo
         isGuidance={isGuidance}
         isActionable={isActionable}
         pathwayState={pathwayState}
@@ -285,7 +285,7 @@ function renderGuidance(
   return returnElements;
 }
 
-interface ExpandedNodeRenderProps {
+interface ExpandedNodeMemoProps {
   documentation: DocumentationResource | undefined;
   pathwayState: GuidanceState;
   isGuidance: boolean;
@@ -294,7 +294,7 @@ interface ExpandedNodeRenderProps {
   setComments: (value: string) => void;
   onConfirm: (status: string, action?: Action[]) => void;
 }
-const ExpandedNodeRender: FC<ExpandedNodeRenderProps> = memo(
+const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({ documentation, pathwayState, isGuidance, isActionable, comments, setComments, onConfirm }) => {
     const guidance = isGuidance && renderGuidance(pathwayState, documentation);
     const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);

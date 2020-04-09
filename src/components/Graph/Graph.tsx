@@ -201,7 +201,7 @@ const Graph: FC<GraphProps> = memo(
       : [];
 
     return (
-      <GraphRender
+      <GraphMemo
         graphElement={graphElement}
         interactive={interactive}
         maxHeight={maxHeight}
@@ -220,7 +220,7 @@ const Graph: FC<GraphProps> = memo(
   }
 );
 
-interface GraphRenderProps {
+interface GraphMemoProps {
   graphElement: RefObject<HTMLDivElement>;
   interactive: boolean;
   maxHeight: number;
@@ -240,7 +240,7 @@ interface GraphRenderProps {
   setExpanded: (key: string, expand?: boolean | undefined) => void;
 }
 
-const GraphRender: FC<GraphRenderProps> = memo(
+const GraphMemo: FC<GraphMemoProps> = memo(
   ({
     graphElement,
     interactive,
