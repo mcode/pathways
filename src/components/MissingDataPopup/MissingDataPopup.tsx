@@ -42,7 +42,7 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const [showCheck, setShowCheck] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
-  const note = useNote();
+  const { note } = useNote();
 
   return (
     <div>

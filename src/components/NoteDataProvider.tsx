@@ -1,4 +1,12 @@
-import React, { FC, createContext, useContext, ReactNode } from 'react';
+import React, {
+  FC,
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  SetStateAction,
+  Dispatch
+} from 'react';
 import { usePathwayContext } from './PathwayProvider';
 import { usePatient } from './PatientProvider';
 import { getHumanName } from 'utils/fhirUtils';
@@ -23,12 +31,22 @@ interface NoteDataProviderProps {
   physician: string;
 }
 
-export const NoteContext = createContext<Note | null>(null);
+interface NoteContextProps {
+  note: Note | null;
+  setNote: Dispatch<SetStateAction<Note>> | (() => void);
+}
+
+export const NoteContext = createContext<NoteContextProps>({
+  note: null,
+  setNote: () => {
+    // do nothing.
+  }
+});
 
 export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
   const patient = usePatient().patient as fhir.Patient;
   const name = patient.name ? getHumanName(patient.name) : '';
-  const note: Note = {
+  const [note, setNote] = useState<Note>({
     patient: name,
     date: date.toDateString(),
     physician: physician,
@@ -36,12 +54,12 @@ export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, ph
     mcodeElements: {},
     pathway: usePathwayContext().evaluatedPathway?.pathway.name,
     status: 'Pending'
-  };
+  });
 
-  return <NoteContext.Provider value={note}>{children}</NoteContext.Provider>;
+  return <NoteContext.Provider value={{ note, setNote }}>{children}</NoteContext.Provider>;
 };
 
-export const useNote = (): Note | null => useContext(NoteContext);
+export const useNote = (): NoteContextProps => useContext(NoteContext);
 
 export const toString = (note: Note): string => {
   let mcodeElements = '';
