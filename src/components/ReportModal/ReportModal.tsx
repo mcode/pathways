@@ -16,7 +16,7 @@ const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   const patientSection = [
     { name: 'Date', value: note?.date },
     { name: 'Patient', value: note?.patient },
-    { name: 'Date of Birth:', value: note?.birthdate },
+    { name: 'Date of Birth', value: note?.birthdate },
     { name: 'Physician', value: note?.physician }
   ];
 
