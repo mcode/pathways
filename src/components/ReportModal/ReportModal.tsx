@@ -12,7 +12,7 @@ interface ReportModalInterface {
 
 const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   const note = useNote();
-  const reportName = `${note?.pathway} Report`;
+  const reportName = 'Pathway Report';
   const patientSection = [
     { name: 'Date', value: note?.date },
     { name: 'Patient', value: note?.patient },
