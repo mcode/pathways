@@ -1,5 +1,4 @@
-import React, { FC, useState, useEffect, useCallback, useRef } from 'react';
-
+import React, { FC, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -42,6 +41,16 @@ const App: FC<AppProps> = ({ demoId }) => {
     _setPatientRecords(value);
     setEvaluatePath(true);
   }, []);
+
+  const providerProps = useMemo(
+    () => ({
+      patientRecords,
+      setPatientRecords,
+      evaluatePath,
+      setEvaluatePath
+    }),
+    [patientRecords, setPatientRecords, evaluatePath, setEvaluatePath]
+  );
 
   useEffect(() => {
     if (demoId === null) {
@@ -117,19 +126,22 @@ const App: FC<AppProps> = ({ demoId }) => {
     setCurrentPathway(value);
   }
 
-  function updateEvaluatedPathways(value: EvaluatedPathway): void {
-    const newList = [...evaluatedPathways]; // Create a shallow copy of list
-    for (let i = 0; i < evaluatedPathways.length; i++) {
-      if (evaluatedPathways[i].pathway.name === value.pathway.name) {
-        newList[i] = value;
-        setEvaluatedPathways(newList);
+  const updateEvaluatedPathways = useCallback(
+    (value: EvaluatedPathway) => {
+      const newList = [...evaluatedPathways]; // Create a shallow copy of list
+      for (let i = 0; i < evaluatedPathways.length; i++) {
+        if (evaluatedPathways[i].pathway.name === value.pathway.name) {
+          newList[i] = value;
+          setEvaluatedPathways(newList);
+        }
       }
-    }
 
-    if (currentPathway?.pathway.name === value.pathway.name) {
-      setCurrentPathway(value);
-    }
-  }
+      if (currentPathway?.pathway.name === value.pathway.name) {
+        setCurrentPathway(value);
+      }
+    },
+    [currentPathway, evaluatedPathways]
+  );
 
   interface PatientViewProps {
     evaluatedPathway: EvaluatedPathway | null;
@@ -159,9 +171,7 @@ const App: FC<AppProps> = ({ demoId }) => {
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
         <PatientProvider value={{ patient, setPatient }}>
-          <PatientRecordsProvider
-            value={{ patientRecords, setPatientRecords, evaluatePath, setEvaluatePath }}
-          >
+          <PatientRecordsProvider value={providerProps}>
             <PathwayProvider
               pathwayCtx={{
                 updateEvaluatedPathways,
