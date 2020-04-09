@@ -62,13 +62,30 @@ $lineHeight: 30px;
           }
         }
     
-        .elementContainer {
-          padding-left: 15px;
+        .visualizerContainer {
+          padding: 15px;
           width: 100%;
-          height: 250px;
+          max-height: 250px;
           color: $black;
           background-color: $gray-lighter;
           overflow: scroll;
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          td {
+            padding: 4px 0px;
+            min-width: 50px;
+          }
+
+          tr {
+            border-bottom: 2px solid $white;
+            :first-child {
+              font-weight: bold;
+            }
+          }
         }
     
         &:hover, &:focus{
