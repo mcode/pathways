@@ -29,7 +29,6 @@ export interface Note {
 interface NoteDataProviderProps {
   children: ReactNode;
   date: Date;
-  physician: string;
 }
 
 interface NoteContextProps {
@@ -44,7 +43,7 @@ export const NoteContext = createContext<NoteContextProps>({
   }
 });
 
-export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
+export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date }) => {
   const patient = usePatient().patient as fhir.Patient;
   const { user } = useUser();
   const name = patient?.name ? getHumanName(patient.name) : '';

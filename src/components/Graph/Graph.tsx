@@ -280,7 +280,7 @@ const GraphMemo: FC<GraphMemoProps> = memo(
                 return interactive ? setExpanded(nodeName) : undefined;
               }, [nodeName]);
               return (
-                <NoteDataProvider date={new Date(Date.now())} physician={''} key={nodeName}>
+                <NoteDataProvider date={new Date(Date.now())} key={nodeName}>
                   <Node
                     key={nodeName}
                     documentation={docResource}
