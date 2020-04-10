@@ -10,6 +10,7 @@ import React, {
 import { usePathwayContext } from './PathwayProvider';
 import { usePatient } from './PatientProvider';
 import { getHumanName } from 'utils/fhirUtils';
+import { useUser } from './UserProvider';
 export interface Note {
   patient: string;
   date: string;
@@ -45,11 +46,12 @@ export const NoteContext = createContext<NoteContextProps>({
 
 export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
   const patient = usePatient().patient as fhir.Patient;
+  const { user } = useUser();
   const name = patient?.name ? getHumanName(patient.name) : '';
   const [note, setNote] = useState<Note>({
     patient: name,
     date: date.toDateString(),
-    physician: physician,
+    physician: user,
     birthdate: patient?.birthDate || '',
     mcodeElements: {},
     pathway: usePathwayContext().evaluatedPathway?.pathway.name,
