@@ -8,7 +8,6 @@ import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import { PatientRecordsProvider } from './PatientRecordsProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
-import { NoteDataProvider } from './NoteDataProvider';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
