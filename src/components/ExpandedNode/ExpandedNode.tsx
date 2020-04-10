@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
-import { ConfirmedActionButton } from 'components/ConfirmedActionButton';
+import ActionButton from 'components/ActionButton';
+import ReportModal from 'components/ReportModal';
 import { isBranchState } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
@@ -34,26 +35,37 @@ interface ExpandedNodeProps {
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
   ({ pathwayState, isActionable, isGuidance, documentation }) => {
-    const [comments, setComments] = useState<string>('');
+    const { note, setNote } = useNote();
+    const [comments, _setComments] = useState<string>(note?.notes ?? '');
+    const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
     const client = useFHIRClient();
-    const note = useNote();
+    const setComments = (nc: string): void => {
+      if (note) note.notes = nc;
+      _setComments(nc);
+    };
     const patient = usePatient().patient as fhir.Patient;
+    if (note) note.node = pathwayState.label;
 
-    // prettier-ignore
-    const onConfirm = (status: string, action?: Action[]): void => {
+    const onConfirm = (action?: Action[]): void => {
       const newPatientRecords = [...patientRecords];
 
       // Create DocumentReference and add to patient record(and post to FHIR server)
       if (note) {
-        const noteString = createNoteContent(note, patientRecords, status, comments, pathwayState);
+        const noteString = createNoteContent(
+          note,
+          patientRecords,
+          note.status,
+          comments,
+          pathwayState
+        );
         const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
         newPatientRecords.push(documentReference);
         client?.create?.(documentReference);
       }
 
       // Translate pathway recommended resource and add to patient record
-      if (action && action.length > 0) {
+      if (note?.status === 'Accepted' && action && action.length > 0) {
         const resource: Resource = translatePathwayRecommendation(
           action[0].resource,
           patient.id as string
@@ -67,15 +79,34 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     return (
-      <ExpandedNodeMemo
-        isGuidance={isGuidance}
-        isActionable={isActionable}
-        pathwayState={pathwayState}
-        documentation={documentation}
-        setComments={setComments}
-        comments={comments}
-        onConfirm={onConfirm}
-      />
+      <>
+        <ExpandedNodeMemo
+          isGuidance={isGuidance}
+          isActionable={isActionable}
+          pathwayState={pathwayState}
+          documentation={documentation}
+          setComments={setComments}
+          comments={comments}
+          onAccept={(): void => {
+            setNote(prevNote => {
+              return { ...prevNote, status: 'Accepted' };
+            });
+            setShowReport(true);
+          }}
+          onDecline={(): void => {
+            setNote(prevNote => {
+              return { ...prevNote, status: 'Declined' };
+            });
+            setShowReport(true);
+          }}
+        />
+        {showReport && (
+          <ReportModal
+            onConfirm={(): void => onConfirm(pathwayState.action)}
+            onDecline={(): void => setShowReport(false)}
+          />
+        )}
+      </>
     );
   }
 );
@@ -292,10 +323,20 @@ interface ExpandedNodeMemoProps {
   isActionable: boolean;
   comments: string;
   setComments: (value: string) => void;
-  onConfirm: (status: string, action?: Action[]) => void;
+  onAccept: () => void;
+  onDecline: () => void;
 }
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
-  ({ documentation, pathwayState, isGuidance, isActionable, comments, setComments, onConfirm }) => {
+  ({
+    documentation,
+    pathwayState,
+    isGuidance,
+    isActionable,
+    comments,
+    setComments,
+    onAccept,
+    onDecline
+  }) => {
     const guidance = isGuidance && renderGuidance(pathwayState, documentation);
     const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
     const defaultText =
@@ -326,22 +367,10 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
               onChange={(e): void => setComments(e.target.value)}
             ></textarea>
             <div className={styles.footer}>
-              <ConfirmedActionButton
-                type="accept"
-                size="large"
-                onConfirm={(): void => {
-                  onConfirm('Accepted', pathwayState.action);
-                }}
-              />
+              <ActionButton type="accept" size="large" onClick={onAccept} />
             </div>
             <div className={styles.footer}>
-              <ConfirmedActionButton
-                type="decline"
-                size="large"
-                onConfirm={(): void => {
-                  onConfirm('Declined');
-                }}
-              />
+              <ActionButton type="decline" size="large" onClick={onDecline} />
             </div>
           </form>
         )}
