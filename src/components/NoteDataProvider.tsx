@@ -45,12 +45,12 @@ export const NoteContext = createContext<NoteContextProps>({
 
 export const NoteDataProvider: FC<NoteDataProviderProps> = ({ children, date, physician }) => {
   const patient = usePatient().patient as fhir.Patient;
-  const name = patient.name ? getHumanName(patient.name) : '';
+  const name = patient?.name ? getHumanName(patient.name) : '';
   const [note, setNote] = useState<Note>({
     patient: name,
     date: date.toDateString(),
     physician: physician,
-    birthdate: patient.birthDate || '',
+    birthdate: patient?.birthDate || '',
     mcodeElements: {},
     pathway: usePathwayContext().evaluatedPathway?.pathway.name,
     status: 'Pending'
