@@ -7949,7 +7949,7 @@
       ]
     },
     "dateWritten": "2018-12-12T21:02:14-05:00",
-    "status": "stopped",
+    "status": "completed",
     "patient": {
       "reference": "Patient/126040"
     },
@@ -8320,7 +8320,7 @@
       ]
     },
     "dateWritten": "2018-12-12T21:02:14-05:00",
-    "status": "stopped",
+    "status": "completed",
     "patient": {
       "reference": "Patient/126040"
     },
