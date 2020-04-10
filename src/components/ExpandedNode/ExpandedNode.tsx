@@ -36,13 +36,13 @@ interface ExpandedNodeProps {
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
   ({ pathwayState, isActionable, isGuidance, documentation }) => {
     const { note, setNote } = useNote();
-    const [comments, _setComments] = useState<string>(note?.notes ?? '');
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
     const client = useFHIRClient();
     const setComments = (nc: string): void => {
-      if (note) note.notes = nc;
-      _setComments(nc);
+      setNote(prevNote => {
+        return { ...prevNote, notes: nc };
+      });
     };
     const patient = usePatient().patient as fhir.Patient;
     if (note) note.node = pathwayState.label;
@@ -56,7 +56,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           note,
           patientRecords,
           note.status,
-          comments,
+          note?.notes ?? '',
           pathwayState
         );
         const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
@@ -86,7 +86,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           pathwayState={pathwayState}
           documentation={documentation}
           setComments={setComments}
-          comments={comments}
+          comments={note?.notes ?? ''}
           onAccept={(): void => {
             setNote(prevNote => {
               return { ...prevNote, status: 'Accepted' };
