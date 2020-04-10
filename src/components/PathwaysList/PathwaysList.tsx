@@ -20,7 +20,8 @@ import {
   faMinus,
   faChevronUp,
   faChevronDown,
-  faCaretDown
+  faCaretDown,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { usePatient } from 'components/PatientProvider';
 import { useFHIRClient } from 'components/FHIRClient';
@@ -191,6 +192,11 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         }}
       >
         <div>{pathway.name}</div>
+        {selected && (
+          <div>
+            <FontAwesomeIcon icon={faCheckCircle} />
+          </div>
+        )}
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
