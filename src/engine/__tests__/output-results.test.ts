@@ -353,7 +353,7 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['Chemo']);
+    expect(patientPath.currentStates).toStrictEqual(['ChemoMedication']);
     expect(patientPath.documentation).toEqual({
       Start: {
         state: 'Start',

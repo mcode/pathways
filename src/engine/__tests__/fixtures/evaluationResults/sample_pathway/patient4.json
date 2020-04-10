@@ -1,6 +1,6 @@
 {
   "patientId": "06da3260-0780-4e95-b3aa-33600e793a48",
-  "currentStates": ["Chemo"],
+  "currentStates": ["ChemoMedication"],
   "documentation": {
     "Start": {
       "state": "Start",
