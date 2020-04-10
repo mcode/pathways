@@ -4,6 +4,116 @@
 $verticalPadding: 20px;
 $lineHeight: 35px;
 
+@mixin pathwayElement($numElementsColor, $numElementsBgColor, $hoverColor) {
+  display: block;
+  margin-bottom: 1vh;
+  font-size: 1.1em;
+
+  .title {
+    padding: $verticalPadding 0 $verticalPadding 20px;
+    height: 2*$verticalPadding + $lineHeight;
+    line-height: $lineHeight;
+    width: 100%;
+    font-weight:700;
+
+    div {
+      display: inline-block;
+    }
+
+    .numElements {
+      float: right;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      margin-right: 25px;
+      color: $numElementsColor;
+      background-color: $numElementsBgColor;
+      border-radius: 100%;
+      text-align: center;
+    }
+
+    .expand {
+      float: right;
+      margin-right: 25px;
+      font-size: 1.2em;
+    }
+
+    &:hover, &:focus {
+      cursor: pointer;
+    }
+  }
+
+  .infoContainer {
+    padding: 4px;
+    width: 100%;
+    height: 500px;
+
+    .details, .pathway {
+      display: block;
+      float: left;
+      height: 100%;
+      background-color: $white;
+    }
+
+    .details {
+      width: calc(65% - 5px);
+      padding: 15px;
+      margin-right: 10px;
+      font-size: 0.8em;
+
+      table {
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      p {
+        font-style: italic;
+      }
+
+      td, th {
+        padding: 4px 50px 4px 0px;
+        min-width: 50px;
+      }
+
+      .matchingElement {
+        color: $blue;
+        font-weight: bold;
+      }
+
+      tr {
+        border-bottom: 2px solid $gray-lighter;
+      }
+
+      button {
+        font-size: 1em;
+        padding: 10px 15px;
+        margin-top: 25px;
+      }
+    }
+
+    .pathway {
+      position: relative;
+      width: calc(35% - 5px);
+      overflow: hidden;
+
+      .controls {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        width: 20px;
+
+        svg {
+          display: inline;
+        }
+      }
+    }
+  }
+
+  &:hover, &:focus{
+    background-color: darken($hoverColor, 10%);
+  }
+}
+
 .pathways_list {
   .header_title {
     display: flex;
@@ -29,114 +139,13 @@ $lineHeight: 35px;
     }
   }
 
+  .selectedPathwayElement {
+    @include pathwayElement($blue, $white, $blue);
+    background-color: $blue;
+  }
+
   .pathwayElement {
-    display: block;
-    margin-bottom: 1vh;
-    font-size: 1.1em;
-
-    .title {
-      padding: $verticalPadding 0 $verticalPadding 20px;
-      height: 2*$verticalPadding + $lineHeight;
-      line-height: $lineHeight;
-      width: 100%;
-      font-weight:700;
-
-      div {
-        display: inline-block;
-      }
-
-      .numElements {
-        float: right;
-        width: 35px;
-        height: 35px;
-        line-height: 35px;
-        margin-right: 25px;
-        color: $white;
-        background-color: $blue;
-        border-radius: 100%;
-        text-align: center;
-      }
-
-      .expand {
-        float: right;
-        margin-right: 25px;
-        font-size: 1.2em;
-      }
-
-      &:hover, &:focus {
-        cursor: pointer;
-      }
-    }
-
-    .infoContainer {
-      padding: 4px;
-      width: 100%;
-      height: 500px;
-
-      .details, .pathway {
-        display: block;
-        float: left;
-        height: 100%;
-        background-color: $white;
-      }
-
-      .details {
-        width: calc(65% - 5px);
-        padding: 15px;
-        margin-right: 10px;
-        font-size: 0.8em;
-
-        table {
-          border-collapse: collapse;
-          margin-top: 15px;
-        }
-
-        p {
-          font-style: italic;
-        }
-
-        td, th {
-          padding: 4px 50px 4px 0px;
-          min-width: 50px;
-        }
-
-        .matchingElement {
-          color: $blue;
-          font-weight: bold;
-        }
-
-        tr {
-          border-bottom: 2px solid $gray-lighter;
-        }
-
-        button {
-          font-size: 1em;
-          padding: 10px 15px;
-          margin-top: 25px;
-        }
-      }
-
-      .pathway {
-        position: relative;
-        width: calc(35% - 5px);
-        overflow: hidden;
-
-        .controls {
-          position: absolute;
-          top: 20px;
-          right: 10px;
-          width: 20px;
-
-          svg {
-            display: inline;
-          }
-        }
-      }
-    }
-
-    &:hover, &:focus{
-      background-color: darken($gray-lighter, 10%);
-    }
+    @include pathwayElement($white, $blue, $gray-lighter);
   }
 }
 

@@ -30,8 +30,14 @@ const useStyles = makeStyles(
     'pathway-element': {
       backgroundColor: theme.palette.background.default
     },
+    'selected-pathway-element': {
+      backgroundColor: theme.palette.primary.main
+    },
     title: {
       color: theme.palette.text.primary
+    },
+    'selected-title': {
+      color: theme.palette.common.white
     }
   }),
   { name: 'PathwaysList' }
@@ -42,6 +48,7 @@ interface PathwaysListElementProps {
   criteria?: CriteriaResult;
   callback: Function;
   selected: boolean;
+  disableSelect: boolean;
 }
 
 interface PathwaysListProps {
@@ -85,6 +92,7 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
                   callback={callback}
                   criteria={c}
                   selected={pathwayName === selectedPathway}
+                  disableSelect={selectedPathway !== undefined}
                   key={pathwayName}
                 />
               );
@@ -149,7 +157,8 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
   callback,
-  selected
+  selected,
+  disableSelect
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
@@ -165,14 +174,16 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     setIsVisible(!isVisible);
   }
 
+  const pathwayElementClass = selected
+    ? clsx(styles.selectedPathwayElement, classes['selected-pathway-element'])
+    : clsx(styles.pathwayElement, classes['pathway-element']);
+  const titleClass = selected
+    ? clsx(styles.title, classes['selected-title'])
+    : clsx(styles.title, classes.title);
   return (
-    <div
-      className={clsx(styles.pathwayElement, classes['pathway-element'])}
-      role={'list'}
-      key={pathway.name}
-    >
+    <div className={pathwayElementClass} role={'list'} key={pathway.name}>
       <div
-        className={clsx(styles.title, classes.title)}
+        className={titleClass}
         role={'listitem'}
         onClick={(e): void => {
           pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
@@ -208,6 +219,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </table>
             <button
               className={indexStyles.button}
+              disabled={disableSelect}
               onClick={(): void => {
                 const carePlan = createCarePlan(pathway.name, patient);
 
