@@ -230,6 +230,14 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             >
               Select Pathway
             </button>
+            <button
+              className={indexStyles.button}
+              onClick={(): void => {
+                callback(evaluatedPathway);
+              }}
+            >
+              View Pathway
+            </button>
           </div>
           <div className={styles.pathway}>
             <div style={{ height: '100%', overflow: 'scroll' }}>
