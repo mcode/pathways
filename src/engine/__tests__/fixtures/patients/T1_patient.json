@@ -50524,7 +50524,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "baf478d3-ce58-4559-b427-44a94dc5ae79",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [

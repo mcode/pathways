@@ -208,21 +208,29 @@ function formatDocumentation(
 }
 
 /**
+ * Helper function to determine whether the action represented by
+ * the given resource has been "completed", and the pathway execution should advance.
+ * @param resource - the FHIR resource for a given action
+ * @return boolean as to whether this resource is complete
+ */
+function isComplete(resource: DocumentationResource): boolean {
+  // placeholder for more complex logic if needed.
+  // as of today MedicationRequest and ServiceRequest should both be "completed"
+  // (MedicationRequest can also be "stopped" though that indicates
+  // "Actions implied by the prescription are to be permanently halted, **before all of them occurred.**")
+  return resource.status === 'completed';
+}
+
+/**
  * Helper function to select the transition state
- * This function is needed because MedicationRequests can have multiple
- * different statuses to indiciate complete
  * @param resource - the resource returned by the CQL execution
  * @param currentState - the current state
  * @return the next state name or null
  */
 function formatNextState(resource: DocumentationResource, currentState: State): string[] {
-  if (resource.resourceType === 'MedicationRequest') {
-    return currentState.transitions.length !== 0 ? [currentState.transitions[0].transition] : [];
-  } else {
-    return resource.status === 'completed' && currentState.transitions.length !== 0
-      ? [currentState.transitions[0].transition]
-      : [];
-  }
+  return isComplete(resource) && currentState.transitions.length !== 0
+    ? [currentState.transitions[0].transition]
+    : [];
 }
 
 /**
