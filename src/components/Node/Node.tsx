@@ -106,7 +106,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
               <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
               {label}
             </div>
-            <StatusIcon status={isAccepted} />
+            <StatusIcon status={status} />
           </div>
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
