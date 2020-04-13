@@ -92,7 +92,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       let status = null;
       if ('action' in pathwayState) {
         status = isAccepted;
-      } else if (!isCurrentNode && documentation !== null) {
+      } else if (!isCurrentNode && documentation) {
         status = true;
       }
 
