@@ -21033,7 +21033,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "dcdbd869-49c4-43ba-a84e-4d42ab043183",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -22141,7 +22141,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "a4d14889-e6e7-4158-a47d-f5d2595294e7",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -22756,7 +22756,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "e5273db4-a0c2-430c-adce-5f0b2442cdf9",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -23371,7 +23371,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "4ebfcbee-bb9c-4e19-80f6-311a6ed91b80",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -23986,7 +23986,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "c9f0c339-bc4c-447f-bd3c-4e8251b51794",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -24601,7 +24601,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "2f63f2f6-07e7-4671-87c5-f9dd3ed937d4",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -25216,7 +25216,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "f50b571d-8468-4a6c-aa4f-0a454eec68b2",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -25882,7 +25882,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "a2b3d649-cde2-442a-8e32-5c1f452d9386",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
@@ -27231,7 +27231,7 @@
       "resource": {
         "resourceType": "MedicationRequest",
         "id": "1448e46d-ac3f-4141-a96d-95c7fbebd94e",
-        "status": "stopped",
+        "status": "completed",
         "intent": "order",
         "medicationCodeableConcept": {
           "coding": [
