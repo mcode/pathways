@@ -53,7 +53,7 @@ const App: FC<AppProps> = ({ demoId }) => {
   );
 
   useEffect(() => {
-    if (demoId === null) {
+    if (!demoId) {
       FHIR.oauth2
         .init({
           clientId: 'Input client id you get when you register the app',
@@ -100,7 +100,7 @@ const App: FC<AppProps> = ({ demoId }) => {
   }, [client]);
 
   const service = useGetPathwaysService(
-    config.get(demoId !== null ? 'demoPathwaysService' : 'pathwaysService')
+    config.get(demoId ? 'demoPathwaysService' : 'pathwaysService')
   );
 
   useEffect(() => {

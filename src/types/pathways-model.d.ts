@@ -59,8 +59,9 @@ declare module 'pathways-model' {
   export interface PathwayResults {
     patientId: string;
     currentStates: string[];
-    documentation: Documentation[];
-    path: string[];
+    documentation: {
+      [key: string]: Documentation;
+    };
   }
 
   export interface CriteriaResultItem {
@@ -96,6 +97,7 @@ declare module 'pathways-model' {
 
   export interface Documentation {
     state: string;
+    onPath: boolean;
   }
 
   export interface DocumentationResource extends Documentation {
