@@ -156,7 +156,7 @@ const PathwayVisualizer: FC = () => {
   const [criteria, setCriteria] = useState<CriteriaResult | null>(null);
 
   useEffect(() => {
-    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+    // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
     const patient = {
       resourceType: 'Bundle',
       type: 'searchset',

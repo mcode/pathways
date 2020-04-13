@@ -51,7 +51,7 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
   const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
 
   if (!criteria && evaluatedPathways.length > 0 && resources && resources.length > 0) {
-    // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+    // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
     const patient = {
       resourceType: 'Bundle',
       type: 'searchset',
