@@ -15,6 +15,7 @@ import { loadingService, loadedService, errorService } from 'testUtils/services'
 import { evaluatedCriteria, evaluatedPathwayResults } from 'testUtils/MockedValues';
 import { Pathway, EvaluatedPathway } from 'pathways-model';
 import MockedPatientRecordsProvider from 'testUtils/MockedPatientRecordsProvider';
+import MockedPatientProvider from 'testUtils/MockedPatientProvider';
 
 jest.mock('engine');
 
@@ -23,7 +24,11 @@ const renderComponent = async (
 ): Promise<RenderResult | undefined> => {
   let result: RenderResult | undefined;
   await act(async () => {
-    result = render(<MockedPatientRecordsProvider>{component}</MockedPatientRecordsProvider>);
+    result = render(
+      <MockedPatientProvider>
+        <MockedPatientRecordsProvider>{component}</MockedPatientRecordsProvider>
+      </MockedPatientProvider>
+    );
     await wait();
   });
   return result;
