@@ -107,7 +107,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
   const resourceCount: string = !['Patient', 'Pathway'].includes(resourceType)
-    ? '(' + resourcesByType.length + ')'
+    ? `(${resourcesByType.length})`
     : '';
 
   return (
