@@ -27,11 +27,40 @@ import { CriteriaResult } from 'pathways-model';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 
-const getResourceByType = (
-  patientRecord: ReadonlyArray<DomainResource>,
-  resourceType: string
-): ReadonlyArray<object> => {
-  return patientRecord.filter(resource => resource.resourceType === resourceType);
+const resourceTypes = [
+  'Pathway',
+  'Patient',
+  'Condition',
+  'Observation',
+  'DiagnosticReport',
+  'MedicationRequest',
+  'AllergyIntolerance',
+  'CarePlan',
+  'Procedure',
+  'Encounter',
+  'Immunization'
+];
+
+const groupResourceByType = (
+  patientRecord: ReadonlyArray<DomainResource>
+): ReadonlyMap<string, ReadonlyArray<DomainResource>> => {
+  const map: Map<string, DomainResource[]> = new Map();
+  patientRecord.forEach(resource => {
+    const resourceType = resource.resourceType ?? '';
+    if (resourceTypes.includes(resourceType)) {
+      const collection = map.get(resourceType);
+      if (!collection) map.set(resourceType, [resource]);
+      else collection.push(resource);
+    }
+  });
+  return map;
+};
+
+const getResourcesByType = (
+  resourceType: string,
+  groupedResources: ReadonlyMap<string, ReadonlyArray<DomainResource>>
+): ReadonlyArray<DomainResource> => {
+  return groupedResources.get(resourceType) ?? [];
 };
 
 interface PatientRecordProps {
@@ -40,29 +69,19 @@ interface PatientRecordProps {
 
 interface PatientRecordElementProps {
   resourceType: string;
+  resources: ReadonlyArray<DomainResource>;
 }
 
 interface VisualizerProps {
   resourceType: string;
-  resourcesByType: readonly object[];
+  resourcesByType: ReadonlyArray<DomainResource>;
 }
 
 const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
+  const resources = usePatientRecords().patientRecords;
   const recordContainerElement = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const resourceTypes = [
-    'Pathway',
-    'Patient',
-    'Condition',
-    'Observation',
-    'DiagnosticReport',
-    'MedicationRequest',
-    'AllergyIntolerance',
-    'CarePlan',
-    'Procedure',
-    'Encounter',
-    'Immunization'
-  ];
+  const groupedResources = groupResourceByType(resources);
 
   const expand = (): void => {
     setIsExpanded(!isExpanded);
@@ -80,7 +99,11 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
       <div className={styles.record} ref={recordContainerElement}>
         <div className={styles.sidebar}>
           {resourceTypes.map(resourceType => (
-            <PatientRecordElement resourceType={resourceType} key={resourceType} />
+            <PatientRecordElement
+              resourceType={resourceType}
+              resources={getResourcesByType(resourceType, groupedResources)}
+              key={resourceType}
+            />
           ))}
         </div>
 
@@ -100,14 +123,12 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
   }
 };
 
-const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) => {
-  const resources = usePatientRecords().patientRecords;
-  const resourcesByType = getResourceByType(resources, resourceType);
+const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, resources }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
   const resourceCount: string = !['Patient', 'Pathway'].includes(resourceType)
-    ? `(${resourcesByType.length})`
+    ? `(${resources.length})`
     : '';
 
   return (
@@ -123,7 +144,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
 
       {isExpanded && (
         <div className={styles.visualizerContainer}>
-          <Visualizer resourceType={resourceType} resourcesByType={resourcesByType} />
+          <Visualizer resourceType={resourceType} resourcesByType={resources} />
         </div>
       )}
     </div>
