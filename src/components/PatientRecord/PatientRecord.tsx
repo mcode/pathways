@@ -23,12 +23,44 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import styles from './PatientRecord.module.scss';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { CriteriaResult } from 'pathways-model';
+import { usePathwayContext } from 'components/PathwayProvider';
+import { evaluatePathwayCriteria } from 'engine';
 
-const getResourceByType = (
-  patientRecord: ReadonlyArray<DomainResource>,
-  resourceType: string
-): ReadonlyArray<object> => {
-  return patientRecord.filter(resource => resource.resourceType === resourceType);
+const resourceTypes = [
+  'Pathway',
+  'Patient',
+  'Condition',
+  'Observation',
+  'DiagnosticReport',
+  'MedicationRequest',
+  'AllergyIntolerance',
+  'CarePlan',
+  'Procedure',
+  'Encounter',
+  'Immunization'
+];
+
+const groupResourceByType = (
+  patientRecord: ReadonlyArray<DomainResource>
+): ReadonlyMap<string, ReadonlyArray<DomainResource>> => {
+  const map: Map<string, DomainResource[]> = new Map();
+  patientRecord.forEach(resource => {
+    const resourceType = resource.resourceType ?? '';
+    if (resourceTypes.includes(resourceType)) {
+      const collection = map.get(resourceType);
+      if (!collection) map.set(resourceType, [resource]);
+      else collection.push(resource);
+    }
+  });
+  return map;
+};
+
+const getResourcesByType = (
+  resourceType: string,
+  groupedResources: ReadonlyMap<string, ReadonlyArray<DomainResource>>
+): ReadonlyArray<DomainResource> => {
+  return groupedResources.get(resourceType) ?? [];
 };
 
 interface PatientRecordProps {
@@ -37,28 +69,19 @@ interface PatientRecordProps {
 
 interface PatientRecordElementProps {
   resourceType: string;
+  resources: ReadonlyArray<DomainResource>;
 }
 
 interface VisualizerProps {
   resourceType: string;
-  resourcesByType: readonly object[];
+  resourcesByType: ReadonlyArray<DomainResource>;
 }
 
 const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
+  const resources = usePatientRecords().patientRecords;
   const recordContainerElement = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const resourceTypes = [
-    'Patient',
-    'Condition',
-    'Observation',
-    'DiagnosticReport',
-    'MedicationRequest',
-    'AllergyIntolerance',
-    'CarePlan',
-    'Procedure',
-    'Encounter',
-    'Immunization'
-  ];
+  const groupedResources = groupResourceByType(resources);
 
   const expand = (): void => {
     setIsExpanded(!isExpanded);
@@ -76,7 +99,11 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
       <div className={styles.record} ref={recordContainerElement}>
         <div className={styles.sidebar}>
           {resourceTypes.map(resourceType => (
-            <PatientRecordElement resourceType={resourceType} key={resourceType} />
+            <PatientRecordElement
+              resourceType={resourceType}
+              resources={getResourcesByType(resourceType, groupedResources)}
+              key={resourceType}
+            />
           ))}
         </div>
 
@@ -96,14 +123,13 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
   }
 };
 
-const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) => {
-  const resources = usePatientRecords().patientRecords;
-  const resourcesByType = getResourceByType(resources, resourceType);
+const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, resources }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
-  const resourceCount: string =
-    resourceType !== 'Patient' ? '(' + resourcesByType.length + ')' : '';
+  const resourceCount: string = !['Patient', 'Pathway'].includes(resourceType)
+    ? `(${resources.length})`
+    : '';
 
   return (
     <div className={styles.element}>
@@ -117,8 +143,8 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
       </div>
 
       {isExpanded && (
-        <div className={styles.elementContainer}>
-          <Visualizer resourceType={resourceType} resourcesByType={resourcesByType} />
+        <div className={styles.visualizerContainer}>
+          <Visualizer resourceType={resourceType} resourcesByType={resources} />
         </div>
       )}
     </div>
@@ -127,7 +153,9 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType }) =
 
 const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
   const patient = usePatient().patient as fhir.Patient;
-  if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
+
+  if (resourceType === 'Pathway') return <PathwayVisualizer />;
+  else if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
   else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
   else if (resourceType === 'Observation') return <ObservationsVisualizer rows={resourcesByType} />;
   else if (resourceType === 'DiagnosticReport') return <ReportsVisualizer rows={resourcesByType} />;
@@ -141,6 +169,41 @@ const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
   else if (resourceType === 'Immunization')
     return <ImmunizationsVisualizer rows={resourcesByType} />;
   else return <div>Unsupported Resource</div>;
+};
+
+const PathwayVisualizer: FC = () => {
+  const resources = usePatientRecords().patientRecords;
+  const evaluatedPathway = usePathwayContext().evaluatedPathway;
+  const [criteria, setCriteria] = useState<CriteriaResult | null>(null);
+
+  useEffect(() => {
+    // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
+    const patient = {
+      resourceType: 'Bundle',
+      type: 'searchset',
+      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
+    };
+
+    // Evaluate pathway criteria
+    if (evaluatedPathway) {
+      evaluatePathwayCriteria(patient, evaluatedPathway.pathway).then(criteriaResult =>
+        setCriteria(criteriaResult)
+      );
+    }
+  }, [evaluatedPathway, resources]);
+
+  return (
+    <table>
+      <tbody>
+        {criteria?.criteriaResultItems.map(c => (
+          <tr key={c.elementName}>
+            <td>{c.elementName}</td>
+            <td>{c.actual}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
 
 export default PatientRecord;

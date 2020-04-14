@@ -150,7 +150,7 @@ const Graph: FC<GraphProps> = memo(
         resources.length > 0 &&
         (!evaluatedPathway.pathwayResults || patientRecords.evaluatePath)
       ) {
-        // Create a fake Bundle for the CQL engine and check if patientPath needs to be evaluated
+        // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
         const patient = {
           resourceType: 'Bundle',
           type: 'searchset',
