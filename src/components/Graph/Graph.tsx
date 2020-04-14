@@ -25,7 +25,7 @@ import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
 import styles from './Graph.module.scss';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
-import { NoteDataProvider } from '../NoteDataProvider';
+import { NoteDataProvider } from 'components/NoteDataProvider';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
