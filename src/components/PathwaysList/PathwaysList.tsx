@@ -108,15 +108,15 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
   }
 
   const getSelectedPathway = (): string | undefined => {
-    // Get all active CarePlan resource titles
-    const carePlanTitles = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    // Get all active CarePlan resource texts
+    const carePlanTexts = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
       .filter(r => r.status === 'active')
-      .map(r => r.title);
+      .map(r => r.text?.div);
 
-    // Check to see if any of the pathway names are in carePlanTitles
+    // Check to see if any of the pathway names are in carePlanTexts
     const selectedPathway = evaluatedPathways
       .map(p => p.pathway.name)
-      .find(n => carePlanTitles.includes(n));
+      .find(n => carePlanTexts.some(text => text?.includes(n)));
 
     return selectedPathway;
   };
