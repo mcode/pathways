@@ -10,7 +10,7 @@ interface ButtonProps {
 }
 
 interface ActionButtonProps extends ButtonProps {
-  size: 'small' | 'large';
+  size: 'small' | 'large' | 'medium';
 }
 
 const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
@@ -29,11 +29,32 @@ const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
 const SmallActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
     <div
-      className={type === 'accept' ? styles.accept : styles.decline}
+      className={`${type === 'accept' ? styles.accept : styles.decline} ${
+        styles.smallActionButton
+      }`}
       onClick={onClick}
       data-testid={type}
     >
       <FontAwesomeIcon icon={type === 'accept' ? faCheck : faTimes} />
+    </div>
+  );
+};
+
+const MediumActionButton: FC<ButtonProps> = ({ type, onClick }) => {
+  const buttonText = {
+    accept: 'Submit',
+    decline: 'Cancel'
+  };
+  return (
+    <div
+      className={`${type === 'accept' ? styles.accept : styles.decline} ${
+        styles.mediumActionButton
+      }`}
+      onClick={onClick}
+      data-testid={type}
+    >
+      <FontAwesomeIcon icon={type === 'accept' ? faCheck : faTimes} />
+      {buttonText[type]}
     </div>
   );
 };
@@ -44,6 +65,8 @@ const ActionButton: FC<ActionButtonProps> = ({ type, size, onClick }) => {
       return <SmallActionButton type={type} onClick={onClick} />;
     case 'large':
       return <LargeActionButton type={type} onClick={onClick} />;
+    case 'medium':
+      return <MediumActionButton type={type} onClick={onClick} />;
   }
 };
 

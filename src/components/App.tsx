@@ -8,7 +8,6 @@ import { FHIRClientProvider } from './FHIRClient';
 import { PatientProvider } from './PatientProvider';
 import { PatientRecordsProvider } from './PatientRecordsProvider';
 import PatientRecord from './PatientRecord/PatientRecord';
-import { NoteDataProvider } from './NoteDataProvider';
 import Graph from './Graph';
 import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
@@ -21,6 +20,7 @@ import { MockedFHIRClient } from 'utils/MockedFHIRClient';
 import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
+import { UserProvider } from './UserProvider';
 interface AppProps {
   demoId?: string;
 }
@@ -170,16 +170,16 @@ const App: FC<AppProps> = ({ demoId }) => {
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
-        <PatientProvider value={{ patient, setPatient }}>
-          <PatientRecordsProvider value={providerProps}>
-            <PathwayProvider
-              pathwayCtx={{
-                updateEvaluatedPathways,
-                evaluatedPathway: currentPathway,
-                setEvaluatedPathway: setEvaluatedPathwayCallback
-              }}
-            >
-              <NoteDataProvider physician={user} date={new Date(Date.now())}>
+        <UserProvider value={{ user, setUser }}>
+          <PatientProvider value={{ patient, setPatient }}>
+            <PatientRecordsProvider value={providerProps}>
+              <PathwayProvider
+                pathwayCtx={{
+                  updateEvaluatedPathways,
+                  evaluatedPathway: currentPathway,
+                  setEvaluatedPathway: setEvaluatedPathwayCallback
+                }}
+              >
                 <div ref={headerElement}>
                   <Header logo={logo} />
 
@@ -199,10 +199,10 @@ const App: FC<AppProps> = ({ demoId }) => {
                 ) : (
                   <PatientView evaluatedPathway={currentPathway} />
                 )}
-              </NoteDataProvider>
-            </PathwayProvider>
-          </PatientRecordsProvider>
-        </PatientProvider>
+              </PathwayProvider>
+            </PatientRecordsProvider>
+          </PatientProvider>
+        </UserProvider>
       </FHIRClientProvider>
     </ThemeProvider>
   );

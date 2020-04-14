@@ -1,0 +1,56 @@
+@import '../../styles/variables';
+
+.reportModal {
+  // Position modal in the center of the page
+  width: 80vw;
+  position: fixed;
+  left: 10%;
+  top: 15%;
+
+  // Style the modal itself
+  padding: 2em;
+  border-radius: 1em;
+  border: 0.5em solid rgba($gray, 0.5);
+  background-color: $gray;
+  color:$white;
+  -moz-background-clip: padding;     /* Firefox 3.6 */
+  -webkit-background-clip: padding;  /* Safari 4? Chrome 6? */
+  background-clip: padding-box;      /* Firefox 4, Safari 5, Opera 10, IE 9 */
+
+  // Organize the content in the modal
+  display: flex;
+  flex-direction: column;
+
+  // Need z-index so that it is displayed over other nodes outside the stacking context
+  z-index: 1;
+
+  > :first-child {
+    align-self: center;
+  }
+
+  > * {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+}
+
+.sectionContainer {
+  display: grid;
+  grid-auto-rows: 1fr;
+  grid-row-gap: 2em;
+}
+
+.confirmationSection {
+  display: flex;
+  justify-content: space-around;
+}
+
+.confirmationButtonGroup {
+  display: flex;
+  > * {
+    flex-grow: 0;
+  }
+  :first-child {
+    margin-right: 0.5em;
+  }
+}

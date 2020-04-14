@@ -1,0 +1,47 @@
+@import '../../../styles/variables';
+
+.fieldContainer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 90%;
+  justify-content: space-between;
+  margin-left: 2em;
+  > * {
+    width: 50%;
+    flex: 0 0 30%;
+  }
+}
+
+.field {
+  margin-right: 2em;
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.1em;
+  line-height: 0.8;
+  > b {
+    margin-right: 0.5em;
+  }
+}
+
+.sectionContainer {
+  display: flex;
+}
+
+.sectionIconContainer {
+  display: inline-flex;
+  align-items: center;
+  border-right: 0.1em solid $white;
+  min-width: 3em;
+}
+
+.icon {
+  font-size: 2em;
+}
+
+.notesField {
+  margin-left: 2em;
+  > b {
+    margin-bottom: 0.5em;
+  }
+}

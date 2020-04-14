@@ -25,6 +25,7 @@ import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { DomainResource } from 'fhir-objects';
 import styles from './Graph.module.scss';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
+import { NoteDataProvider } from 'components/NoteDataProvider';
 
 interface GraphProps {
   evaluatedPathway: EvaluatedPathway;
@@ -275,31 +276,35 @@ const GraphMemo: FC<GraphMemoProps> = memo(
         {nodeCoordinates !== undefined
           ? Object.keys(nodeCoordinates).map(nodeName => {
               const docResource = documentation[nodeName] as DocumentationResource;
-              const onClickHandler = interactive ? (): void => setExpanded(nodeName) : undefined;
+              const onClickHandler = useCallback(() => {
+                return interactive ? setExpanded(nodeName) : undefined;
+              }, [nodeName]);
               return (
-                <Node
-                  key={nodeName}
-                  documentation={docResource}
-                  ref={(node: HTMLDivElement): void => {
-                    nodeRefs.current[nodeName] = node;
-                  }}
-                  pathwayState={pathway.states[nodeName]}
-                  isOnPatientPath={
-                    evaluatedPathway.pathwayResults
-                      ? getPath(evaluatedPathway.pathwayResults).includes(nodeName) ||
-                        evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
-                      : false
-                  }
-                  isCurrentNode={
-                    evaluatedPathway.pathwayResults
-                      ? evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
-                      : false
-                  }
-                  xCoordinate={nodeCoordinates[nodeName].x + parentWidth / 2}
-                  yCoordinate={nodeCoordinates[nodeName].y}
-                  expanded={expanded[nodeName]}
-                  onClickHandler={onClickHandler}
-                />
+                <NoteDataProvider date={new Date(Date.now())} key={nodeName}>
+                  <Node
+                    key={nodeName}
+                    documentation={docResource}
+                    ref={(node: HTMLDivElement): void => {
+                      nodeRefs.current[nodeName] = node;
+                    }}
+                    pathwayState={pathway.states[nodeName]}
+                    isOnPatientPath={
+                      evaluatedPathway.pathwayResults
+                        ? getPath(evaluatedPathway.pathwayResults).includes(nodeName) ||
+                          evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                        : false
+                    }
+                    isCurrentNode={
+                      evaluatedPathway.pathwayResults
+                        ? evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                        : false
+                    }
+                    xCoordinate={nodeCoordinates[nodeName].x + parentWidth / 2}
+                    yCoordinate={nodeCoordinates[nodeName].y}
+                    expanded={expanded[nodeName]}
+                    onClickHandler={onClickHandler}
+                  />
+                </NoteDataProvider>
               );
             })
           : []}

@@ -5,6 +5,7 @@ import { loadedService } from 'testUtils/services';
 import { EvaluatedPathway } from 'pathways-model';
 import preconvertedELM from '../../../engine/__tests__/fixtures/elm/sample_pathway.elm.json';
 import { PatientRecordsProvider } from 'components/PatientRecordsProvider';
+import { PatientProvider } from '../../PatientProvider';
 
 describe('<Graph />', () => {
   global.fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
@@ -20,6 +21,10 @@ describe('<Graph />', () => {
   const samplePatient = {
     resourceType: 'Patient',
     id: 'bob'
+  };
+
+  const setSamplePatient = (): void => {
+    // do nothing
   };
 
   const sampleObservation = {
@@ -57,23 +62,25 @@ describe('<Graph />', () => {
     updateEvaluatedPathways: (value: EvaluatedPathway) => void
   ): RenderResult => {
     return render(
-      <PatientRecordsProvider
-        value={{
-          patientRecords: [samplePatient, sampleObservation],
-          setPatientRecords: (): void => {
-            return;
-          },
-          evaluatePath: evaluatePath,
-          setEvaluatePath: (value: boolean): void => {
-            evaluatePath = value;
-          }
-        }}
-      >
-        <Graph
-          evaluatedPathway={evaluatedPathway}
-          updateEvaluatedPathways={updateEvaluatedPathways}
-        />
-      </PatientRecordsProvider>
+      <PatientProvider value={{ patient: samplePatient, setPatient: setSamplePatient }}>
+        <PatientRecordsProvider
+          value={{
+            patientRecords: [samplePatient, sampleObservation],
+            setPatientRecords: (): void => {
+              return;
+            },
+            evaluatePath: evaluatePath,
+            setEvaluatePath: (value: boolean): void => {
+              evaluatePath = value;
+            }
+          }}
+        >
+          <Graph
+            evaluatedPathway={evaluatedPathway}
+            updateEvaluatedPathways={updateEvaluatedPathways}
+          />
+        </PatientRecordsProvider>
+      </PatientProvider>
     );
   };
 

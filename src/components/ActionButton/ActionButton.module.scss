@@ -12,6 +12,11 @@
   margin-right: 0.5em;
 }
 
+.smallActionButton {
+  max-width: 2.25em;
+  max-height: 2em;
+}
+
 .accept {
   @extend .selectButton;
   background: $green;
@@ -40,4 +45,10 @@
       background-color: darken($white, 10%);
     }
   }
+}
+
+.mediumActionButton {
+  min-width: 7em;
+  border-radius: 0.25em;
+  max-height: 1em;
 }
