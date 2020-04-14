@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useState, ButtonHTMLAttributes } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
@@ -181,6 +181,16 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   const titleClass = selected
     ? clsx(styles.title, classes['selected-title'])
     : clsx(styles.title, classes.title);
+
+  // Optional attributes for "Select Pathway" button
+  const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
+  if (!disableSelect) {
+    selectButtonOpts.className = indexStyles.button;
+  } else {
+    // Add tooltip to button
+    selectButtonOpts.title = 'Only one pathway may be selected at a time';
+  }
+
   return (
     <div className={pathwayElementClass} role={'list'} key={pathway.name}>
       <div
@@ -224,7 +234,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               </tbody>
             </table>
             <button
-              className={indexStyles.button}
+              {...selectButtonOpts}
               disabled={disableSelect}
               onClick={(): void => {
                 const carePlan = createCarePlan(pathway.name, patient);
