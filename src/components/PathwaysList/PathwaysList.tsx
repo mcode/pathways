@@ -49,7 +49,6 @@ interface PathwaysListElementProps {
   criteria?: CriteriaResult;
   callback: Function;
   selected: boolean;
-  disableSelect: boolean;
 }
 
 interface PathwaysListProps {
@@ -85,15 +84,14 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
         {criteria ? (
           criteria.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
-            const pathwayName = evaluatedPathway?.pathway.name;
+            const pathwayName = evaluatedPathway?.pathway.name || '';
             if (evaluatedPathway)
               return (
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  selected={pathwayName === selectedPathway}
-                  disableSelect={selectedPathway !== undefined}
+                  selected={selectedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
@@ -107,21 +105,21 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
     );
   }
 
-  const getSelectedPathway = (): string | undefined => {
+  const getSelectedPathways = (): string[] => {
     // Get all active CarePlan resource texts
     const carePlanTexts = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
       .filter(r => r.status === 'active')
       .map(r => r.text?.div);
 
     // Check to see if any of the pathway names are in carePlanTexts
-    const selectedPathway = evaluatedPathways
+    const selectedPathways = evaluatedPathways
       .map(p => p.pathway.name)
-      .find(n => carePlanTexts.some(text => text?.includes(n)));
+      .filter(n => carePlanTexts.some(text => text?.includes(n)));
 
-    return selectedPathway;
+    return selectedPathways;
   };
 
-  const selectedPathway = getSelectedPathway();
+  const selectedPathways = getSelectedPathways();
   return (
     <div className={styles.pathways_list}>
       {service.status === 'loading' ? (
@@ -158,8 +156,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
   callback,
-  selected,
-  disableSelect
+  selected
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
@@ -184,11 +181,11 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
 
   // Optional attributes for "Select Pathway" button
   const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
-  if (!disableSelect) {
-    selectButtonOpts.className = indexStyles.button;
-  } else {
+  if (selected) {
     // Add tooltip to button
-    selectButtonOpts.title = 'Only one pathway may be selected at a time';
+    selectButtonOpts.title = 'Pathway is already selected';
+  } else {
+    selectButtonOpts.className = indexStyles.button;
   }
 
   return (
@@ -235,7 +232,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </table>
             <button
               {...selectButtonOpts}
-              disabled={disableSelect}
+              disabled={selected}
               onClick={(): void => {
                 const carePlan = createCarePlan(pathway.name, patient);
 
