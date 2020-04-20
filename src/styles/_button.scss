@@ -14,4 +14,9 @@
     &:hover, &:focus {
         background-color: darken($blue, 10%);
     }
+
+    &:disabled {
+        background-color: lighten($blue, 20%);
+        cursor: default;
+    }
 }

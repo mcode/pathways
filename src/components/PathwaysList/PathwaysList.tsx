@@ -172,20 +172,24 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     setIsVisible(!isVisible);
   }
 
-  const pathwayElementClass = selected
-    ? clsx(styles.selectedPathwayElement, classes['selected-pathway-element'])
-    : clsx(styles.pathwayElement, classes['pathway-element']);
-  const titleClass = selected
-    ? clsx(styles.title, classes['selected-title'])
-    : clsx(styles.title, classes.title);
+  const pathwayElementClass = clsx(
+    selected && styles.selectedPathwayElement,
+    selected && classes['selected-pathway-element'],
+    !selected && styles.pathwayElement,
+    !selected && classes['pathway-element']
+  );
+
+  const titleClass = clsx(
+    styles.title,
+    selected && classes['selected-title'],
+    !selected && classes.title
+  );
 
   // Optional attributes for "Select Pathway" button
   const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
   if (selected) {
     // Add tooltip to button
     selectButtonOpts.title = 'Pathway is already selected';
-  } else {
-    selectButtonOpts.className = indexStyles.button;
   }
 
   return (
@@ -199,11 +203,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         }}
       >
         <div>{pathway.name}</div>
-        {selected && (
-          <div>
-            <FontAwesomeIcon icon={faCheckCircle} />
-          </div>
-        )}
+        {selected && <FontAwesomeIcon icon={faCheckCircle} />}
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
@@ -232,6 +232,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </table>
             <button
               {...selectButtonOpts}
+              className={indexStyles.button}
               disabled={selected}
               onClick={(): void => {
                 const carePlan = createCarePlan(pathway.name, patient);
