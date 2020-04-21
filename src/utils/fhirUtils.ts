@@ -190,6 +190,7 @@ function withLeadingZero(n: number): string {
 
 export function createCarePlan(title: string, patient: Patient): CarePlan {
   return {
+    title,
     resourceType: 'CarePlan',
     text: {
       status: R4.NarrativeStatusKind._generated,
