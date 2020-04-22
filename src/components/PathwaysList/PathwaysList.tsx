@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useState, ButtonHTMLAttributes } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
@@ -12,23 +12,33 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
-import { Resource } from 'fhir-objects';
+import { CarePlan, Patient } from 'fhir-objects';
+import { createCarePlan } from 'utils/fhirUtils';
 import {
   faPlay,
   faPlus,
   faMinus,
   faChevronUp,
   faChevronDown,
-  faCaretDown
+  faCaretDown,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
+import { usePatient } from 'components/PatientProvider';
+import { useFHIRClient } from 'components/FHIRClient';
 
 const useStyles = makeStyles(
   theme => ({
     'pathway-element': {
       backgroundColor: theme.palette.background.default
     },
+    'selected-pathway-element': {
+      backgroundColor: theme.palette.primary.main
+    },
     title: {
       color: theme.palette.text.primary
+    },
+    'selected-title': {
+      color: theme.palette.common.white
     }
   }),
   { name: 'PathwaysList' }
@@ -38,6 +48,7 @@ interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
   criteria?: CriteriaResult;
   callback: Function;
+  selected: boolean;
 }
 
 interface PathwaysListProps {
@@ -73,13 +84,15 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
         {criteria ? (
           criteria.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
+            const pathwayName = evaluatedPathway?.pathway.name || '';
             if (evaluatedPathway)
               return (
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  key={evaluatedPathway.pathway.name}
+                  selected={selectedPathways.includes(pathwayName)}
+                  key={pathwayName}
                 />
               );
             else
@@ -92,6 +105,21 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
     );
   }
 
+  const getSelectedPathways = (): string[] => {
+    // Get all active CarePlan resource titles
+    const carePlanTitles = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+      .filter(r => r.status === 'active')
+      .map(r => r.title);
+
+    // Check to see if any of the pathway names are in carePlanTitles
+    const selectedPathways = evaluatedPathways
+      .map(p => p.pathway.name)
+      .filter(n => carePlanTitles.includes(n));
+
+    return selectedPathways;
+  };
+
+  const selectedPathways = getSelectedPathways();
   return (
     <div className={styles.pathways_list}>
       {service.status === 'loading' ? (
@@ -127,12 +155,16 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
 const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
-  callback
+  callback,
+  selected
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
   const pathwayCtx = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const { patientRecords, setPatientRecords } = usePatientRecords();
+  const patient = usePatient().patient as Patient;
+  const client = useFHIRClient();
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
@@ -140,14 +172,30 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     setIsVisible(!isVisible);
   }
 
+  const pathwayElementClass = clsx(
+    selected && styles.selectedPathwayElement,
+    selected && classes['selected-pathway-element'],
+    !selected && styles.pathwayElement,
+    !selected && classes['pathway-element']
+  );
+
+  const titleClass = clsx(
+    styles.title,
+    selected && classes['selected-title'],
+    !selected && classes.title
+  );
+
+  // Optional attributes for "Select Pathway" button
+  const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
+  if (selected) {
+    // Add tooltip to button
+    selectButtonOpts.title = 'Pathway is already selected';
+  }
+
   return (
-    <div
-      className={clsx(styles.pathwayElement, classes['pathway-element'])}
-      role={'list'}
-      key={pathway.name}
-    >
+    <div className={pathwayElementClass} role={'list'} key={pathway.name}>
       <div
-        className={clsx(styles.title, classes.title)}
+        className={titleClass}
         role={'listitem'}
         onClick={(e): void => {
           pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
@@ -155,6 +203,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         }}
       >
         <div>{pathway.name}</div>
+        {selected && <FontAwesomeIcon icon={faCheckCircle} />}
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
@@ -181,8 +230,27 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                 ))}
               </tbody>
             </table>
-            <button className={indexStyles.button} onClick={(): void => callback(evaluatedPathway)}>
+            <button
+              {...selectButtonOpts}
+              className={indexStyles.button}
+              disabled={selected}
+              onClick={(): void => {
+                const carePlan = createCarePlan(pathway.name, patient);
+
+                setPatientRecords([...patientRecords, carePlan]);
+                client?.create?.(carePlan);
+                callback(evaluatedPathway);
+              }}
+            >
               Select Pathway
+            </button>
+            <button
+              className={indexStyles.button}
+              onClick={(): void => {
+                callback(evaluatedPathway);
+              }}
+            >
+              View Pathway
             </button>
           </div>
           <div className={styles.pathway}>

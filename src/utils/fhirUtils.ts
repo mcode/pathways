@@ -7,8 +7,10 @@ import {
   DocumentReference,
   Observation,
   ServiceRequest,
-  MedicationRequest
+  MedicationRequest,
+  CarePlan
 } from 'fhir-objects';
+import { R4 } from '@ahryman40k/ts-fhir-types';
 import { v1 } from 'uuid';
 
 // translates pathway recommendation resource into suitable FHIR resource
@@ -184,4 +186,28 @@ function getCurrentTime(): string {
 
 function withLeadingZero(n: number): string {
   return n < 10 ? '0' + n : n.toString();
+}
+
+export function createCarePlan(title: string, patient: Patient): CarePlan {
+  return {
+    title,
+    resourceType: 'CarePlan',
+    text: {
+      status: R4.NarrativeStatusKind._generated,
+      div: `<div> Assignment of patient to pathway ${title} </div>`
+    },
+    status: 'active',
+    intent: 'plan',
+    category: [
+      {
+        coding: [
+          {
+            system: 'http://hl7.org/fhir/us/core/CodeSystem/careplan-category',
+            code: 'assess-plan'
+          }
+        ]
+      }
+    ],
+    subject: { reference: `Patient/${patient.id}` }
+  };
 }
