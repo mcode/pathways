@@ -47,7 +47,7 @@ const App: FC<AppProps> = ({ demoId }) => {
     setEvaluatePath(true);
   }, []);
 
-  const setMcodeRecords = (resources: DomainResource[]): void => {
+  const setMcodeRecords = useCallback((resources: DomainResource[]): void => {
     // Create a Bundle for the CQL engine
     const bundle = {
       resourceType: 'Bundle',
@@ -80,10 +80,10 @@ const App: FC<AppProps> = ({ demoId }) => {
           progesteroneReceptor: mcodeData['Progesterone Receptor Value'][0] ?? undefined,
           her2Receptor: mcodeData['HER2 Receptor Value'][0] ?? undefined
         };
+
         _setMcodeRecords(mcodeElements);
-        debugger;
       });
-  };
+  }, []);
 
   const providerProps = useMemo(
     () => ({
