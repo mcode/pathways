@@ -12,6 +12,7 @@ import {
 } from 'fhir-objects';
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { v1 } from 'uuid';
+import { McodeElements } from 'mcode';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
@@ -210,4 +211,14 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
     ],
     subject: { reference: `Patient/${patient.id}` }
   };
+}
+
+export function getTNM(mcodeElements: McodeElements): string {
+  let tnm = '';
+  tnm += mcodeElements.tumorCategory?.split(' ')[0] ?? '';
+  tnm += ' ';
+  tnm += mcodeElements.nodeCategory?.split(' ')[0] ?? '';
+  tnm += ' ';
+  tnm += mcodeElements.metastasesCategory?.split(' ')[0] ?? '';
+  return tnm;
 }
