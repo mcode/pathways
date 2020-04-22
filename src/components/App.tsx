@@ -13,7 +13,7 @@ import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
 import ThemeProvider from './ThemeProvider';
-import { EvaluatedPathway } from 'pathways-model';
+import { EvaluatedPathway, ElmResults } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
@@ -21,6 +21,10 @@ import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
 import { UserProvider } from './UserProvider';
+import { McodeElements } from 'mcode';
+import { getFixture } from 'engine/cql-extractor';
+import { convertBasicCQL } from 'engine/cql-to-elm';
+import executeElm from 'engine/elm-executor';
 interface AppProps {
   demoId?: string;
 }
@@ -28,6 +32,7 @@ interface AppProps {
 const App: FC<AppProps> = ({ demoId }) => {
   const [patient, setPatient] = useState<fhir.Patient | null>(null);
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
+  const [mcodeRecords, _setMcodeRecords] = useState<McodeElements>({});
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatePath, setEvaluatePath] = useState<boolean>(false);
@@ -42,14 +47,61 @@ const App: FC<AppProps> = ({ demoId }) => {
     setEvaluatePath(true);
   }, []);
 
+  const setMcodeRecords = (resources: DomainResource[]): void => {
+    // Create a Bundle for the CQL engine
+    const bundle = {
+      resourceType: 'Bundle',
+      type: 'searchset',
+      entry: resources.map((r: DomainResource) => ({ resource: r }))
+    };
+    getFixture('mCODE.cql')
+      .then(cql => convertBasicCQL(cql))
+      .then(elm => {
+        let elmResults: ElmResults = {
+          patientResults: {}
+        };
+        elmResults = executeElm(bundle, elm);
+        const patientIds = Object.keys(elmResults.patientResults);
+        const mcodeData = elmResults.patientResults[patientIds[0]];
+
+        const mcodeElements: McodeElements = {
+          primaryCancer: mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
+          laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
+          tumorCategory:
+            mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ??
+            undefined,
+          nodeCategory:
+            mcodeData['TNM Clinical Regional Nodes Category Data Value (N Category)'][0] ??
+            undefined,
+          metastasesCategory:
+            mcodeData['TNM Clinical Distant Metastases Category Data Value (M Category)'][0] ??
+            undefined,
+          estrogenReceptor: mcodeData['Estrogen Receptor Value'][0] ?? undefined,
+          progesteroneReceptor: mcodeData['Progesterone Receptor Value'][0] ?? undefined,
+          her2Receptor: mcodeData['HER2 Receptor Value'][0] ?? undefined
+        };
+        _setMcodeRecords(mcodeElements);
+        debugger;
+      });
+  };
+
   const providerProps = useMemo(
     () => ({
       patientRecords,
       setPatientRecords,
       evaluatePath,
-      setEvaluatePath
+      setEvaluatePath,
+      mcodeRecords,
+      setMcodeRecords
     }),
-    [patientRecords, setPatientRecords, evaluatePath, setEvaluatePath]
+    [
+      patientRecords,
+      setPatientRecords,
+      evaluatePath,
+      setEvaluatePath,
+      mcodeRecords,
+      setMcodeRecords
+    ]
   );
 
   useEffect(() => {
@@ -72,6 +124,7 @@ const App: FC<AppProps> = ({ demoId }) => {
             });
 
             setPatientRecords(records);
+            setMcodeRecords(records);
           });
           client.patient?.read?.().then((resultPatient: fhir.Patient) => setPatient(resultPatient));
           setClient(client);
@@ -84,6 +137,7 @@ const App: FC<AppProps> = ({ demoId }) => {
         .then(result => {
           const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
           setPatientRecords(result);
+          setMcodeRecords(result);
           setPatient(resultPatient);
         });
     }

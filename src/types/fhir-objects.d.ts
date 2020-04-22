@@ -19,4 +19,5 @@ declare module 'fhir-objects' {
   export type ServiceRequest = fhir.ProcedureRequest | R4.IServiceRequest;
   export type MedicationRequest = fhir.MedicationRequest | R4.IMedicationRequest;
   export type CarePlan = R4.ICarePlan;
+  export type Condition = fhir.Condition;
 }

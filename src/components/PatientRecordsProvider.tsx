@@ -1,5 +1,6 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react';
 import { DomainResource } from 'fhir-objects';
+import { McodeElements } from 'mcode';
 interface PatientRecordsProviderProps {
   children: ReactNode;
   value: PatientRecordsContextInterface;
@@ -10,6 +11,8 @@ interface PatientRecordsContextInterface {
   setPatientRecords: Function;
   evaluatePath: boolean;
   setEvaluatePath: (value: boolean) => void;
+  mcodeRecords: McodeElements;
+  setMcodeRecords: (value: DomainResource[]) => void;
 }
 
 export const PatientRecordsContext = createContext<PatientRecordsContextInterface>({
@@ -19,6 +22,10 @@ export const PatientRecordsContext = createContext<PatientRecordsContextInterfac
   },
   evaluatePath: true,
   setEvaluatePath: (): void => {
+    return;
+  },
+  mcodeRecords: {},
+  setMcodeRecords: (): void => {
     return;
   }
 });

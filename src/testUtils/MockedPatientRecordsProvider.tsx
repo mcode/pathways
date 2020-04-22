@@ -27,6 +27,10 @@ const MockedPatientRecordsProvider: FC<PatientRecordsProviderProps> = ({ childre
       evaluatePath: true,
       setEvaluatePath: (): void => {
         return;
+      },
+      mcodeRecords: {},
+      setMcodeRecords: (): void => {
+        return;
       }
     }}
   >
