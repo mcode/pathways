@@ -138,7 +138,7 @@ const App: FC<AppProps> = ({ demoId }) => {
           setPatient(resultPatient);
         });
     }
-  }, [demoId, setPatientRecords]);
+  }, [demoId, setPatientRecords, setMcodeRecords]);
 
   // gather note info
   useEffect(() => {

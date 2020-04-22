@@ -26,9 +26,11 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { CriteriaResult } from 'pathways-model';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
+import { McodeElements } from 'mcode';
 
 const resourceTypes = [
   'Pathway',
+  'Mcode',
   'Patient',
   'Condition',
   'Observation',
@@ -124,10 +126,12 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
 };
 
 const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, resources }) => {
+  console.log(resourceType);
+  console.log(resources);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
-  const resourceCount: string = !['Patient', 'Pathway'].includes(resourceType)
+  const resourceCount: string = !['Patient', 'Pathway', 'Mcode'].includes(resourceType)
     ? `(${resources.length})`
     : '';
 
@@ -155,6 +159,7 @@ const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
   const patient = usePatient().patient as fhir.Patient;
 
   if (resourceType === 'Pathway') return <PathwayVisualizer />;
+  else if (resourceType === 'Mcode') return <McodeVisualizer />;
   else if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
   else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
   else if (resourceType === 'Observation') return <ObservationsVisualizer rows={resourcesByType} />;
@@ -201,6 +206,30 @@ const PathwayVisualizer: FC = () => {
             <td>{c.actual}</td>
           </tr>
         ))}
+      </tbody>
+    </table>
+  );
+};
+
+const McodeVisualizer: FC = () => {
+  const mcode = usePatientRecords().mcodeRecords;
+  console.log(mcode);
+  type mcodeKey = keyof McodeElements & string;
+  const keysArray: mcodeKey[] = [];
+  for (const key in mcode) {
+    keysArray.push(key as mcodeKey);
+  }
+  return (
+    <table>
+      <tbody>
+        {keysArray.map(key => {
+          return (
+            <tr key={key}>
+              <td>{key}</td>
+              <td>{mcode[key] ? mcode[key] : '-'}</td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
