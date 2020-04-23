@@ -80,10 +80,10 @@ interface VisualizerProps {
 }
 
 const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
-  const resources = usePatientRecords().patientRecords;
+  const { patientRecords } = usePatientRecords();
   const recordContainerElement = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const groupedResources = groupResourceByType(resources);
+  const groupedResources = groupResourceByType(patientRecords);
 
   const expand = (): void => {
     setIsExpanded(!isExpanded);
@@ -126,8 +126,6 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
 };
 
 const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, resources }) => {
-  console.log(resourceType);
-  console.log(resources);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
@@ -177,8 +175,8 @@ const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
 };
 
 const PathwayVisualizer: FC = () => {
-  const resources = usePatientRecords().patientRecords;
-  const evaluatedPathway = usePathwayContext().evaluatedPathway;
+  const { patientRecords } = usePatientRecords();
+  const { evaluatedPathway } = usePathwayContext();
   const [criteria, setCriteria] = useState<CriteriaResult | null>(null);
 
   useEffect(() => {
@@ -186,7 +184,7 @@ const PathwayVisualizer: FC = () => {
     const patient = {
       resourceType: 'Bundle',
       type: 'searchset',
-      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
+      entry: patientRecords.map((r: fhir.Resource) => ({ resource: r }))
     };
 
     // Evaluate pathway criteria
@@ -195,7 +193,7 @@ const PathwayVisualizer: FC = () => {
         setCriteria(criteriaResult)
       );
     }
-  }, [evaluatedPathway, resources]);
+  }, [evaluatedPathway, patientRecords]);
 
   return (
     <table>
@@ -212,21 +210,22 @@ const PathwayVisualizer: FC = () => {
 };
 
 const McodeVisualizer: FC = () => {
-  const mcode = usePatientRecords().mcodeRecords;
-  console.log(mcode);
+  const { mcodeRecords } = usePatientRecords();
   type mcodeKey = keyof McodeElements & string;
   const keysArray: mcodeKey[] = [];
-  for (const key in mcode) {
+  for (const key in mcodeRecords) {
     keysArray.push(key as mcodeKey);
   }
   return (
     <table>
       <tbody>
         {keysArray.map(key => {
+          const result = key.replace(/([A-Z]+)*([A-Z][a-z])/g, '$1 $2');
+          const name = result.charAt(0).toUpperCase() + result.slice(1);
           return (
             <tr key={key}>
-              <td>{key}</td>
-              <td>{mcode[key] ? mcode[key] : '-'}</td>
+              <td>{name}</td>
+              <td>{mcodeRecords[key] ? mcodeRecords[key] : '-'}</td>
             </tr>
           );
         })}
