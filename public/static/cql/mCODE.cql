@@ -12,35 +12,34 @@ code "Primary cancer code": '64572001' from "SNOMEDCT" display 'Disease (disorde
 code "TNM clinical primary tumor code": '21905-5' from "LOINC" display 'Primary tumor.clinical [Class] Cancer'
 code "TNM clinical regional nodes code": '21906-3' from "LOINC" display 'Regional lymph nodes.clinical [Class] Cancer'
 code "TNM clinical distant metastases code": '21907-1' from "LOINC" display 'Distant metastases.clinical [Class] Cancer'
-code "Tumor marker test code": 'laboratory' from "OBSCAT"
 code "Estrogen receptor code": '85337-4' from "LOINC" display 'Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain'
 code "Progesterone receptor code": '85339-0' from "LOINC" display 'Progesterone receptor Ag [Presence] in Breast cancer specimen by Immune stain'
 code "HER2 receptor code": '85319-2' from "LOINC" display 'HER2 [Presence] in Breast cancer specimen by Immune stain'
 
 // selected cancer codes used within Synthea
 // not the entire list supported by PrimaryCancerConditionVS
-code "11p partial monosomy syndrome 4135001 code": '4135001' from SNOMEDCT display '11p partial monosomy syndrome'
-code "Orbital lymphoma 13048006 code": '13048006' from SNOMEDCT display 'Orbital lymphoma'
-code "Delta heavy chain disease 20224008 code": '20224008' from SNOMEDCT display 'Delta heavy chain disease'
-code "Malignant neoplasm of breast 254837009 code": '254837009' from SNOMEDCT display 'Malignant neoplasm of breast'
-code "Primary malignant neoplasm of colon 93761005 code": '93761005' from SNOMEDCT display 'Primary malignant neoplasm of colon'
-code "Secondary malignant neoplasm of colon 94260004 code": '94260004' from SNOMEDCT display 'Secondary malignant neoplasm of colon'
-code "Carcinoma in situ of prostate (disorder) 92691004 code": '92691004' from SNOMEDCT display 'Carcinoma in situ of prostate (disorder)'
-code "Small cell carcinoma of lung (disorder) 254632001 code": '254632001' from SNOMEDCT display 'Small cell carcinoma of lung (disorder)'
-code "Non-small cell lung cancer (disorder) 254637007 code": '254637007' from SNOMEDCT display 'Non-small cell lung cancer (disorder)'
+code "11p partial monosomy syndrome code": '4135001' from SNOMEDCT display '11p partial monosomy syndrome'
+code "Orbital lymphoma code": '13048006' from SNOMEDCT display 'Orbital lymphoma'
+code "Delta heavy chain disease code": '20224008' from SNOMEDCT display 'Delta heavy chain disease'
+code "Malignant neoplasm of breast code": '254837009' from SNOMEDCT display 'Malignant neoplasm of breast'
+code "Primary malignant neoplasm of colon code": '93761005' from SNOMEDCT display 'Primary malignant neoplasm of colon'
+code "Secondary malignant neoplasm of colon code": '94260004' from SNOMEDCT display 'Secondary malignant neoplasm of colon'
+code "Carcinoma in situ of prostate (disorder) code": '92691004' from SNOMEDCT display 'Carcinoma in situ of prostate (disorder)'
+code "Small cell carcinoma of lung (disorder) code": '254632001' from SNOMEDCT display 'Small cell carcinoma of lung (disorder)'
+code "Non-small cell lung cancer (disorder) code": '254637007' from SNOMEDCT display 'Non-small cell lung cancer (disorder)'
 
 // Category code as concepts
 concept "Primary cancer": { "Primary cancer code" }
 concept "PrimaryCancersVS": {
-    "11p partial monosomy syndrome 4135001 code",
-    "Orbital lymphoma 13048006 code",
-    "Delta heavy chain disease 20224008 code",
-    "Malignant neoplasm of breast 254837009 code",
-    "Primary malignant neoplasm of colon 93761005 code",
-    "Secondary malignant neoplasm of colon 94260004 code",
-    "Carcinoma in situ of prostate (disorder) 92691004 code",
-    "Small cell carcinoma of lung (disorder) 254632001 code",
-    "Non-small cell lung cancer (disorder) 254637007 code":
+    "11p partial monosomy syndrome code",
+    "Orbital lymphoma code",
+    "Delta heavy chain disease code",
+    "Malignant neoplasm of breast code",
+    "Primary malignant neoplasm of colon code",
+    "Secondary malignant neoplasm of colon code",
+    "Carcinoma in situ of prostate (disorder) code",
+    "Small cell carcinoma of lung (disorder) code",
+    "Non-small cell lung cancer (disorder) code":
 }
 
 context Patient
