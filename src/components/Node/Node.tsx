@@ -91,7 +91,8 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         : null;
       let status = null;
       if ('action' in pathwayState) {
-        status = isAccepted;
+        if (isOnPatientPath) status = isAccepted;
+        else status = isGuidance && documentation ? true : null;
       } else if (!isCurrentNode && documentation) {
         status = true;
       }
