@@ -13,7 +13,7 @@ import config from 'utils/ConfigManager';
 import PathwaysList from './PathwaysList';
 import { PathwayProvider } from './PathwayProvider';
 import ThemeProvider from './ThemeProvider';
-import { EvaluatedPathway, ElmResults } from 'pathways-model';
+import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
@@ -57,10 +57,7 @@ const App: FC<AppProps> = ({ demoId }) => {
     getFixture('mCODE.cql')
       .then(cql => convertBasicCQL(cql))
       .then(elm => {
-        let elmResults: ElmResults = {
-          patientResults: {}
-        };
-        elmResults = executeElm(bundle, elm);
+        let elmResults = executeElm(bundle, elm);
         const patientIds = Object.keys(elmResults.patientResults);
         const mcodeData = elmResults.patientResults[patientIds[0]];
 
