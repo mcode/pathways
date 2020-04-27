@@ -5,7 +5,6 @@ using FHIR version '4.0.0'
 // CODESYSTEMS
 codesystem "SNOMEDCT": 'http://snomed.info/sct'
 codesystem "LOINC": 'http://loinc.org'
-codesystem "OBSCAT": 'http://terminology.hl7.org/CodeSystem/observation-category'
 
 // FHIR CODES
 code "Primary cancer code": '64572001' from "SNOMEDCT" display 'Disease (disorder)'
