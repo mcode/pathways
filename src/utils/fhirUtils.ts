@@ -214,11 +214,10 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
 }
 
 export function getTNM(mcodeElements: McodeElements): string {
-  let tnm = '';
-  tnm += mcodeElements.tumorCategory?.split(' ')[0] ?? '';
-  tnm += ' ';
-  tnm += mcodeElements.nodeCategory?.split(' ')[0] ?? '';
-  tnm += ' ';
-  tnm += mcodeElements.metastasesCategory?.split(' ')[0] ?? '';
-  return tnm;
+  const tnm = [
+    mcodeElements.tumorCategory?.split(' ')[0],
+    mcodeElements.nodeCategory?.split(' ')[0],
+    mcodeElements.metastasesCategory?.split(' ')[0]
+  ].join(' ');
+  return tnm === '   ' ? 'Unknown' : tnm;
 }
