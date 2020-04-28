@@ -1,0 +1,1107 @@
+{
+    "library": {
+      "annotation": [
+        {
+          "startLine": 41,
+          "startChar": 48,
+          "endLine": 41,
+          "endChar": 48,
+          "message": "Syntax error at :",
+          "errorType": "syntax",
+          "errorSeverity": "error",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 70,
+          "startChar": 5,
+          "endLine": 70,
+          "endChar": 43,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 74,
+          "startChar": 5,
+          "endLine": 74,
+          "endChar": 52,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 77,
+          "startChar": 5,
+          "endLine": 77,
+          "endChar": 53,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 80,
+          "startChar": 5,
+          "endLine": 80,
+          "endChar": 57,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 83,
+          "startChar": 5,
+          "endLine": 83,
+          "endChar": 43,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 86,
+          "startChar": 5,
+          "endLine": 86,
+          "endChar": 47,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        },
+        {
+          "startLine": 89,
+          "startChar": 5,
+          "endLine": 89,
+          "endChar": 39,
+          "message": "Could not resolve membership operator for terminology target of the retrieve.",
+          "errorType": "semantic",
+          "errorSeverity": "warning",
+          "type": "CqlToElmError"
+        }
+      ],
+      "identifier": {
+        "id": "mCODE",
+        "version": "1"
+      },
+      "schemaIdentifier": {
+        "id": "urn:hl7-org:elm",
+        "version": "r1"
+      },
+      "usings": {
+        "def": [
+          {
+            "localIdentifier": "System",
+            "uri": "urn:hl7-org:elm-types:r1"
+          },
+          {
+            "localIdentifier": "FHIR",
+            "uri": "http://hl7.org/fhir",
+            "version": "4.0.0"
+          }
+        ]
+      },
+      "codeSystems": {
+        "def": [
+          {
+            "name": "SNOMEDCT",
+            "id": "http://snomed.info/sct",
+            "accessLevel": "Public"
+          },
+          {
+            "name": "LOINC",
+            "id": "http://loinc.org",
+            "accessLevel": "Public"
+          }
+        ]
+      },
+      "codes": {
+        "def": [
+          {
+            "name": "Primary cancer code",
+            "id": "64572001",
+            "display": "Disease (disorder)",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "TNM clinical primary tumor code",
+            "id": "21905-5",
+            "display": "Primary tumor.clinical [Class] Cancer",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "TNM clinical regional nodes code",
+            "id": "21906-3",
+            "display": "Regional lymph nodes.clinical [Class] Cancer",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "TNM clinical distant metastases code",
+            "id": "21907-1",
+            "display": "Distant metastases.clinical [Class] Cancer",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "Estrogen receptor code",
+            "id": "85337-4",
+            "display": "Estrogen receptor Ag [Presence] in Breast cancer specimen by Immune stain",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "Progesterone receptor code",
+            "id": "85339-0",
+            "display": "Progesterone receptor Ag [Presence] in Breast cancer specimen by Immune stain",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "HER2 receptor code",
+            "id": "85319-2",
+            "display": "HER2 [Presence] in Breast cancer specimen by Immune stain",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "LOINC"
+            }
+          },
+          {
+            "name": "11p partial monosomy syndrome code",
+            "id": "4135001",
+            "display": "11p partial monosomy syndrome",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Orbital lymphoma code",
+            "id": "13048006",
+            "display": "Orbital lymphoma",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Delta heavy chain disease code",
+            "id": "20224008",
+            "display": "Delta heavy chain disease",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Malignant neoplasm of breast code",
+            "id": "254837009",
+            "display": "Malignant neoplasm of breast",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Primary malignant neoplasm of colon code",
+            "id": "93761005",
+            "display": "Primary malignant neoplasm of colon",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Secondary malignant neoplasm of colon code",
+            "id": "94260004",
+            "display": "Secondary malignant neoplasm of colon",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Carcinoma in situ of prostate (disorder) code",
+            "id": "92691004",
+            "display": "Carcinoma in situ of prostate (disorder)",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Small cell carcinoma of lung (disorder) code",
+            "id": "254632001",
+            "display": "Small cell carcinoma of lung (disorder)",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          },
+          {
+            "name": "Non-small cell lung cancer (disorder) code",
+            "id": "254637007",
+            "display": "Non-small cell lung cancer (disorder)",
+            "accessLevel": "Public",
+            "codeSystem": {
+              "name": "SNOMEDCT"
+            }
+          }
+        ]
+      },
+      "concepts": {
+        "def": [
+          {
+            "name": "Primary cancer",
+            "accessLevel": "Public",
+            "code": [
+              {
+                "name": "Primary cancer code"
+              }
+            ]
+          },
+          {
+            "name": "PrimaryCancersVS",
+            "accessLevel": "Public",
+            "code": [
+              {
+                "name": "11p partial monosomy syndrome code"
+              },
+              {
+                "name": "Orbital lymphoma code"
+              },
+              {
+                "name": "Delta heavy chain disease code"
+              },
+              {
+                "name": "Malignant neoplasm of breast code"
+              },
+              {
+                "name": "Primary malignant neoplasm of colon code"
+              },
+              {
+                "name": "Secondary malignant neoplasm of colon code"
+              },
+              {
+                "name": "Carcinoma in situ of prostate (disorder) code"
+              },
+              {
+                "name": "Small cell carcinoma of lung (disorder) code"
+              },
+              {
+                "name": "Non-small cell lung cancer (disorder) code"
+              }
+            ]
+          }
+        ]
+      },
+      "statements": {
+        "def": [
+          {
+            "name": "Patient",
+            "context": "Patient",
+            "expression": {
+              "type": "SingletonFrom",
+              "operand": {
+                "dataType": "{http://hl7.org/fhir}Patient",
+                "type": "Retrieve"
+              }
+            }
+          },
+          {
+            "name": "ToCode",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "type": "FunctionDef",
+            "expression": {
+              "type": "If",
+              "condition": {
+                "asType": "{urn:hl7-org:elm-types:r1}Boolean",
+                "type": "As",
+                "operand": {
+                  "type": "IsNull",
+                  "operand": {
+                    "name": "coding",
+                    "type": "OperandRef"
+                  }
+                }
+              },
+              "then": {
+                "asType": "{urn:hl7-org:elm-types:r1}Code",
+                "type": "As",
+                "operand": {
+                  "type": "Null"
+                }
+              },
+              "else": {
+                "classType": "{urn:hl7-org:elm-types:r1}Code",
+                "type": "Instance",
+                "element": [
+                  {
+                    "name": "code",
+                    "value": {
+                      "path": "value",
+                      "type": "Property",
+                      "source": {
+                        "path": "code",
+                        "type": "Property",
+                        "source": {
+                          "name": "coding",
+                          "type": "OperandRef"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "system",
+                    "value": {
+                      "path": "value",
+                      "type": "Property",
+                      "source": {
+                        "path": "system",
+                        "type": "Property",
+                        "source": {
+                          "name": "coding",
+                          "type": "OperandRef"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "version",
+                    "value": {
+                      "path": "value",
+                      "type": "Property",
+                      "source": {
+                        "path": "version",
+                        "type": "Property",
+                        "source": {
+                          "name": "coding",
+                          "type": "OperandRef"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "display",
+                    "value": {
+                      "path": "value",
+                      "type": "Property",
+                      "source": {
+                        "path": "display",
+                        "type": "Property",
+                        "source": {
+                          "name": "coding",
+                          "type": "OperandRef"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "operand": [
+              {
+                "name": "coding",
+                "operandTypeSpecifier": {
+                  "name": "{http://hl7.org/fhir}Coding",
+                  "type": "NamedTypeSpecifier"
+                }
+              }
+            ]
+          },
+          {
+            "name": "ToConcept",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "type": "FunctionDef",
+            "expression": {
+              "type": "If",
+              "condition": {
+                "asType": "{urn:hl7-org:elm-types:r1}Boolean",
+                "type": "As",
+                "operand": {
+                  "type": "IsNull",
+                  "operand": {
+                    "name": "concept",
+                    "type": "OperandRef"
+                  }
+                }
+              },
+              "then": {
+                "asType": "{urn:hl7-org:elm-types:r1}Concept",
+                "type": "As",
+                "operand": {
+                  "type": "Null"
+                }
+              },
+              "else": {
+                "classType": "{urn:hl7-org:elm-types:r1}Concept",
+                "type": "Instance",
+                "element": [
+                  {
+                    "name": "codes",
+                    "value": {
+                      "type": "Query",
+                      "source": [
+                        {
+                          "alias": "C",
+                          "expression": {
+                            "path": "coding",
+                            "type": "Property",
+                            "source": {
+                              "name": "concept",
+                              "type": "OperandRef"
+                            }
+                          }
+                        }
+                      ],
+                      "relationship": [],
+                      "return": {
+                        "expression": {
+                          "name": "ToCode",
+                          "type": "FunctionRef",
+                          "operand": [
+                            {
+                              "name": "C",
+                              "type": "AliasRef"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "name": "display",
+                    "value": {
+                      "path": "value",
+                      "type": "Property",
+                      "source": {
+                        "path": "text",
+                        "type": "Property",
+                        "source": {
+                          "name": "concept",
+                          "type": "OperandRef"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "operand": [
+              {
+                "name": "concept",
+                "operandTypeSpecifier": {
+                  "name": "{http://hl7.org/fhir}CodeableConcept",
+                  "type": "NamedTypeSpecifier"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Primary Cancer Condition",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Cancer",
+                  "expression": {
+                    "dataType": "{http://hl7.org/fhir}Condition",
+                    "codeProperty": "code",
+                    "type": "Retrieve",
+                    "codes": {
+                      "type": "ToList",
+                      "operand": {
+                        "name": "PrimaryCancersVS",
+                        "type": "ConceptRef"
+                      }
+                    }
+                  }
+                }
+              ],
+              "relationship": [],
+              "where": {
+                "type": "Equivalent",
+                "operand": [
+                  {
+                    "name": "ToConcept",
+                    "type": "FunctionRef",
+                    "operand": [
+                      {
+                        "strict": false,
+                        "type": "As",
+                        "operand": {
+                          "type": "Indexer",
+                          "operand": [
+                            {
+                              "path": "category",
+                              "scope": "Cancer",
+                              "type": "Property"
+                            },
+                            {
+                              "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                              "value": "0",
+                              "type": "Literal"
+                            }
+                          ]
+                        },
+                        "asTypeSpecifier": {
+                          "name": "{http://hl7.org/fhir}CodeableConcept",
+                          "type": "NamedTypeSpecifier"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Primary cancer",
+                    "type": "ConceptRef"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Primary Tumor",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "TNM clinical primary tumor code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Regional Nodes",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "TNM clinical regional nodes code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Distant Metastases",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "TNM clinical distant metastases code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "Estrogen Receptor Tumor Marker Test",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "Estrogen receptor code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "Progesterone Receptor Tumor Marker Test",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "Progesterone receptor code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "HER2 Receptor Tumor Marker Test",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "dataType": "{http://hl7.org/fhir}Observation",
+              "codeProperty": "code",
+              "type": "Retrieve",
+              "codes": {
+                "type": "ToList",
+                "operand": {
+                  "name": "HER2 receptor code",
+                  "type": "CodeRef"
+                }
+              }
+            }
+          },
+          {
+            "name": "Primary Cancer Condition Value",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Cancer",
+                  "expression": {
+                    "name": "Primary Cancer Condition",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "type": "Indexer",
+                            "operand": [
+                              {
+                                "type": "ToList",
+                                "operand": {
+                                  "path": "code",
+                                  "scope": "Cancer",
+                                  "type": "Property"
+                                }
+                              },
+                              {
+                                "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                                "value": "0",
+                                "type": "Literal"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Primary Cancer Condition Body Location Value",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Cancer",
+                  "expression": {
+                    "name": "Primary Cancer Condition",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "type": "Flatten",
+                          "operand": {
+                            "type": "Query",
+                            "source": [
+                              {
+                                "alias": "$this",
+                                "expression": {
+                                  "path": "bodySite",
+                                  "scope": "Cancer",
+                                  "type": "Property"
+                                }
+                              }
+                            ],
+                            "where": {
+                              "type": "Not",
+                              "operand": {
+                                "type": "IsNull",
+                                "operand": {
+                                  "path": "coding",
+                                  "type": "Property",
+                                  "source": {
+                                    "name": "$this",
+                                    "type": "AliasRef"
+                                  }
+                                }
+                              }
+                            },
+                            "return": {
+                              "expression": {
+                                "path": "coding",
+                                "type": "Property",
+                                "source": {
+                                  "name": "$this",
+                                  "type": "AliasRef"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Primary Tumor Category Data Value (T Category)",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Disease",
+                  "expression": {
+                    "name": "TNM Clinical Primary Tumor",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Disease",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Regional Nodes Category Data Value (N Category)",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Disease",
+                  "expression": {
+                    "name": "TNM Clinical Regional Nodes",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Disease",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "TNM Clinical Distant Metastases Category Data Value (M Category)",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Disease",
+                  "expression": {
+                    "name": "TNM Clinical Distant Metastases",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Disease",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Estrogen Receptor Value",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Test",
+                  "expression": {
+                    "name": "Estrogen Receptor Tumor Marker Test",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Test",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Progesterone Receptor Value",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Test",
+                  "expression": {
+                    "name": "Progesterone Receptor Tumor Marker Test",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Test",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "HER2 Receptor Value",
+            "context": "Patient",
+            "accessLevel": "Public",
+            "expression": {
+              "type": "Query",
+              "source": [
+                {
+                  "alias": "Test",
+                  "expression": {
+                    "name": "HER2 Receptor Tumor Marker Test",
+                    "type": "ExpressionRef"
+                  }
+                }
+              ],
+              "relationship": [],
+              "return": {
+                "expression": {
+                  "path": "value",
+                  "type": "Property",
+                  "source": {
+                    "path": "display",
+                    "type": "Property",
+                    "source": {
+                      "type": "Indexer",
+                      "operand": [
+                        {
+                          "path": "coding",
+                          "type": "Property",
+                          "source": {
+                            "path": "value",
+                            "scope": "Test",
+                            "type": "Property"
+                          }
+                        },
+                        {
+                          "valueType": "{urn:hl7-org:elm-types:r1}Integer",
+                          "value": "0",
+                          "type": "Literal"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
