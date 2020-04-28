@@ -60,8 +60,8 @@ const App: FC<AppProps> = ({ demoId }) => {
       const mcodeData = elmResults.patientResults[patientIds[0]];
 
       const mcodeElements: McodeElements = {
-        'Primary Cancer': mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
-        Laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
+        'Primary Cancer': mcodeData['Primary Cancer Condition Value'][0] ?? undefined,
+        Laterality: mcodeData['Primary Cancer Condition Body Location Value'][0] ?? undefined,
         'Tumor Category':
           mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ?? undefined,
         'Node Category':

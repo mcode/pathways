@@ -89,34 +89,34 @@ define "HER2 Receptor Tumor Marker Test":
     [Observation: "HER2 receptor code"]
 
 // mCODE Data Element Definitions
-define "Primary Cancer Condition Body Location Code":
+define "Primary Cancer Condition Value":
     "Primary Cancer Condition" Cancer
-    return Cancer.bodySite
-
-define "Primary Cancer Condition Code":
+    return Cancer.code[0].coding[0].display.value
+    
+define "Primary Cancer Condition Body Location Value":
     "Primary Cancer Condition" Cancer
-    return Cancer.code.text.value
+    return Cancer.bodySite.coding[0].display.value
 
 define "TNM Clinical Primary Tumor Category Data Value (T Category)":
     "TNM Clinical Primary Tumor" Disease
-    return Disease.value.text.value
+    return Disease.value.coding[0].display.value
 
 define "TNM Clinical Regional Nodes Category Data Value (N Category)":
     "TNM Clinical Regional Nodes" Disease
-    return Disease.value.text.value
+    return Disease.value.coding[0].display.value
 
 define "TNM Clinical Distant Metastases Category Data Value (M Category)":
     "TNM Clinical Distant Metastases" Disease
-    return Disease.value.text.value
+    return Disease.value.coding[0].display.value
 
 define "Estrogen Receptor Value":
     "Estrogen Receptor Tumor Marker Test" Test
-    return Test.value.text.value
+    return Test.value.coding[0].display.value
 
 define "Progesterone Receptor Value":
     "Progesterone Receptor Tumor Marker Test" Test
-    return Test.value.text.value
+    return Test.value.coding[0].display.value
 
 define "HER2 Receptor Value":
     "HER2 Receptor Tumor Marker Test" Test
-    return Test.value.text.value
+    return Test.value.coding[0].display.value
