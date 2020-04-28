@@ -21,6 +21,9 @@ import { getHumanName } from 'utils/fhirUtils';
 import { DomainResource, Practitioner } from 'fhir-objects';
 import styles from './App.module.scss';
 import { UserProvider } from './UserProvider';
+import { McodeElements } from 'mcode';
+import { getFixture } from 'engine/cql-extractor';
+import executeElm from 'engine/elm-executor';
 interface AppProps {
   demoId?: string;
 }
@@ -28,6 +31,7 @@ interface AppProps {
 const App: FC<AppProps> = ({ demoId }) => {
   const [patient, setPatient] = useState<fhir.Patient | null>(null);
   const [patientRecords, _setPatientRecords] = useState<DomainResource[]>([]);
+  const [mcodeRecords, _setMcodeRecords] = useState<McodeElements>({});
   const [currentPathway, setCurrentPathway] = useState<EvaluatedPathway | null>(null);
   const [selectPathway, setSelectPathway] = useState<boolean>(true);
   const [evaluatePath, setEvaluatePath] = useState<boolean>(false);
@@ -42,14 +46,54 @@ const App: FC<AppProps> = ({ demoId }) => {
     setEvaluatePath(true);
   }, []);
 
+  const setMcodeRecords = useCallback((resources: DomainResource[]): void => {
+    // Create a Bundle for the CQL engine
+    const bundle = {
+      resourceType: 'Bundle',
+      type: 'searchset',
+      entry: resources.map((r: DomainResource) => ({ resource: r }))
+    };
+    getFixture('elm/mCODE.elm.json').then(elmString => {
+      const elm = JSON.parse(elmString);
+      const elmResults = executeElm(bundle, elm);
+      const patientIds = Object.keys(elmResults.patientResults);
+      const mcodeData = elmResults.patientResults[patientIds[0]];
+      const mcodeElements: McodeElements = {
+        'Primary Cancer': mcodeData['Primary Cancer Condition Value'][0] ?? undefined,
+        Laterality: mcodeData['Primary Cancer Condition Body Location Value'][0] ?? undefined,
+        'Tumor Category':
+          mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ?? undefined,
+        'Node Category':
+          mcodeData['TNM Clinical Regional Nodes Category Data Value (N Category)'][0] ?? undefined,
+        'Metastases Category':
+          mcodeData['TNM Clinical Distant Metastases Category Data Value (M Category)'][0] ??
+          undefined,
+        'Estrogen Receptor': mcodeData['Estrogen Receptor Value'][0] ?? undefined,
+        'Progesterone Receptor': mcodeData['Progesterone Receptor Value'][0] ?? undefined,
+        'HER2 Receptor': mcodeData['HER2 Receptor Value'][0] ?? undefined
+      };
+
+      _setMcodeRecords(mcodeElements);
+    });
+  }, []);
+
   const providerProps = useMemo(
     () => ({
       patientRecords,
       setPatientRecords,
       evaluatePath,
-      setEvaluatePath
+      setEvaluatePath,
+      mcodeRecords,
+      setMcodeRecords
     }),
-    [patientRecords, setPatientRecords, evaluatePath, setEvaluatePath]
+    [
+      patientRecords,
+      setPatientRecords,
+      evaluatePath,
+      setEvaluatePath,
+      mcodeRecords,
+      setMcodeRecords
+    ]
   );
 
   useEffect(() => {
@@ -72,6 +116,7 @@ const App: FC<AppProps> = ({ demoId }) => {
             });
 
             setPatientRecords(records);
+            setMcodeRecords(records);
           });
           client.patient?.read?.().then((resultPatient: fhir.Patient) => setPatient(resultPatient));
           setClient(client);
@@ -84,10 +129,11 @@ const App: FC<AppProps> = ({ demoId }) => {
         .then(result => {
           const resultPatient = result.find((r: DomainResource) => r.resourceType === 'Patient');
           setPatientRecords(result);
+          setMcodeRecords(result);
           setPatient(resultPatient);
         });
     }
-  }, [demoId, setPatientRecords]);
+  }, [demoId, setPatientRecords, setMcodeRecords]);
 
   // gather note info
   useEffect(() => {

@@ -58,15 +58,15 @@ interface PathwaysListProps {
 }
 
 const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
-  const resources = usePatientRecords().patientRecords;
+  const { patientRecords } = usePatientRecords();
   const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
 
-  if (!criteria && evaluatedPathways.length > 0 && resources && resources.length > 0) {
+  if (!criteria && evaluatedPathways.length > 0 && patientRecords && patientRecords.length > 0) {
     // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
     const patient = {
       resourceType: 'Bundle',
       type: 'searchset',
-      entry: resources.map((r: fhir.Resource) => ({ resource: r }))
+      entry: patientRecords.map((r: fhir.Resource) => ({ resource: r }))
     };
 
     // Evaluate pathway criteria for each pathway
@@ -107,7 +107,7 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
 
   const getSelectedPathways = (): string[] => {
     // Get all active CarePlan resource titles
-    const carePlanTitles = (resources.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
       .filter(r => r.status === 'active')
       .map(r => r.title);
 

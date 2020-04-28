@@ -9,7 +9,7 @@ interface PathwayProviderProps {
 
 const pathway: Pathway = {
   name: 'Test Pathway',
-  library: 'mCODE.cql',
+  library: 'mCODE_Library.cql',
   criteria: [
     {
       elementName: 'condition',

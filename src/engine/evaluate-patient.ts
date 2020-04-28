@@ -85,9 +85,7 @@ function processELMCommon(patientRecord: Bundle, elm: object): Promise<PatientDa
   // this is not inherently async,
   // but we wrap it in a promise to make the code cleaner elsewhere
   return new Promise((resolve, reject) => {
-    let elmResults: ElmResults = {
-      patientResults: {}
-    };
+    let elmResults: ElmResults;
     if (instanceOfElmObject(elm)) {
       elmResults = executeElm(patientRecord, elm.main, elm.libraries);
     } else {

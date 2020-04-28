@@ -4,6 +4,8 @@ import ReportSection, { PhysicianNotesSection } from './ReportSection';
 import styles from './ReportModal.module.scss';
 import { faUser, faNotesMedical, faRoute, faStickyNote } from '@fortawesome/free-solid-svg-icons';
 import ActionButton from 'components/ActionButton';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
+import { getTNM } from 'utils/fhirUtils';
 
 interface ReportModalInterface {
   onConfirm: () => void;
@@ -12,6 +14,7 @@ interface ReportModalInterface {
 
 const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   const { note } = useNote();
+  const { mcodeRecords } = usePatientRecords();
   const reportName = 'Pathway Report';
   const patientSection = [
     { name: 'Date', value: note?.date },
@@ -21,12 +24,12 @@ const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   ];
 
   const observationField = [
-    { name: 'Primary Cancer', value: undefined },
-    { name: 'Laterality', value: undefined },
-    { name: 'Clinical TNM', value: undefined },
-    { name: 'Estrogen Receptor', value: undefined },
-    { name: 'Progesterone Receptor', value: undefined },
-    { name: 'HER2 Receptor', value: undefined }
+    { name: 'Primary Cancer', value: mcodeRecords['Primary Cancer'] ?? 'Unknown' },
+    { name: 'Laterality', value: mcodeRecords.Laterality ?? 'Unknown' },
+    { name: 'Clinical TNM', value: getTNM(mcodeRecords) },
+    { name: 'Estrogen Receptor', value: mcodeRecords['Estrogen Receptor'] ?? 'Unknown' },
+    { name: 'Progesterone Receptor', value: mcodeRecords['Progesterone Receptor'] ?? 'Unknown' },
+    { name: 'HER2 Receptor', value: mcodeRecords['HER2 Receptor'] ?? 'Unknown' }
   ];
 
   const pathwaySection = [
