@@ -62,20 +62,20 @@ const App: FC<AppProps> = ({ demoId }) => {
         const mcodeData = elmResults.patientResults[patientIds[0]];
 
         const mcodeElements: McodeElements = {
-          primaryCancer: mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
-          laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
-          tumorCategory:
+          'Primary Cancer': mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
+          Laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
+          'Tumor Category':
             mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ??
             undefined,
-          nodeCategory:
+          'Node Category':
             mcodeData['TNM Clinical Regional Nodes Category Data Value (N Category)'][0] ??
             undefined,
-          metastasesCategory:
+          'Metastases Category':
             mcodeData['TNM Clinical Distant Metastases Category Data Value (M Category)'][0] ??
             undefined,
-          estrogenReceptor: mcodeData['Estrogen Receptor Value'][0] ?? undefined,
-          progesteroneReceptor: mcodeData['Progesterone Receptor Value'][0] ?? undefined,
-          her2Receptor: mcodeData['HER2 Receptor Value'][0] ?? undefined
+          'Estrogen Receptor': mcodeData['Estrogen Receptor Value'][0] ?? undefined,
+          'Progesterone Receptor': mcodeData['Progesterone Receptor Value'][0] ?? undefined,
+          'HER2 Receptor': mcodeData['HER2 Receptor Value'][0] ?? undefined
         };
 
         _setMcodeRecords(mcodeElements);

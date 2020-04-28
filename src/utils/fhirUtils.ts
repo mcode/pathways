@@ -215,9 +215,9 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
 
 export function getTNM(mcodeElements: McodeElements): string {
   const tnm = [
-    mcodeElements.tumorCategory?.split(' ')[0],
-    mcodeElements.nodeCategory?.split(' ')[0],
-    mcodeElements.metastasesCategory?.split(' ')[0]
+    mcodeElements['Tumor Category']?.split(' ')[0],
+    mcodeElements['Node Category']?.split(' ')[0],
+    mcodeElements['Metastases Category']?.split(' ')[0]
   ].join(' ');
   return tnm === '   ' ? 'Unknown' : tnm;
 }
