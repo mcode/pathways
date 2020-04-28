@@ -23,7 +23,6 @@ import styles from './App.module.scss';
 import { UserProvider } from './UserProvider';
 import { McodeElements } from 'mcode';
 import { getFixture } from 'engine/cql-extractor';
-import { convertBasicCQL } from 'engine/cql-to-elm';
 import executeElm from 'engine/elm-executor';
 interface AppProps {
   demoId?: string;
@@ -54,32 +53,29 @@ const App: FC<AppProps> = ({ demoId }) => {
       type: 'searchset',
       entry: resources.map((r: DomainResource) => ({ resource: r }))
     };
-    getFixture('mCODE.cql')
-      .then(cql => convertBasicCQL(cql))
-      .then(elm => {
-        const elmResults = executeElm(bundle, elm);
-        const patientIds = Object.keys(elmResults.patientResults);
-        const mcodeData = elmResults.patientResults[patientIds[0]];
+    getFixture('elm/mCODE.elm.json').then(elmString => {
+      const elm = JSON.parse(elmString);
+      const elmResults = executeElm(bundle, elm);
+      const patientIds = Object.keys(elmResults.patientResults);
+      const mcodeData = elmResults.patientResults[patientIds[0]];
 
-        const mcodeElements: McodeElements = {
-          'Primary Cancer': mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
-          Laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
-          'Tumor Category':
-            mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ??
-            undefined,
-          'Node Category':
-            mcodeData['TNM Clinical Regional Nodes Category Data Value (N Category)'][0] ??
-            undefined,
-          'Metastases Category':
-            mcodeData['TNM Clinical Distant Metastases Category Data Value (M Category)'][0] ??
-            undefined,
-          'Estrogen Receptor': mcodeData['Estrogen Receptor Value'][0] ?? undefined,
-          'Progesterone Receptor': mcodeData['Progesterone Receptor Value'][0] ?? undefined,
-          'HER2 Receptor': mcodeData['HER2 Receptor Value'][0] ?? undefined
-        };
+      const mcodeElements: McodeElements = {
+        'Primary Cancer': mcodeData['Primary Cancer Condition Code'][0] ?? undefined,
+        Laterality: mcodeData['Primary Cancer Condition Body Location Code'][0] ?? undefined,
+        'Tumor Category':
+          mcodeData['TNM Clinical Primary Tumor Category Data Value (T Category)'][0] ?? undefined,
+        'Node Category':
+          mcodeData['TNM Clinical Regional Nodes Category Data Value (N Category)'][0] ?? undefined,
+        'Metastases Category':
+          mcodeData['TNM Clinical Distant Metastases Category Data Value (M Category)'][0] ??
+          undefined,
+        'Estrogen Receptor': mcodeData['Estrogen Receptor Value'][0] ?? undefined,
+        'Progesterone Receptor': mcodeData['Progesterone Receptor Value'][0] ?? undefined,
+        'HER2 Receptor': mcodeData['HER2 Receptor Value'][0] ?? undefined
+      };
 
-        _setMcodeRecords(mcodeElements);
-      });
+      _setMcodeRecords(mcodeElements);
+    });
   }, []);
 
   const providerProps = useMemo(
