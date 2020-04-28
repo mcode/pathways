@@ -220,11 +220,9 @@ const McodeVisualizer: FC = () => {
     <table>
       <tbody>
         {keysArray.map(key => {
-          const result = key.replace(/([A-Z]+)*([A-Z][a-z])/g, '$1 $2');
-          const name = result.charAt(0).toUpperCase() + result.slice(1);
           return (
             <tr key={key}>
-              <td>{name}</td>
+              <td>{key}</td>
               <td>{mcodeRecords[key] ? mcodeRecords[key] : '-'}</td>
             </tr>
           );
