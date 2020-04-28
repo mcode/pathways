@@ -58,7 +58,6 @@ const App: FC<AppProps> = ({ demoId }) => {
       const elmResults = executeElm(bundle, elm);
       const patientIds = Object.keys(elmResults.patientResults);
       const mcodeData = elmResults.patientResults[patientIds[0]];
-
       const mcodeElements: McodeElements = {
         'Primary Cancer': mcodeData['Primary Cancer Condition Value'][0] ?? undefined,
         Laterality: mcodeData['Primary Cancer Condition Body Location Value'][0] ?? undefined,
