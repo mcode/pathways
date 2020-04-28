@@ -28,7 +28,7 @@ import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { McodeElements } from 'mcode';
 
-const resourceTypes = [
+const recordSections = [
   'Pathway',
   'Mcode',
   'Patient',
@@ -49,7 +49,7 @@ const groupResourceByType = (
   const map: Map<string, DomainResource[]> = new Map();
   patientRecord.forEach(resource => {
     const resourceType = resource.resourceType ?? '';
-    if (resourceTypes.includes(resourceType)) {
+    if (recordSections.includes(resourceType)) {
       const collection = map.get(resourceType);
       if (!collection) map.set(resourceType, [resource]);
       else collection.push(resource);
@@ -70,12 +70,12 @@ interface PatientRecordProps {
 }
 
 interface PatientRecordElementProps {
-  resourceType: string;
+  recordSection: string;
   resources: ReadonlyArray<DomainResource>;
 }
 
 interface VisualizerProps {
-  resourceType: string;
+  recordSection: string;
   resourcesByType: ReadonlyArray<DomainResource>;
 }
 
@@ -100,11 +100,11 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
     return (
       <div className={styles.record} ref={recordContainerElement}>
         <div className={styles.sidebar}>
-          {resourceTypes.map(resourceType => (
+          {recordSections.map(recordSection => (
             <PatientRecordElement
-              resourceType={resourceType}
-              resources={getResourcesByType(resourceType, groupedResources)}
-              key={resourceType}
+              recordSection={recordSection}
+              resources={getResourcesByType(recordSection, groupedResources)}
+              key={recordSection}
             />
           ))}
         </div>
@@ -125,11 +125,11 @@ const PatientRecord: FC<PatientRecordProps> = ({ headerElement }) => {
   }
 };
 
-const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, resources }) => {
+const PatientRecordElement: FC<PatientRecordElementProps> = ({ recordSection, resources }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const chevron: IconProp = isExpanded ? faChevronUp : faChevronDown;
-  const resourceCount: string = !['Patient', 'Pathway', 'Mcode'].includes(resourceType)
+  const resourceCount: string = !['Patient', 'Pathway', 'Mcode'].includes(recordSection)
     ? `(${resources.length})`
     : '';
 
@@ -137,7 +137,7 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, res
     <div className={styles.element}>
       <div className={styles.title} onClick={(): void => setIsExpanded(!isExpanded)}>
         <div>
-          {resourceType} {resourceCount}
+          {recordSection} {resourceCount}
         </div>
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
@@ -146,30 +146,32 @@ const PatientRecordElement: FC<PatientRecordElementProps> = ({ resourceType, res
 
       {isExpanded && (
         <div className={styles.visualizerContainer}>
-          <Visualizer resourceType={resourceType} resourcesByType={resources} />
+          <Visualizer recordSection={recordSection} resourcesByType={resources} />
         </div>
       )}
     </div>
   );
 };
 
-const Visualizer: FC<VisualizerProps> = ({ resourceType, resourcesByType }) => {
+const Visualizer: FC<VisualizerProps> = ({ recordSection, resourcesByType }) => {
   const patient = usePatient().patient as fhir.Patient;
 
-  if (resourceType === 'Pathway') return <PathwayVisualizer />;
-  else if (resourceType === 'Mcode') return <McodeVisualizer />;
-  else if (resourceType === 'Patient') return <PatientVisualizer patient={patient} />;
-  else if (resourceType === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'Observation') return <ObservationsVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'DiagnosticReport') return <ReportsVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'MedicationRequest')
+  if (recordSection === 'Pathway') return <PathwayVisualizer />;
+  else if (recordSection === 'Mcode') return <McodeVisualizer />;
+  else if (recordSection === 'Patient') return <PatientVisualizer patient={patient} />;
+  else if (recordSection === 'Condition') return <ConditionsVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'Observation')
+    return <ObservationsVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'DiagnosticReport')
+    return <ReportsVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'MedicationRequest')
     return <MedicationsVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'AllergyIntolerance')
+  else if (recordSection === 'AllergyIntolerance')
     return <AllergiesVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'CarePlan') return <CarePlansVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'Procedure') return <ProceduresVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'Encounter') return <EncountersVisualizer rows={resourcesByType} />;
-  else if (resourceType === 'Immunization')
+  else if (recordSection === 'CarePlan') return <CarePlansVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'Procedure') return <ProceduresVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'Encounter') return <EncountersVisualizer rows={resourcesByType} />;
+  else if (recordSection === 'Immunization')
     return <ImmunizationsVisualizer rows={resourcesByType} />;
   else return <div>Unsupported Resource</div>;
 };

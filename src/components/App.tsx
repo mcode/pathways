@@ -57,7 +57,7 @@ const App: FC<AppProps> = ({ demoId }) => {
     getFixture('mCODE.cql')
       .then(cql => convertBasicCQL(cql))
       .then(elm => {
-        let elmResults = executeElm(bundle, elm);
+        const elmResults = executeElm(bundle, elm);
         const patientIds = Object.keys(elmResults.patientResults);
         const mcodeData = elmResults.patientResults[patientIds[0]];
 
