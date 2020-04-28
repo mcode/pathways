@@ -24,12 +24,12 @@ const ReportModal: FC<ReportModalInterface> = ({ onConfirm, onDecline }) => {
   ];
 
   const observationField = [
-    { name: 'Primary Cancer', value: mcodeRecords.primaryCancer ?? 'Unknown' },
-    { name: 'Laterality', value: mcodeRecords.laterality ?? 'Unknown' },
+    { name: 'Primary Cancer', value: mcodeRecords['Primary Cancer'] ?? 'Unknown' },
+    { name: 'Laterality', value: mcodeRecords.Laterality ?? 'Unknown' },
     { name: 'Clinical TNM', value: getTNM(mcodeRecords) },
-    { name: 'Estrogen Receptor', value: mcodeRecords.estrogenReceptor ?? 'Unknown' },
-    { name: 'Progesterone Receptor', value: mcodeRecords.progesteroneReceptor ?? 'Unknown' },
-    { name: 'HER2 Receptor', value: mcodeRecords.her2Receptor ?? 'Unknown' }
+    { name: 'Estrogen Receptor', value: mcodeRecords['Estrogen Receptor'] ?? 'Unknown' },
+    { name: 'Progesterone Receptor', value: mcodeRecords['Progesterone Receptor'] ?? 'Unknown' },
+    { name: 'HER2 Receptor', value: mcodeRecords['HER2 Receptor'] ?? 'Unknown' }
   ];
 
   const pathwaySection = [
