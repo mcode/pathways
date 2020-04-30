@@ -117,6 +117,8 @@ $lineHeight: 35px;
 }
 
 .pathways_list {
+  overflow-y: auto;
+
   .header_title {
     display: flex;
     flex-direction: column;

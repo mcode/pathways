@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, ButtonHTMLAttributes } from 'react';
+import React, { FC, ReactNode, useState, ButtonHTMLAttributes, RefObject } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
@@ -55,9 +55,15 @@ interface PathwaysListProps {
   evaluatedPathways: EvaluatedPathway[];
   callback: Function;
   service: Service<Array<Pathway>>;
+  headerElement: RefObject<HTMLDivElement>;
 }
 
-const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, service }) => {
+const PathwaysList: FC<PathwaysListProps> = ({
+  evaluatedPathways,
+  callback,
+  service,
+  headerElement
+}) => {
   const { patientRecords } = usePatientRecords();
   const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
 
@@ -120,8 +126,12 @@ const PathwaysList: FC<PathwaysListProps> = ({ evaluatedPathways, callback, serv
   };
 
   const selectedPathways = getSelectedPathways();
+  const style = { height: '100%' };
+  if (headerElement?.current) {
+    style.height = window.innerHeight - headerElement.current.clientHeight + 'px';
+  }
   return (
-    <div className={styles.pathways_list}>
+    <div className={styles.pathways_list} style={style}>
       {service.status === 'loading' ? (
         <div>Loading...</div>
       ) : service.status === 'loaded' ? (
