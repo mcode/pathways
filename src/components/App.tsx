@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { FC, useState, useEffect, useCallback, useMemo, useRef, RefObject } from 'react';
 import Header from 'components/Header';
 import Navigation from 'components/Navigation';
 import { PathwaysClient } from 'pathways-client';
@@ -189,30 +189,6 @@ const App: FC<AppProps> = ({ demoId }) => {
     [currentPathway, evaluatedPathways]
   );
 
-  interface PatientViewProps {
-    evaluatedPathway: EvaluatedPathway | null;
-  }
-
-  const PatientView: FC<PatientViewProps> = ({ evaluatedPathway }) => {
-    return (
-      <div className={styles.display}>
-        <PatientRecord headerElement={headerElement} />
-
-        {evaluatedPathway ? (
-          <div ref={graphContainerElement} className={styles.graph}>
-            <Graph
-              evaluatedPathway={evaluatedPathway}
-              expandCurrentNode={true}
-              updateEvaluatedPathways={updateEvaluatedPathways}
-            />
-          </div>
-        ) : (
-          <div>No Pathway Loaded</div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
@@ -243,7 +219,12 @@ const App: FC<AppProps> = ({ demoId }) => {
                     service={service}
                   />
                 ) : (
-                  <PatientView evaluatedPathway={currentPathway} />
+                  <PatientView
+                    headerElement={headerElement}
+                    graphContainerElement={graphContainerElement}
+                    evaluatedPathway={currentPathway}
+                    updateEvaluatedPathways={updateEvaluatedPathways}
+                  />
                 )}
               </PathwayProvider>
             </PatientRecordsProvider>
@@ -251,6 +232,38 @@ const App: FC<AppProps> = ({ demoId }) => {
         </UserProvider>
       </FHIRClientProvider>
     </ThemeProvider>
+  );
+};
+
+interface PatientViewProps {
+  headerElement: RefObject<HTMLDivElement>;
+  graphContainerElement: RefObject<HTMLDivElement>;
+  evaluatedPathway: EvaluatedPathway | null;
+  updateEvaluatedPathways: (value: EvaluatedPathway) => void;
+}
+
+const PatientView: FC<PatientViewProps> = ({
+  headerElement,
+  graphContainerElement,
+  evaluatedPathway,
+  updateEvaluatedPathways
+}) => {
+  return (
+    <div className={styles.display}>
+      <PatientRecord headerElement={headerElement} />
+
+      {evaluatedPathway ? (
+        <div ref={graphContainerElement} className={styles.graph}>
+          <Graph
+            evaluatedPathway={evaluatedPathway}
+            expandCurrentNode={true}
+            updateEvaluatedPathways={updateEvaluatedPathways}
+          />
+        </div>
+      ) : (
+        <div>No Pathway Loaded</div>
+      )}
+    </div>
   );
 };
 
