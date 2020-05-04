@@ -222,6 +222,7 @@ const App: FC<AppProps> = ({ demoId }) => {
                   />
                 ) : (
                   <PatientView
+                    key={currentPathway?.pathway.name ?? ''}
                     headerElement={headerElement}
                     graphContainerElement={graphContainerElement}
                     evaluatedPathway={currentPathway}
