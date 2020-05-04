@@ -137,7 +137,7 @@ const Graph: FC<GraphProps> = memo(
 
     const setExpanded = useCallback((key: string, expand?: boolean): void => {
       _setExpanded(prevState => {
-        return { ...prevState, [key]: !prevState[key] };
+        return { ...prevState, [key]: expand ?? !prevState[key] };
       });
     }, []);
 
