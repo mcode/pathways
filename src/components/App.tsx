@@ -162,7 +162,7 @@ const App: FC<AppProps> = ({ demoId }) => {
       graphContainerElement.current.style.height =
         window.innerHeight - headerElement.current.clientHeight + 'px';
     }
-  });
+  }, [selectPathway]);
 
   function setEvaluatedPathwayCallback(
     value: EvaluatedPathway | null,
