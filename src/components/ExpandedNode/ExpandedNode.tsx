@@ -76,6 +76,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       }
 
       setPatientRecords(newPatientRecords);
+      setShowReport(false);
     };
 
     return (
