@@ -158,9 +158,10 @@ const App: FC<AppProps> = ({ demoId }) => {
 
   // Set the height of the graph container
   useEffect(() => {
-    if (graphContainerElement?.current && headerElement?.current)
+    if (graphContainerElement?.current && headerElement?.current) {
       graphContainerElement.current.style.height =
         window.innerHeight - headerElement.current.clientHeight + 'px';
+    }
   }, [selectPathway]);
 
   function setEvaluatedPathwayCallback(
@@ -217,6 +218,7 @@ const App: FC<AppProps> = ({ demoId }) => {
                     evaluatedPathways={evaluatedPathways}
                     callback={setEvaluatedPathwayCallback}
                     service={service}
+                    headerElement={headerElement}
                   />
                 ) : (
                   <PatientView
