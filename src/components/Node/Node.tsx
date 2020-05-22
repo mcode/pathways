@@ -62,7 +62,6 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         top: yCoordinate,
         left: xCoordinate
       };
-
       const classes = useStyles();
       const backgroundColorClass = isOnPatientPath
         ? styles.onPatientPath
@@ -79,6 +78,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           ? styles.childOnPatientPath
           : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
       }
+
       const isGuidance = isGuidanceState(pathwayState);
       // TODO: how do we determine whether a node has been accepted or declined?
       // for now:
@@ -88,6 +88,10 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       const isAccepted = wasActionTaken
         ? documentation?.resourceType !== 'DocumentReference'
         : null;
+      if (isAccepted === false) {
+        topLevelClasses.push(styles.declined);
+        if (expanded) expandedNodeClass = styles.childDeclined;
+      }
       let status = null;
       if ('action' in pathwayState) {
         if (isOnPatientPath) status = isAccepted;
