@@ -16,9 +16,9 @@ import { McodeElements } from 'mcode';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
-  pathwayResource: MedicationRequest | ServiceRequest,
+  pathwayResource: MedicationRequest | ServiceRequest | CarePlan,
   patientId: string
-): MedicationRequest | ServiceRequest {
+): MedicationRequest | ServiceRequest | CarePlan {
   const { resourceType } = pathwayResource;
   const resourceProperties = {
     id: v1(),
@@ -46,6 +46,13 @@ export function translatePathwayRecommendation(
         ...resourceProperties,
         medicationCodeableConcept
       } as MedicationRequest;
+    }
+    case 'CarePlan': {
+      const { title } = pathwayResource as CarePlan;
+      return {
+        ...resourceProperties,
+        title
+      } as CarePlan;
     }
     default: {
       throw Error(`Translation for ${resourceType} not implemented.`);

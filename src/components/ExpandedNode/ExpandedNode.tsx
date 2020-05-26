@@ -24,7 +24,8 @@ import {
   Procedure,
   Identifier,
   MedicationRequest,
-  ServiceRequest
+  ServiceRequest,
+  CarePlan
 } from 'fhir-objects';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
@@ -273,23 +274,27 @@ function renderGuidance(
       title="Notes"
       description={pathwayState.action[0].description}
     />,
-    <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />,
-    <ExpandedNodeField
-      key="System"
-      title="System"
-      description={
-        <>
-          {coding && coding[0].system}
-          <a href={coding && coding[0].system} target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
-          </a>
-        </>
-      }
-    />,
-    <ExpandedNodeField key="Code" title="Code" description={coding && coding[0].code} />,
-    <ExpandedNodeField key="Display" title="Display" description={coding && coding[0].display} />
+    <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
   ];
 
+  if (coding) {
+    returnElements.concat([
+      <ExpandedNodeField
+        key="System"
+        title="System"
+        description={
+          <>
+            {coding && coding[0].system}
+            <a href={coding && coding[0].system} target="_blank" rel="noopener noreferrer">
+              <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.externalLink} />
+            </a>
+          </>
+        }
+      />,
+      <ExpandedNodeField key="Code" title="Code" description={coding && coding[0].code} />,
+      <ExpandedNodeField key="Display" title="Display" description={coding && coding[0].display} />
+    ]);
+  }
   if (documentation?.resource) {
     switch (documentation.resourceType) {
       case 'Procedure': {
@@ -318,6 +323,13 @@ function renderGuidance(
           );
         }
         break;
+      }
+      case 'CarePlan': {
+        const plan = documentation.resource as CarePlan;
+        const title = plan.title;
+        if (title) {
+          returnElements.push(<ExpandedNodeField key="Title" title="Title" description={title} />);
+        }
       }
     }
   }
