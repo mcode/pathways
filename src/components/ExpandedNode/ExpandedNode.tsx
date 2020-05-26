@@ -278,7 +278,7 @@ function renderGuidance(
   ];
 
   if (coding) {
-    returnElements.concat([
+    const elements = [
       <ExpandedNodeField
         key="System"
         title="System"
@@ -293,7 +293,8 @@ function renderGuidance(
       />,
       <ExpandedNodeField key="Code" title="Code" description={coding && coding[0].code} />,
       <ExpandedNodeField key="Display" title="Display" description={coding && coding[0].display} />
-    ]);
+    ];
+    returnElements.push(...elements);
   }
   if (documentation?.resource) {
     switch (documentation.resourceType) {
