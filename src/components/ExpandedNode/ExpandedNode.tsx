@@ -136,14 +136,16 @@ const StatusField: FC<StatusFieldProps> = ({ documentation }) => {
   }
   const status = documentation.status;
   const rawDate = documentation.resource?.meta?.lastUpdated;
-  if (rawDate)
+  if (rawDate) {
+    const descript = new Date(rawDate).toLocaleString('en-us');
     return (
       <ExpandedNodeField
         key="Status"
         title={status}
-        description={new Date(rawDate).toLocaleString('en-us')}
+        description={status === 'Declined' ? descript.concat(' by Dr. Example') : descript}
       />
     );
+  }
   return null;
 };
 
