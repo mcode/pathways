@@ -394,6 +394,9 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
             {guidance || branch}
+            {!isActionable && comments != null && (
+              <ExpandedNodeField key="Comments" title="Comments" description={comments} />
+            )}
           </tbody>
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
