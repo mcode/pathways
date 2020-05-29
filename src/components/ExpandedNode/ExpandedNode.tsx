@@ -394,7 +394,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
             {guidance || branch}
-            {!isActionable && comments != null && (
+            {!isActionable && comments !== '' && comments != null && (
               <ExpandedNodeField key="Comments" title="Comments" description={comments} />
             )}
           </tbody>
