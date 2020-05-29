@@ -90,7 +90,6 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         : null;
       if (isAccepted === false) {
         topLevelClasses.push(styles.declined);
-        if (documentation) documentation.status = 'Declined';
         if (expanded) expandedNodeClass = styles.childDeclined;
       }
       let status = null;
@@ -120,6 +119,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
                 isActionable={isActionable}
                 isGuidance={isGuidance}
                 documentation={documentation}
+                isAccepted={isAccepted}
               />
             </div>
           )}
