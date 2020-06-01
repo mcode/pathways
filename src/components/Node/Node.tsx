@@ -13,7 +13,6 @@ import {
   faMicroscope,
   faPlay,
   faPrescriptionBottleAlt,
-  faCapsules,
   faSyringe,
   faCheckCircle,
   faTimesCircle
@@ -138,8 +137,7 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
     if (guidancePathwayState.action.length > 0) {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
-      else if (resourceType === 'MedicationAdministration') icon = faCapsules;
-      else if (resourceType === 'Procedure') icon = faSyringe;
+      else if (resourceType === 'ServiceRequest') icon = faSyringe;
     }
   }
   return <FontAwesomeIcon icon={icon} className={styles.icon} />;
