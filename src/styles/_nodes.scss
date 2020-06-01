@@ -37,9 +37,10 @@
   text-align: center;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .statusIcon {
-  margin-left: auto;
-  padding-left: .75em;
+  margin: 0;
+  padding-left: 20px;
 }

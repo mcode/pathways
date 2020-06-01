@@ -153,15 +153,9 @@ interface StatusIconProps {
 }
 
 const StatusIcon: FC<StatusIconProps> = ({ status }) => {
-  if (status == null) {
-    return null;
-  }
+  if (status === null) return null;
   const icon = status ? faCheckCircle : faTimesCircle;
-  return (
-    <div className={nodeStyles.statusIcon}>
-      <FontAwesomeIcon icon={icon} className={styles.icon} />
-    </div>
-  );
+  return <FontAwesomeIcon icon={icon} className={styles.statusIcon} />;
 };
 
 export default Node;

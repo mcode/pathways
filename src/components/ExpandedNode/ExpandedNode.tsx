@@ -144,8 +144,8 @@ const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
     return (
       <ExpandedNodeField
         key="Status"
-        title={isAccepted === false ? 'Declined' : status}
-        description={isAccepted === false ? date.concat(' by Dr. Example') : date}
+        title={isAccepted ? status.charAt(0).toUpperCase() + status.slice(1) : 'Declined'}
+        description={isAccepted ? date : date.concat(' by Dr. Example')}
       />
     );
   }
@@ -362,16 +362,18 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
         </table>
         {isActionable && isGuidance && (
           <form className={styles.commentsForm}>
-            <label>Comments:</label>
-            <button
-              className={`${indexStyles.button} ${styles.defaultTextButton}`}
-              onClick={(e): void => {
-                e.preventDefault();
-                if (!comments.includes(defaultText)) setComments(comments + defaultText);
-              }}
-            >
-              Use Default Text
-            </button>
+            <div>
+              <label>Comments:</label>
+              <button
+                className={`${indexStyles.button} ${styles.defaultTextButton}`}
+                onClick={(e): void => {
+                  e.preventDefault();
+                  if (!comments.includes(defaultText)) setComments(comments + defaultText);
+                }}
+              >
+                Use Default Text
+              </button>
+            </div>
             <textarea
               className={styles.comments}
               value={comments}
