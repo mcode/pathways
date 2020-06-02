@@ -137,10 +137,11 @@ describe('<ExpandedNode />', () => {
         isActionable={true}
         isGuidance={true}
         documentation={testDoc}
+        isAccepted={true}
       />
     );
 
-    expect(getByText(testDoc.status)).toBeVisible();
+    expect(getByText('Final')).toBeVisible();
     // TODO: brittle
     const dateString = new Date(fixedUpdatedDate).toLocaleString();
     expect(getByText(dateString)).toBeVisible();
