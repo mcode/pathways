@@ -204,13 +204,13 @@ const App: FC<AppProps> = ({ demoId }) => {
 
   const unassignPathway = useCallback(
     (pathwayName: string): void => {
-      const newPatientRecords = patientRecords.filter(r => {
-        return r.resourceType === 'CarePlan' && (r as CarePlan).title === pathwayName
-          ? false
-          : true;
+      const newPatientRecords: DomainResource[] = [];
+      patientRecords.forEach(r => {
+        if (r.resourceType === 'CarePlan' && (r as CarePlan).title === pathwayName)
+          client?.delete?.(`CarePlan/${r.id}`);
+        else newPatientRecords.push(r);
       });
       setPatientRecords(newPatientRecords);
-      client?.delete?.(`CarePlan/${pathwayName}`);
     },
     [patientRecords, setPatientRecords, client]
   );
