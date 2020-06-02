@@ -62,7 +62,6 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         top: yCoordinate,
         left: xCoordinate
       };
-
       const classes = useStyles();
       const backgroundColorClass = isOnPatientPath
         ? styles.onPatientPath
@@ -79,6 +78,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           ? styles.childOnPatientPath
           : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
       }
+
       const isGuidance = isGuidanceState(pathwayState);
       // TODO: how do we determine whether a node has been accepted or declined?
       // for now:
@@ -88,6 +88,10 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       const isAccepted = wasActionTaken
         ? documentation?.resourceType !== 'DocumentReference'
         : null;
+      if (isAccepted === false) {
+        topLevelClasses.push(styles.declined);
+        if (expanded) expandedNodeClass = styles.childDeclined;
+      }
       let status = null;
       if ('action' in pathwayState) {
         if (isOnPatientPath) status = isAccepted;
@@ -115,6 +119,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
                 isActionable={isActionable}
                 isGuidance={isGuidance}
                 documentation={documentation}
+                isAccepted={isAccepted}
               />
             </div>
           )}
@@ -148,15 +153,9 @@ interface StatusIconProps {
 }
 
 const StatusIcon: FC<StatusIconProps> = ({ status }) => {
-  if (status == null) {
-    return null;
-  }
+  if (status === null) return null;
   const icon = status ? faCheckCircle : faTimesCircle;
-  return (
-    <div className={nodeStyles.statusIcon}>
-      <FontAwesomeIcon icon={icon} className={styles.icon} />
-    </div>
-  );
+  return <FontAwesomeIcon icon={icon} className={styles.statusIcon} />;
 };
 
 export default Node;

@@ -31,10 +31,11 @@ interface ExpandedNodeProps {
   isActionable: boolean;
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;
+  isAccepted: boolean | null;
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
-  ({ pathwayState, isActionable, isGuidance, documentation }) => {
+  ({ pathwayState, isActionable, isGuidance, documentation, isAccepted }) => {
     const { note, setNote } = useNote();
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
@@ -100,6 +101,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
             });
             setShowReport(true);
           }}
+          isAccepted={isAccepted}
         />
         {showReport && (
           <ReportModal
@@ -128,28 +130,32 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
 
 type StatusFieldProps = {
   documentation: DocumentationResource | undefined;
+  isAccepted: boolean | null;
 };
 
-const StatusField: FC<StatusFieldProps> = ({ documentation }) => {
+const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
   if (!documentation?.resource) {
     return null;
   }
   const status = documentation.status;
   const rawDate = documentation.resource?.meta?.lastUpdated;
-  if (rawDate)
+  if (rawDate) {
+    const date = new Date(rawDate).toLocaleString('en-us');
     return (
       <ExpandedNodeField
         key="Status"
-        title={status}
-        description={new Date(rawDate).toLocaleString('en-us')}
+        title={isAccepted ? status.charAt(0).toUpperCase() + status.slice(1) : 'Declined'}
+        description={isAccepted ? date : date.concat(' by Dr. Example')}
       />
     );
+  }
   return null;
 };
 
 function renderBranch(
   documentation: DocumentationResource | undefined,
-  pathwayState: State
+  pathwayState: State,
+  isAccepted: boolean | null
 ): ReactElement[] {
   const returnElements: ReactElement[] = [];
 
@@ -253,7 +259,8 @@ function isMedicationRequest(
 }
 function renderGuidance(
   pathwayState: GuidanceState,
-  documentation: DocumentationResource | undefined
+  documentation: DocumentationResource | undefined,
+  isAccepted: boolean | null
 ): ReactElement[] {
   const resource = pathwayState.action[0].resource;
   const coding = isMedicationRequest(resource)
@@ -326,6 +333,7 @@ interface ExpandedNodeMemoProps {
   setComments: (value: string) => void;
   onAccept: () => void;
   onDecline: () => void;
+  isAccepted: boolean | null;
 }
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
@@ -336,32 +344,36 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     comments,
     setComments,
     onAccept,
-    onDecline
+    onDecline,
+    isAccepted
   }) => {
-    const guidance = isGuidance && renderGuidance(pathwayState, documentation);
-    const branch = isBranchState(pathwayState) && renderBranch(documentation, pathwayState);
+    const guidance = isGuidance && renderGuidance(pathwayState, documentation, isAccepted);
+    const branch =
+      isBranchState(pathwayState) && renderBranch(documentation, pathwayState, isAccepted);
     const defaultText =
       'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
     return (
       <div className={indexStyles.expandedNode}>
         <table className={styles.infoTable}>
           <tbody>
-            <StatusField documentation={documentation} />
+            <StatusField documentation={documentation} isAccepted={isAccepted} />
             {guidance || branch}
           </tbody>
         </table>
         {isActionable && isGuidance && (
           <form className={styles.commentsForm}>
-            <label>Comments:</label>
-            <button
-              className={`${indexStyles.button} ${styles.defaultTextButton}`}
-              onClick={(e): void => {
-                e.preventDefault();
-                if (!comments.includes(defaultText)) setComments(comments + defaultText);
-              }}
-            >
-              Use Default Text
-            </button>
+            <div>
+              <label>Comments:</label>
+              <button
+                className={`${indexStyles.button} ${styles.defaultTextButton}`}
+                onClick={(e): void => {
+                  e.preventDefault();
+                  if (!comments.includes(defaultText)) setComments(comments + defaultText);
+                }}
+              >
+                Use Default Text
+              </button>
+            </div>
             <textarea
               className={styles.comments}
               value={comments}

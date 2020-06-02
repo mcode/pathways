@@ -10,12 +10,14 @@
   font-weight: bold;
   text-align: right;
   width: 20%;
+  vertical-align: baseline;
 }
 
 .desc {
   padding-left: 15px;
   font-style: italic;
   overflow-wrap: break-word;
+  white-space: normal;
 
   .externalLink {
     color: $blue;
@@ -31,12 +33,13 @@
     padding: 5px 10px;
     margin: 0 0 2px 5px;
     float: right;
+    font-size: 0.8em;
 }
 
 .commentsForm {
   margin-top: 15px;
 
-  > label {
+  > div > label {
     font-weight: bold;
   }
 }

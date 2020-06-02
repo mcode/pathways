@@ -8,11 +8,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2em;
+  white-space: nowrap;
 
   .icon {
-    font-size: 1.2em;
     color: $black;
-    padding-right: 5px;
+    margin-right: 8px;
+  }
+
+  .statusIcon {
+    margin-left: 20px;
   }
 
   &:first-child {
@@ -26,6 +31,10 @@
 
   &.actionable {
     background-color: $red;
+  }
+
+  &.declined {
+    background-color: $black-medium;
   }
 
   .icon {
@@ -50,8 +59,8 @@
 
   &.childOnPatientPath {
     border: 1px solid $blue;
-
   }
+
   &.childActionable {
     border: 1px solid $red;
   }
@@ -59,5 +68,9 @@
   &.childNotOnPatientPath {
     border-width: 1px;
     border-style: solid;
+  }
+
+  &.childDeclined {
+    border: 1px solid $black-medium
   }
 }
