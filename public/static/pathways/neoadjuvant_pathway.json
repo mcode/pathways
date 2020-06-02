@@ -163,7 +163,7 @@
         "action": [
           {
             "type": "create",
-            "description": "Chemotherapy TCHP Care Plan",
+            "description": "Chemotherapy TCHP Regimen",
             "resource": {
                 "resourceType": "CarePlan",
                 "title": "ChemoTCHP"
@@ -182,7 +182,7 @@
         "action": [
           {
             "type": "create",
-            "description": "Chemo Care Plan",
+            "description": "Chemotherapy ACTHP Regimen",
             "resource": {
                 "resourceType": "CarePlan",
                 "title": "ChemoACTHP"
@@ -201,7 +201,7 @@
         "action": [
           {
             "type": "create",
-            "description": "Chemotherapy ddACTHP Care Plan",
+            "description": "Chemotherapy ddACTHP Regimen",
             "resource": {
                 "resourceType": "CarePlan",
                 "title": "ChemoddACTHP"
