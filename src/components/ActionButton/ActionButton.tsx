@@ -3,6 +3,7 @@ import indexStyles from 'styles/index.module.scss';
 import styles from './ActionButton.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@material-ui/core';
 
 interface ButtonProps {
   type: 'accept' | 'decline';
@@ -15,14 +16,15 @@ interface ActionButtonProps extends ButtonProps {
 
 const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
   return (
-    <button
+    <Button
       className={`${styles.largeActionButton} ${indexStyles.button} ${type === 'decline' &&
         styles.largeDecline}`}
-      type="button"
       onClick={onClick}
+      variant={type === 'decline' ? 'text' : 'contained'}
+      color={type === 'decline' ? 'default' : 'primary'}
     >
       {type[0].toUpperCase() + type.slice(1)}
-    </button>
+    </Button>
   );
 };
 
