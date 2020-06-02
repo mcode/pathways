@@ -18,7 +18,7 @@ export const PathwayContext = createContext<PathwayContextInterface>({
     //do nothing
   },
   unassignPathway: () => {
-    //do nothin
+    //do nothing
   }
 });
 

@@ -18,7 +18,6 @@ interface Props {
   options: Array<Option>;
   onChange?: (value: Option | ReadonlyArray<Option> | null) => void;
   selectedValue: Option | ReadonlyArray<Option> | null;
-  evaluatedPathways: EvaluatedPathway[];
   setSelectPathway: (flag: boolean) => void;
 }
 
@@ -68,13 +67,7 @@ const DropDown: FC<Props> = ({
             }}
             variant="contained"
             color={selected ? 'secondary' : 'primary'}
-            startIcon={
-              selected ? (
-                <FontAwesomeIcon icon={faTimesCircle} />
-              ) : (
-                <FontAwesomeIcon icon={faCheckCircle} />
-              )
-            }
+            startIcon={<FontAwesomeIcon icon={selected ? faTimesCircle : faCheckCircle} />}
           >
             {selected ? 'Unassign' : 'Assign'}
           </Button>

@@ -217,21 +217,12 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </table>
             <Button
               onClick={(): void => {
-                if (selected) {
-                  unassignPathway(pathway.name);
-                } else {
-                  assignPathway(pathway.name);
-                }
+                if (selected) unassignPathway(pathway.name);
+                else assignPathway(pathway.name);
               }}
               variant="contained"
               color={selected ? 'secondary' : 'primary'}
-              startIcon={
-                selected ? (
-                  <FontAwesomeIcon icon={faTimesCircle} />
-                ) : (
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                )
-              }
+              startIcon={<FontAwesomeIcon icon={selected ? faTimesCircle : faCheckCircle} />}
             >
               {selected ? 'Unassign' : 'Assign'}
             </Button>

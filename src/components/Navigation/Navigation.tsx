@@ -67,7 +67,6 @@ const Navigation: FC<Props> = ({ evaluatedPathways, selectPathway, setSelectPath
           visible={!selectPathway}
           options={pathwayOptions}
           selectedValue={value}
-          evaluatedPathways={evaluatedPathways}
           setSelectPathway={setSelectPathway}
           onChange={onChangeHandler}
         />
