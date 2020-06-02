@@ -10,12 +10,14 @@
   font-weight: bold;
   text-align: right;
   width: 20%;
+  vertical-align: baseline;
 }
 
 .desc {
   padding-left: 15px;
   font-style: italic;
   overflow-wrap: break-word;
+  white-space: normal;
 
   .externalLink {
     color: $blue;
