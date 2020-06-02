@@ -9,7 +9,6 @@ import { Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThList, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { EvaluatedPathway } from 'pathways-model';
 
 interface Props {
   label?: string;

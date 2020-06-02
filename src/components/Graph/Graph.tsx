@@ -57,7 +57,6 @@ const Graph: FC<GraphProps> = memo(
       if (!pathwayCtx.evaluatedPathway) return <div>No Pathway Loaded</div>;
       else evaluatedPathway = pathwayCtx.evaluatedPathway;
     }
-    //  const { evaluatedPathway, updateEvaluatedPathways } = usePathwayContext();
 
     const patientRecords = usePatientRecords();
     const resources = patientRecords.patientRecords;
