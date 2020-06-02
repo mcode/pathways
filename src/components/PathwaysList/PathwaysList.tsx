@@ -248,7 +248,11 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
           </div>
           <div className={styles.pathway}>
             <div style={{ height: '100%', overflow: 'scroll' }}>
-              <Graph interactive={false} expandCurrentNode={false} />
+              <Graph
+                evaluatedPathway={evaluatedPathway}
+                interactive={false}
+                expandCurrentNode={false}
+              />
             </div>
             <div className={styles.controls}>
               <FontAwesomeIcon icon={faPlay} />
