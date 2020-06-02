@@ -222,13 +222,39 @@ function isComplete(resource: DocumentationResource): boolean {
 }
 
 /**
+ * Helper function to determine whether current state should be skipped and pathway execution should advance
+ * Checks for DocumentReference resource with state label and advance
+ * @param currentState current state
+ * @param resources list of patient resources
+ * @return boolean as to whether pathway execution should advance
+ */
+function shouldAdvance(currentState: State, resources: DomainResource[]): boolean {
+  return resources.some(r => {
+    if (r.resourceType !== 'DocumentReference') return false;
+    const content = (r as DocumentReference).content[0].attachment.data;
+    if (content) {
+      const convertedContent = atob(content);
+      return convertedContent.includes(currentState.label) && convertedContent.includes('Advance');
+    }
+
+    return false;
+  });
+}
+
+/**
  * Helper function to select the transition state
  * @param resource - the resource returned by the CQL execution
  * @param currentState - the current state
+ * @param resources list of patient resources
  * @return the next state name or null
  */
-function formatNextState(resource: DocumentationResource, currentState: State): string[] {
-  return isComplete(resource) && currentState.transitions.length !== 0
+function formatNextState(
+  resource: DocumentationResource,
+  currentState: State,
+  resources: DomainResource[]
+): string[] {
+  return (shouldAdvance(currentState, resources) || isComplete(resource)) &&
+    currentState.transitions.length !== 0
     ? [currentState.transitions[0].transition]
     : [];
 }
@@ -304,7 +330,7 @@ function nextState(
     if (resource?.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
-        nextStates: formatNextState(resource, currentState),
+        nextStates: formatNextState(resource, currentState, resources),
         documentation: formatDocumentation(resource, currentStateName),
         status: 'status' in resource ? resource.status : 'unknown'
       };
@@ -321,7 +347,7 @@ function nextState(
           onPath: true
         };
         return {
-          nextStates: formatNextState(doc, currentState),
+          nextStates: formatNextState(doc, currentState, resources),
           documentation: formatDocumentation(doc, currentStateName),
           status: doc.status
         };
