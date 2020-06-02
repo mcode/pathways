@@ -3,7 +3,7 @@ import Select from 'react-select';
 
 import styles from './DropDown.module.scss';
 import { Option } from 'option';
-import { createCarePlan, getSelectedPathways } from 'utils/fhirUtils';
+import { createCarePlan, getSelectedPathways, pathwayIsSelected } from 'utils/fhirUtils';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,7 +38,7 @@ const DropDown: FC<Props> = ({
   const { patientRecords, setPatientRecords } = usePatientRecords();
   const client = useFHIRClient();
   const patient = usePatient().patient as Patient;
-  const { evaluatedPathway } = usePathwayContext();
+  const { evaluatedPathway, assignPathway, unassignPathway } = usePathwayContext();
   const onChangeCallback = useCallback(
     (value: Option | ReadonlyArray<Option> | null | undefined) => {
       if (onChange) onChange(value == null ? null : value);
@@ -46,10 +46,7 @@ const DropDown: FC<Props> = ({
     [onChange]
   );
 
-  const selectedPathways = getSelectedPathways(patientRecords, evaluatedPathways);
-  const selected = evaluatedPathway?.pathway
-    ? selectedPathways.includes(evaluatedPathway.pathway.name)
-    : false;
+  const selected = pathwayIsSelected(patientRecords, evaluatedPathway?.pathway);
 
   if (visible)
     return (
@@ -68,12 +65,11 @@ const DropDown: FC<Props> = ({
           </Button>
           <Button
             onClick={(): void => {
-              if (selected) {
-                // Unassign
-              } else if (evaluatedPathway?.pathway) {
-                const carePlan = createCarePlan(evaluatedPathway.pathway.name, patient);
-                setPatientRecords([...patientRecords, carePlan]);
-                client?.create?.(carePlan);
+              if (evaluatedPathway?.pathway) {
+                if (selected) unassignPathway(evaluatedPathway.pathway.name);
+                else assignPathway(evaluatedPathway.pathway.name);
+              } else {
+                alert('Unable to perform action. No pathway is selected.');
               }
             }}
             variant="contained"

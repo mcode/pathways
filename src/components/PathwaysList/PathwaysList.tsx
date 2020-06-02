@@ -159,11 +159,13 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
-  const pathwayCtx = usePathwayContext();
+  const {
+    setEvaluatedPathway,
+    updateEvaluatedPathways,
+    assignPathway,
+    unassignPathway
+  } = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const { patientRecords, setPatientRecords } = usePatientRecords();
-  const patient = usePatient().patient as Patient;
-  const client = useFHIRClient();
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
@@ -190,7 +192,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         className={titleClass}
         role={'listitem'}
         onClick={(e): void => {
-          pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
+          setEvaluatedPathway(evaluatedPathway, true);
           toggleVisible();
         }}
       >
@@ -226,12 +228,9 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               className={indexStyles.button}
               onClick={(): void => {
                 if (selected) {
-                  // Unassign
+                  unassignPathway(pathway.name);
                 } else {
-                  const carePlan = createCarePlan(pathway.name, patient);
-
-                  setPatientRecords([...patientRecords, carePlan]);
-                  client?.create?.(carePlan);
+                  assignPathway(pathway.name);
                 }
               }}
               variant="contained"
@@ -260,12 +259,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
           </div>
           <div className={styles.pathway}>
             <div style={{ height: '100%', overflow: 'scroll' }}>
-              <Graph
-                evaluatedPathway={evaluatedPathway}
-                interactive={false}
-                expandCurrentNode={false}
-                updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
-              />
+              <Graph interactive={false} expandCurrentNode={false} />
             </div>
             <div className={styles.controls}>
               <FontAwesomeIcon icon={faPlay} />

@@ -35,6 +35,12 @@ export const mockedPathwayCtx = {
   },
   updateEvaluatedPathways: (): void => {
     //do nothing
+  },
+  assignPathway: (): void => {
+    //do nothing
+  },
+  unassignPathway: (): void => {
+    //do nothing
   }
 };
 

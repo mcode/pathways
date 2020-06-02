@@ -1,4 +1,4 @@
-import { GuidanceState, EvaluatedPathway } from 'pathways-model';
+import { GuidanceState, EvaluatedPathway, Pathway } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
@@ -13,6 +13,7 @@ import {
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { v1 } from 'uuid';
 import { McodeElements } from 'mcode';
+import { PathwaysClient } from 'pathways-client';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
@@ -235,6 +236,20 @@ export function getSelectedPathways(
     .filter(n => carePlanTitles.includes(n));
 
   return selectedPathways;
+}
+
+export function pathwayIsSelected(
+  patientRecords: DomainResource[],
+  pathway: Pathway | undefined
+): boolean {
+  if (!pathway) return false;
+
+  // Get all active CarePlan resource titles
+  const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    .filter(r => r.status === 'active')
+    .map(r => r.title);
+
+  return carePlanTitles.includes(pathway.name);
 }
 
 export function getTNM(mcodeElements: McodeElements): string {
