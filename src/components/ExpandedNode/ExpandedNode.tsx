@@ -31,13 +31,14 @@ import { Button } from '@material-ui/core';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
+  isCurrentNode: boolean;
   isGuidance: boolean;
   documentation: DocumentationResource | undefined;
   isAccepted: boolean | null;
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
-  ({ pathwayState, isActionable, isGuidance, documentation, isAccepted }) => {
+  ({ pathwayState, isActionable, isCurrentNode, isGuidance, documentation, isAccepted }) => {
     const { note, setNote } = useNote();
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
@@ -82,11 +83,43 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       setShowReport(false);
     };
 
+    const onAdvance = (): void => {
+      const newPatientRecords = [...patientRecords];
+
+      const documentReference: DocumentReference = {
+        resourceType: 'DocumentReference',
+        status: 'current',
+        content: [
+          {
+            attachment: {
+              data: btoa(`${pathwayState.label} - Advance`),
+              contentType: 'text/plain'
+            }
+          }
+        ],
+        type: {
+          coding: [
+            {
+              system: 'http://loinc.org',
+              code: '34108-1',
+              display: 'Outpatient Note'
+            }
+          ]
+        },
+        indexed: ''
+      };
+
+      newPatientRecords.push(documentReference);
+      client?.create?.(documentReference);
+      setPatientRecords(newPatientRecords);
+    };
+
     return (
       <>
         <ExpandedNodeMemo
           isGuidance={isGuidance}
           isActionable={isActionable}
+          isCurrentNode={isCurrentNode}
           pathwayState={pathwayState}
           documentation={documentation}
           setComments={setComments}
@@ -104,6 +137,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
             setShowReport(true);
           }}
           isAccepted={isAccepted}
+          onAdvance={onAdvance}
         />
         {showReport && (
           <ReportModal
@@ -343,11 +377,13 @@ interface ExpandedNodeMemoProps {
   pathwayState: GuidanceState;
   isGuidance: boolean;
   isActionable: boolean;
+  isCurrentNode: boolean;
   comments: string;
   setComments: (value: string) => void;
   onAccept: () => void;
   onDecline: () => void;
   isAccepted: boolean | null;
+  onAdvance: () => void;
 }
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
@@ -355,11 +391,13 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     pathwayState,
     isGuidance,
     isActionable,
+    isCurrentNode,
     comments,
     setComments,
     onAccept,
     onDecline,
-    isAccepted
+    isAccepted,
+    onAdvance
   }) => {
     const guidance = isGuidance && renderGuidance(pathwayState, documentation, isAccepted);
     const branch =
@@ -374,6 +412,12 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
             {guidance || branch}
           </tbody>
         </table>
+        {/* Node is advanceable if it has been accepted or declined */}
+        {pathwayState.transitions.length > 0 && !isActionable && isGuidance && isCurrentNode && (
+          <button className={indexStyles.button} onClick={onAdvance}>
+            Advance
+          </button>
+        )}
         {isActionable && isGuidance && (
           <form className={styles.commentsForm}>
             <div>

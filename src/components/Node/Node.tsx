@@ -121,6 +121,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
                 isGuidance={isGuidance}
                 documentation={documentation}
                 isAccepted={isAccepted}
+                isCurrentNode={isCurrentNode}
               />
             </div>
           )}
