@@ -13,7 +13,7 @@ import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { CarePlan, Patient } from 'fhir-objects';
-import { createCarePlan } from 'utils/fhirUtils';
+import { createCarePlan, getSelectedPathways } from 'utils/fhirUtils';
 import {
   faEye,
   faPlay,
@@ -93,8 +93,8 @@ const PathwaysList: FC<PathwaysListProps> = ({
         {criteria ? (
           criteria.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
-            const pathwayName = evaluatedPathway?.pathway.name || '';
-            if (evaluatedPathway)
+            if (evaluatedPathway) {
+              const pathwayName = evaluatedPathway.pathway.name;
               return (
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
@@ -104,7 +104,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
                   key={pathwayName}
                 />
               );
-            else
+            } else
               return <div>An error occured evaluating the pathway criteria. Please try again.</div>;
           })
         ) : (
@@ -114,21 +114,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
     );
   }
 
-  const getSelectedPathways = (): string[] => {
-    // Get all active CarePlan resource titles
-    const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
-      .filter(r => r.status === 'active')
-      .map(r => r.title);
-
-    // Check to see if any of the pathway names are in carePlanTitles
-    const selectedPathways = evaluatedPathways
-      .map(p => p.pathway.name)
-      .filter(n => carePlanTitles.includes(n));
-
-    return selectedPathways;
-  };
-
-  const selectedPathways = getSelectedPathways();
+  const selectedPathways = getSelectedPathways(patientRecords, evaluatedPathways);
   const style = { height: '100%' };
   if (headerElement?.current) {
     style.height = window.innerHeight - headerElement.current.clientHeight + 'px';

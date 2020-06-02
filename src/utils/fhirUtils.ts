@@ -1,4 +1,4 @@
-import { GuidanceState } from 'pathways-model';
+import { GuidanceState, EvaluatedPathway } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
@@ -218,6 +218,23 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
     ],
     subject: { reference: `Patient/${patient.id}` }
   };
+}
+
+export function getSelectedPathways(
+  patientRecords: DomainResource[],
+  evaluatedPathways: EvaluatedPathway[]
+): string[] {
+  // Get all active CarePlan resource titles
+  const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    .filter(r => r.status === 'active')
+    .map(r => r.title);
+
+  // Check to see if any of the pathway names are in carePlanTitles
+  const selectedPathways = evaluatedPathways
+    .map(p => p.pathway.name)
+    .filter(n => carePlanTitles.includes(n));
+
+  return selectedPathways;
 }
 
 export function getTNM(mcodeElements: McodeElements): string {

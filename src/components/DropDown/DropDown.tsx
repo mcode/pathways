@@ -3,10 +3,16 @@ import Select from 'react-select';
 
 import styles from './DropDown.module.scss';
 import { Option } from 'option';
-import { createCarePlan } from 'utils/fhirUtils';
+import { createCarePlan, getSelectedPathways } from 'utils/fhirUtils';
+import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThList, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { useFHIRClient } from 'components/FHIRClient';
+import { usePatient } from 'components/PatientProvider';
+import { Patient } from 'fhir-objects';
+import { usePathwayContext } from 'components/PathwayProvider';
+import { EvaluatedPathway } from 'pathways-model';
 
 interface Props {
   label?: string;
@@ -15,6 +21,7 @@ interface Props {
   options: Array<Option>;
   onChange?: (value: Option | ReadonlyArray<Option> | null) => void;
   selectedValue: Option | ReadonlyArray<Option> | null;
+  evaluatedPathways: EvaluatedPathway[];
   setSelectPathway: (flag: boolean) => void;
 }
 
@@ -25,8 +32,13 @@ const DropDown: FC<Props> = ({
   visible,
   onChange,
   selectedValue,
+  evaluatedPathways,
   setSelectPathway
 }: Props) => {
+  const { patientRecords, setPatientRecords } = usePatientRecords();
+  const client = useFHIRClient();
+  const patient = usePatient().patient as Patient;
+  const { evaluatedPathway } = usePathwayContext();
   const onChangeCallback = useCallback(
     (value: Option | ReadonlyArray<Option> | null | undefined) => {
       if (onChange) onChange(value == null ? null : value);
@@ -34,7 +46,10 @@ const DropDown: FC<Props> = ({
     [onChange]
   );
 
-  const selected = true;
+  const selectedPathways = getSelectedPathways(patientRecords, evaluatedPathways);
+  const selected = evaluatedPathway?.pathway
+    ? selectedPathways.includes(evaluatedPathway.pathway.name)
+    : false;
 
   if (visible)
     return (
@@ -53,13 +68,13 @@ const DropDown: FC<Props> = ({
           </Button>
           <Button
             onClick={(): void => {
-              // if (selected) {
-              //   // Unassign
-              // } else {
-              //   const carePlan = createCarePlan(pathway.name, patient);
-              //   setPatientRecords([...patientRecords, carePlan]);
-              //   client?.create?.(carePlan);
-              // }
+              if (selected) {
+                // Unassign
+              } else if (evaluatedPathway?.pathway) {
+                const carePlan = createCarePlan(evaluatedPathway.pathway.name, patient);
+                setPatientRecords([...patientRecords, carePlan]);
+                client?.create?.(carePlan);
+              }
             }}
             variant="contained"
             color={selected ? 'secondary' : 'primary'}
