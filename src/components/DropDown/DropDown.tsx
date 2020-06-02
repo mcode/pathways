@@ -29,7 +29,6 @@ const DropDown: FC<Props> = ({
   visible,
   onChange,
   selectedValue,
-  evaluatedPathways,
   setSelectPathway
 }: Props) => {
   const { patientRecords } = usePatientRecords();

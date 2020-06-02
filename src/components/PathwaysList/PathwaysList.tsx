@@ -5,7 +5,6 @@ import { Service } from 'pathways-objects';
 import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
 
 import styles from './PathwaysList.module.scss';
-import indexStyles from 'styles/index.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -217,7 +216,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               </tbody>
             </table>
             <Button
-              className={indexStyles.button}
               onClick={(): void => {
                 if (selected) {
                   unassignPathway(pathway.name);
@@ -238,7 +236,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
               {selected ? 'Unassign' : 'Assign'}
             </Button>
             <Button
-              className={indexStyles.button}
               onClick={(): void => {
                 callback(evaluatedPathway);
               }}
