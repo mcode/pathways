@@ -3,14 +3,11 @@ import Select from 'react-select';
 
 import styles from './DropDown.module.scss';
 import { Option } from 'option';
-import { createCarePlan, getSelectedPathways, pathwayIsSelected } from 'utils/fhirUtils';
+import { pathwayIsSelected } from 'utils/fhirUtils';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThList, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { useFHIRClient } from 'components/FHIRClient';
-import { usePatient } from 'components/PatientProvider';
-import { Patient } from 'fhir-objects';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { EvaluatedPathway } from 'pathways-model';
 
@@ -35,9 +32,7 @@ const DropDown: FC<Props> = ({
   evaluatedPathways,
   setSelectPathway
 }: Props) => {
-  const { patientRecords, setPatientRecords } = usePatientRecords();
-  const client = useFHIRClient();
-  const patient = usePatient().patient as Patient;
+  const { patientRecords } = usePatientRecords();
   const { evaluatedPathway, assignPathway, unassignPathway } = usePathwayContext();
   const onChangeCallback = useCallback(
     (value: Option | ReadonlyArray<Option> | null | undefined) => {

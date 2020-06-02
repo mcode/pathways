@@ -210,9 +210,9 @@ const App: FC<AppProps> = ({ demoId }) => {
           : true;
       });
       setPatientRecords(newPatientRecords);
-      // client?.
+      client?.delete?.(`CarePlan/${pathwayName}`);
     },
-    [patientRecords, setPatientRecords]
+    [patientRecords, setPatientRecords, client]
   );
 
   return (

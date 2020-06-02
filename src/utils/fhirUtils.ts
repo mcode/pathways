@@ -13,7 +13,6 @@ import {
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { v1 } from 'uuid';
 import { McodeElements } from 'mcode';
-import { PathwaysClient } from 'pathways-client';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
@@ -201,6 +200,7 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
   return {
     title,
     resourceType: 'CarePlan',
+    id: title,
     text: {
       status: R4.NarrativeStatusKind._generated,
       div: `<div> Assignment of patient to pathway ${title} </div>`

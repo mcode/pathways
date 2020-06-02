@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, ButtonHTMLAttributes, RefObject } from 'react';
+import React, { FC, ReactNode, useState, RefObject } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
@@ -12,8 +12,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
-import { CarePlan, Patient } from 'fhir-objects';
-import { createCarePlan, getSelectedPathways } from 'utils/fhirUtils';
+import { getSelectedPathways } from 'utils/fhirUtils';
 import {
   faEye,
   faPlay,
@@ -25,8 +24,6 @@ import {
   faCheckCircle,
   faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
-import { usePatient } from 'components/PatientProvider';
-import { useFHIRClient } from 'components/FHIRClient';
 import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(
@@ -159,12 +156,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
-  const {
-    setEvaluatedPathway,
-    updateEvaluatedPathways,
-    assignPathway,
-    unassignPathway
-  } = usePathwayContext();
+  const { setEvaluatedPathway, assignPathway, unassignPathway } = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;

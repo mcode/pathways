@@ -8,5 +8,6 @@ declare module 'pathways-client' {
     user?: Record<string, Function>;
     units?: Record<string, Function>;
     create?: (resource: Resource) => Promise<Resource>;
+    delete?: (uri: string) => Promise<Resource>;
   }
 }
