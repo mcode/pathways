@@ -6,6 +6,7 @@ import { EvaluatedPathway } from 'pathways-model';
 import preconvertedELM from '../../../engine/__tests__/fixtures/elm/sample_pathway.elm.json';
 import { PatientRecordsProvider } from 'components/PatientRecordsProvider';
 import { PatientProvider } from '../../PatientProvider';
+import { PathwayProvider } from 'components/PathwayProvider';
 
 describe('<Graph />', () => {
   global.fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
@@ -75,10 +76,14 @@ describe('<Graph />', () => {
             }
           }}
         >
-          <Graph
-            evaluatedPathway={evaluatedPathway}
-            updateEvaluatedPathways={updateEvaluatedPathways}
-          />
+          <PathwayProvider
+            pathwayCtx={{
+              evaluatedPathway: evaluatedPathway,
+              updateEvaluatedPathways: updateEvaluatedPathways
+            }}
+          >
+            <Graph />
+          </PathwayProvider>
         </PatientRecordsProvider>
       </PatientProvider>
     );

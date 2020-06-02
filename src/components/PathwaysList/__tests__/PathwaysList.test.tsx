@@ -113,7 +113,7 @@ describe('<PathwaysList />', () => {
           fireEvent.click(node);
         });
       });
-      getAllByText(result.container, 'Select Pathway').forEach(button => {
+      getAllByText(result.container, 'View').forEach(button => {
         act(() => {
           fireEvent.click(button);
         });
