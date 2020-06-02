@@ -18,6 +18,6 @@ declare module 'fhir-objects' {
   export type Bundle = fhir.Bundle | R4.IBundle;
   export type ServiceRequest = fhir.ProcedureRequest | R4.IServiceRequest;
   export type MedicationRequest = fhir.MedicationRequest | R4.IMedicationRequest;
-  export type CarePlan = R4.ICarePlan;
+  export type CarePlan = fhir.CarePlan | R4.ICarePlan;
   export type Condition = fhir.Condition;
 }

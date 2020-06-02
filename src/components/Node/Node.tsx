@@ -15,7 +15,8 @@ import {
   faPrescriptionBottleAlt,
   faSyringe,
   faCheckCircle,
-  faTimesCircle
+  faTimesCircle,
+  faBookMedical
 } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles(
@@ -143,6 +144,7 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
       const resourceType = guidancePathwayState.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
       else if (resourceType === 'ServiceRequest') icon = faSyringe;
+      else if (resourceType === 'CarePlan') icon = faBookMedical;
     }
   }
   return <FontAwesomeIcon icon={icon} className={styles.icon} />;
