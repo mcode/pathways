@@ -15,16 +15,19 @@ import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { CarePlan, Patient } from 'fhir-objects';
 import { createCarePlan } from 'utils/fhirUtils';
 import {
+  faEye,
   faPlay,
   faPlus,
   faMinus,
   faChevronUp,
   faChevronDown,
   faCaretDown,
-  faCheckCircle
+  faCheckCircle,
+  faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { usePatient } from 'components/PatientProvider';
 import { useFHIRClient } from 'components/FHIRClient';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(
   theme => ({
@@ -195,13 +198,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
     !selected && classes.title
   );
 
-  // Optional attributes for "Select Pathway" button
-  const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
-  if (selected) {
-    // Add tooltip to button
-    selectButtonOpts.title = 'Pathway is already selected';
-  }
-
   return (
     <div className={pathwayElementClass} role={'list'} key={pathway.name}>
       <div
@@ -240,28 +236,41 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                 ))}
               </tbody>
             </table>
-            <button
-              {...selectButtonOpts}
+            <Button
               className={indexStyles.button}
-              disabled={selected}
               onClick={(): void => {
-                const carePlan = createCarePlan(pathway.name, patient);
+                if (selected) {
+                  // Unassign
+                } else {
+                  const carePlan = createCarePlan(pathway.name, patient);
 
-                setPatientRecords([...patientRecords, carePlan]);
-                client?.create?.(carePlan);
-                callback(evaluatedPathway);
+                  setPatientRecords([...patientRecords, carePlan]);
+                  client?.create?.(carePlan);
+                }
               }}
+              variant="contained"
+              color={selected ? 'secondary' : 'primary'}
+              startIcon={
+                selected ? (
+                  <FontAwesomeIcon icon={faTimesCircle} />
+                ) : (
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                )
+              }
             >
-              Select Pathway
-            </button>
-            <button
+              {selected ? 'Unassign' : 'Assign'}
+            </Button>
+            <Button
               className={indexStyles.button}
               onClick={(): void => {
                 callback(evaluatedPathway);
               }}
+              variant="contained"
+              color="primary"
+              startIcon={<FontAwesomeIcon icon={faEye} />}
             >
-              View Pathway
-            </button>
+              View
+            </Button>
           </div>
           <div className={styles.pathway}>
             <div style={{ height: '100%', overflow: 'scroll' }}>

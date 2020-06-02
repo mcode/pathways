@@ -3,6 +3,10 @@ import Select from 'react-select';
 
 import styles from './DropDown.module.scss';
 import { Option } from 'option';
+import { createCarePlan } from 'utils/fhirUtils';
+import { Button } from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThList, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   label?: string;
@@ -30,18 +34,45 @@ const DropDown: FC<Props> = ({
     [onChange]
   );
 
+  const selected = true;
+
   if (visible)
     return (
       <div className={styles.dropdown}>
         <div>
           <label htmlFor={id}>{label}</label>
-          <button
+          <Button
             onClick={(): void => {
               setSelectPathway(true);
             }}
+            variant="contained"
+            color="primary"
+            startIcon={<FontAwesomeIcon icon={faThList} />}
           >
-            Explore Pathways
-          </button>
+            Explore
+          </Button>
+          <Button
+            onClick={(): void => {
+              // if (selected) {
+              //   // Unassign
+              // } else {
+              //   const carePlan = createCarePlan(pathway.name, patient);
+              //   setPatientRecords([...patientRecords, carePlan]);
+              //   client?.create?.(carePlan);
+              // }
+            }}
+            variant="contained"
+            color={selected ? 'secondary' : 'primary'}
+            startIcon={
+              selected ? (
+                <FontAwesomeIcon icon={faTimesCircle} />
+              ) : (
+                <FontAwesomeIcon icon={faCheckCircle} />
+              )
+            }
+          >
+            {selected ? 'Unassign' : 'Assign'}
+          </Button>
         </div>
         <Select
           classNamePrefix="DropDown"
