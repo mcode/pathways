@@ -90,13 +90,11 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     const onAdvance = (): void => {
-      const newPatientRecords = [...patientRecords];
       const content = `${pathwayState.label} - Advance`;
       const documentReference = createDocumentReference(content, patient);
 
-      newPatientRecords.push(documentReference);
       client?.create?.(documentReference);
-      setPatientRecords(newPatientRecords);
+      setPatientRecords([...patientRecords, documentReference]);
     };
 
     return (
