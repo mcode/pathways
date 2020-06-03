@@ -11,7 +11,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
-import { getSelectedPathways } from 'utils/fhirUtils';
+import { getAssignedPathways } from 'utils/fhirUtils';
 import {
   faEye,
   faPlay,
@@ -47,7 +47,7 @@ interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
   criteria?: CriteriaResult;
   callback: Function;
-  selected: boolean;
+  assigned: boolean;
 }
 
 interface PathwaysListProps {
@@ -96,7 +96,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  selected={selectedPathways.includes(pathwayName)}
+                  assigned={selectedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
@@ -110,7 +110,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
     );
   }
 
-  const selectedPathways = getSelectedPathways(patientRecords, evaluatedPathways);
+  const selectedPathways = getAssignedPathways(patientRecords, evaluatedPathways);
   const style = { height: '100%' };
   if (headerElement?.current) {
     style.height = window.innerHeight - headerElement.current.clientHeight + 'px';
@@ -151,7 +151,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
   callback,
-  selected
+  assigned
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
@@ -165,16 +165,16 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   }
 
   const pathwayElementClass = clsx(
-    selected && styles.selectedPathwayElement,
-    selected && classes['selected-pathway-element'],
-    !selected && styles.pathwayElement,
-    !selected && classes['pathway-element']
+    assigned && styles.selectedPathwayElement,
+    assigned && classes['selected-pathway-element'],
+    !assigned && styles.pathwayElement,
+    !assigned && classes['pathway-element']
   );
 
   const titleClass = clsx(
     styles.title,
-    selected && classes['selected-title'],
-    !selected && classes.title
+    assigned && classes['selected-title'],
+    !assigned && classes.title
   );
 
   return (
@@ -188,7 +188,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         }}
       >
         <div>{pathway.name}</div>
-        {selected && <FontAwesomeIcon icon={faCheckCircle} />}
+        {assigned && <FontAwesomeIcon icon={faCheckCircle} />}
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
@@ -217,14 +217,13 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
             </table>
             <Button
               onClick={(): void => {
-                if (selected) unassignPathway(pathway.name);
-                else assignPathway(pathway.name);
+                assigned ? unassignPathway(pathway.name) : assignPathway(pathway.name);
               }}
               variant="contained"
-              color={selected ? 'secondary' : 'primary'}
-              startIcon={<FontAwesomeIcon icon={selected ? faTimesCircle : faCheckCircle} />}
+              color={assigned ? 'secondary' : 'primary'}
+              startIcon={<FontAwesomeIcon icon={assigned ? faTimesCircle : faCheckCircle} />}
             >
-              {selected ? 'Unassign' : 'Assign'}
+              {assigned ? 'Unassign' : 'Assign'}
             </Button>
             <Button
               onClick={(): void => {

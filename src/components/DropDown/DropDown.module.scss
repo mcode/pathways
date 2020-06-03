@@ -17,10 +17,6 @@
     cursor: pointer;
     text-align: center;
     appearance: none;
-
-    &:hover, &:focus {
-        background-color: darken($blue, 10%);
-    }
   }
 
   label {

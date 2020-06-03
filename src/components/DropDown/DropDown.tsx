@@ -3,7 +3,7 @@ import Select from 'react-select';
 
 import styles from './DropDown.module.scss';
 import { Option } from 'option';
-import { pathwayIsSelected } from 'utils/fhirUtils';
+import { pathwayIsAssigned } from 'utils/fhirUtils';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,7 +38,7 @@ const DropDown: FC<Props> = ({
     [onChange]
   );
 
-  const selected = pathwayIsSelected(patientRecords, evaluatedPathway?.pathway);
+  const assigned = pathwayIsAssigned(patientRecords, evaluatedPathway?.pathway);
 
   if (visible)
     return (
@@ -58,17 +58,18 @@ const DropDown: FC<Props> = ({
           <Button
             onClick={(): void => {
               if (evaluatedPathway?.pathway) {
-                if (selected) unassignPathway(evaluatedPathway.pathway.name);
-                else assignPathway(evaluatedPathway.pathway.name);
+                assigned
+                  ? unassignPathway(evaluatedPathway.pathway.name)
+                  : assignPathway(evaluatedPathway.pathway.name);
               } else {
                 alert('Unable to perform action. No pathway is selected.');
               }
             }}
             variant="contained"
-            color={selected ? 'secondary' : 'primary'}
-            startIcon={<FontAwesomeIcon icon={selected ? faTimesCircle : faCheckCircle} />}
+            color={assigned ? 'secondary' : 'primary'}
+            startIcon={<FontAwesomeIcon icon={assigned ? faTimesCircle : faCheckCircle} />}
           >
-            {selected ? 'Unassign' : 'Assign'}
+            {assigned ? 'Unassign' : 'Assign'}
           </Button>
         </div>
         <Select

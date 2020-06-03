@@ -222,7 +222,7 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
   };
 }
 
-export function getSelectedPathways(
+export function getAssignedPathways(
   patientRecords: DomainResource[],
   evaluatedPathways: EvaluatedPathway[]
 ): string[] {
@@ -232,14 +232,10 @@ export function getSelectedPathways(
     .map(r => r.title);
 
   // Check to see if any of the pathway names are in carePlanTitles
-  const selectedPathways = evaluatedPathways
-    .map(p => p.pathway.name)
-    .filter(n => carePlanTitles.includes(n));
-
-  return selectedPathways;
+  return evaluatedPathways.map(p => p.pathway.name).filter(n => carePlanTitles.includes(n));
 }
 
-export function pathwayIsSelected(
+export function pathwayIsAssigned(
   patientRecords: DomainResource[],
   pathway: Pathway | undefined
 ): boolean {
