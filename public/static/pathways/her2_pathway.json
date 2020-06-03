@@ -75,7 +75,7 @@
       ],
       "transitions": [
         {
-          "transition": "PostchemotherapyTrastuzumabRequest"
+          "transition": "PostchemotherapyTrastuzumab"
         }
       ],
       "cql": "[CarePlan] CTH where CTH.title.value='ChemotherapyTH' return Tuple{ resourceType: 'CarePlan', id: CTH.id.value , status: CTH.status.value}"
@@ -94,13 +94,13 @@
       ],
       "transitions": [
         {
-          "transition": "PostchemotherapyTrastuzumabRequest"
+          "transition": "PostchemotherapyTrastuzumab"
         }
       ],
       "cql": "[CarePlan] CTCH where CTCH.title.value='ChemotherapyTCH' return Tuple{ resourceType: 'CarePlan', id: CTCH.id.value , status: CTCH.status.value}"
     },
-    "PostchemotherapyTrastuzumabRequest": {
-      "label": "Post-Chemotherapy Trastuzumab Request",
+    "PostchemotherapyTrastuzumab": {
+      "label": "Post-Chemotherapy Trastuzumab",
       "action": [
         {
           "type": "create",
@@ -122,38 +122,10 @@
       ],
       "transitions": [
         {
-          "transition": "PostchemotherapyTrastuzumabAdministration"
-        }
-      ],
-      "cql": "[MedicationRequest: \"trastuzumab 150 MG Injection code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value}"
-    },
-    "PostchemotherapyTrastuzumabAdministration": {
-      "label": "Post-Chemotherapy Trastuzumab Administration",
-      "action": [
-        {
-          "type": "create",
-          "description": "Post Chemotherapy Trastuzumab (1 year total duration recommended)",
-          "resource": {
-            "resourceType": "MedicationAdministration",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                  "code": "224905",
-                  "display": "trastuzumab"
-                }
-              ],
-              "text": "trastuzumab"
-            }
-          }
-        }
-      ],
-      "transitions": [
-        {
           "transition": "ERStatus"
         }
       ],
-      "cql": "[MedicationAdministration: \"trastuzumab code\"] Trastuzumab return Tuple{ resourceType: 'MedicationAdministration', id: Trastuzumab.id.value, status: Trastuzumab.status.value} "
+      "cql": "[MedicationRequest: \"trastuzumab 150 MG Injection code\"] PCT return Tuple{ resourceType: 'MedicationRequest', id: PCT.id.value , status: PCT.status.value}"
     },
     "ERStatus": {
       "label": "ER Status",
