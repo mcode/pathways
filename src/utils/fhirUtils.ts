@@ -74,11 +74,7 @@ export function getHumanName(person: HumanName[]): string {
   return name;
 }
 
-export function createDocumentReference(
-  data: string,
-  labelOrCondition: string,
-  patient: Patient
-): DocumentReference {
+export function createDocumentReference(data: string, patient: Patient): DocumentReference {
   return {
     resourceType: 'DocumentReference',
     id: v1(),
@@ -87,12 +83,6 @@ export function createDocumentReference(
     },
     status: 'current',
     subject: { reference: `Patient/${patient.id}` },
-    identifier: [
-      {
-        system: 'pathways.documentreference',
-        value: btoa(labelOrCondition)
-      }
-    ],
     content: [
       {
         attachment: {
@@ -112,6 +102,23 @@ export function createDocumentReference(
       ]
     },
     indexed: ''
+  };
+}
+
+export function createActionDocumentReference(
+  data: string,
+  labelOrCondition: string,
+  patient: Patient
+): DocumentReference {
+  const documentReference = createDocumentReference(data, patient);
+  return {
+    ...documentReference,
+    identifier: [
+      {
+        system: 'pathways.documentreference',
+        value: btoa(labelOrCondition)
+      }
+    ]
   };
 }
 

@@ -7,7 +7,7 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { usePatient } from 'components/PatientProvider';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { useFHIRClient } from 'components/FHIRClient';
-import { createDocumentReference, createNoteContent } from 'utils/fhirUtils';
+import { createActionDocumentReference, createNoteContent } from 'utils/fhirUtils';
 import { useNote } from 'components/NoteDataProvider';
 interface MissingDataPopup {
   values: string[];
@@ -81,7 +81,11 @@ const PopupContent: FC<PopupContentProps> = ({ values, setOpen }) => {
               // Create DocumentReference with selected value and add to patient record
               if (note) {
                 const noteString = createNoteContent(note, patientRecords, 'completed', selected);
-                const documentReference = createDocumentReference(noteString, selected, patient);
+                const documentReference = createActionDocumentReference(
+                  noteString,
+                  selected,
+                  patient
+                );
                 setPatientRecords([...patientRecords, documentReference]);
                 client?.create?.(documentReference);
               }
