@@ -17,6 +17,7 @@ import {
   createNoteContent
 } from 'utils/fhirUtils';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@material-ui/core';
 import { useNote } from 'components/NoteDataProvider';
 import {
   Resource,
@@ -397,9 +398,14 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
         {pathwayState.transitions.length > 0 && !isActionable && isGuidance && isCurrentNode && (
-          <button className={`${indexStyles.button} ${styles.button}`} onClick={onAdvance}>
+          <Button
+            className={`${indexStyles.button} ${styles.button}`}
+            variant="contained"
+            color="primary"
+            onClick={onAdvance}
+          >
             Advance
-          </button>
+          </Button>
         )}
         {isActionable && isGuidance && (
           <form className={styles.commentsForm}>
