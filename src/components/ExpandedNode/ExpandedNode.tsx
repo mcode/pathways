@@ -29,7 +29,7 @@ import {
   ServiceRequest,
   CarePlan
 } from 'fhir-objects';
-import { Button } from '@material-ui/core';
+
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
