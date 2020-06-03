@@ -30,13 +30,13 @@ const useStyles = makeStyles(
     'pathway-element': {
       backgroundColor: theme.palette.background.default
     },
-    'selected-pathway-element': {
+    'assigned-pathway-element': {
       backgroundColor: theme.palette.primary.main
     },
     title: {
       color: theme.palette.text.primary
     },
-    'selected-title': {
+    'assigned-title': {
       color: theme.palette.common.white
     }
   }),
@@ -96,7 +96,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  assigned={selectedPathways.includes(pathwayName)}
+                  assigned={assignedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
@@ -110,7 +110,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
     );
   }
 
-  const selectedPathways = getAssignedPathways(patientRecords, evaluatedPathways);
+  const assignedPathways = getAssignedPathways(patientRecords, evaluatedPathways);
   const style = { height: '100%' };
   if (headerElement?.current) {
     style.height = window.innerHeight - headerElement.current.clientHeight + 'px';
@@ -165,15 +165,15 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   }
 
   const pathwayElementClass = clsx(
-    assigned && styles.selectedPathwayElement,
-    assigned && classes['selected-pathway-element'],
+    assigned && styles.assignedPathwayElement,
+    assigned && classes['assigned-pathway-element'],
     !assigned && styles.pathwayElement,
     !assigned && classes['pathway-element']
   );
 
   const titleClass = clsx(
     styles.title,
-    assigned && classes['selected-title'],
+    assigned && classes['assigned-title'],
     !assigned && classes.title
   );
 
