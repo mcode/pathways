@@ -56,7 +56,11 @@ const testActionState: GuidanceState = {
     }
   ],
   cql: 'Chemotherapy',
-  transitions: []
+  transitions: [
+    {
+      transition: 'Test transition'
+    }
+  ]
 };
 
 const testMedicationRequestState: GuidanceState = {
@@ -92,6 +96,8 @@ describe('<ExpandedNode />', () => {
         isActionable={false}
         isGuidance={true}
         documentation={undefined}
+        isAccepted={null}
+        isCurrentNode={true}
       />
     );
 
@@ -117,6 +123,8 @@ describe('<ExpandedNode />', () => {
         isActionable={false}
         isGuidance={true}
         documentation={undefined}
+        isAccepted={null}
+        isCurrentNode={true}
       />
     );
 
@@ -138,6 +146,7 @@ describe('<ExpandedNode />', () => {
         isGuidance={true}
         documentation={testDoc}
         isAccepted={true}
+        isCurrentNode={true}
       />
     );
 
@@ -151,5 +160,21 @@ describe('<ExpandedNode />', () => {
     expect(getByText('Accept')).toBeVisible();
     expect(getByText('Decline')).toBeVisible();
     expect(getByText('Use Default Text')).toBeVisible();
+  });
+
+  it('renders advance button', () => {
+    const { getByText } = render(
+      <ExpandedNode
+        pathwayState={testActionState}
+        isActionable={false}
+        isGuidance={true}
+        documentation={testDoc}
+        isAccepted={null}
+        isCurrentNode={true}
+      />
+    );
+
+    // Advance button should be displayed on node that is non-actionable, guidance, and current
+    expect(getByText('Advance')).toBeVisible();
   });
 });
