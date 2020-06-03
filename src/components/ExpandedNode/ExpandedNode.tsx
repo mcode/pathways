@@ -12,6 +12,7 @@ import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { usePatient } from 'components/PatientProvider';
 import {
   translatePathwayRecommendation,
+  createActionDocumentReference,
   createDocumentReference,
   createNoteContent
 } from 'utils/fhirUtils';
@@ -63,7 +64,12 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           note?.notes ?? '',
           pathwayState
         );
-        const documentReference = createDocumentReference(noteString, pathwayState.label, patient);
+        const documentReference = createActionDocumentReference(
+          noteString,
+          pathwayState.label,
+          patient
+        );
+
         newPatientRecords.push(documentReference);
         client?.create?.(documentReference);
       }
@@ -85,29 +91,8 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
 
     const onAdvance = (): void => {
       const newPatientRecords = [...patientRecords];
-
-      const documentReference: DocumentReference = {
-        resourceType: 'DocumentReference',
-        status: 'current',
-        content: [
-          {
-            attachment: {
-              data: btoa(`${pathwayState.label} - Advance`),
-              contentType: 'text/plain'
-            }
-          }
-        ],
-        type: {
-          coding: [
-            {
-              system: 'http://loinc.org',
-              code: '34108-1',
-              display: 'Outpatient Note'
-            }
-          ]
-        },
-        indexed: ''
-      };
+      const content = `${pathwayState.label} - Advance`;
+      const documentReference = createDocumentReference(content, patient);
 
       newPatientRecords.push(documentReference);
       client?.create?.(documentReference);
