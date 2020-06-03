@@ -26,12 +26,12 @@ import { DomainResource } from 'fhir-objects';
 import styles from './Graph.module.scss';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import { NoteDataProvider } from 'components/NoteDataProvider';
+import { usePathwayContext } from 'components/PathwayProvider';
 
 interface GraphProps {
-  evaluatedPathway: EvaluatedPathway;
+  evaluatedPathway?: EvaluatedPathway;
   interactive?: boolean;
   expandCurrentNode?: boolean;
-  updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
 const getPath = (pathwayResults: PathwayResults): string[] => {
@@ -51,7 +51,13 @@ const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolea
 };
 
 const Graph: FC<GraphProps> = memo(
-  ({ evaluatedPathway, interactive = true, expandCurrentNode = true, updateEvaluatedPathways }) => {
+  ({ evaluatedPathway, interactive = true, expandCurrentNode = true }) => {
+    const pathwayCtx = usePathwayContext();
+    if (!evaluatedPathway) {
+      if (!pathwayCtx.evaluatedPathway) return <div>No Pathway Loaded</div>;
+      else evaluatedPathway = pathwayCtx.evaluatedPathway;
+    }
+
     const patientRecords = usePatientRecords();
     const resources = patientRecords.patientRecords;
     const pathway = evaluatedPathway.pathway;
@@ -64,9 +70,12 @@ const Graph: FC<GraphProps> = memo(
     const setPath = useCallback(
       (value: PathwayResults): void => {
         patientRecords.setEvaluatePath(false);
-        updateEvaluatedPathways({ pathway: evaluatedPathway.pathway, pathwayResults: value });
+        pathwayCtx.updateEvaluatedPathways({
+          pathway: pathway,
+          pathwayResults: value
+        });
       },
-      [evaluatedPathway.pathway, updateEvaluatedPathways, patientRecords]
+      [pathway, pathwayCtx, patientRecords]
     );
 
     // Get the layout of the graph
@@ -148,7 +157,7 @@ const Graph: FC<GraphProps> = memo(
 
       if (
         resources.length > 0 &&
-        (!evaluatedPathway.pathwayResults || patientRecords.evaluatePath)
+        (!evaluatedPathway?.pathwayResults || patientRecords.evaluatePath)
       ) {
         // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
         const patient = {
@@ -164,18 +173,18 @@ const Graph: FC<GraphProps> = memo(
           cancel = true;
         };
       }
-    }, [pathway, resources, evaluatedPathway.pathwayResults, setPath, patientRecords]);
+    }, [pathway, resources, evaluatedPathway, setPath, patientRecords]);
 
     // Expand all the current nodes by default if allowed
     useEffect(() => {
-      if (evaluatedPathway.pathwayResults) {
+      if (evaluatedPathway?.pathwayResults) {
         for (const currentNode of evaluatedPathway.pathwayResults.currentStates) {
           if (expandCurrentNode) {
             if (currentNode) setExpanded(currentNode, true);
           }
         }
       }
-    }, [expandCurrentNode, evaluatedPathway.pathwayResults, setExpanded]);
+    }, [expandCurrentNode, evaluatedPathway, setExpanded]);
 
     // Recalculate graph layout if graph container size changes
     useEffect(() => {

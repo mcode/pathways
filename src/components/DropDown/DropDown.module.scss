@@ -11,17 +11,12 @@
     float: right;
     border: none;
     color: $white;
-    background-color: $blue;
     text-decoration: none;
     text-transform: uppercase;
     font-weight: 600;
     cursor: pointer;
     text-align: center;
     appearance: none;
-
-    &:hover, &:focus {
-        background-color: darken($blue, 10%);
-    }
   }
 
   label {

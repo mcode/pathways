@@ -27,6 +27,7 @@ import {
   ServiceRequest,
   CarePlan
 } from 'fhir-objects';
+import { Button } from '@material-ui/core';
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
   isActionable: boolean;
@@ -377,15 +378,17 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
           <form className={styles.commentsForm}>
             <div>
               <label>Comments:</label>
-              <button
+              <Button
                 className={`${indexStyles.button} ${styles.defaultTextButton}`}
                 onClick={(e): void => {
                   e.preventDefault();
                   if (!comments.includes(defaultText)) setComments(comments + defaultText);
                 }}
+                variant="contained"
+                color="primary"
               >
                 Use Default Text
-              </button>
+              </Button>
             </div>
             <textarea
               className={styles.comments}

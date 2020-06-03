@@ -17,8 +17,8 @@ import { EvaluatedPathway } from 'pathways-model';
 import useGetPathwaysService from './PathwaysService/PathwaysService';
 import FHIR from 'fhirclient';
 import { MockedFHIRClient } from 'utils/MockedFHIRClient';
-import { getHumanName } from 'utils/fhirUtils';
-import { DomainResource, Practitioner } from 'fhir-objects';
+import { getHumanName, createCarePlan } from 'utils/fhirUtils';
+import { DomainResource, Practitioner, CarePlan } from 'fhir-objects';
 import styles from './App.module.scss';
 import { UserProvider } from './UserProvider';
 import { McodeElements } from 'mcode';
@@ -190,6 +190,31 @@ const App: FC<AppProps> = ({ demoId }) => {
     [currentPathway, evaluatedPathways]
   );
 
+  const assignPathway = useCallback(
+    (pathwayName: string): void => {
+      if (!patient) return;
+
+      const carePlan = createCarePlan(pathwayName, patient);
+
+      setPatientRecords([...patientRecords, carePlan]);
+      client?.create?.(carePlan);
+    },
+    [patientRecords, patient, client, setPatientRecords]
+  );
+
+  const unassignPathway = useCallback(
+    (pathwayName: string): void => {
+      const newPatientRecords: DomainResource[] = [];
+      patientRecords.forEach(r => {
+        if (r.resourceType === 'CarePlan' && (r as CarePlan).title === pathwayName)
+          client?.delete?.(`CarePlan/${r.id}`);
+        else newPatientRecords.push(r);
+      });
+      setPatientRecords(newPatientRecords);
+    },
+    [patientRecords, setPatientRecords, client]
+  );
+
   return (
     <ThemeProvider>
       <FHIRClientProvider client={client as PathwaysClient}>
@@ -200,7 +225,9 @@ const App: FC<AppProps> = ({ demoId }) => {
                 pathwayCtx={{
                   updateEvaluatedPathways,
                   evaluatedPathway: currentPathway,
-                  setEvaluatedPathway: setEvaluatedPathwayCallback
+                  setEvaluatedPathway: setEvaluatedPathwayCallback,
+                  assignPathway: assignPathway,
+                  unassignPathway: unassignPathway
                 }}
               >
                 <div ref={headerElement}>
@@ -225,8 +252,6 @@ const App: FC<AppProps> = ({ demoId }) => {
                     key={currentPathway?.pathway.name ?? ''}
                     headerElement={headerElement}
                     graphContainerElement={graphContainerElement}
-                    evaluatedPathway={currentPathway}
-                    updateEvaluatedPathways={updateEvaluatedPathways}
                   />
                 )}
               </PathwayProvider>
@@ -241,31 +266,16 @@ const App: FC<AppProps> = ({ demoId }) => {
 interface PatientViewProps {
   headerElement: RefObject<HTMLDivElement>;
   graphContainerElement: RefObject<HTMLDivElement>;
-  evaluatedPathway: EvaluatedPathway | null;
-  updateEvaluatedPathways: (value: EvaluatedPathway) => void;
 }
 
-const PatientView: FC<PatientViewProps> = ({
-  headerElement,
-  graphContainerElement,
-  evaluatedPathway,
-  updateEvaluatedPathways
-}) => {
+const PatientView: FC<PatientViewProps> = ({ headerElement, graphContainerElement }) => {
   return (
     <div className={styles.display}>
       <PatientRecord headerElement={headerElement} />
 
-      {evaluatedPathway ? (
-        <div ref={graphContainerElement} className={styles.graph}>
-          <Graph
-            evaluatedPathway={evaluatedPathway}
-            expandCurrentNode={true}
-            updateEvaluatedPathways={updateEvaluatedPathways}
-          />
-        </div>
-      ) : (
-        <div>No Pathway Loaded</div>
-      )}
+      <div ref={graphContainerElement} className={styles.graph}>
+        <Graph expandCurrentNode={true} />
+      </div>
     </div>
   );
 };

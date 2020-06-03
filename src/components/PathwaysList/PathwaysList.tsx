@@ -1,43 +1,42 @@
-import React, { FC, ReactNode, useState, ButtonHTMLAttributes, RefObject } from 'react';
+import React, { FC, ReactNode, useState, RefObject } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
 import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
 
 import styles from './PathwaysList.module.scss';
-import indexStyles from 'styles/index.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
 import { evaluatePathwayCriteria } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
-import { CarePlan, Patient } from 'fhir-objects';
-import { createCarePlan } from 'utils/fhirUtils';
+import { getAssignedPathways } from 'utils/fhirUtils';
 import {
+  faEye,
   faPlay,
   faPlus,
   faMinus,
   faChevronUp,
   faChevronDown,
   faCaretDown,
-  faCheckCircle
+  faCheckCircle,
+  faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
-import { usePatient } from 'components/PatientProvider';
-import { useFHIRClient } from 'components/FHIRClient';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(
   theme => ({
     'pathway-element': {
       backgroundColor: theme.palette.background.default
     },
-    'selected-pathway-element': {
+    'assigned-pathway-element': {
       backgroundColor: theme.palette.primary.main
     },
     title: {
       color: theme.palette.text.primary
     },
-    'selected-title': {
+    'assigned-title': {
       color: theme.palette.common.white
     }
   }),
@@ -48,7 +47,7 @@ interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
   criteria?: CriteriaResult;
   callback: Function;
-  selected: boolean;
+  assigned: boolean;
 }
 
 interface PathwaysListProps {
@@ -90,18 +89,18 @@ const PathwaysList: FC<PathwaysListProps> = ({
         {criteria ? (
           criteria.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
-            const pathwayName = evaluatedPathway?.pathway.name || '';
-            if (evaluatedPathway)
+            if (evaluatedPathway) {
+              const pathwayName = evaluatedPathway.pathway.name;
               return (
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
                   criteria={c}
-                  selected={selectedPathways.includes(pathwayName)}
+                  assigned={assignedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
-            else
+            } else
               return <div>An error occured evaluating the pathway criteria. Please try again.</div>;
           })
         ) : (
@@ -111,21 +110,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
     );
   }
 
-  const getSelectedPathways = (): string[] => {
-    // Get all active CarePlan resource titles
-    const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
-      .filter(r => r.status === 'active')
-      .map(r => r.title);
-
-    // Check to see if any of the pathway names are in carePlanTitles
-    const selectedPathways = evaluatedPathways
-      .map(p => p.pathway.name)
-      .filter(n => carePlanTitles.includes(n));
-
-    return selectedPathways;
-  };
-
-  const selectedPathways = getSelectedPathways();
+  const assignedPathways = getAssignedPathways(patientRecords, evaluatedPathways);
   const style = { height: '100%' };
   if (headerElement?.current) {
     style.height = window.innerHeight - headerElement.current.clientHeight + 'px';
@@ -166,15 +151,12 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
   criteria,
   callback,
-  selected
+  assigned
 }) => {
   const classes = useStyles();
   const pathway = evaluatedPathway.pathway;
-  const pathwayCtx = usePathwayContext();
+  const { setEvaluatedPathway, assignPathway, unassignPathway } = usePathwayContext();
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const { patientRecords, setPatientRecords } = usePatientRecords();
-  const patient = usePatient().patient as Patient;
-  const client = useFHIRClient();
 
   const chevron: IconProp = isVisible ? faChevronUp : faChevronDown;
 
@@ -183,24 +165,17 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
   }
 
   const pathwayElementClass = clsx(
-    selected && styles.selectedPathwayElement,
-    selected && classes['selected-pathway-element'],
-    !selected && styles.pathwayElement,
-    !selected && classes['pathway-element']
+    assigned && styles.assignedPathwayElement,
+    assigned && classes['assigned-pathway-element'],
+    !assigned && styles.pathwayElement,
+    !assigned && classes['pathway-element']
   );
 
   const titleClass = clsx(
     styles.title,
-    selected && classes['selected-title'],
-    !selected && classes.title
+    assigned && classes['assigned-title'],
+    !assigned && classes.title
   );
-
-  // Optional attributes for "Select Pathway" button
-  const selectButtonOpts: ButtonHTMLAttributes<HTMLButtonElement> = {};
-  if (selected) {
-    // Add tooltip to button
-    selectButtonOpts.title = 'Pathway is already selected';
-  }
 
   return (
     <div className={pathwayElementClass} role={'list'} key={pathway.name}>
@@ -208,12 +183,12 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         className={titleClass}
         role={'listitem'}
         onClick={(e): void => {
-          pathwayCtx.setEvaluatedPathway(evaluatedPathway, true);
+          setEvaluatedPathway(evaluatedPathway, true);
           toggleVisible();
         }}
       >
         <div>{pathway.name}</div>
-        {selected && <FontAwesomeIcon icon={faCheckCircle} />}
+        {assigned && <FontAwesomeIcon icon={faCheckCircle} />}
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
@@ -240,28 +215,26 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                 ))}
               </tbody>
             </table>
-            <button
-              {...selectButtonOpts}
-              className={indexStyles.button}
-              disabled={selected}
+            <Button
               onClick={(): void => {
-                const carePlan = createCarePlan(pathway.name, patient);
-
-                setPatientRecords([...patientRecords, carePlan]);
-                client?.create?.(carePlan);
-                callback(evaluatedPathway);
+                assigned ? unassignPathway(pathway.name) : assignPathway(pathway.name);
               }}
+              variant="contained"
+              color={assigned ? 'secondary' : 'primary'}
+              startIcon={<FontAwesomeIcon icon={assigned ? faTimesCircle : faCheckCircle} />}
             >
-              Select Pathway
-            </button>
-            <button
-              className={indexStyles.button}
+              {assigned ? 'Unassign' : 'Assign'}
+            </Button>
+            <Button
               onClick={(): void => {
                 callback(evaluatedPathway);
               }}
+              variant="contained"
+              color="primary"
+              startIcon={<FontAwesomeIcon icon={faEye} />}
             >
-              View Pathway
-            </button>
+              View
+            </Button>
           </div>
           <div className={styles.pathway}>
             <div style={{ height: '100%', overflow: 'scroll' }}>
@@ -269,7 +242,6 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                 evaluatedPathway={evaluatedPathway}
                 interactive={false}
                 expandCurrentNode={false}
-                updateEvaluatedPathways={pathwayCtx.updateEvaluatedPathways}
               />
             </div>
             <div className={styles.controls}>

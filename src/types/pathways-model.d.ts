@@ -114,5 +114,7 @@ declare module 'pathways-model' {
       selectPathway?: boolean
     ) => void;
     updateEvaluatedPathways: (value: EvaluatedPathway) => void;
+    assignPathway: (pathwayName: string) => void;
+    unassignPathway: (pathwayName: string) => void;
   }
 }

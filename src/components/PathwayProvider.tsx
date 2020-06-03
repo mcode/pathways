@@ -13,6 +13,12 @@ export const PathwayContext = createContext<PathwayContextInterface>({
   },
   updateEvaluatedPathways: () => {
     //do nothing
+  },
+  assignPathway: () => {
+    //do nothing
+  },
+  unassignPathway: () => {
+    //do nothing
   }
 });
 

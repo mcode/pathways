@@ -1,4 +1,4 @@
-import { GuidanceState } from 'pathways-model';
+import { GuidanceState, EvaluatedPathway, Pathway } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
@@ -13,6 +13,7 @@ import {
 import { R4 } from '@ahryman40k/ts-fhir-types';
 import { v1 } from 'uuid';
 import { McodeElements } from 'mcode';
+import shortid from 'shortid';
 
 // translates pathway recommendation resource into suitable FHIR resource
 export function translatePathwayRecommendation(
@@ -200,6 +201,7 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
   return {
     title,
     resourceType: 'CarePlan',
+    id: shortid.generate(),
     text: {
       status: R4.NarrativeStatusKind._generated,
       div: `<div> Assignment of patient to pathway ${title} </div>`
@@ -218,6 +220,33 @@ export function createCarePlan(title: string, patient: Patient): CarePlan {
     ],
     subject: { reference: `Patient/${patient.id}` }
   };
+}
+
+export function getAssignedPathways(
+  patientRecords: DomainResource[],
+  evaluatedPathways: EvaluatedPathway[]
+): string[] {
+  // Get all active CarePlan resource titles
+  const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    .filter(r => r.status === 'active')
+    .map(r => r.title);
+
+  // Check to see if any of the pathway names are in carePlanTitles
+  return evaluatedPathways.map(p => p.pathway.name).filter(n => carePlanTitles.includes(n));
+}
+
+export function pathwayIsAssigned(
+  patientRecords: DomainResource[],
+  pathway: Pathway | undefined
+): boolean {
+  if (!pathway) return false;
+
+  // Get all active CarePlan resource titles
+  const carePlanTitles = (patientRecords.filter(r => r.resourceType === 'CarePlan') as CarePlan[])
+    .filter(r => r.status === 'active')
+    .map(r => r.title);
+
+  return carePlanTitles.includes(pathway.name);
 }
 
 export function getTNM(mcodeElements: McodeElements): string {

@@ -34,13 +34,23 @@ const MockedNavigation: FC = () => {
     }
   }
 
+  const assignPathway = (pathwayName: string): void => {
+    return;
+  };
+
+  const unassignPathway = (pathwayName: string): void => {
+    return;
+  };
+
   return (
     <MockedPatientProvider>
       <MockedPathwayProvider
         pathwayCtx={{
           evaluatedPathway: currentPathway,
           setEvaluatedPathway: setEvaluatedPathwayCallback,
-          updateEvaluatedPathways: updateEvaluatedPathways
+          updateEvaluatedPathways: updateEvaluatedPathways,
+          assignPathway: assignPathway,
+          unassignPathway: unassignPathway
         }}
       >
         <Navigation
