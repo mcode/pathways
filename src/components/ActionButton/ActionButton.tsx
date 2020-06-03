@@ -18,7 +18,7 @@ const LargeActionButton: FC<ButtonProps> = ({ type, onClick }) => {
     <Button
       onClick={onClick}
       variant={type === 'decline' ? 'text' : 'contained'}
-      color={type === 'decline' ? 'default' : 'primary'}
+      color={type === 'decline' ? 'secondary' : 'primary'}
     >
       {type[0].toUpperCase() + type.slice(1)}
     </Button>
