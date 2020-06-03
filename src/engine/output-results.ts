@@ -234,7 +234,7 @@ function shouldAdvance(currentState: State, resources: DomainResource[]): boolea
     const content = (r as DocumentReference).content[0].attachment.data;
     if (content) {
       const convertedContent = atob(content);
-      return convertedContent.includes(currentState.label) && convertedContent.includes('Advance');
+      return convertedContent === `${currentState.label} - Advance`;
     }
 
     return false;
