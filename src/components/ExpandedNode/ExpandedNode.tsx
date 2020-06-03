@@ -414,7 +414,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
         {pathwayState.transitions.length > 0 && !isActionable && isGuidance && isCurrentNode && (
-          <button className={indexStyles.button} onClick={onAdvance}>
+          <button className={`${indexStyles.button} ${styles.button}`} onClick={onAdvance}>
             Advance
           </button>
         )}
@@ -423,7 +423,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
             <div>
               <label>Comments:</label>
               <Button
-                className={`${indexStyles.button} ${styles.defaultTextButton}`}
+                className={`${indexStyles.button} ${styles.button}`}
                 onClick={(e): void => {
                   e.preventDefault();
                   if (!comments.includes(defaultText)) setComments(comments + defaultText);
