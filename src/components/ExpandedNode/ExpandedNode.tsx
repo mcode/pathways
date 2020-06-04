@@ -395,9 +395,9 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
       'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
     let notes;
-    const documentreference = retrieveNote(pathwayState.label, patientRecords);
-    if (documentreference) {
-      const content = documentreference.content[0].attachment?.data;
+    const documentReference = retrieveNote(pathwayState.label, patientRecords);
+    if (documentReference) {
+      const content = documentReference.content[0].attachment?.data;
       if (content) {
         notes = atob(content);
         notes = notes.slice(notes.indexOf('Notes: ') + 6);
