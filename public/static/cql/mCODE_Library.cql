@@ -27,6 +27,8 @@ code "14 ML pertuzumab 30 MG/ML Injection code": '1298948' from "RXNORM" display
 code "Cyclophosphamide 1000 MG Injection code": '1734919' from "RXNORM" display 'Cyclophosphamide 1000 MG Injection'
 code "trastuzumab 150 MG Injection code": '1922509' from "RXNORM" display 'trastuzumab 150 MG Injection'
 code "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code": '1790099' from "RXNORM" display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
+code "ado-trastuzumab emtansine 100 MG Injection code": '1658084' from "RXNORM" display 'ado-trastuzumab emtansine 100 MG Injection'
+code "paclitaxel 100 MG Injection code": '583214' from "RXNORM" display 'paclitaxel 100 MG Injection'
 
 code "11p partial monosomy syndrome 4135001 code": '4135001' from SNOMEDCT display '11p partial monosomy syndrome'
 code "Orbital lymphoma 13048006 code": '13048006' from SNOMEDCT display 'Orbital lymphoma'
@@ -54,6 +56,8 @@ concept "14 ML pertuzumab 30 MG/ML Injection": {"14 ML pertuzumab 30 MG/ML Injec
 concept "Cyclophosphamide 1000 MG Injection": {"Cyclophosphamide 1000 MG Injection code"} display 'Cyclophosphamide 1000 MG Injection'
 concept "trastuzumab 150 MG Injection": {"trastuzumab 150 MG Injection code"} display 'trastuzumab 150 MG Injection'
 concept "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection": {"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"} display '10 ML Doxorubicin Hydrochloride 2 MG/ML Injection'
+concept "ado-trastuzumab emtansine 100 MG Injection": {"ado-trastuzumab emtansine 100 MG Injection code"} display 'ado-trastuzumab emtansine 100 MG Injection'
+concept "paclitaxel 100 MG Injection": {"paclitaxel 100 MG Injection code"} display 'paclitaxel 100 MG Injection'
 
 concept "HER2 [Presence] in Breast cancer specimen by Immune stain" {"HER2 [Presence] in Breast cancer specimen by Immune stain code"} display 'HER2 [Presence] in Breast cancer specimen by Immune stain'
 
