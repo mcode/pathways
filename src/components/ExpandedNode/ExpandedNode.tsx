@@ -29,6 +29,7 @@ import {
   ServiceRequest,
   CarePlan
 } from 'fhir-objects';
+import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
@@ -98,6 +99,16 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       setPatientRecords([...patientRecords, documentReference]);
     };
 
+    let notes;
+    const documentreference = retrieveNote(pathwayState.label, patientRecords);
+    if (documentreference) {
+      const content = documentreference.content[0].attachment?.data;
+      if (content) {
+        notes = atob(content);
+        notes = notes.slice(notes.indexOf('Notes: ') + 6);
+      }
+    }
+
     return (
       <>
         <ExpandedNodeMemo
@@ -107,7 +118,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           pathwayState={pathwayState}
           documentation={documentation}
           setComments={setComments}
-          comments={note?.notes ?? ''}
+          comments={notes ?? ''}
           onAccept={(): void => {
             setNote(prevNote => {
               return { ...prevNote, status: 'Accepted' };
@@ -428,7 +439,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
             </div>
             <textarea
               className={styles.comments}
-              value={comments}
+              defaultValue={comments}
               onChange={(e): void => setComments(e.target.value)}
             ></textarea>
             <div className={styles.footer}>
