@@ -12,7 +12,7 @@ import {
   CriteriaResultItem,
   Documentation
 } from 'pathways-model';
-import { DomainResource } from 'fhir-objects';
+import { DocumentReference, DomainResource } from 'fhir-objects';
 import { retrieveNote } from 'utils/fhirUtils';
 
 interface StateData {
