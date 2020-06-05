@@ -29,11 +29,12 @@ import { NoteDataProvider } from 'components/NoteDataProvider';
 import { usePathwayContext } from 'components/PathwayProvider';
 
 interface GraphProps {
-  evaluatedPathway?: EvaluatedPathway;
-  interactive?: boolean;
+  evaluatedPathway?: EvaluatedPathway; // Pathway component and a pathwayResults component
+  interactive?: boolean; 
   expandCurrentNode?: boolean;
 }
 
+// 
 const getPath = (pathwayResults: PathwayResults): string[] => {
   return Object.values(pathwayResults.documentation)
     .filter(doc => doc.onPath)
