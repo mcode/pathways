@@ -30,7 +30,6 @@ import {
   CarePlan
 } from 'fhir-objects';
 import { retrieveNote } from 'utils/fhirUtils';
-import { DomainResource } from 'fhir-objects';
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
@@ -124,7 +123,6 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           }}
           isAccepted={isAccepted}
           onAdvance={onAdvance}
-          patientRecords={patientRecords}
         />
         {showReport && (
           <ReportModal
@@ -371,7 +369,6 @@ interface ExpandedNodeMemoProps {
   onDecline: () => void;
   isAccepted: boolean | null;
   onAdvance: () => void;
-  patientRecords: DomainResource[];
 }
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
@@ -385,9 +382,9 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     onAccept,
     onDecline,
     isAccepted,
-    onAdvance,
-    patientRecords
+    onAdvance
   }) => {
+    const { patientRecords } = usePatientRecords();
     const guidance = isGuidance && renderGuidance(pathwayState, documentation, isAccepted);
     const branch =
       isBranchState(pathwayState) && renderBranch(documentation, pathwayState, isAccepted);
@@ -400,7 +397,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
       const content = documentReference.content[0].attachment?.data;
       if (content) {
         notes = atob(content);
-        notes = notes.slice(notes.indexOf('Notes: ') + 6);
+        notes = notes.slice(notes.indexOf('Notes: ') + 7).slice(0, -3);
       }
     }
 
@@ -410,7 +407,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
             {guidance || branch}
-            {!isActionable && notes && (
+            {!isActionable && notes && /\S/.test(notes) && (
               <ExpandedNodeField key="Comments" title="Comments" description={notes} />
             )}
           </tbody>
