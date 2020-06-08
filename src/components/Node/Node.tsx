@@ -41,6 +41,7 @@ interface NodeProps {
   yCoordinate: number;
   expanded?: boolean;
   onClickHandler?: () => void;
+  isChoiceOfCurrent: boolean | null;
 }
 
 const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(

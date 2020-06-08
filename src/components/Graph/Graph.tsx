@@ -27,6 +27,7 @@ import styles from './Graph.module.scss';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import { NoteDataProvider } from 'components/NoteDataProvider';
 import { usePathwayContext } from 'components/PathwayProvider';
+import { isBranchState } from 'utils/nodeUtils';
 
 interface GraphProps {
   evaluatedPathway?: EvaluatedPathway; // Pathway component and a pathwayResults component
@@ -34,13 +35,24 @@ interface GraphProps {
   expandCurrentNode?: boolean;
 }
 
-// 
+// Filtering through the documentation of PathwayResults and pulling 
+// out docs on the path and mapping these values to their state,
+// So basically getting the state of everything on the path and returning
+// it as a string array 
 const getPath = (pathwayResults: PathwayResults): string[] => {
   return Object.values(pathwayResults.documentation)
     .filter(doc => doc.onPath)
     .map(doc => doc.state);
 };
 
+const isChoiceOfCurrent = (parents: string[], evaluatedPathway: EvaluatedPathway): boolean => {
+  for (let parent in parents) {
+    if (isBranchState(evaluatedPathway.pathway.states[parent])) return true;
+  }
+  return false;
+}
+
+// An edge is only in path if it has been added ? 
 const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
   const path = getPath(pathwayResults);
   const startIndex = path.indexOf(edge.start);
@@ -53,7 +65,7 @@ const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolea
 
 const Graph: FC<GraphProps> = memo(
   ({ evaluatedPathway, interactive = true, expandCurrentNode = true }) => {
-    const pathwayCtx = usePathwayContext();
+    const pathwayCtx = usePathwayContext(); // Where does this pull context from?
     if (!evaluatedPathway) {
       if (!pathwayCtx.evaluatedPathway) return <div>No Pathway Loaded</div>;
       else evaluatedPathway = pathwayCtx.evaluatedPathway;
@@ -289,6 +301,15 @@ const GraphMemo: FC<GraphMemoProps> = memo(
               const onClickHandler = useCallback(() => {
                 return interactive ? setExpanded(nodeName) : undefined;
               }, [nodeName]);
+              const parents = new Array()
+              for (let edge in edges) {
+                if (edges[edge].end == nodeName 
+                  && evaluatedPathway.pathwayResults
+                  && evaluatedPathway.pathwayResults.currentStates.includes(edges[edge].end)) {
+                    parents.push(edges[edge].start) 
+                }
+              }
+
               return (
                 <NoteDataProvider date={new Date(Date.now())} key={nodeName}>
                   <Node
@@ -313,6 +334,7 @@ const GraphMemo: FC<GraphMemoProps> = memo(
                     yCoordinate={nodeCoordinates[nodeName].y}
                     expanded={expanded[nodeName]}
                     onClickHandler={onClickHandler}
+                    isChoiceOfCurrent={isChoiceOfCurrent(parents, evaluatedPathway)}
                   />
                 </NoteDataProvider>
               );
@@ -333,18 +355,19 @@ const GraphMemo: FC<GraphMemoProps> = memo(
         >
           {edges !== undefined
             ? Object.keys(edges).map(edgeName => {
-                const edge = edges[edgeName];
+                const edge = edges[edgeName]
                 return (
                   <Arrow
                     key={edgeName}
                     edge={edge}
                     edgeName={edgeName}
-                    isOnPatientPath={
-                      evaluatedPathway.pathwayResults
-                        ? isEdgeOnPatientPath(evaluatedPathway.pathwayResults, edge)
-                        : false
-                    }
+                    isOnPatientPath={evaluatedPathway.pathwayResults 
+                             ? isEdgeOnPatientPath(evaluatedPathway.pathwayResults, edge) 
+                             : false}                    
                     widthOffset={parentWidth / 2}
+                    isCurrentBranch={evaluatedPathway.pathwayResults 
+                                && evaluatedPathway.pathwayResults.currentStates.includes(edge.start) 
+                                && isBranchState(pathway.states[edge.start])}
                   />
                 );
               })

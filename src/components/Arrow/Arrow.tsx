@@ -7,6 +7,7 @@ interface ArrowProps {
   edgeName: string;
   isOnPatientPath: boolean;
   widthOffset: number;
+  isCurrentBranch?: boolean | null;
 }
 
 interface ArrowPathProps {
@@ -15,13 +16,16 @@ interface ArrowPathProps {
   widthOffset: number;
 }
 
-const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset }) => {
-  const className = isOnPatientPath ? styles.arrowOnPatientPath : styles.arrow;
+const Arrow: FC<ArrowProps> = ({ edge, edgeName, isOnPatientPath, widthOffset, isCurrentBranch }) => {
+  const className = isOnPatientPath 
+                  ? styles.arrowOnPatientPath
+                  : (isCurrentBranch ? styles.branchArrow : styles.arrow)
   const edgeNameNoWhitespace = edgeName.replace(' ', '');
   const arrowheadId = `arrowhead-${edgeNameNoWhitespace}`;
 
   const { label } = edge;
   return (
+
     <svg className={className}>
       <ArrowPath points={edge.points} arrowheadId={arrowheadId} widthOffset={widthOffset} />
       {label ? (

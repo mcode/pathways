@@ -24,3 +24,7 @@
 .arrowOnPatientPath {
   @include arrow($blue);
 }
+
+.branchArrow {
+  @include arrow($red);
+}
