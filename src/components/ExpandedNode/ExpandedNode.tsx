@@ -290,8 +290,8 @@ function renderGuidance(
 
   const returnElements = [
     <ExpandedNodeField
-      key="Notes"
-      title="Notes"
+      key="Description"
+      title="Description"
       description={pathwayState.action[0].description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
@@ -397,7 +397,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
       const content = documentReference.content[0].attachment?.data;
       if (content) {
         notes = atob(content);
-        notes = notes.slice(notes.indexOf('Notes: ') + 7).slice(0, -3);
+        notes = notes.slice(notes.indexOf('Notes: ') + 7)
       }
     }
 
