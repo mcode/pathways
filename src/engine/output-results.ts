@@ -13,6 +13,7 @@ import {
   Documentation
 } from 'pathways-model';
 import { DocumentReference, DomainResource } from 'fhir-objects';
+import { retrieveNote } from 'utils/fhirUtils';
 
 interface StateData {
   documentation: Documentation;
@@ -364,32 +365,6 @@ function nextState(
   } else if (currentState.transitions.length > 1) {
     return getConditionalNextState(patientData, currentState, currentStateName, resources);
   } else return null;
-}
-
-/**
- * Helper function to retrieve DocumentReference note if one exists.
- * @param condition - the transition condition description for the note
- * @param resources - list of patient resources
- * @return DocumentReference for the transition condition or null if none found
- */
-function retrieveNote(condition: string, resources: DomainResource[]): DocumentReference | null {
-  const documentReference = resources.find(resource => {
-    if (resource.resourceType !== 'DocumentReference') return false;
-    const documentReference = resource as DocumentReference;
-    if (documentReference.identifier === undefined) return false;
-    for (const identifier of documentReference.identifier) {
-      if (
-        identifier.system === 'pathways.documentreference' &&
-        identifier.value === btoa(condition)
-      )
-        return true;
-    }
-    return false;
-  });
-
-  if (!documentReference) return null;
-
-  return documentReference as DocumentReference;
 }
 
 /**

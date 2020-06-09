@@ -76,7 +76,6 @@ Pathway: ${note.pathway}\n
 Node: ${note.node}\n
 Status: ${note.status}\n
 Treatment: ${note.treatment}\n
-Notes: ${note.notes}
-  `;
+Notes: ${note.notes}`;
   return noteString;
 };

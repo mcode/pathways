@@ -29,6 +29,7 @@ import {
   ServiceRequest,
   CarePlan
 } from 'fhir-objects';
+import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
   pathwayState: GuidanceState;
@@ -289,8 +290,8 @@ function renderGuidance(
 
   const returnElements = [
     <ExpandedNodeField
-      key="Notes"
-      title="Notes"
+      key="Description"
+      title="Description"
       description={pathwayState.action[0].description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
@@ -383,17 +384,32 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     isAccepted,
     onAdvance
   }) => {
+    const { patientRecords } = usePatientRecords();
     const guidance = isGuidance && renderGuidance(pathwayState, documentation, isAccepted);
     const branch =
       isBranchState(pathwayState) && renderBranch(documentation, pathwayState, isAccepted);
     const defaultText =
       'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
+
+    let notes;
+    const documentReference = retrieveNote(pathwayState.label, patientRecords);
+    if (documentReference) {
+      const content = documentReference.content[0].attachment?.data;
+      if (content) {
+        notes = atob(content);
+        notes = notes.slice(notes.indexOf('Notes: ') + 7);
+      }
+    }
+
     return (
       <div className={indexStyles.expandedNode}>
         <table className={styles.infoTable}>
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
             {guidance || branch}
+            {!isActionable && notes && /\S/.test(notes) && (
+              <ExpandedNodeField key="Comments" title="Comments" description={notes} />
+            )}
           </tbody>
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
