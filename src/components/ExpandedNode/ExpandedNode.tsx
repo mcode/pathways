@@ -397,7 +397,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
       const content = documentReference.content[0].attachment?.data;
       if (content) {
         notes = atob(content);
-        notes = notes.slice(notes.indexOf('Notes: ') + 7)
+        notes = notes.slice(notes.indexOf('Notes: ') + 7);
       }
     }
 
