@@ -55,7 +55,8 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         xCoordinate,
         yCoordinate,
         expanded = false,
-        onClickHandler
+        onClickHandler,
+        isChoiceOfCurrent
       },
       ref
     ) => {
@@ -65,14 +66,15 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         left: xCoordinate
       };
       const classes = useStyles();
-      const backgroundColorClass = isOnPatientPath
-        ? styles.onPatientPath
-        : clsx(styles.notOnPatientPath, classes['not-on-patient-path']);
+      const backgroundColorClass =
+        isOnPatientPath || isChoiceOfCurrent
+          ? styles.onPatientPath
+          : clsx(styles.notOnPatientPath, classes['not-on-patient-path']);
       const isActionable = isCurrentNode && !documentation;
       const topLevelClasses = [styles.node, backgroundColorClass];
       let expandedNodeClass = '';
       if (expanded) topLevelClasses.push(nodeStyles.expanded);
-      if (isActionable) {
+      if (isActionable || isChoiceOfCurrent) {
         topLevelClasses.push(styles.actionable);
         expandedNodeClass = styles.childActionable;
       } else {
@@ -101,7 +103,6 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       } else if (!isCurrentNode && documentation) {
         status = true;
       }
-
       return (
         <div className={topLevelClasses.join(' ')} style={style} ref={ref}>
           <div
