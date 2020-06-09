@@ -30,15 +30,11 @@ import { usePathwayContext } from 'components/PathwayProvider';
 import { isBranchState } from 'utils/nodeUtils';
 
 interface GraphProps {
-  evaluatedPathway?: EvaluatedPathway; // Pathway component and a pathwayResults component
+  evaluatedPathway?: EvaluatedPathway;
   interactive?: boolean;
   expandCurrentNode?: boolean;
 }
 
-// Filtering through the documentation of PathwayResults and pulling
-// out docs on the path and mapping these values to their state,
-// So basically getting the state of everything on the path and returning
-// it as a string array
 const getPath = (pathwayResults: PathwayResults): string[] => {
   return Object.values(pathwayResults.documentation)
     .filter(doc => doc.onPath)
@@ -66,7 +62,7 @@ const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolea
 
 const Graph: FC<GraphProps> = memo(
   ({ evaluatedPathway, interactive = true, expandCurrentNode = true }) => {
-    const pathwayCtx = usePathwayContext(); // Where does this pull context from?
+    const pathwayCtx = usePathwayContext();
     if (!evaluatedPathway) {
       if (!pathwayCtx.evaluatedPathway) return <div>No Pathway Loaded</div>;
       else evaluatedPathway = pathwayCtx.evaluatedPathway;

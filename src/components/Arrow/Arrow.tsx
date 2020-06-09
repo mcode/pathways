@@ -7,7 +7,7 @@ interface ArrowProps {
   edgeName: string;
   isOnPatientPath: boolean;
   widthOffset: number;
-  isCurrentBranch?: boolean | null;
+  isCurrentBranch: boolean | null;
 }
 
 interface ArrowPathProps {
