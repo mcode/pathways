@@ -152,9 +152,10 @@ const ExpandedNodeField: FC<ExpandedNodeFieldProps> = ({ title, description }) =
 type StatusFieldProps = {
   documentation: DocumentationResource | undefined;
   isAccepted: boolean | null;
+  isGuidance: boolean;
 };
 
-const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
+const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted, isGuidance }) => {
   if (!documentation?.resource) {
     return null;
   }
@@ -162,10 +163,11 @@ const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
   const rawDate = documentation.resource?.meta?.lastUpdated;
   if (rawDate) {
     const date = new Date(rawDate).toLocaleString('en-us');
+    const declinedText = isGuidance ? 'Declined' : 'Status';
     return (
       <ExpandedNodeField
         key="Status"
-        title={isAccepted ? status.charAt(0).toUpperCase() + status.slice(1) : 'Declined'}
+        title={isAccepted ? status.charAt(0).toUpperCase() + status.slice(1) : declinedText}
         description={isAccepted ? date : date.concat(' by Dr. Example')}
       />
     );
@@ -405,7 +407,11 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
       <div className={indexStyles.expandedNode}>
         <table className={styles.infoTable}>
           <tbody>
-            <StatusField documentation={documentation} isAccepted={isAccepted} />
+            <StatusField
+              documentation={documentation}
+              isAccepted={isAccepted}
+              isGuidance={isGuidance}
+            />
             {guidance || branch}
             {!isActionable && notes && /\S/.test(notes) && (
               <ExpandedNodeField key="Comments" title="Comments" description={notes} />
