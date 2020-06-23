@@ -162,10 +162,18 @@ const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
   const rawDate = documentation.resource?.meta?.lastUpdated;
   if (rawDate) {
     const date = new Date(rawDate).toLocaleString('en-us');
+    let titleText = '';
+    if (isAccepted) {
+      titleText = status.charAt(0).toUpperCase() + status.slice(1);
+    } else if (isAccepted === null) {
+      titleText = 'Status';
+    } else {
+      titleText = 'Declined';
+    }
     return (
       <ExpandedNodeField
         key="Status"
-        title={isAccepted ? status.charAt(0).toUpperCase() + status.slice(1) : 'Declined'}
+        title={titleText}
         description={isAccepted ? date : date.concat(' by Dr. Example')}
       />
     );
