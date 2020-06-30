@@ -5,11 +5,11 @@ import {
   Pathway,
   PathwayResults,
   PatientData,
-  CriteriaResult,
+  PreconditionResult,
   DocumentationResource,
   PathwayNode,
   GuidanceNode,
-  CriteriaResultItem,
+  PreconditionResultItem,
   Documentation
 } from 'pathways-model';
 import { DocumentReference, DomainResource } from 'fhir-objects';
@@ -84,17 +84,17 @@ export function pathwayData(
 }
 
 /**
- * Engine function to take in the ELM patient results and output data relating to the pathway criteria
+ * Engine function to take in the ELM patient results and output data relating to the pathway precondition
  * @param pathway - the entire pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
- * @return returns CriteriaResult containing the expected and actual value for one data element
+ * @return returns PreconditionResult containing the expected and actual value for one data element
  */
-export function criteriaData(pathway: Pathway, patientData: PatientData): CriteriaResult {
-  const resultItems: CriteriaResultItem[] = [];
+export function preconditionData(pathway: Pathway, patientData: PatientData): PreconditionResult {
+  const resultItems: PreconditionResultItem[] = [];
 
   let matches = 0;
-  pathway.criteria.forEach(criteria => {
-    let evaluationResult = patientData[criteria.elementName];
+  pathway.precondition.forEach(precondition => {
+    let evaluationResult = patientData[precondition.elementName];
     if (Array.isArray(evaluationResult)) {
       evaluationResult = evaluationResult[0]; // TODO: add functionality for multiple resources
     }
@@ -108,20 +108,20 @@ export function criteriaData(pathway: Pathway, patientData: PatientData): Criter
 
     if (match) matches += 1;
 
-    const criteriaResultItem = {
-      elementName: criteria.elementName,
-      expected: criteria.expected,
+    const preconditionResultItem = {
+      elementName: precondition.elementName,
+      expected: precondition.expected,
       actual,
       match
     };
 
-    resultItems.push(criteriaResultItem);
+    resultItems.push(preconditionResultItem);
   });
 
   return {
     pathwayName: pathway.name,
     matches: matches,
-    criteriaResultItems: resultItems
+    preconditionResultItems: resultItems
   };
 }
 

@@ -84,18 +84,18 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
 }
 
 /**
- * Extract the CQL statements from the `criteria` section of the pathway
+ * Extract the CQL statements from the `precondition` section of the pathway
  * into a snippet ready to be converted to ELM.
  * @param pathway - the entire pathway object
- * @return a string of the CQL for the criteria in the pathway
+ * @return a string of the CQL for the precondition in the pathway
  */
-export function extractCriteriaCQL(pathway: Pathway): Promise<string> {
+export function extractPreconditionCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway
-    for (const criteria of pathway.criteria) {
-      const cqlBlock1 = criteria.cql;
-      const nextBlock1 = cqlFormat(cqlBlock1, criteria.elementName);
+    for (const precondition of pathway.precondition) {
+      const cqlBlock1 = precondition.cql;
+      const nextBlock1 = cqlFormat(cqlBlock1, precondition.elementName);
       cql = cqlAdd(cql, nextBlock1);
     }
 

@@ -1,4 +1,4 @@
-import { pathwayData, criteriaData } from '../output-results';
+import { pathwayData, preconditionData } from '../output-results';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
 import { resources } from 'testUtils/MockedValues';
@@ -457,7 +457,7 @@ describe('pathway results translator', () => {
   });
 });
 
-describe('criteria results translator', () => {
+describe('precondition results translator', () => {
   it('matching patient produces correct results', () => {
     const patientData = {
       Patient: {
@@ -473,12 +473,12 @@ describe('criteria results translator', () => {
       ]
     };
 
-    const results = criteriaData(pathway, patientData);
+    const results = preconditionData(pathway, patientData);
 
     expect(results).toEqual({
       pathwayName: 'test_breast_cancer',
       matches: 1,
-      criteriaResultItems: [
+      preconditionResultItems: [
         {
           elementName: 'Condition',
           expected: 'Breast Cancer',
@@ -504,12 +504,12 @@ describe('criteria results translator', () => {
       ]
     };
 
-    const results = criteriaData(pathway, patientData);
+    const results = preconditionData(pathway, patientData);
 
     expect(results).toEqual({
       pathwayName: 'test_breast_cancer',
       matches: 0,
-      criteriaResultItems: [
+      preconditionResultItems: [
         {
           elementName: 'Condition',
           expected: 'Breast Cancer',

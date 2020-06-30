@@ -4,7 +4,7 @@ declare module 'pathways-model' {
     name: string;
     description?: string;
     library: string;
-    criteria: Criteria[];
+    precondition: Precondition[];
     nodes: {
       [key: string]: GuidanceNode | BranchNode | PathwayNode;
     };
@@ -14,7 +14,7 @@ declare module 'pathways-model' {
 
   export interface PathwayELM {
     navigational?: object;
-    criteria?: object;
+    precondition?: object;
   }
 
   export interface EvaluatedPathway {
@@ -22,7 +22,7 @@ declare module 'pathways-model' {
     pathwayResults: PathwayResults | null;
   }
 
-  export interface Criteria {
+  export interface Precondition {
     elementName: string; // name of the mCODE element
     expected: string; // human readable value
     cql: string; // cql to fetch the value from a patient
@@ -64,9 +64,9 @@ declare module 'pathways-model' {
     };
   }
 
-  export interface CriteriaResultItem {
-    // doesn't extend Criteria because we don't care about the cql here,
-    // and don't want to make it optional in Criteria
+  export interface PreconditionResultItem {
+    // doesn't extend Precondition because we don't care about the cql here,
+    // and don't want to make it optional in Precondition
 
     elementName: string; // name of the mCODE element
     expected: string; // human readable value
@@ -74,10 +74,10 @@ declare module 'pathways-model' {
     match: boolean; // in case expected !== actual but they are still a match
   }
 
-  export interface CriteriaResult {
+  export interface PreconditionResult {
     pathwayName: string;
     matches: number;
-    criteriaResultItems: CriteriaResultItem[];
+    preconditionResultItems: PreconditionResultItem[];
   }
 
   export interface ElmResults {

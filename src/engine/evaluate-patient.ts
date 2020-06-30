@@ -1,8 +1,14 @@
-import { extractNavigationCQL, extractCriteriaCQL, CqlObject, Library } from './cql-extractor';
+import { extractNavigationCQL, extractPreconditionCQL, CqlObject, Library } from './cql-extractor';
 import convertCQL, { convertBasicCQL, ElmObject } from './cql-to-elm';
 import executeElm from './elm-executor';
-import { pathwayData, criteriaData } from './output-results';
-import { Pathway, PatientData, PathwayResults, ElmResults, CriteriaResult } from 'pathways-model';
+import { pathwayData, preconditionData } from './output-results';
+import {
+  Pathway,
+  PatientData,
+  PathwayResults,
+  ElmResults,
+  PreconditionResult
+} from 'pathways-model';
 import { getFixture } from './cql-extractor';
 import { extractCQLInclude } from 'utils/regexes';
 import { DomainResource, Bundle } from 'fhir-objects';
@@ -31,21 +37,21 @@ export function evaluatePatientOnPathway(
 }
 
 /**
- * Evaluate the pathway criteria against the given patient.
+ * Evaluate the pathway precondition against the given patient.
  * @param patientRecord - Patient's record as FHIR data
  * @param pathway - entire Pathway object
- * @return a list of CriteriaResults, each containing
- *         the expected value and actual value for one criteria item
+ * @return a list of PreconditionResults, each containing
+ *         the expected value and actual value for one precondition item
  */
-export function evaluatePathwayCriteria(
+export function evaluatePathwayPrecondition(
   patientRecord: Bundle,
   pathway: Pathway
-): Promise<CriteriaResult> {
-  const patientDataPromise = pathway.elm?.criteria
-    ? processELMCommon(patientRecord, pathway.elm.criteria)
-    : extractCriteriaCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+): Promise<PreconditionResult> {
+  const patientDataPromise = pathway.elm?.precondition
+    ? processELMCommon(patientRecord, pathway.elm.precondition)
+    : extractPreconditionCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
-  return patientDataPromise.then(patientData => criteriaData(pathway, patientData));
+  return patientDataPromise.then(patientData => preconditionData(pathway, patientData));
 }
 
 /**

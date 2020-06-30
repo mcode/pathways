@@ -10,7 +10,7 @@ interface PathwayProviderProps {
 const pathway: Pathway = {
   name: 'Test Pathway',
   library: 'mCODE_Library.cql',
-  criteria: [
+  precondition: [
     {
       elementName: 'condition',
       expected: 'breast cancer',
