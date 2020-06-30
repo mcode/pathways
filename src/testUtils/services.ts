@@ -19,7 +19,7 @@ export const loadedService: Service<Array<Pathway>> = {
           cql: 'some fancy CQL statement'
         }
       ],
-      states: {
+      nodes: {
         Start: {
           label: 'Start',
           transitions: []
@@ -37,7 +37,7 @@ export const loadedService: Service<Array<Pathway>> = {
           cql: 'some fancy CQL statement'
         }
       ],
-      states: {
+      nodes: {
         Start: {
           label: 'Start',
           transitions: []
@@ -55,7 +55,7 @@ export const loadedService: Service<Array<Pathway>> = {
           cql: 'some fancy CQL statement'
         }
       ],
-      states: {
+      nodes: {
         Start: {
           label: 'Start',
           transitions: []

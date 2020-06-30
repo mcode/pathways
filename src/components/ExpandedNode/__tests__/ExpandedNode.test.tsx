@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import ExpandedNode from 'components/ExpandedNode';
 import {
-  GuidanceState,
+  GuidanceNode,
   BasicActionResource,
   BasicMedicationRequestResource,
   DocumentationResource
@@ -13,7 +13,7 @@ const testDoc: DocumentationResource = {
   resourceType: 'Observation',
   id: '138629',
   status: 'final',
-  state: 'N-test',
+  node: 'N-test',
   resource: {
     resourceType: 'Observation',
     id: '138629',
@@ -34,7 +34,7 @@ const testDoc: DocumentationResource = {
     ]
   }
 };
-const testActionState: GuidanceState = {
+const testActionState: GuidanceNode = {
   label: 'Chemotherapy',
   action: [
     {
@@ -63,7 +63,7 @@ const testActionState: GuidanceState = {
   ]
 };
 
-const testMedicationRequestState: GuidanceState = {
+const testMedicationRequestState: GuidanceNode = {
   label: 'ChemoMedication Request',
   action: [
     {
@@ -89,10 +89,10 @@ const testMedicationRequestState: GuidanceState = {
 };
 
 describe('<ExpandedNode />', () => {
-  it('renders a ExpandedNode for action state', () => {
+  it('renders a ExpandedNode for action node', () => {
     const { getByText, queryByRole, queryByText } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        pathwayNode={testActionState}
         isActionable={false}
         isGuidance={true}
         documentation={undefined}
@@ -119,7 +119,7 @@ describe('<ExpandedNode />', () => {
   it('renders a ExpandedNode for a medication request state', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayState={testMedicationRequestState}
+        pathwayNode={testMedicationRequestState}
         isActionable={false}
         isGuidance={true}
         documentation={undefined}
@@ -141,7 +141,7 @@ describe('<ExpandedNode />', () => {
   it('renders an active ExpandedNode', () => {
     const { getByText, getByRole } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        pathwayNode={testActionState}
         isActionable={true}
         isGuidance={true}
         documentation={testDoc}
@@ -165,7 +165,7 @@ describe('<ExpandedNode />', () => {
   it('renders advance button', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        pathwayNode={testActionState}
         isActionable={false}
         isGuidance={true}
         documentation={testDoc}

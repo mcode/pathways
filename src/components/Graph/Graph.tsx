@@ -37,7 +37,7 @@ interface GraphProps {
 const getPath = (pathwayResults: PathwayResults): string[] => {
   return Object.values(pathwayResults.documentation)
     .filter(doc => doc.onPath)
-    .map(doc => doc.state);
+    .map(doc => doc.node);
 };
 
 const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
@@ -45,7 +45,7 @@ const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolea
   const startIndex = path.indexOf(edge.start);
   const endIndex = path.indexOf(edge.end);
   if (startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex) return true;
-  else if (startIndex === path.length - 1 && pathwayResults.currentStates.includes(edge.end))
+  else if (startIndex === path.length - 1 && pathwayResults.currentNodes.includes(edge.end))
     return true;
   else return false;
 };
@@ -178,7 +178,7 @@ const Graph: FC<GraphProps> = memo(
     // Expand all the current nodes by default if allowed
     useEffect(() => {
       if (evaluatedPathway?.pathwayResults) {
-        for (const currentNode of evaluatedPathway.pathwayResults.currentStates) {
+        for (const currentNode of evaluatedPathway.pathwayResults.currentNodes) {
           if (expandCurrentNode) {
             if (currentNode) setExpanded(currentNode, true);
           }
@@ -296,16 +296,16 @@ const GraphMemo: FC<GraphMemoProps> = memo(
                     ref={(node: HTMLDivElement): void => {
                       nodeRefs.current[nodeName] = node;
                     }}
-                    pathwayState={pathway.states[nodeName]}
+                    pathwayNode={pathway.nodes[nodeName]}
                     isOnPatientPath={
                       evaluatedPathway.pathwayResults
                         ? getPath(evaluatedPathway.pathwayResults).includes(nodeName) ||
-                          evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                          evaluatedPathway.pathwayResults.currentNodes.includes(nodeName)
                         : false
                     }
                     isCurrentNode={
                       evaluatedPathway.pathwayResults
-                        ? evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                        ? evaluatedPathway.pathwayResults.currentNodes.includes(nodeName)
                         : false
                     }
                     xCoordinate={nodeCoordinates[nodeName].x + parentWidth / 2}

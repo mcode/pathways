@@ -11,7 +11,7 @@ describe('<Node />', () => {
   it('renders a node with text, icon, and correct styles', () => {
     const { container, getByText, getByRole } = render(
       <Node
-        pathwayState={testState}
+        pathwayNode={testState}
         isOnPatientPath={true}
         isCurrentNode={false}
         xCoordinate={0}
@@ -30,7 +30,7 @@ describe('<Node />', () => {
   it('renders correct background-color when node is not on patient path', () => {
     const { container } = render(
       <Node
-        pathwayState={testState}
+        pathwayNode={testState}
         isOnPatientPath={false}
         isCurrentNode={false}
         xCoordinate={0}
@@ -44,7 +44,7 @@ describe('<Node />', () => {
   it('expands the additional children when clicked', () => {
     const { container } = render(
       <Node
-        pathwayState={testState}
+        pathwayNode={testState}
         isOnPatientPath={true}
         isCurrentNode={false}
         xCoordinate={0}

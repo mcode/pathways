@@ -1,37 +1,37 @@
 {
   "patientId": "9cbc5bf7-7f16-424c-aebe-af0670f92c27",
-  "currentStates": ["Radiation"],
+  "currentNodes": ["Radiation"],
   "documentation": {
     "Start": {
-      "state": "Start",
+      "node": "Start",
       "onPath": true
     },
     "T-test": {
       "resourceType": "Observation",
       "id": "fc4bd5bf-40be-4407-8679-9e15e342762b",
       "status": "final",
-      "state": "T-test",
+      "node": "T-test",
       "onPath": true
     },
     "Surgery": {
       "resourceType": "Procedure",
       "id": "c3643461-66a8-4bdd-b2e9-5176ec0a833d",
       "status": "completed",
-      "state": "Surgery",
+      "node": "Surgery",
       "onPath": true
     },
     "N-test": {
       "resourceType": "Observation",
       "id": "48b52a74-1d91-4573-b430-2d44af0decbe",
       "status": "final",
-      "state": "N-test",
+      "node": "N-test",
       "onPath": true
     },
     "Radiation": {
       "resourceType": "Procedure",
       "id": "85b3a2f2-8a91-4897-bddc-c60491137b86",
       "status": "completed",
-      "state": "Radiation",
+      "node": "Radiation",
       "onPath": true
     }
   }

@@ -1,16 +1,16 @@
 {
   "patientId": "664c8ded-bb1a-4893-b3ee-90d64fdb7f56",
-  "currentStates": ["N-test"],
+  "currentNodes": ["N-test"],
   "documentation": {
     "Start": {
-      "state": "Start",
+      "node": "Start",
       "onPath": true
     },
     "T-test": {
       "resourceType": "Observation",
       "id": "c958f03c-2f53-4c83-b583-92e5331dff22",
       "status": "final",
-      "state": "T-test",
+      "node": "T-test",
       "onPath": true
     }
   }

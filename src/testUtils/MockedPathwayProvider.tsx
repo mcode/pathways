@@ -17,7 +17,7 @@ const pathway: Pathway = {
       cql: 'some fancy CQL statement'
     }
   ],
-  states: {
+  nodes: {
     Start: {
       label: 'Start',
       transitions: []

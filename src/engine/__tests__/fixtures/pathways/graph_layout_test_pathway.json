@@ -9,7 +9,7 @@
       "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } "
     }
   ],
-  "states": {
+  "nodes": {
     "Start": {
       "label": "Start",
       "transitions": [

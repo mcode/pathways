@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, State } from 'pathways-model';
+import { Pathway, PathwayNode } from 'pathways-model';
 import { Node, Nodes, Layout, NodeCoordinates, Edges, NodeDimensions } from 'graph-model';
 
 import dagre from 'dagre';
@@ -28,31 +28,31 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
-  const nodeNames = Object.keys(pathway.states);
+  const nodeNames = Object.keys(pathway.nodes);
   const g = new dagre.graphlib.Graph();
 
   g.setGraph({});
   g.setDefaultEdgeLabel(() => ({})); // dagre requires a default edge label, we want it to just be empty
 
-  nodeNames.forEach(stateName => {
-    const state: State = pathway.states[stateName];
-    const nodeDimension = nodeDimensions[stateName];
+  nodeNames.forEach(nodeName => {
+    const node: PathwayNode = pathway.nodes[nodeName];
+    const nodeDimension = nodeDimensions[nodeName];
 
     if (nodeDimension) {
-      g.setNode(stateName, {
-        label: state.label,
+      g.setNode(nodeName, {
+        label: node.label,
         width: nodeDimension.width,
         height: nodeDimension.height
       });
     } else {
-      g.setNode(stateName, {
-        label: state.label,
-        width: state.label.length * NODE_WIDTH_FACTOR,
+      g.setNode(nodeName, {
+        label: node.label,
+        width: node.label.length * NODE_WIDTH_FACTOR,
         height: NODE_HEIGHT
       });
     }
 
-    state.transitions.forEach(transition => {
+    node.transitions.forEach(transition => {
       const label = transition.condition
         ? {
             label: transition.condition.description,
@@ -61,7 +61,7 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
           }
         : {};
 
-      g.setEdge(stateName, transition.transition, label);
+      g.setEdge(nodeName, transition.transition, label);
     });
   });
 
@@ -307,7 +307,7 @@ function layoutCustom(pathway: Pathway): Layout {
    * the children.
    *
    * @param nodes - the Nodes
-   * @param graph - the graph as list of states by level
+   * @param graph - the graph as list of nodes by level
    * @param node - the node to get children from
    * @param rank - the rank to assign to the children
    */
@@ -330,7 +330,7 @@ function layoutCustom(pathway: Pathway): Layout {
   }
 
   /**
-   * Assigns the node labeled by stateName the rank by updating graph and nodes data structures
+   * Assigns the node labeled by nodeName the rank by updating graph and nodes data structures
    *
    * @param nodes - the Nodes
    * @param graph - the graph as list of nodes by level
@@ -357,10 +357,10 @@ function layoutCustom(pathway: Pathway): Layout {
     const nodes: Nodes = {};
 
     // Iniitalize each node with default values
-    let stateName: string;
-    for (stateName in pathway.states) {
-      nodes[stateName] = {
-        label: stateName,
+    let nodeName: string;
+    for (nodeName in pathway.nodes) {
+      nodes[nodeName] = {
+        label: nodeName,
         rank: NaN,
         horizontalPosition: NaN,
         children: [],
@@ -370,14 +370,14 @@ function layoutCustom(pathway: Pathway): Layout {
     }
 
     // Set the child and parent properties of each node
-    Object.keys(pathway.states).forEach(stateName => {
-      const state: State = pathway.states[stateName];
+    Object.keys(pathway.nodes).forEach(nodeName => {
+      const node: PathwayNode = pathway.nodes[nodeName];
 
-      state.transitions.forEach(transition => {
-        if (!nodes[stateName].children.includes(transition.transition))
-          nodes[stateName].children.push(transition.transition);
-        if (!nodes[transition.transition].parents.includes(stateName))
-          nodes[transition.transition].parents.push(stateName);
+      node.transitions.forEach(transition => {
+        if (!nodes[nodeName].children.includes(transition.transition))
+          nodes[nodeName].children.push(transition.transition);
+        if (!nodes[transition.transition].parents.includes(nodeName))
+          nodes[transition.transition].parents.push(nodeName);
       });
     });
 

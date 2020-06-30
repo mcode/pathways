@@ -5,8 +5,8 @@ declare module 'pathways-model' {
     description?: string;
     library: string;
     criteria: Criteria[];
-    states: {
-      [key: string]: GuidanceState | BranchState | State;
+    nodes: {
+      [key: string]: GuidanceNode | BranchNode | PathwayNode;
     };
     elm?: PathwayELM;
     // TODO: this should not be optional once we have the pathway builder
@@ -28,12 +28,12 @@ declare module 'pathways-model' {
     cql: string; // cql to fetch the value from a patient
   }
 
-  export interface State {
+  export interface PathwayNode {
     label: string;
     transitions: Transition[];
   }
 
-  export interface GuidanceState extends State {
+  export interface GuidanceNode extends PathwayNode {
     cql: string;
     action: Action[];
   }
@@ -58,7 +58,7 @@ declare module 'pathways-model' {
 
   export interface PathwayResults {
     patientId: string;
-    currentStates: string[];
+    currentNodes: string[];
     documentation: {
       [key: string]: Documentation;
     };
@@ -96,7 +96,7 @@ declare module 'pathways-model' {
   }
 
   export interface Documentation {
-    state: string;
+    node: string;
     onPath: boolean;
   }
 

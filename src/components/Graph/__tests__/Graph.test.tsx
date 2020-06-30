@@ -94,7 +94,7 @@ describe('<Graph />', () => {
     const evaluatedPathway = pathwayList[0];
     evaluatedPathway.pathwayResults = {
       patientId: 'test',
-      currentStates: ['Start'],
+      currentNodes: ['Start'],
       documentation: [],
       path: ['Start']
     };

@@ -14,7 +14,7 @@
         "cql": "[Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 return Tuple{ value: Her2.value.text.value, match: Her2.value.text.value ~ 'Positive' } "
       }
     ],
-    "states": {
+    "nodes": {
       "Start": {
         "label": "Start",
         "transitions": [
