@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, ReactElement, useState, memo } from 'react';
-import { GuidanceNode, DocumentationResource, PathwayNode, Action } from 'pathways-model';
+import { ActionNode, DocumentationResource, PathwayNode, Action } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
@@ -32,16 +32,16 @@ import {
 import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
-  pathwayNode: GuidanceNode;
+  pathwayNode: ActionNode;
   isActionable: boolean;
   isCurrentNode: boolean;
-  isGuidance: boolean;
+  isAction: boolean;
   documentation: DocumentationResource | undefined;
   isAccepted: boolean | null;
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
-  ({ pathwayNode, isActionable, isCurrentNode, isGuidance, documentation, isAccepted }) => {
+  ({ pathwayNode, isActionable, isCurrentNode, isAction, documentation, isAccepted }) => {
     const { note, setNote } = useNote();
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
@@ -102,7 +102,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     return (
       <>
         <ExpandedNodeMemo
-          isGuidance={isGuidance}
+          isAction={isAction}
           isActionable={isActionable}
           isCurrentNode={isCurrentNode}
           pathwayNode={pathwayNode}
@@ -286,8 +286,8 @@ function isMedicationRequest(
 ): request is MedicationRequest {
   return (request as MedicationRequest).medicationCodeableConcept !== undefined;
 }
-function renderGuidance(
-  pathwayNode: GuidanceNode,
+function renderAction(
+  pathwayNode: ActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
@@ -367,8 +367,8 @@ function renderGuidance(
 
 interface ExpandedNodeMemoProps {
   documentation: DocumentationResource | undefined;
-  pathwayNode: GuidanceNode;
-  isGuidance: boolean;
+  pathwayNode: ActionNode;
+  isAction: boolean;
   isActionable: boolean;
   isCurrentNode: boolean;
   comments: string;
@@ -382,7 +382,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
     documentation,
     pathwayNode,
-    isGuidance,
+    isAction,
     isActionable,
     isCurrentNode,
     comments,
@@ -393,7 +393,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     onAdvance
   }) => {
     const { patientRecords } = usePatientRecords();
-    const guidance = isGuidance && renderGuidance(pathwayNode, documentation, isAccepted);
+    const action = isAction && renderAction(pathwayNode, documentation, isAccepted);
     const branch =
       isBranchNode(pathwayNode) && renderBranch(documentation, pathwayNode, isAccepted);
     const defaultText =
@@ -414,14 +414,14 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
         <table className={styles.infoTable}>
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
-            {guidance || branch}
+            {action || branch}
             {!isActionable && notes && /\S/.test(notes) && (
               <ExpandedNodeField key="Comments" title="Comments" description={notes} />
             )}
           </tbody>
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
-        {pathwayNode.transitions.length > 0 && !isActionable && isGuidance && isCurrentNode && (
+        {pathwayNode.transitions.length > 0 && !isActionable && isAction && isCurrentNode && (
           <Button
             className={`${indexStyles.button} ${styles.button}`}
             variant="contained"
@@ -431,7 +431,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
             Advance
           </Button>
         )}
-        {isActionable && isGuidance && (
+        {isActionable && isAction && (
           <form className={styles.commentsForm}>
             <div>
               <label>Comments:</label>

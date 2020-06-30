@@ -1,13 +1,13 @@
 import React, { FC, Ref, forwardRef, memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { GuidanceNode, PathwayNode, DocumentationResource } from 'pathways-model';
+import { ActionNode, PathwayNode, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from './Node.module.scss';
 import nodeStyles from 'styles/index.module.scss';
 import ExpandedNode from 'components/ExpandedNode';
-import { isGuidanceNode } from 'utils/nodeUtils';
+import { isActionNode } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faMicroscope,
@@ -80,12 +80,12 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
       }
 
-      const isGuidance = isGuidanceNode(pathwayNode);
+      const isAction = isActionNode(pathwayNode);
       // TODO: how do we determine whether a node has been accepted or declined?
       // for now:
-      // if it's a non-actionable guidance node on the path: accepted == has documentation
-      // if it's actionable, not guidance or not on the path: null
-      const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
+      // if it's a non-actionable action node on the path: accepted == has documentation
+      // if it's actionable, not action or not on the path: null
+      const wasActionTaken = isOnPatientPath && isAction && !isActionable;
       const isAccepted = wasActionTaken
         ? documentation?.resourceType !== 'DocumentReference'
         : null;
@@ -96,7 +96,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       let status = null;
       if ('action' in pathwayNode) {
         if (isOnPatientPath) status = isAccepted;
-        else status = isGuidance && documentation ? true : null;
+        else status = isAction && documentation ? true : null;
       } else if (!isCurrentNode && documentation) {
         status = true;
       }
@@ -108,7 +108,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
             onClick={onClickHandler}
           >
             <div className={nodeStyles.iconAndLabel}>
-              <NodeIcon pathwayNode={pathwayNode} isGuidance={isGuidance} />
+              <NodeIcon pathwayNode={pathwayNode} isAction={isAction} />
               {label}
             </div>
             <StatusIcon status={status} />
@@ -116,9 +116,9 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
               <ExpandedNode
-                pathwayNode={pathwayNode as GuidanceNode}
+                pathwayNode={pathwayNode as ActionNode}
                 isActionable={isActionable}
-                isGuidance={isGuidance}
+                isAction={isAction}
                 documentation={documentation}
                 isAccepted={isAccepted}
                 isCurrentNode={isCurrentNode}
@@ -133,16 +133,16 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
 
 interface NodeIconProps {
   pathwayNode: PathwayNode;
-  isGuidance: boolean;
+  isAction: boolean;
 }
 
-const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isGuidance }) => {
+const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isAction }) => {
   let icon: IconProp = faMicroscope;
   if (pathwayNode.label === 'Start') icon = faPlay;
-  if (isGuidance) {
-    const guidancePathwayNode = pathwayNode as GuidanceNode;
-    if (guidancePathwayNode.action.length > 0) {
-      const resourceType = guidancePathwayNode.action[0].resource.resourceType;
+  if (isAction) {
+    const actionPathwayNode = pathwayNode as ActionNode;
+    if (actionPathwayNode.action.length > 0) {
+      const resourceType = actionPathwayNode.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
       else if (resourceType === 'ServiceRequest') icon = faSyringe;
       else if (resourceType === 'CarePlan') icon = faBookMedical;

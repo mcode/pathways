@@ -8,7 +8,7 @@ import {
   PreconditionResult,
   DocumentationResource,
   PathwayNode,
-  GuidanceNode,
+  ActionNode,
   PreconditionResultItem,
   Documentation
 } from 'pathways-model';
@@ -322,7 +322,7 @@ function nextNode(
   currentNodeName: string,
   resources: DomainResource[]
 ): NodeData | null {
-  const currentNode: PathwayNode | GuidanceNode = pathway.nodes[currentNodeName];
+  const currentNode: PathwayNode | ActionNode = pathway.nodes[currentNodeName];
   if ('action' in currentNode) {
     let resource = patientData[currentNodeName];
     if (resource?.length) {

@@ -6,7 +6,7 @@ declare module 'pathways-model' {
     library: string;
     precondition: Precondition[];
     nodes: {
-      [key: string]: GuidanceNode | BranchNode | PathwayNode;
+      [key: string]: ActionNode | BranchNode | PathwayNode;
     };
     elm?: PathwayELM;
     // TODO: this should not be optional once we have the pathway builder
@@ -33,7 +33,7 @@ declare module 'pathways-model' {
     transitions: Transition[];
   }
 
-  export interface GuidanceNode extends PathwayNode {
+  export interface ActionNode extends PathwayNode {
     cql: string;
     action: Action[];
   }

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import ExpandedNode from 'components/ExpandedNode';
 import {
-  GuidanceNode,
+  ActionNode,
   BasicActionResource,
   BasicMedicationRequestResource,
   DocumentationResource
@@ -34,7 +34,7 @@ const testDoc: DocumentationResource = {
     ]
   }
 };
-const testActionState: GuidanceNode = {
+const testActionState: ActionNode = {
   label: 'Chemotherapy',
   action: [
     {
@@ -63,7 +63,7 @@ const testActionState: GuidanceNode = {
   ]
 };
 
-const testMedicationRequestState: GuidanceNode = {
+const testMedicationRequestState: ActionNode = {
   label: 'ChemoMedication Request',
   action: [
     {
@@ -94,7 +94,7 @@ describe('<ExpandedNode />', () => {
       <ExpandedNode
         pathwayNode={testActionState}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={undefined}
         isAccepted={null}
         isCurrentNode={true}
@@ -121,7 +121,7 @@ describe('<ExpandedNode />', () => {
       <ExpandedNode
         pathwayNode={testMedicationRequestState}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={undefined}
         isAccepted={null}
         isCurrentNode={true}
@@ -143,7 +143,7 @@ describe('<ExpandedNode />', () => {
       <ExpandedNode
         pathwayNode={testActionState}
         isActionable={true}
-        isGuidance={true}
+        isAction={true}
         documentation={testDoc}
         isAccepted={true}
         isCurrentNode={true}
@@ -167,14 +167,14 @@ describe('<ExpandedNode />', () => {
       <ExpandedNode
         pathwayNode={testActionState}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={testDoc}
         isAccepted={null}
         isCurrentNode={true}
       />
     );
 
-    // Advance button should be displayed on node that is non-actionable, guidance, and current
+    // Advance button should be displayed on node that is non-actionable, action, and current
     expect(getByText('Advance')).toBeVisible();
   });
 });
