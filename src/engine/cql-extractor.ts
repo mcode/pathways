@@ -62,11 +62,11 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway
-    for (const nodeName in pathway.nodes) {
-      const node = pathway.nodes[nodeName];
+    for (const nodeKey in pathway.nodes) {
+      const node = pathway.nodes[nodeKey];
       if ('cql' in node) {
         const cqlBlock1 = node.cql;
-        const nextBlock1 = cqlFormat(cqlBlock1, nodeName);
+        const nextBlock1 = cqlFormat(cqlBlock1, nodeKey);
         cql = cqlAdd(cql, nextBlock1);
       } else if (isConditional(node)) {
         for (const transition of node.transitions) {

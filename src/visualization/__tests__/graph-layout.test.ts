@@ -24,18 +24,18 @@ describe('pathway graph layout', () => {
   // Helper function to validate layout output
   function checkLayout(graphCoordinates: NodeCoordinates): void {
     // Verify every node has (x,y) and only start has y: 0
-    for (const nodeName in graphCoordinates) {
+    for (const nodeKey in graphCoordinates) {
       // Validate node
-      const coords = graphCoordinates[nodeName];
+      const coords = graphCoordinates[nodeKey];
       expect(coords).toBeDefined();
       expect(coords.x).toBeDefined();
       expect(coords.y).toBeDefined();
-      if (nodeName !== 'Start') expect(coords.y !== 0).toBeTruthy();
+      if (nodeKey !== 'Start') expect(coords.y !== 0).toBeTruthy();
 
       // Validate node does not overlap with another node
-      for (const otherNodeName in graphCoordinates) {
-        if (nodeName !== otherNodeName) {
-          const otherCoords = graphCoordinates[otherNodeName];
+      for (const otherNodeKey in graphCoordinates) {
+        if (nodeKey !== otherNodeKey) {
+          const otherCoords = graphCoordinates[otherNodeKey];
           expect(coords.x === otherCoords.x && coords.y === otherCoords.y).toBeFalsy();
         }
       }

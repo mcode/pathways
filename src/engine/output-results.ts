@@ -55,12 +55,12 @@ export function pathwayData(
       // Check if any of them have been done
       currentNodes = [];
       const completedNodes: string[] = [];
-      for (const nodeName of nodeData.nextNodes) {
-        const documentReference = retrieveNote(pathway.nodes[nodeName].label, resources);
-        if (!documentReference && (!patientData[nodeName] || !patientData[nodeName].length)) {
-          currentNodes.push(nodeName);
+      for (const nodeKey of nodeData.nextNodes) {
+        const documentReference = retrieveNote(pathway.nodes[nodeKey].label, resources);
+        if (!documentReference && (!patientData[nodeKey] || !patientData[nodeKey].length)) {
+          currentNodes.push(nodeKey);
         } else {
-          completedNodes.push(nodeName);
+          completedNodes.push(nodeKey);
         }
       }
 
@@ -72,8 +72,8 @@ export function pathwayData(
       }
 
       // TODO: there is a possibility multiple nodes match
-      const currentNodeName = completedNodes.length ? completedNodes[0] : currentNodes[0];
-      nodeData = nextNode(pathway, patientData, currentNodeName, resources);
+      const currentNodeKey = completedNodes.length ? completedNodes[0] : currentNodes[0];
+      nodeData = nextNode(pathway, patientData, currentNodeKey, resources);
     }
   }
   return {
@@ -141,19 +141,19 @@ function getAllDocumentation(
   const nodesWithDocumentation = Object.values(patientDocumentation)
     .filter(doc => doc.onPath)
     .map(doc => doc.node);
-  for (const [nodeName, node] of Object.entries(pathway.nodes)) {
-    if (!nodesWithDocumentation.includes(nodeName)) {
+  for (const [nodeKey, node] of Object.entries(pathway.nodes)) {
+    if (!nodesWithDocumentation.includes(nodeKey)) {
       if ('action' in node) {
         // If action check for resource
-        if (patientData[nodeName] && patientData[nodeName].length) {
-          const documentation = patientData[nodeName][0];
-          documentation.node = nodeName;
+        if (patientData[nodeKey] && patientData[nodeKey].length) {
+          const documentation = patientData[nodeKey][0];
+          documentation.node = nodeKey;
           documentation.onPath = false;
           (documentation as DocumentationResource).resource = retrieveResource(
             documentation,
             resources
           );
-          patientDocumentation[nodeName] = { ...documentation };
+          patientDocumentation[nodeKey] = { ...documentation };
         }
       } else {
         // Tranisition element must check each transition in patient data for existence
@@ -165,13 +165,13 @@ function getAllDocumentation(
             patientData[transition.condition.description].length
           ) {
             const documentation = patientData[transition.condition.description][0];
-            documentation.node = nodeName;
+            documentation.node = nodeKey;
             documentation.onPath = false;
             (documentation as DocumentationResource).resource = retrieveResource(
               documentation,
               resources
             );
-            patientDocumentation[nodeName] = { ...documentation };
+            patientDocumentation[nodeKey] = { ...documentation };
           } else {
             // Check for document reference note
             const documentReference = retrieveNote(transition.condition.description, resources);
@@ -180,11 +180,11 @@ function getAllDocumentation(
                 resourceType: 'DocumentReference',
                 status: documentReference.status,
                 id: documentReference.id,
-                node: nodeName,
+                node: nodeKey,
                 onPath: false,
                 resource: documentReference
               };
-              patientDocumentation[nodeName] = { ...documentation };
+              patientDocumentation[nodeKey] = { ...documentation };
             }
           }
         }
@@ -261,13 +261,13 @@ function formatNextNode(
  * Determine the nextNode in a conditional transition node
  * @param patientData - JSON object representing the data on a patient
  * @param currentNode - the current node
- * @param currentNodeName - the name of the current node
+ * @param currentNodeKey - the name of the current node
  * @return the next node
  */
 function getConditionalNextNode(
   patientData: PatientData,
   currentNode: PathwayNode,
-  currentNodeName: string,
+  currentNodeKey: string,
   resources: DomainResource[]
 ): NodeData | null {
   const documentation: DocumentationResource[] = [];
@@ -285,7 +285,7 @@ function getConditionalNextNode(
             resourceType: 'DocumentReference',
             id: documentReference.id ? documentReference.id : 'unknown',
             status: documentReference.status,
-            node: currentNodeName,
+            node: currentNodeKey,
             resource: documentReference,
             onPath: true
           };
@@ -302,7 +302,7 @@ function getConditionalNextNode(
   if (nextNodes.length && documentation.length)
     return {
       nextNodes: nextNodes,
-      documentation: formatDocumentation(documentation[0], currentNodeName),
+      documentation: formatDocumentation(documentation[0], currentNodeKey),
       status: documentation[0].status
     };
   else return null;
@@ -313,23 +313,23 @@ function getConditionalNextNode(
  * For actions this function will also verify the move is valid by the resource status
  * @param pathway - JSON object representing the complete pathway
  * @param patientData - JSON object representing the data on a patient
- * @param currentNodeName - the name of the current node in the traversal
+ * @param currentNodeKey - the name of the current node in the traversal
  * @return returns object with the next node, the status, and the evidenvce
  */
 function nextNode(
   pathway: Pathway,
   patientData: PatientData,
-  currentNodeName: string,
+  currentNodeKey: string,
   resources: DomainResource[]
 ): NodeData | null {
-  const currentNode: PathwayNode | ActionNode = pathway.nodes[currentNodeName];
+  const currentNode: PathwayNode | ActionNode = pathway.nodes[currentNodeKey];
   if ('action' in currentNode) {
-    let resource = patientData[currentNodeName];
+    let resource = patientData[currentNodeKey];
     if (resource?.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources
       return {
         nextNodes: formatNextNode(resource, currentNode, resources),
-        documentation: formatDocumentation(resource, currentNodeName),
+        documentation: formatDocumentation(resource, currentNodeKey),
         status: 'status' in resource ? resource.status : 'unknown'
       };
     } else {
@@ -340,13 +340,13 @@ function nextNode(
           resourceType: 'DocumentReference',
           id: documentReference.id ? documentReference.id : 'unknown',
           status: 'status' in documentReference ? documentReference.status : 'unknown',
-          node: currentNodeName,
+          node: currentNodeKey,
           resource: documentReference,
           onPath: true
         };
         return {
           nextNodes: formatNextNode(doc, currentNode, resources),
-          documentation: formatDocumentation(doc, currentNodeName),
+          documentation: formatDocumentation(doc, currentNodeKey),
           status: doc.status
         };
       }
@@ -356,11 +356,11 @@ function nextNode(
   } else if (currentNode.transitions.length === 1) {
     return {
       nextNodes: [currentNode.transitions[0].transition],
-      documentation: { node: currentNodeName, onPath: true },
+      documentation: { node: currentNodeKey, onPath: true },
       status: 'completed'
     };
   } else if (currentNode.transitions.length > 1) {
-    return getConditionalNextNode(patientData, currentNode, currentNodeName, resources);
+    return getConditionalNextNode(patientData, currentNode, currentNodeKey, resources);
   } else return null;
 }
 
