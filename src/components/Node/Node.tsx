@@ -116,7 +116,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
               <ExpandedNode
-                pathwayNode={pathwayNode as ActionNode}
+                actionNode={pathwayNode as ActionNode}
                 isActionable={isActionable}
                 isAction={isAction}
                 documentation={documentation}
@@ -140,9 +140,9 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isAction }) => {
   let icon: IconProp = faMicroscope;
   if (pathwayNode.label === 'Start') icon = faPlay;
   if (isAction) {
-    const actionPathwayNode = pathwayNode as ActionNode;
-    if (actionPathwayNode.action.length > 0) {
-      const resourceType = actionPathwayNode.action[0].resource.resourceType;
+    const actionNode = pathwayNode as ActionNode;
+    if (actionNode.action.length > 0) {
+      const resourceType = actionNode.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
       else if (resourceType === 'ServiceRequest') icon = faSyringe;
       else if (resourceType === 'CarePlan') icon = faBookMedical;

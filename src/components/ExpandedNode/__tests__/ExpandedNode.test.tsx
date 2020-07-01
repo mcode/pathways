@@ -92,7 +92,7 @@ describe('<ExpandedNode />', () => {
   it('renders a ExpandedNode for action node', () => {
     const { getByText, queryByRole, queryByText } = render(
       <ExpandedNode
-        pathwayNode={testActionState}
+        actionNode={testActionState}
         isActionable={false}
         isAction={true}
         documentation={undefined}
@@ -119,7 +119,7 @@ describe('<ExpandedNode />', () => {
   it('renders a ExpandedNode for a medication request state', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayNode={testMedicationRequestState}
+        actionNode={testMedicationRequestState}
         isActionable={false}
         isAction={true}
         documentation={undefined}
@@ -141,7 +141,7 @@ describe('<ExpandedNode />', () => {
   it('renders an active ExpandedNode', () => {
     const { getByText, getByRole } = render(
       <ExpandedNode
-        pathwayNode={testActionState}
+        actionNode={testActionState}
         isActionable={true}
         isAction={true}
         documentation={testDoc}
@@ -165,7 +165,7 @@ describe('<ExpandedNode />', () => {
   it('renders advance button', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayNode={testActionState}
+        actionNode={testActionState}
         isActionable={false}
         isAction={true}
         documentation={testDoc}

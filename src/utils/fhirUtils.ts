@@ -127,13 +127,13 @@ export function createNoteContent(
   patientRecords: DomainResource[],
   status: string,
   notes: string,
-  pathwayNode?: ActionNode
+  actionNode?: ActionNode
 ): string {
   note.status = status;
   note.notes = notes;
-  if (pathwayNode) {
-    note.treatment = pathwayNode.action[0].description;
-    note.node = pathwayNode.label;
+  if (actionNode) {
+    note.treatment = actionNode.action[0].description;
+    note.node = actionNode.label;
   }
 
   const tnm: string[] = ['', '', ''];

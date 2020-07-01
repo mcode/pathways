@@ -32,7 +32,7 @@ import {
 import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
-  pathwayNode: ActionNode;
+  actionNode: ActionNode;
   isActionable: boolean;
   isCurrentNode: boolean;
   isAction: boolean;
@@ -41,7 +41,7 @@ interface ExpandedNodeProps {
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
-  ({ pathwayNode, isActionable, isCurrentNode, isAction, documentation, isAccepted }) => {
+  ({ actionNode, isActionable, isCurrentNode, isAction, documentation, isAccepted }) => {
     const { note, setNote } = useNote();
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
@@ -52,7 +52,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       });
     };
     const patient = usePatient().patient as fhir.Patient;
-    if (note) note.node = pathwayNode.label;
+    if (note) note.node = actionNode.label;
 
     const onConfirm = (action?: Action[]): void => {
       const newPatientRecords = [...patientRecords];
@@ -64,11 +64,11 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           patientRecords,
           note.status,
           note?.notes ?? '',
-          pathwayNode
+          actionNode
         );
         const documentReference = createActionDocumentReference(
           noteString,
-          pathwayNode.label,
+          actionNode.label,
           patient
         );
 
@@ -92,7 +92,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     const onAdvance = (): void => {
-      const content = `${pathwayNode.label} - Advance`;
+      const content = `${actionNode.label} - Advance`;
       const documentReference = createDocumentReference(content, patient);
 
       client?.create?.(documentReference);
@@ -105,7 +105,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           isAction={isAction}
           isActionable={isActionable}
           isCurrentNode={isCurrentNode}
-          pathwayNode={pathwayNode}
+          actionNode={actionNode}
           documentation={documentation}
           setComments={setComments}
           comments={note?.notes ?? ''}
@@ -126,7 +126,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
         />
         {showReport && (
           <ReportModal
-            onConfirm={(): void => onConfirm(pathwayNode.action)}
+            onConfirm={(): void => onConfirm(actionNode.action)}
             onDecline={(): void => setShowReport(false)}
           />
         )}
@@ -287,11 +287,11 @@ function isMedicationRequest(
   return (request as MedicationRequest).medicationCodeableConcept !== undefined;
 }
 function renderAction(
-  pathwayNode: ActionNode,
+  actionNode: ActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
-  const resource = pathwayNode.action[0].resource;
+  const resource = actionNode.action[0].resource;
   const coding = isMedicationRequest(resource)
     ? resource?.medicationCodeableConcept?.coding
     : resource?.code?.coding;
@@ -300,7 +300,7 @@ function renderAction(
     <ExpandedNodeField
       key="Description"
       title="Description"
-      description={pathwayNode.action[0].description}
+      description={actionNode.action[0].description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
   ];
@@ -367,7 +367,7 @@ function renderAction(
 
 interface ExpandedNodeMemoProps {
   documentation: DocumentationResource | undefined;
-  pathwayNode: ActionNode;
+  actionNode: ActionNode;
   isAction: boolean;
   isActionable: boolean;
   isCurrentNode: boolean;
@@ -381,7 +381,7 @@ interface ExpandedNodeMemoProps {
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
     documentation,
-    pathwayNode,
+    actionNode,
     isAction,
     isActionable,
     isCurrentNode,
@@ -393,14 +393,13 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     onAdvance
   }) => {
     const { patientRecords } = usePatientRecords();
-    const action = isAction && renderAction(pathwayNode, documentation, isAccepted);
-    const branch =
-      isBranchNode(pathwayNode) && renderBranch(documentation, pathwayNode, isAccepted);
+    const action = isAction && renderAction(actionNode, documentation, isAccepted);
+    const branch = isBranchNode(actionNode) && renderBranch(documentation, actionNode, isAccepted);
     const defaultText =
       'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
     let notes;
-    const documentReference = retrieveNote(pathwayNode.label, patientRecords);
+    const documentReference = retrieveNote(actionNode.label, patientRecords);
     if (documentReference) {
       const content = documentReference.content[0].attachment?.data;
       if (content) {
@@ -421,7 +420,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
           </tbody>
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
-        {pathwayNode.transitions.length > 0 && !isActionable && isAction && isCurrentNode && (
+        {actionNode.transitions.length > 0 && !isActionable && isAction && isCurrentNode && (
           <Button
             className={`${indexStyles.button} ${styles.button}`}
             variant="contained"
