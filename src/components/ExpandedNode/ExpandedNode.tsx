@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, ReactElement, useState, memo } from 'react';
-import { ActionNode, DocumentationResource, PathwayNode, Action } from 'pathways-model';
+import { PathwayActionNode, DocumentationResource, PathwayNode, Action } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
@@ -32,7 +32,7 @@ import {
 import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
-  actionNode: ActionNode;
+  actionNode: PathwayActionNode;
   isActionable: boolean;
   isCurrentNode: boolean;
   isAction: boolean;
@@ -287,7 +287,7 @@ function isMedicationRequest(
   return (request as MedicationRequest).medicationCodeableConcept !== undefined;
 }
 function renderAction(
-  actionNode: ActionNode,
+  actionNode: PathwayActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
@@ -367,7 +367,7 @@ function renderAction(
 
 interface ExpandedNodeMemoProps {
   documentation: DocumentationResource | undefined;
-  actionNode: ActionNode;
+  actionNode: PathwayActionNode;
   isAction: boolean;
   isActionable: boolean;
   isCurrentNode: boolean;

@@ -1,4 +1,4 @@
-import { ActionNode, EvaluatedPathway, Pathway } from 'pathways-model';
+import { PathwayActionNode, EvaluatedPathway, Pathway } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
@@ -127,7 +127,7 @@ export function createNoteContent(
   patientRecords: DomainResource[],
   status: string,
   notes: string,
-  actionNode?: ActionNode
+  actionNode?: PathwayActionNode
 ): string {
   note.status = status;
   note.notes = notes;

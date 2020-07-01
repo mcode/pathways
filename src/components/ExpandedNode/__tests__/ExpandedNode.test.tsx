@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import ExpandedNode from 'components/ExpandedNode';
 import {
-  ActionNode,
+  PathwayActionNode,
   BasicActionResource,
   BasicMedicationRequestResource,
   DocumentationResource
@@ -34,7 +34,7 @@ const testDoc: DocumentationResource = {
     ]
   }
 };
-const testActionState: ActionNode = {
+const testActionState: PathwayActionNode = {
   label: 'Chemotherapy',
   action: [
     {
@@ -63,7 +63,7 @@ const testActionState: ActionNode = {
   ]
 };
 
-const testMedicationRequestState: ActionNode = {
+const testMedicationRequestState: PathwayActionNode = {
   label: 'ChemoMedication Request',
   action: [
     {
