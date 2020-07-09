@@ -40,6 +40,17 @@ const DropDown: FC<Props> = ({
 
   const assigned = pathwayIsAssigned(patientRecords, evaluatedPathway?.pathway);
 
+  const formatOptionLabel = (option: Readonly<Option>): object => (
+    <div>
+      <div className={styles.name}> {option.label} </div>
+      <div className={styles.check}>
+        {pathwayIsAssigned(patientRecords, option.value.pathway) && (
+          <FontAwesomeIcon icon={faCheckCircle} />
+        )}
+      </div>
+    </div>
+  );
+
   if (visible)
     return (
       <div className={styles.dropdown}>
@@ -79,6 +90,7 @@ const DropDown: FC<Props> = ({
           onChange={onChangeCallback}
           options={options}
           aria-label={label}
+          formatOptionLabel={formatOptionLabel}
         />
       </div>
     );
