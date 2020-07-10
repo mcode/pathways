@@ -37,18 +37,18 @@ export function evaluatePatientOnPathway(
 }
 
 /**
- * Evaluate the pathway precondition against the given patient.
+ * Evaluate the pathway preconditions against the given patient.
  * @param patientRecord - Patient's record as FHIR data
  * @param pathway - entire Pathway object
  * @return a list of PreconditionResults, each containing
  *         the expected value and actual value for one precondition item
  */
-export function evaluatePathwayPrecondition(
+export function evaluatePathwayPreconditions(
   patientRecord: Bundle,
   pathway: Pathway
 ): Promise<PreconditionResult> {
-  const patientDataPromise = pathway.elm?.precondition
-    ? processELMCommon(patientRecord, pathway.elm.precondition)
+  const patientDataPromise = pathway.elm?.preconditions
+    ? processELMCommon(patientRecord, pathway.elm.preconditions)
     : extractPreconditionCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
   return patientDataPromise.then(patientData => preconditionData(pathway, patientData));

@@ -8,7 +8,7 @@ import {
   PreconditionResult,
   DocumentationResource,
   PathwayNode,
-  PathwayActionNode,
+  ActionNode,
   PreconditionResultItem,
   Documentation
 } from 'pathways-model';
@@ -84,7 +84,7 @@ export function pathwayData(
 }
 
 /**
- * Engine function to take in the ELM patient results and output data relating to the pathway precondition
+ * Engine function to take in the ELM patient results and output data relating to the pathway preconditions
  * @param pathway - the entire pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
  * @return returns PreconditionResult containing the expected and actual value for one data element
@@ -93,7 +93,7 @@ export function preconditionData(pathway: Pathway, patientData: PatientData): Pr
   const resultItems: PreconditionResultItem[] = [];
 
   let matches = 0;
-  pathway.precondition.forEach(precondition => {
+  pathway.preconditions.forEach(precondition => {
     let evaluationResult = patientData[precondition.elementName];
     if (Array.isArray(evaluationResult)) {
       evaluationResult = evaluationResult[0]; // TODO: add functionality for multiple resources
@@ -322,7 +322,7 @@ function nextNode(
   currentNodeKey: string,
   resources: DomainResource[]
 ): NodeData | null {
-  const currentNode: PathwayNode | PathwayActionNode = pathway.nodes[currentNodeKey];
+  const currentNode: PathwayNode | ActionNode = pathway.nodes[currentNodeKey];
   if ('action' in currentNode) {
     let resource = patientData[currentNodeKey];
     if (resource?.length) {

@@ -2,7 +2,7 @@
   "name": "Early Stage HER2+ (Draft)",
   "description": "Pathway for the Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway. This is a draft pathway.",
   "library": "mCODE_Library.cql",
-  "precondition": [
+  "preconditions": [
     {
       "elementName": "Condition",
       "expected": "Breast Cancer",
@@ -1605,7 +1605,7 @@
             }
          }
       },
-      "precondition":{
+      "preconditions":{
          "library" : {
             "annotation" : [ {
                "startLine" : 54,

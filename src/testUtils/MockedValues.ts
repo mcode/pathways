@@ -12,7 +12,7 @@ export const resources: fhir.DomainResource[] = [
   }
 ];
 
-export const evaluatedPrecondition: PreconditionResult[] = [
+export const evaluatedPreconditions: PreconditionResult[] = [
   {
     pathwayName: 'test1',
     matches: 1,

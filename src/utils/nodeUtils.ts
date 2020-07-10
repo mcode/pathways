@@ -1,7 +1,7 @@
-import { PathwayNode, PathwayActionNode } from 'pathways-model';
+import { PathwayNode, ActionNode } from 'pathways-model';
 
 export function isActionNode(node: PathwayNode): boolean {
-  const { action } = node as PathwayActionNode;
+  const { action } = node as ActionNode;
   return action ? action.length > 0 : false;
 }
 

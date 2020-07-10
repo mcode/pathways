@@ -1,7 +1,7 @@
 import React, { FC, Ref, forwardRef, memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { PathwayActionNode, PathwayNode, DocumentationResource } from 'pathways-model';
+import { ActionNode, PathwayNode, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from './Node.module.scss';
@@ -116,7 +116,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
               <ExpandedNode
-                actionNode={pathwayNode as PathwayActionNode}
+                actionNode={pathwayNode as ActionNode}
                 isActionable={isActionable}
                 isAction={isAction}
                 documentation={documentation}
@@ -140,7 +140,7 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isAction }) => {
   let icon: IconProp = faMicroscope;
   if (pathwayNode.label === 'Start') icon = faPlay;
   if (isAction) {
-    const actionNode = pathwayNode as PathwayActionNode;
+    const actionNode = pathwayNode as ActionNode;
     if (actionNode.action.length > 0) {
       const resourceType = actionNode.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;

@@ -9,10 +9,10 @@ import {
   RenderResult
 } from '@testing-library/react';
 import PathwaysList from 'components/PathwaysList';
-import { evaluatePathwayPrecondition, evaluatePatientOnPathway } from 'engine';
+import { evaluatePathwayPreconditions, evaluatePatientOnPathway } from 'engine';
 
 import { loadingService, loadedService, errorService } from 'testUtils/services';
-import { evaluatedPrecondition, evaluatedPathwayResults } from 'testUtils/MockedValues';
+import { evaluatedPreconditions, evaluatedPathwayResults } from 'testUtils/MockedValues';
 import { Pathway, EvaluatedPathway } from 'pathways-model';
 import MockedPatientRecordsProvider from 'testUtils/MockedPatientRecordsProvider';
 import MockedPatientProvider from 'testUtils/MockedPatientProvider';
@@ -57,10 +57,10 @@ describe('<PathwaysList />', () => {
   });
 
   it('renders list of pathways', async () => {
-    (evaluatePathwayPrecondition as jest.Mock)
-      .mockResolvedValueOnce(evaluatedPrecondition[0])
-      .mockResolvedValueOnce(evaluatedPrecondition[1])
-      .mockResolvedValueOnce(evaluatedPrecondition[2]);
+    (evaluatePathwayPreconditions as jest.Mock)
+      .mockResolvedValueOnce(evaluatedPreconditions[0])
+      .mockResolvedValueOnce(evaluatedPreconditions[1])
+      .mockResolvedValueOnce(evaluatedPreconditions[2]);
     const result = await renderComponent(
       <PathwaysList
         evaluatedPathways={pathwayList}
@@ -89,10 +89,10 @@ describe('<PathwaysList />', () => {
   it('responds to click events with pathway', async () => {
     // eslint-disable-next-line
     console.error = jest.fn(); // Prevents act warning
-    (evaluatePathwayPrecondition as jest.Mock)
-      .mockResolvedValueOnce(evaluatedPrecondition[0])
-      .mockResolvedValueOnce(evaluatedPrecondition[1])
-      .mockResolvedValueOnce(evaluatedPrecondition[2]);
+    (evaluatePathwayPreconditions as jest.Mock)
+      .mockResolvedValueOnce(evaluatedPreconditions[0])
+      .mockResolvedValueOnce(evaluatedPreconditions[1])
+      .mockResolvedValueOnce(evaluatedPreconditions[2]);
     (evaluatePatientOnPathway as jest.Mock).mockResolvedValue(evaluatedPathwayResults);
     let value = '';
     function setValue(text: string): void {

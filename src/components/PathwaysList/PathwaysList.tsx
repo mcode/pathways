@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { evaluatePathwayPrecondition } from 'engine';
+import { evaluatePathwayPreconditions } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { getAssignedPathways } from 'utils/fhirUtils';
 import {
@@ -45,7 +45,7 @@ const useStyles = makeStyles(
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
-  precondition?: PreconditionResult;
+  preconditions?: PreconditionResult;
   callback: Function;
   assigned: boolean;
 }
@@ -64,10 +64,10 @@ const PathwaysList: FC<PathwaysListProps> = ({
   headerElement
 }) => {
   const { patientRecords } = usePatientRecords();
-  const [precondition, setPrecondition] = useState<PreconditionResult[] | null>(null);
+  const [preconditions, setPreconditions] = useState<PreconditionResult[] | null>(null);
 
   if (
-    !precondition &&
+    !preconditions &&
     evaluatedPathways.length > 0 &&
     patientRecords &&
     patientRecords.length > 0
@@ -79,20 +79,20 @@ const PathwaysList: FC<PathwaysListProps> = ({
       entry: patientRecords.map((r: fhir.Resource) => ({ resource: r }))
     };
 
-    // Evaluate pathway precondition for each pathway
+    // Evaluate pathway preconditions for each pathway
     const preconditionPromises = evaluatedPathways.map(pathway =>
-      evaluatePathwayPrecondition(patient, pathway.pathway)
+      evaluatePathwayPreconditions(patient, pathway.pathway)
     );
     Promise.all(preconditionPromises).then(preconditionResults => {
-      setPrecondition(preconditionResults.sort((a, b) => b.matches - a.matches));
+      setPreconditions(preconditionResults.sort((a, b) => b.matches - a.matches));
     });
   }
 
   function renderList(): ReactNode {
     return (
       <div>
-        {precondition ? (
-          precondition.map(c => {
+        {preconditions ? (
+          preconditions.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
             if (evaluatedPathway) {
               const pathwayName = evaluatedPathway.pathway.name;
@@ -100,14 +100,14 @@ const PathwaysList: FC<PathwaysListProps> = ({
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
-                  precondition={c}
+                  preconditions={c}
                   assigned={assignedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
             } else
               return (
-                <div>An error occured evaluating the pathway precondition. Please try again.</div>
+                <div>An error occured evaluating the pathway preconditions. Please try again.</div>
               );
           })
         ) : (
@@ -145,7 +145,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
             </div>
           </div>
 
-          {precondition?.length !== 0 && renderList()}
+          {preconditions?.length !== 0 && renderList()}
         </div>
       ) : (
         <div>ERROR</div>
@@ -156,7 +156,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
 
 const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
-  precondition,
+  preconditions,
   callback,
   assigned
 }) => {
@@ -199,7 +199,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={styles.numElements}>{precondition?.matches}</div>
+        <div className={styles.numElements}>{preconditions?.matches}</div>
       </div>
 
       {isVisible && (
@@ -213,7 +213,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                   <th>mCODE elements</th>
                   <th>patient elements</th>
                 </tr>
-                {precondition?.preconditionResultItems.map(c => (
+                {preconditions?.preconditionResultItems.map(c => (
                   <tr key={c.elementName}>
                     <td>{c.elementName}</td>
                     <td>{c.expected}</td>
