@@ -44,8 +44,8 @@ const DropDown: FC<Props> = ({
     <>
       {option.label}
       {pathwayIsAssigned(patientRecords, option.value.pathway) && (
-          <FontAwesomeIcon icon={faCheckCircle} className={styles.check} />
-        )}
+        <FontAwesomeIcon icon={faCheckCircle} className={styles.check} />
+      )}
     </>
   );
 
