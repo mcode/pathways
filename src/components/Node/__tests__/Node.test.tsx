@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import Node from '../Node';
 
-const testState = {
+const testNode = {
   label: 'Start',
   transitions: []
 };
@@ -11,7 +11,7 @@ describe('<Node />', () => {
   it('renders a node with text, icon, and correct styles', () => {
     const { container, getByText, getByRole } = render(
       <Node
-        pathwayNode={testState}
+        pathwayNode={testNode}
         isOnPatientPath={true}
         isCurrentNode={false}
         xCoordinate={0}
@@ -19,7 +19,7 @@ describe('<Node />', () => {
       />
     );
 
-    expect(getByText(testState.label)).toBeVisible();
+    expect(getByText(testNode.label)).toBeVisible();
     expect(getByRole('img', { hidden: true })).toBeVisible();
 
     expect(container.firstChild).toHaveClass('onPatientPath');
@@ -30,7 +30,7 @@ describe('<Node />', () => {
   it('renders correct background-color when node is not on patient path', () => {
     const { container } = render(
       <Node
-        pathwayNode={testState}
+        pathwayNode={testNode}
         isOnPatientPath={false}
         isCurrentNode={false}
         xCoordinate={0}
@@ -44,7 +44,7 @@ describe('<Node />', () => {
   it('expands the additional children when clicked', () => {
     const { container } = render(
       <Node
-        pathwayNode={testState}
+        pathwayNode={testNode}
         isOnPatientPath={true}
         isCurrentNode={false}
         xCoordinate={0}

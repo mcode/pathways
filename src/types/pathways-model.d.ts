@@ -38,8 +38,8 @@ declare module 'pathways-model' {
     action: Action[];
   }
 
-  // NOTE: the model also includes a BranchState (which extends State),
-  // but as of right now it has no additional fields not in State,
+  // NOTE: the model also includes a BranchNode (which extends PathwayNode),
+  // but as of right now it has no additional fields not in PathwayNode,
   // and TypeScript does not allow "empty" interfaces so we can't add it yet.
   // Add it here if/when we ever need it.
 

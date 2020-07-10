@@ -133,7 +133,7 @@ const Graph: FC<GraphProps> = memo(
       });
     }
     const layoutKeys = Object.keys(layout).toString();
-    const initialExpandedState = useMemo(() => {
+    const initialExpandedNode = useMemo(() => {
       return layoutKeys.split(',').reduce((acc: { [key: string]: boolean }, curr: string) => {
         acc[curr] = false;
         return acc;
@@ -141,7 +141,7 @@ const Graph: FC<GraphProps> = memo(
     }, [layoutKeys]);
 
     const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
-      initialExpandedState
+      initialExpandedNode
     );
 
     const setExpanded = useCallback((key: string, expand?: boolean): void => {

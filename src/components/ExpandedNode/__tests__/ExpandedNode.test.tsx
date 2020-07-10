@@ -34,7 +34,7 @@ const testDoc: DocumentationResource = {
     ]
   }
 };
-const testActionState: ActionNode = {
+const testActionNode: ActionNode = {
   label: 'Chemotherapy',
   action: [
     {
@@ -63,7 +63,7 @@ const testActionState: ActionNode = {
   ]
 };
 
-const testMedicationRequestState: ActionNode = {
+const testMedicationRequestNode: ActionNode = {
   label: 'ChemoMedication Request',
   action: [
     {
@@ -92,7 +92,7 @@ describe('<ExpandedNode />', () => {
   it('renders a ExpandedNode for action node', () => {
     const { getByText, queryByRole, queryByText } = render(
       <ExpandedNode
-        actionNode={testActionState}
+        actionNode={testActionNode}
         isActionable={false}
         isAction={true}
         documentation={undefined}
@@ -101,9 +101,9 @@ describe('<ExpandedNode />', () => {
       />
     );
 
-    const resource = testActionState.action[0].resource as BasicActionResource;
+    const resource = testActionNode.action[0].resource as BasicActionResource;
 
-    expect(getByText(testActionState.action[0].description)).toBeVisible();
+    expect(getByText(testActionNode.action[0].description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.code.coding[0].system)).toBeVisible();
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
@@ -116,10 +116,10 @@ describe('<ExpandedNode />', () => {
     expect(queryByText('Use Default Text')).toBeNull();
   });
 
-  it('renders a ExpandedNode for a medication request state', () => {
+  it('renders a ExpandedNode for a medication request node', () => {
     const { getByText } = render(
       <ExpandedNode
-        actionNode={testMedicationRequestState}
+        actionNode={testMedicationRequestNode}
         isActionable={false}
         isAction={true}
         documentation={undefined}
@@ -128,10 +128,9 @@ describe('<ExpandedNode />', () => {
       />
     );
 
-    const resource = testMedicationRequestState.action[0]
-      .resource as BasicMedicationRequestResource;
+    const resource = testMedicationRequestNode.action[0].resource as BasicMedicationRequestResource;
 
-    expect(getByText(testMedicationRequestState.action[0].description)).toBeVisible();
+    expect(getByText(testMedicationRequestNode.action[0].description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].system)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].code)).toBeVisible();
@@ -141,7 +140,7 @@ describe('<ExpandedNode />', () => {
   it('renders an active ExpandedNode', () => {
     const { getByText, getByRole } = render(
       <ExpandedNode
-        actionNode={testActionState}
+        actionNode={testActionNode}
         isActionable={true}
         isAction={true}
         documentation={testDoc}
@@ -165,7 +164,7 @@ describe('<ExpandedNode />', () => {
   it('renders advance button', () => {
     const { getByText } = render(
       <ExpandedNode
-        actionNode={testActionState}
+        actionNode={testActionNode}
         isActionable={false}
         isAction={true}
         documentation={testDoc}
