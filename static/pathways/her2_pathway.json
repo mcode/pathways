@@ -2,7 +2,7 @@
   "name": "Breast Cancer: Early Stage HER2+ (Draft)",
   "description": "Pathway for the Early Stage HER2+ Initial Medical Consult Breast Cancer Pathway. This is a draft pathway.",
   "library": "mCODE_Library.cql",
-  "criteria": [
+  "preconditions": [
     {
       "elementName": "Condition",
       "expected": "Breast Cancer",
@@ -14,7 +14,7 @@
       "cql": "[Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 return Tuple{ value: Her2.value.text.value, match: Her2.value.text.value ~ 'Positive' } "
     }
   ],
-  "states": {
+  "nodes": {
     "Start": {
       "label": "Start",
       "transitions": [
@@ -1292,7 +1292,7 @@
           }
        }
     },
-    "criteria":{
+    "preconditions":{
        "library" : {
           "identifier" : {
              "id" : "mCODEResources",
