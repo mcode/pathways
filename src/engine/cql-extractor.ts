@@ -1,4 +1,4 @@
-import { Pathway, State } from 'pathways-model';
+import { Pathway, PathwayNode } from 'pathways-model';
 
 export interface CqlObject {
   main: string;
@@ -41,19 +41,19 @@ function cqlAdd(cql: string, cqlBlock: string): string {
 }
 
 /**
- * Helper function to determine if a state has a conditional transition
- * @param state - the JSON object of the desired state on the pathway
- * @return true if state is a conditional transition and false
+ * Helper function to determine if a node has a conditional transition
+ * @param node - the JSON object of the desired node on the pathway
+ * @return true if node is a conditional transition and false
  *                   otherwise
  */
-function isConditional(state: State): boolean {
-  if ('transitions' in state) {
-    return state.transitions.length > 1 ? true : false;
+function isConditional(node: PathwayNode): boolean {
+  if ('transitions' in node) {
+    return node.transitions.length > 1 ? true : false;
   } else return false;
 }
 
 /**
- * Function to extract the CQL code from each state in the pathway and build
+ * Function to extract the CQL code from each node in the pathway and build
  * the CQL code to execute
  * @param pathway - the JSON object of the entire pathway
  * @return a string of the CQL code for the navigational nodes in the pathway
@@ -62,14 +62,14 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway
-    for (const stateName in pathway.states) {
-      const state = pathway.states[stateName];
-      if ('cql' in state) {
-        const cqlBlock1 = state.cql;
-        const nextBlock1 = cqlFormat(cqlBlock1, stateName);
+    for (const nodeKey in pathway.nodes) {
+      const node = pathway.nodes[nodeKey];
+      if ('cql' in node) {
+        const cqlBlock1 = node.cql;
+        const nextBlock1 = cqlFormat(cqlBlock1, nodeKey);
         cql = cqlAdd(cql, nextBlock1);
-      } else if (isConditional(state)) {
-        for (const transition of state.transitions) {
+      } else if (isConditional(node)) {
+        for (const transition of node.transitions) {
           const condition = transition.condition;
           if (condition) {
             const nextBlock2 = cqlFormat(condition.cql, condition.description);
@@ -84,18 +84,18 @@ export function extractNavigationCQL(pathway: Pathway): Promise<string> {
 }
 
 /**
- * Extract the CQL statements from the `criteria` section of the pathway
+ * Extract the CQL statements from the `preconditions` section of the pathway
  * into a snippet ready to be converted to ELM.
  * @param pathway - the entire pathway object
- * @return a string of the CQL for the criteria in the pathway
+ * @return a string of the CQL for the preconditions in the pathway
  */
-export function extractCriteriaCQL(pathway: Pathway): Promise<string> {
+export function extractPreconditionCQL(pathway: Pathway): Promise<string> {
   return getFixture(pathway.library).then(library => {
     let cql = library;
     // Loop through each JSON object in the pathway
-    for (const criteria of pathway.criteria) {
-      const cqlBlock1 = criteria.cql;
-      const nextBlock1 = cqlFormat(cqlBlock1, criteria.elementName);
+    for (const precondition of pathway.preconditions) {
+      const cqlBlock1 = precondition.cql;
+      const nextBlock1 = cqlFormat(cqlBlock1, precondition.elementName);
       cql = cqlAdd(cql, nextBlock1);
     }
 

@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable max-len */
 
-import { Pathway, State } from 'pathways-model';
+import { Pathway, PathwayNode } from 'pathways-model';
 import { Node, Nodes, Layout, NodeCoordinates, Edges, NodeDimensions } from 'graph-model';
 
 import dagre from 'dagre';
@@ -28,31 +28,31 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
   const START = 'Start';
   const NODE_HEIGHT = 50;
   const NODE_WIDTH_FACTOR = 10; // factor to convert label length => width, assume font size roughly 10
-  const nodeNames = Object.keys(pathway.states);
+  const nodeKeys = Object.keys(pathway.nodes);
   const g = new dagre.graphlib.Graph();
 
   g.setGraph({});
   g.setDefaultEdgeLabel(() => ({})); // dagre requires a default edge label, we want it to just be empty
 
-  nodeNames.forEach(stateName => {
-    const state: State = pathway.states[stateName];
-    const nodeDimension = nodeDimensions[stateName];
+  nodeKeys.forEach(nodeKey => {
+    const node: PathwayNode = pathway.nodes[nodeKey];
+    const nodeDimension = nodeDimensions[nodeKey];
 
     if (nodeDimension) {
-      g.setNode(stateName, {
-        label: state.label,
+      g.setNode(nodeKey, {
+        label: node.label,
         width: nodeDimension.width,
         height: nodeDimension.height
       });
     } else {
-      g.setNode(stateName, {
-        label: state.label,
-        width: state.label.length * NODE_WIDTH_FACTOR,
+      g.setNode(nodeKey, {
+        label: node.label,
+        width: node.label.length * NODE_WIDTH_FACTOR,
         height: NODE_HEIGHT
       });
     }
 
-    state.transitions.forEach(transition => {
+    node.transitions.forEach(transition => {
       const label = transition.condition
         ? {
             label: transition.condition.description,
@@ -61,7 +61,7 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
           }
         : {};
 
-      g.setEdge(stateName, transition.transition, label);
+      g.setEdge(nodeKey, transition.transition, label);
     });
   });
 
@@ -69,12 +69,12 @@ function layoutDagre(pathway: Pathway, nodeDimensions: NodeDimensions): Layout {
   const nodeCoordinates: NodeCoordinates = {};
   const startNodeShift = g.node(START).x;
 
-  for (const nodeName of nodeNames) {
-    const node = g.node(nodeName);
+  for (const nodeKey of nodeKeys) {
+    const node = g.node(nodeKey);
     // dagre returns coordinates for the center of the node,
     // our renderer expects coordinates for the corner of the node.
     // further, our renderer expects the Start node to be centered at x: 0
-    nodeCoordinates[nodeName] = {
+    nodeCoordinates[nodeKey] = {
       x: node.x - startNodeShift - node.width / 2,
       y: node.y - node.height / 2
     };
@@ -121,9 +121,9 @@ function layoutCustom(pathway: Pathway): Layout {
   let rank = 0;
   do {
     // Iterate over each node on the current level
-    for (const nodeName of graph[rank]) {
+    for (const nodeKey of graph[rank]) {
       // Assign all children to the next rank
-      assignRankToChildren(nodes[nodeName], rank + 1);
+      assignRankToChildren(nodes[nodeKey], rank + 1);
     }
 
     rank++;
@@ -153,9 +153,9 @@ function layoutCustom(pathway: Pathway): Layout {
   function produceCoordinates(): NodeCoordinates {
     const coordinates: NodeCoordinates = {};
 
-    for (const nodeName in nodes) {
-      const node = nodes[nodeName];
-      coordinates[nodeName] = {
+    for (const nodeKey in nodes) {
+      const node = nodes[nodeKey];
+      coordinates[nodeKey] = {
         x: node.horizontalPosition,
         y: node.rank * VERTICAL_OFFSET
       };
@@ -202,7 +202,7 @@ function layoutCustom(pathway: Pathway): Layout {
   }
 
   /**
-   * Assigns the node given by nodeName the horizontal position hPos if it is not already set
+   * Assigns the node given by nodeKey the horizontal position hPos if it is not already set
    * @param node - the node to set the horizontal position of
    * @param hPos - the horizontal position for the node
    */
@@ -228,8 +228,8 @@ function layoutCustom(pathway: Pathway): Layout {
    * @param rank - the level of the graph to assign node positions of
    */
   function assignHorizontalPositionToNodesInRank(rank: number): void {
-    for (const nodeName of graph[rank]) {
-      const node = nodes[nodeName];
+    for (const nodeKey of graph[rank]) {
+      const node = nodes[nodeKey];
       if (!isNaN(node.horizontalPosition)) continue;
       const parentsOnHigherRank = node.parents.filter(p => nodes[p].rank < node.rank);
       if (parentsOnHigherRank.length === 1) {
@@ -307,7 +307,7 @@ function layoutCustom(pathway: Pathway): Layout {
    * the children.
    *
    * @param nodes - the Nodes
-   * @param graph - the graph as list of states by level
+   * @param graph - the graph as list of nodes by level
    * @param node - the node to get children from
    * @param rank - the rank to assign to the children
    */
@@ -330,20 +330,20 @@ function layoutCustom(pathway: Pathway): Layout {
   }
 
   /**
-   * Assigns the node labeled by stateName the rank by updating graph and nodes data structures
+   * Assigns the node labeled by nodeKey the rank by updating graph and nodes data structures
    *
    * @param nodes - the Nodes
    * @param graph - the graph as list of nodes by level
-   * @param nodeName - the name of the node to set the rank of
+   * @param nodeKey - the name of the node to set the rank of
    * @param rank - the new rank for the node
    */
-  function assignRankToNode(nodeName: string, rank: number): void {
+  function assignRankToNode(nodeKey: string, rank: number): void {
     try {
-      graph[rank].push(nodeName);
+      graph[rank].push(nodeKey);
     } catch (err) {
-      graph[rank] = [nodeName];
+      graph[rank] = [nodeKey];
     } finally {
-      nodes[nodeName].rank = rank;
+      nodes[nodeKey].rank = rank;
     }
   }
 
@@ -357,10 +357,10 @@ function layoutCustom(pathway: Pathway): Layout {
     const nodes: Nodes = {};
 
     // Iniitalize each node with default values
-    let stateName: string;
-    for (stateName in pathway.states) {
-      nodes[stateName] = {
-        label: stateName,
+    let nodeKey: string;
+    for (nodeKey in pathway.nodes) {
+      nodes[nodeKey] = {
+        label: nodeKey,
         rank: NaN,
         horizontalPosition: NaN,
         children: [],
@@ -370,14 +370,14 @@ function layoutCustom(pathway: Pathway): Layout {
     }
 
     // Set the child and parent properties of each node
-    Object.keys(pathway.states).forEach(stateName => {
-      const state: State = pathway.states[stateName];
+    Object.keys(pathway.nodes).forEach(nodeKey => {
+      const node: PathwayNode = pathway.nodes[nodeKey];
 
-      state.transitions.forEach(transition => {
-        if (!nodes[stateName].children.includes(transition.transition))
-          nodes[stateName].children.push(transition.transition);
-        if (!nodes[transition.transition].parents.includes(stateName))
-          nodes[transition.transition].parents.push(stateName);
+      node.transitions.forEach(transition => {
+        if (!nodes[nodeKey].children.includes(transition.transition))
+          nodes[nodeKey].children.push(transition.transition);
+        if (!nodes[transition.transition].parents.includes(nodeKey))
+          nodes[transition.transition].parents.push(nodeKey);
       });
     });
 

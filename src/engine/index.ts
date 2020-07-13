@@ -1,1 +1,1 @@
-export { evaluatePatientOnPathway, evaluatePathwayCriteria } from './evaluate-patient';
+export { evaluatePatientOnPathway, evaluatePathwayPreconditions } from './evaluate-patient';

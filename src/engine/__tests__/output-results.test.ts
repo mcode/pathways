@@ -1,4 +1,4 @@
-import { pathwayData, criteriaData } from '../output-results';
+import { pathwayData, preconditionData } from '../output-results';
 
 import pathway from './fixtures/pathways/sample_pathway.json';
 import { resources } from 'testUtils/MockedValues';
@@ -54,38 +54,38 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['Radiation']);
+    expect(patientPath.currentNodes).toStrictEqual(['Radiation']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       Surgery: {
         resourceType: 'Procedure',
         status: 'completed',
         id: '3',
-        state: 'Surgery',
+        node: 'Surgery',
         onPath: true
       },
       'N-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '2',
-        state: 'N-test',
+        node: 'N-test',
         onPath: true
       },
       Radiation: {
         resourceType: 'Procedure',
         status: 'not-done',
         id: '4',
-        state: 'Radiation',
+        node: 'Radiation',
         onPath: true
       }
     });
@@ -135,31 +135,31 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['Surgery']);
+    expect(patientPath.currentNodes).toStrictEqual(['Surgery']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       'N-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '2',
-        state: 'N-test',
+        node: 'N-test',
         onPath: false
       },
       Surgery: {
         resourceType: 'Procedure',
         status: 'in-progress',
         id: '3',
-        state: 'Surgery',
+        node: 'Surgery',
         onPath: true
       }
     });
@@ -201,24 +201,24 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['N-test']);
+    expect(patientPath.currentNodes).toStrictEqual(['N-test']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       Chemo: {
         resourceType: 'Procedure',
         status: 'final',
         id: '2',
-        state: 'Chemo',
+        node: 'Chemo',
         onPath: false
       }
     });
@@ -272,38 +272,38 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['Chemo']);
+    expect(patientPath.currentNodes).toStrictEqual(['Chemo']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       'N-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '2',
-        state: 'N-test',
+        node: 'N-test',
         onPath: true
       },
       ChemoMedication: {
         resourceType: 'MedicationRequest',
         status: 'completed',
         id: '4',
-        state: 'ChemoMedication',
+        node: 'ChemoMedication',
         onPath: true
       },
       Chemo: {
         resourceType: 'Procedure',
         status: 'completed',
         id: '3',
-        state: 'Chemo',
+        node: 'Chemo',
         onPath: true
       }
     });
@@ -353,31 +353,31 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['ChemoMedication']);
+    expect(patientPath.currentNodes).toStrictEqual(['ChemoMedication']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       'N-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '2',
-        state: 'N-test',
+        node: 'N-test',
         onPath: true
       },
       ChemoMedication: {
         resourceType: 'MedicationRequest',
         status: 'active',
         id: '3',
-        state: 'ChemoMedication',
+        node: 'ChemoMedication',
         onPath: true
       }
     });
@@ -426,38 +426,38 @@ describe('pathway results translator', () => {
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentStates).toStrictEqual(['Radiation', 'OtherRadiation']);
+    expect(patientPath.currentNodes).toStrictEqual(['Radiation', 'OtherRadiation']);
     expect(patientPath.documentation).toEqual({
       Start: {
-        state: 'Start',
+        node: 'Start',
         onPath: true
       },
       'T-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '1',
-        state: 'T-test',
+        node: 'T-test',
         onPath: true
       },
       Surgery: {
         resourceType: 'Procedure',
         status: 'completed',
         id: '3',
-        state: 'Surgery',
+        node: 'Surgery',
         onPath: true
       },
       'N-test': {
         resourceType: 'Observation',
         status: 'final',
         id: '2',
-        state: 'N-test',
+        node: 'N-test',
         onPath: true
       }
     });
   });
 });
 
-describe('criteria results translator', () => {
+describe('precondition results translator', () => {
   it('matching patient produces correct results', () => {
     const patientData = {
       Patient: {
@@ -473,12 +473,12 @@ describe('criteria results translator', () => {
       ]
     };
 
-    const results = criteriaData(pathway, patientData);
+    const results = preconditionData(pathway, patientData);
 
     expect(results).toEqual({
       pathwayName: 'test_breast_cancer',
       matches: 1,
-      criteriaResultItems: [
+      preconditionResultItems: [
         {
           elementName: 'Condition',
           expected: 'Breast Cancer',
@@ -504,12 +504,12 @@ describe('criteria results translator', () => {
       ]
     };
 
-    const results = criteriaData(pathway, patientData);
+    const results = preconditionData(pathway, patientData);
 
     expect(results).toEqual({
       pathwayName: 'test_breast_cancer',
       matches: 0,
-      criteriaResultItems: [
+      preconditionResultItems: [
         {
           elementName: 'Condition',
           expected: 'Breast Cancer',

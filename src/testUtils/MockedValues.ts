@@ -1,4 +1,4 @@
-import { CriteriaResult, PathwayResults } from 'pathways-model';
+import { PreconditionResult, PathwayResults } from 'pathways-model';
 
 export const resources: fhir.DomainResource[] = [
   {
@@ -12,11 +12,11 @@ export const resources: fhir.DomainResource[] = [
   }
 ];
 
-export const evaluatedCriteria: CriteriaResult[] = [
+export const evaluatedPreconditions: PreconditionResult[] = [
   {
     pathwayName: 'test1',
     matches: 1,
-    criteriaResultItems: [
+    preconditionResultItems: [
       {
         elementName: 'condition',
         expected: 'breast Cancer',
@@ -28,7 +28,7 @@ export const evaluatedCriteria: CriteriaResult[] = [
   {
     pathwayName: 'test2',
     matches: 0,
-    criteriaResultItems: [
+    preconditionResultItems: [
       {
         elementName: 'condition',
         expected: 'gist Cancer',
@@ -40,7 +40,7 @@ export const evaluatedCriteria: CriteriaResult[] = [
   {
     pathwayName: 'test3',
     matches: 0,
-    criteriaResultItems: [
+    preconditionResultItems: [
       {
         elementName: 'condition',
         expected: 'lung Cancer',
@@ -53,10 +53,10 @@ export const evaluatedCriteria: CriteriaResult[] = [
 
 export const evaluatedPathwayResults: PathwayResults = {
   patientId: '1',
-  currentStates: ['Start'],
+  currentNodes: ['Start'],
   documentation: {
     Start: {
-      state: 'Start',
+      node: 'Start',
       onPath: true
     }
   }

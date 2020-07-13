@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import ExpandedNode from 'components/ExpandedNode';
 import {
-  GuidanceState,
+  ActionNode,
   BasicActionResource,
   BasicMedicationRequestResource,
   DocumentationResource
@@ -13,7 +13,7 @@ const testDoc: DocumentationResource = {
   resourceType: 'Observation',
   id: '138629',
   status: 'final',
-  state: 'N-test',
+  node: 'N-test',
   resource: {
     resourceType: 'Observation',
     id: '138629',
@@ -34,7 +34,7 @@ const testDoc: DocumentationResource = {
     ]
   }
 };
-const testActionState: GuidanceState = {
+const testActionNode: ActionNode = {
   label: 'Chemotherapy',
   action: [
     {
@@ -63,7 +63,7 @@ const testActionState: GuidanceState = {
   ]
 };
 
-const testMedicationRequestState: GuidanceState = {
+const testMedicationRequestNode: ActionNode = {
   label: 'ChemoMedication Request',
   action: [
     {
@@ -89,21 +89,21 @@ const testMedicationRequestState: GuidanceState = {
 };
 
 describe('<ExpandedNode />', () => {
-  it('renders a ExpandedNode for action state', () => {
+  it('renders a ExpandedNode for action node', () => {
     const { getByText, queryByRole, queryByText } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        actionNode={testActionNode}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={undefined}
         isAccepted={null}
         isCurrentNode={true}
       />
     );
 
-    const resource = testActionState.action[0].resource as BasicActionResource;
+    const resource = testActionNode.action[0].resource as BasicActionResource;
 
-    expect(getByText(testActionState.action[0].description)).toBeVisible();
+    expect(getByText(testActionNode.action[0].description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.code.coding[0].system)).toBeVisible();
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
@@ -116,22 +116,21 @@ describe('<ExpandedNode />', () => {
     expect(queryByText('Use Default Text')).toBeNull();
   });
 
-  it('renders a ExpandedNode for a medication request state', () => {
+  it('renders a ExpandedNode for a medication request node', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayState={testMedicationRequestState}
+        actionNode={testMedicationRequestNode}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={undefined}
         isAccepted={null}
         isCurrentNode={true}
       />
     );
 
-    const resource = testMedicationRequestState.action[0]
-      .resource as BasicMedicationRequestResource;
+    const resource = testMedicationRequestNode.action[0].resource as BasicMedicationRequestResource;
 
-    expect(getByText(testMedicationRequestState.action[0].description)).toBeVisible();
+    expect(getByText(testMedicationRequestNode.action[0].description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].system)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].code)).toBeVisible();
@@ -141,9 +140,9 @@ describe('<ExpandedNode />', () => {
   it('renders an active ExpandedNode', () => {
     const { getByText, getByRole } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        actionNode={testActionNode}
         isActionable={true}
-        isGuidance={true}
+        isAction={true}
         documentation={testDoc}
         isAccepted={true}
         isCurrentNode={true}
@@ -165,16 +164,16 @@ describe('<ExpandedNode />', () => {
   it('renders advance button', () => {
     const { getByText } = render(
       <ExpandedNode
-        pathwayState={testActionState}
+        actionNode={testActionNode}
         isActionable={false}
-        isGuidance={true}
+        isAction={true}
         documentation={testDoc}
         isAccepted={null}
         isCurrentNode={true}
       />
     );
 
-    // Advance button should be displayed on node that is non-actionable, guidance, and current
+    // Advance button should be displayed on node that is non-actionable, action, and current
     expect(getByText('Advance')).toBeVisible();
   });
 });

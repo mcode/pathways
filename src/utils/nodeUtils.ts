@@ -1,10 +1,10 @@
-import { State, GuidanceState } from 'pathways-model';
+import { PathwayNode, ActionNode } from 'pathways-model';
 
-export function isGuidanceState(state: State): boolean {
-  const { action } = state as GuidanceState;
+export function isActionNode(node: PathwayNode): boolean {
+  const { action } = node as ActionNode;
   return action ? action.length > 0 : false;
 }
 
-export function isBranchState(state: State): boolean {
-  return !isGuidanceState(state) && state.transitions.length > 1;
+export function isBranchNode(node: PathwayNode): boolean {
+  return !isActionNode(node) && node.transitions.length > 1;
 }

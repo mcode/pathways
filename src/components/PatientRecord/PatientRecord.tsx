@@ -23,9 +23,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import styles from './PatientRecord.module.scss';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { CriteriaResult } from 'pathways-model';
+import { PreconditionResult } from 'pathways-model';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { evaluatePathwayCriteria } from 'engine';
+import { evaluatePathwayPreconditions } from 'engine';
 import { McodeElements } from 'mcode';
 
 const recordSections = [
@@ -179,7 +179,7 @@ const Visualizer: FC<VisualizerProps> = ({ recordSection, resourcesByType }) => 
 const PathwayVisualizer: FC = () => {
   const { patientRecords } = usePatientRecords();
   const { evaluatedPathway } = usePathwayContext();
-  const [criteria, setCriteria] = useState<CriteriaResult | null>(null);
+  const [preconditions, setPreconditions] = useState<PreconditionResult | null>(null);
 
   useEffect(() => {
     // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
@@ -189,10 +189,10 @@ const PathwayVisualizer: FC = () => {
       entry: patientRecords.map((r: fhir.Resource) => ({ resource: r }))
     };
 
-    // Evaluate pathway criteria
+    // Evaluate pathway preconditions
     if (evaluatedPathway) {
-      evaluatePathwayCriteria(patient, evaluatedPathway.pathway).then(criteriaResult =>
-        setCriteria(criteriaResult)
+      evaluatePathwayPreconditions(patient, evaluatedPathway.pathway).then(preconditionResult =>
+        setPreconditions(preconditionResult)
       );
     }
   }, [evaluatedPathway, patientRecords]);
@@ -200,7 +200,7 @@ const PathwayVisualizer: FC = () => {
   return (
     <table>
       <tbody>
-        {criteria?.criteriaResultItems.map(c => (
+        {preconditions?.preconditionResultItems.map(c => (
           <tr key={c.elementName}>
             <td>{c.elementName}</td>
             <td>{c.actual}</td>

@@ -37,7 +37,7 @@ interface GraphProps {
 const getPath = (pathwayResults: PathwayResults): string[] => {
   return Object.values(pathwayResults.documentation)
     .filter(doc => doc.onPath)
-    .map(doc => doc.state);
+    .map(doc => doc.node);
 };
 
 const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolean => {
@@ -45,7 +45,7 @@ const isEdgeOnPatientPath = (pathwayResults: PathwayResults, edge: Edge): boolea
   const startIndex = path.indexOf(edge.start);
   const endIndex = path.indexOf(edge.end);
   if (startIndex !== -1 && endIndex !== -1 && startIndex + 1 === endIndex) return true;
-  else if (startIndex === path.length - 1 && pathwayResults.currentStates.includes(edge.end))
+  else if (startIndex === path.length - 1 && pathwayResults.currentNodes.includes(edge.end))
     return true;
   else return false;
 };
@@ -133,7 +133,7 @@ const Graph: FC<GraphProps> = memo(
       });
     }
     const layoutKeys = Object.keys(layout).toString();
-    const initialExpandedState = useMemo(() => {
+    const initialExpandedNode = useMemo(() => {
       return layoutKeys.split(',').reduce((acc: { [key: string]: boolean }, curr: string) => {
         acc[curr] = false;
         return acc;
@@ -141,7 +141,7 @@ const Graph: FC<GraphProps> = memo(
     }, [layoutKeys]);
 
     const [expanded, _setExpanded] = useState<{ [key: string]: boolean | undefined }>(
-      initialExpandedState
+      initialExpandedNode
     );
 
     const setExpanded = useCallback((key: string, expand?: boolean): void => {
@@ -178,7 +178,7 @@ const Graph: FC<GraphProps> = memo(
     // Expand all the current nodes by default if allowed
     useEffect(() => {
       if (evaluatedPathway?.pathwayResults) {
-        for (const currentNode of evaluatedPathway.pathwayResults.currentStates) {
+        for (const currentNode of evaluatedPathway.pathwayResults.currentNodes) {
           if (expandCurrentNode) {
             if (currentNode) setExpanded(currentNode, true);
           }
@@ -283,34 +283,34 @@ const GraphMemo: FC<GraphMemoProps> = memo(
         }}
       >
         {nodeCoordinates !== undefined
-          ? Object.keys(nodeCoordinates).map(nodeName => {
-              const docResource = documentation[nodeName] as DocumentationResource;
+          ? Object.keys(nodeCoordinates).map(nodeKey => {
+              const docResource = documentation[nodeKey] as DocumentationResource;
               const onClickHandler = useCallback(() => {
-                return interactive ? setExpanded(nodeName) : undefined;
-              }, [nodeName]);
+                return interactive ? setExpanded(nodeKey) : undefined;
+              }, [nodeKey]);
               return (
-                <NoteDataProvider date={new Date(Date.now())} key={nodeName}>
+                <NoteDataProvider date={new Date(Date.now())} key={nodeKey}>
                   <Node
-                    key={nodeName}
+                    key={nodeKey}
                     documentation={docResource}
                     ref={(node: HTMLDivElement): void => {
-                      nodeRefs.current[nodeName] = node;
+                      nodeRefs.current[nodeKey] = node;
                     }}
-                    pathwayState={pathway.states[nodeName]}
+                    pathwayNode={pathway.nodes[nodeKey]}
                     isOnPatientPath={
                       evaluatedPathway.pathwayResults
-                        ? getPath(evaluatedPathway.pathwayResults).includes(nodeName) ||
-                          evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                        ? getPath(evaluatedPathway.pathwayResults).includes(nodeKey) ||
+                          evaluatedPathway.pathwayResults.currentNodes.includes(nodeKey)
                         : false
                     }
                     isCurrentNode={
                       evaluatedPathway.pathwayResults
-                        ? evaluatedPathway.pathwayResults.currentStates.includes(nodeName)
+                        ? evaluatedPathway.pathwayResults.currentNodes.includes(nodeKey)
                         : false
                     }
-                    xCoordinate={nodeCoordinates[nodeName].x + parentWidth / 2}
-                    yCoordinate={nodeCoordinates[nodeName].y}
-                    expanded={expanded[nodeName]}
+                    xCoordinate={nodeCoordinates[nodeKey].x + parentWidth / 2}
+                    yCoordinate={nodeCoordinates[nodeKey].y}
+                    expanded={expanded[nodeKey]}
                     onClickHandler={onClickHandler}
                   />
                 </NoteDataProvider>

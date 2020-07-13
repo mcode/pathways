@@ -1,12 +1,12 @@
 import React, { FC, ReactNode, ReactElement, useState, memo } from 'react';
-import { GuidanceState, DocumentationResource, State, Action } from 'pathways-model';
+import { ActionNode, DocumentationResource, PathwayNode, Action } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MissingDataPopup from 'components/MissingDataPopup';
 import styles from './ExpandedNode.module.scss';
 import indexStyles from 'styles/index.module.scss';
 import ActionButton from 'components/ActionButton';
 import ReportModal from 'components/ReportModal';
-import { isBranchState } from 'utils/nodeUtils';
+import { isBranchNode } from 'utils/nodeUtils';
 import { useFHIRClient } from 'components/FHIRClient';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { usePatient } from 'components/PatientProvider';
@@ -32,16 +32,16 @@ import {
 import { retrieveNote } from 'utils/fhirUtils';
 
 interface ExpandedNodeProps {
-  pathwayState: GuidanceState;
+  actionNode: ActionNode;
   isActionable: boolean;
   isCurrentNode: boolean;
-  isGuidance: boolean;
+  isAction: boolean;
   documentation: DocumentationResource | undefined;
   isAccepted: boolean | null;
 }
 
 const ExpandedNode: FC<ExpandedNodeProps> = memo(
-  ({ pathwayState, isActionable, isCurrentNode, isGuidance, documentation, isAccepted }) => {
+  ({ actionNode, isActionable, isCurrentNode, isAction, documentation, isAccepted }) => {
     const { note, setNote } = useNote();
     const [showReport, setShowReport] = useState<boolean>(false);
     const { patientRecords, setPatientRecords } = usePatientRecords();
@@ -52,7 +52,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       });
     };
     const patient = usePatient().patient as fhir.Patient;
-    if (note) note.node = pathwayState.label;
+    if (note) note.node = actionNode.label;
 
     const onConfirm = (action?: Action[]): void => {
       const newPatientRecords = [...patientRecords];
@@ -64,11 +64,11 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
           patientRecords,
           note.status,
           note?.notes ?? '',
-          pathwayState
+          actionNode
         );
         const documentReference = createActionDocumentReference(
           noteString,
-          pathwayState.label,
+          actionNode.label,
           patient
         );
 
@@ -92,7 +92,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     };
 
     const onAdvance = (): void => {
-      const content = `${pathwayState.label} - Advance`;
+      const content = `${actionNode.label} - Advance`;
       const documentReference = createDocumentReference(content, patient);
 
       client?.create?.(documentReference);
@@ -102,10 +102,10 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     return (
       <>
         <ExpandedNodeMemo
-          isGuidance={isGuidance}
+          isAction={isAction}
           isActionable={isActionable}
           isCurrentNode={isCurrentNode}
-          pathwayState={pathwayState}
+          actionNode={actionNode}
           documentation={documentation}
           setComments={setComments}
           comments={note?.notes ?? ''}
@@ -126,7 +126,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
         />
         {showReport && (
           <ReportModal
-            onConfirm={(): void => onConfirm(pathwayState.action)}
+            onConfirm={(): void => onConfirm(actionNode.action)}
             onDecline={(): void => setShowReport(false)}
           />
         )}
@@ -183,7 +183,7 @@ const StatusField: FC<StatusFieldProps> = ({ documentation, isAccepted }) => {
 
 function renderBranch(
   documentation: DocumentationResource | undefined,
-  pathwayState: State,
+  pathwayNode: PathwayNode,
   isAccepted: boolean | null
 ): ReactElement[] {
   const returnElements: ReactElement[] = [];
@@ -262,7 +262,7 @@ function renderBranch(
       }
     }
   } else {
-    const values: string[] = pathwayState.transitions
+    const values: string[] = pathwayNode.transitions
       .map(transition => {
         const description = transition.condition?.description;
         return description ? description : '';
@@ -286,12 +286,12 @@ function isMedicationRequest(
 ): request is MedicationRequest {
   return (request as MedicationRequest).medicationCodeableConcept !== undefined;
 }
-function renderGuidance(
-  pathwayState: GuidanceState,
+function renderAction(
+  actionNode: ActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
-  const resource = pathwayState.action[0].resource;
+  const resource = actionNode.action[0].resource;
   const coding = isMedicationRequest(resource)
     ? resource?.medicationCodeableConcept?.coding
     : resource?.code?.coding;
@@ -300,7 +300,7 @@ function renderGuidance(
     <ExpandedNodeField
       key="Description"
       title="Description"
-      description={pathwayState.action[0].description}
+      description={actionNode.action[0].description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
   ];
@@ -367,8 +367,8 @@ function renderGuidance(
 
 interface ExpandedNodeMemoProps {
   documentation: DocumentationResource | undefined;
-  pathwayState: GuidanceState;
-  isGuidance: boolean;
+  actionNode: ActionNode;
+  isAction: boolean;
   isActionable: boolean;
   isCurrentNode: boolean;
   comments: string;
@@ -381,8 +381,8 @@ interface ExpandedNodeMemoProps {
 const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
   ({
     documentation,
-    pathwayState,
-    isGuidance,
+    actionNode,
+    isAction,
     isActionable,
     isCurrentNode,
     comments,
@@ -393,14 +393,13 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
     onAdvance
   }) => {
     const { patientRecords } = usePatientRecords();
-    const guidance = isGuidance && renderGuidance(pathwayState, documentation, isAccepted);
-    const branch =
-      isBranchState(pathwayState) && renderBranch(documentation, pathwayState, isAccepted);
+    const action = isAction && renderAction(actionNode, documentation, isAccepted);
+    const branch = isBranchNode(actionNode) && renderBranch(documentation, actionNode, isAccepted);
     const defaultText =
       'The patient and I discussed the treatment plan, risks, benefits and alternatives.  The patient expressed understanding and wants to proceed.';
 
     let notes;
-    const documentReference = retrieveNote(pathwayState.label, patientRecords);
+    const documentReference = retrieveNote(actionNode.label, patientRecords);
     if (documentReference) {
       const content = documentReference.content[0].attachment?.data;
       if (content) {
@@ -414,14 +413,14 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
         <table className={styles.infoTable}>
           <tbody>
             <StatusField documentation={documentation} isAccepted={isAccepted} />
-            {guidance || branch}
+            {action || branch}
             {!isActionable && notes && /\S/.test(notes) && (
               <ExpandedNodeField key="Comments" title="Comments" description={notes} />
             )}
           </tbody>
         </table>
         {/* Node is advanceable if it has been accepted or declined */}
-        {pathwayState.transitions.length > 0 && !isActionable && isGuidance && isCurrentNode && (
+        {actionNode.transitions.length > 0 && !isActionable && isAction && isCurrentNode && (
           <Button
             className={`${indexStyles.button} ${styles.button}`}
             variant="contained"
@@ -431,7 +430,7 @@ const ExpandedNodeMemo: FC<ExpandedNodeMemoProps> = memo(
             Advance
           </Button>
         )}
-        {isActionable && isGuidance && (
+        {isActionable && isAction && (
           <form className={styles.commentsForm}>
             <div>
               <label>Comments:</label>

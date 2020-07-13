@@ -1,4 +1,4 @@
-import { GuidanceState, EvaluatedPathway, Pathway } from 'pathways-model';
+import { ActionNode, EvaluatedPathway, Pathway } from 'pathways-model';
 import { Note, toString } from 'components/NoteDataProvider';
 import {
   Patient,
@@ -127,13 +127,13 @@ export function createNoteContent(
   patientRecords: DomainResource[],
   status: string,
   notes: string,
-  pathwayState?: GuidanceState
+  actionNode?: ActionNode
 ): string {
   note.status = status;
   note.notes = notes;
-  if (pathwayState) {
-    note.treatment = pathwayState.action[0].description;
-    note.node = pathwayState.label;
+  if (actionNode) {
+    note.treatment = actionNode.action[0].description;
+    note.node = actionNode.label;
   }
 
   const tnm: string[] = ['', '', ''];

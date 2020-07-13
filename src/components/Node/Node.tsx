@@ -1,13 +1,13 @@
 import React, { FC, Ref, forwardRef, memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { GuidanceState, State, DocumentationResource } from 'pathways-model';
+import { ActionNode, PathwayNode, DocumentationResource } from 'pathways-model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from './Node.module.scss';
 import nodeStyles from 'styles/index.module.scss';
 import ExpandedNode from 'components/ExpandedNode';
-import { isGuidanceState } from 'utils/nodeUtils';
+import { isActionNode } from 'utils/nodeUtils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faMicroscope,
@@ -33,7 +33,7 @@ const useStyles = makeStyles(
 );
 
 interface NodeProps {
-  pathwayState: State;
+  pathwayNode: PathwayNode;
   documentation: DocumentationResource | undefined;
   isOnPatientPath: boolean;
   isCurrentNode: boolean;
@@ -47,7 +47,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
   forwardRef<HTMLDivElement, NodeProps>(
     (
       {
-        pathwayState,
+        pathwayNode,
         documentation,
         isOnPatientPath,
         isCurrentNode,
@@ -58,7 +58,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
       },
       ref
     ) => {
-      const { label } = pathwayState;
+      const { label } = pathwayNode;
       const style = {
         top: yCoordinate,
         left: xCoordinate
@@ -80,12 +80,12 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           : clsx(styles.childNotOnPatientPath, classes['child-not-on-patient-path']);
       }
 
-      const isGuidance = isGuidanceState(pathwayState);
+      const isAction = isActionNode(pathwayNode);
       // TODO: how do we determine whether a node has been accepted or declined?
       // for now:
-      // if it's a non-actionable guidance state on the path: accepted == has documentation
-      // if it's actionable, not guidance or not on the path: null
-      const wasActionTaken = isOnPatientPath && isGuidance && !isActionable;
+      // if it's a non-actionable action node on the path: accepted == has documentation
+      // if it's actionable, not action or not on the path: null
+      const wasActionTaken = isOnPatientPath && isAction && !isActionable;
       const isAccepted = wasActionTaken
         ? documentation?.resourceType !== 'DocumentReference'
         : null;
@@ -94,9 +94,9 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
         if (expanded) expandedNodeClass = styles.childDeclined;
       }
       let status = null;
-      if ('action' in pathwayState) {
+      if ('action' in pathwayNode) {
         if (isOnPatientPath) status = isAccepted;
-        else status = isGuidance && documentation ? true : null;
+        else status = isAction && documentation ? true : null;
       } else if (!isCurrentNode && documentation) {
         status = true;
       }
@@ -108,7 +108,7 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
             onClick={onClickHandler}
           >
             <div className={nodeStyles.iconAndLabel}>
-              <NodeIcon pathwayState={pathwayState} isGuidance={isGuidance} />
+              <NodeIcon pathwayNode={pathwayNode} isAction={isAction} />
               {label}
             </div>
             <StatusIcon status={status} />
@@ -116,9 +116,9 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
           {expanded && (
             <div className={`${styles.expandedNode} ${expandedNodeClass}`}>
               <ExpandedNode
-                pathwayState={pathwayState as GuidanceState}
+                actionNode={pathwayNode as ActionNode}
                 isActionable={isActionable}
-                isGuidance={isGuidance}
+                isAction={isAction}
                 documentation={documentation}
                 isAccepted={isAccepted}
                 isCurrentNode={isCurrentNode}
@@ -132,17 +132,17 @@ const Node: FC<NodeProps & { ref: Ref<HTMLDivElement> }> = memo(
 );
 
 interface NodeIconProps {
-  pathwayState: State;
-  isGuidance: boolean;
+  pathwayNode: PathwayNode;
+  isAction: boolean;
 }
 
-const NodeIcon: FC<NodeIconProps> = ({ pathwayState, isGuidance }) => {
+const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isAction }) => {
   let icon: IconProp = faMicroscope;
-  if (pathwayState.label === 'Start') icon = faPlay;
-  if (isGuidance) {
-    const guidancePathwayState = pathwayState as GuidanceState;
-    if (guidancePathwayState.action.length > 0) {
-      const resourceType = guidancePathwayState.action[0].resource.resourceType;
+  if (pathwayNode.label === 'Start') icon = faPlay;
+  if (isAction) {
+    const actionNode = pathwayNode as ActionNode;
+    if (actionNode.action.length > 0) {
+      const resourceType = actionNode.action[0].resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
       else if (resourceType === 'ServiceRequest') icon = faSyringe;
       else if (resourceType === 'CarePlan') icon = faBookMedical;

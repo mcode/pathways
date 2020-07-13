@@ -2,7 +2,7 @@
   "name": "test_breast_cancer",
   "description": "Mock breast cancer pathway used for testing the system",
   "library": "mCODE_Library.cql",
-  "states": {
+  "nodes": {
     "Start": {
       "label": "Start",
       "transitions": [

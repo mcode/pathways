@@ -2,14 +2,14 @@ import React, { FC, ReactNode, useState, RefObject } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Service } from 'pathways-objects';
-import { Pathway, EvaluatedPathway, CriteriaResult } from 'pathways-model';
+import { Pathway, EvaluatedPathway, PreconditionResult } from 'pathways-model';
 
 import styles from './PathwaysList.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Graph from 'components/Graph';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { usePathwayContext } from 'components/PathwayProvider';
-import { evaluatePathwayCriteria } from 'engine';
+import { evaluatePathwayPreconditions } from 'engine';
 import { usePatientRecords } from 'components/PatientRecordsProvider';
 import { getAssignedPathways } from 'utils/fhirUtils';
 import {
@@ -45,7 +45,7 @@ const useStyles = makeStyles(
 
 interface PathwaysListElementProps {
   evaluatedPathway: EvaluatedPathway;
-  criteria?: CriteriaResult;
+  preconditions?: PreconditionResult;
   callback: Function;
   assigned: boolean;
 }
@@ -64,9 +64,14 @@ const PathwaysList: FC<PathwaysListProps> = ({
   headerElement
 }) => {
   const { patientRecords } = usePatientRecords();
-  const [criteria, setCriteria] = useState<CriteriaResult[] | null>(null);
+  const [preconditions, setPreconditions] = useState<PreconditionResult[] | null>(null);
 
-  if (!criteria && evaluatedPathways.length > 0 && patientRecords && patientRecords.length > 0) {
+  if (
+    !preconditions &&
+    evaluatedPathways.length > 0 &&
+    patientRecords &&
+    patientRecords.length > 0
+  ) {
     // Create a Bundle for the CQL engine and check if patientPath needs to be evaluated
     const patient = {
       resourceType: 'Bundle',
@@ -74,20 +79,20 @@ const PathwaysList: FC<PathwaysListProps> = ({
       entry: patientRecords.map((r: fhir.Resource) => ({ resource: r }))
     };
 
-    // Evaluate pathway criteria for each pathway
-    const criteriaPromises = evaluatedPathways.map(pathway =>
-      evaluatePathwayCriteria(patient, pathway.pathway)
+    // Evaluate pathway preconditions for each pathway
+    const preconditionPromises = evaluatedPathways.map(pathway =>
+      evaluatePathwayPreconditions(patient, pathway.pathway)
     );
-    Promise.all(criteriaPromises).then(criteriaResults => {
-      setCriteria(criteriaResults.sort((a, b) => b.matches - a.matches));
+    Promise.all(preconditionPromises).then(preconditionResults => {
+      setPreconditions(preconditionResults.sort((a, b) => b.matches - a.matches));
     });
   }
 
   function renderList(): ReactNode {
     return (
       <div>
-        {criteria ? (
-          criteria.map(c => {
+        {preconditions ? (
+          preconditions.map(c => {
             const evaluatedPathway = evaluatedPathways.find(p => p.pathway.name === c.pathwayName);
             if (evaluatedPathway) {
               const pathwayName = evaluatedPathway.pathway.name;
@@ -95,13 +100,15 @@ const PathwaysList: FC<PathwaysListProps> = ({
                 <PathwaysListElement
                   evaluatedPathway={evaluatedPathway}
                   callback={callback}
-                  criteria={c}
+                  preconditions={c}
                   assigned={assignedPathways.includes(pathwayName)}
                   key={pathwayName}
                 />
               );
             } else
-              return <div>An error occured evaluating the pathway criteria. Please try again.</div>;
+              return (
+                <div>An error occured evaluating the pathway preconditions. Please try again.</div>
+              );
           })
         ) : (
           <div>Loading Pathways...</div>
@@ -138,7 +145,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
             </div>
           </div>
 
-          {criteria?.length !== 0 && renderList()}
+          {preconditions?.length !== 0 && renderList()}
         </div>
       ) : (
         <div>ERROR</div>
@@ -149,7 +156,7 @@ const PathwaysList: FC<PathwaysListProps> = ({
 
 const PathwaysListElement: FC<PathwaysListElementProps> = ({
   evaluatedPathway,
-  criteria,
+  preconditions,
   callback,
   assigned
 }) => {
@@ -192,7 +199,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
         <div className={styles.expand}>
           <FontAwesomeIcon icon={chevron} />
         </div>
-        <div className={styles.numElements}>{criteria?.matches}</div>
+        <div className={styles.numElements}>{preconditions?.matches}</div>
       </div>
 
       {isVisible && (
@@ -206,7 +213,7 @@ const PathwaysListElement: FC<PathwaysListElementProps> = ({
                   <th>mCODE elements</th>
                   <th>patient elements</th>
                 </tr>
-                {criteria?.criteriaResultItems.map(c => (
+                {preconditions?.preconditionResultItems.map(c => (
                   <tr key={c.elementName}>
                     <td>{c.elementName}</td>
                     <td>{c.expected}</td>
