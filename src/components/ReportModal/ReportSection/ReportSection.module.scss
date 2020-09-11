@@ -2,9 +2,9 @@
 
 .fieldContainer {
   display: flex;
-  flex-direction: column;
+  writing-mode: vertical-lr;
   flex-wrap: wrap;
-  width: 90%;
+  max-width: 80em;
   justify-content: space-between;
   margin-left: 2em;
   > * {
@@ -19,6 +19,7 @@
   align-items: center;
   padding-bottom: 0.1em;
   line-height: 0.8;
+  writing-mode: initial;
   > b {
     margin-right: 0.5em;
   }
