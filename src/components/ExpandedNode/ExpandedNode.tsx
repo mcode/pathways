@@ -282,19 +282,33 @@ function renderBranch(
 }
 
 function isMedicationRequest(
-  request: MedicationRequest | ServiceRequest
+  request: MedicationRequest | ServiceRequest | CarePlan
 ): request is MedicationRequest {
   return (request as MedicationRequest).medicationCodeableConcept !== undefined;
 }
+
+function isServiceRequest(
+  request: MedicationRequest | ServiceRequest | CarePlan
+): request is ServiceRequest {
+  return (request as ServiceRequest).code !== undefined;
+}
+
 function renderAction(
   actionNode: ActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
   const resource = actionNode.action[0].resource;
-  const coding = isMedicationRequest(resource)
-    ? resource?.medicationCodeableConcept?.coding
-    : resource?.code?.coding;
+  let coding = undefined;
+
+  if (isMedicationRequest(resource)) {
+    coding = resource?.medicationCodeableConcept?.coding;
+  } else if (isServiceRequest(resource)) {
+    coding = resource?.code?.coding;
+  } else {
+    // CarePlans don't have codes. we can hack one up from the name
+    coding = [{ display: resource?.title }];
+  }
 
   const returnElements = [
     <ExpandedNodeField

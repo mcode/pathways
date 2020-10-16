@@ -12,6 +12,7 @@ const pathway: Pathway = {
   library: 'mCODE_Library.cql',
   preconditions: [
     {
+      id: 'asdfg',
       elementName: 'condition',
       expected: 'breast cancer',
       cql: 'some fancy CQL statement'
@@ -19,7 +20,9 @@ const pathway: Pathway = {
   ],
   nodes: {
     Start: {
+      key: 'Start',
       label: 'Start',
+      type: 'start',
       transitions: []
     }
   }

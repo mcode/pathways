@@ -1,2582 +1,407 @@
 {
-    "name": "Breast Cancer: Neoadjuvant Chemotherapy with Surgery ",
-    "description": "Pathway for the Early Stage HER2+ Breast Cancer Pathway for neoadjuvant chemotherapy with surgery.",
-    "library": "mCODE_Library.cql",
-    "preconditions": [
-      {
-        "elementName": "Condition",
-        "expected": "Breast Cancer",
-        "cql": "\"Primary Cancer Condition\" PrimaryCancer return Tuple{ value: PrimaryCancer.code.text.value, match: PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)' } "
-      },
-      {
-        "elementName": "HER2 Status",
-        "expected": "+",
-        "cql": "[Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 return Tuple{ value: Her2.value.text.value, match: Her2.value.text.value ~ 'Positive' } "
-      }
-    ],
-    "nodes": {
-      "Start": {
-        "label": "Start",
-        "transitions": [
-          {
-            "transition": "TumorSize"
-          }
-        ]
-      },
-      "TumorSize": {
-        "label": "Tumor Size",
-        "transitions": [
-          {
-            "transition": "ChemotherapyTCHP",
-            "condition": {
-              "description": "T > 2",
-              "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TLarge let TLageConcept: ToConcept(TLarge.value as FHIR.CodeableConcept) where TLageConcept ~ \"T3 category (finding)\" or TLageConcept ~ \"T4 category (finding)\" return Tuple{ resourceType: 'Observation', id: TLarge.id.value , status: TLarge.status.value} "
-            }
-          },
-          {
-            "transition": "ChemotherapyACTHP",
-            "condition": {
-              "description": "T > 2",
-              "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TLarge let TLageConcept: ToConcept(TLarge.value as FHIR.CodeableConcept) where TLageConcept ~ \"T3 category (finding)\" or TLageConcept ~ \"T4 category (finding)\" return Tuple{ resourceType: 'Observation', id: TLarge.id.value , status: TLarge.status.value} "
-            }
-          },
-          {
-            "transition": "ChemotherapyddACTHP",
-            "condition": {
-              "description": "T > 2",
-              "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TLarge let TLageConcept: ToConcept(TLarge.value as FHIR.CodeableConcept) where TLageConcept ~ \"T3 category (finding)\" or TLageConcept ~ \"T4 category (finding)\" return Tuple{ resourceType: 'Observation', id: TLarge.id.value , status: TLarge.status.value} "
-            }
-          },
-          {
-            "transition": "NodeStatus",
-            "condition": {
-              "description": "T <= 2",
-              "cql": "[Observation: \"Primary tumor.clinical [Class] Cancer code\"] TSmall where ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T0 category (finding)\" or ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T1 category (finding)\" or ToConcept(TSmall.value as FHIR.CodeableConcept) ~ \"T2 category (finding)\" return Tuple{ resourceType: 'Observation', id: TSmall.id.value , status: TSmall.status.value} "
-            }
-          }
-        ]
-      },
-      "NodeStatus": {
-        "label": "Node Status",
-        "transitions": [
-          {
-            "transition": "ChemotherapyTCHP",
-            "condition": {
-              "description": "N+",
-              "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
-            }
-          },
-          {
-            "transition": "ChemotherapyACTHP",
-            "condition": {
-              "description": "N+",
-              "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
-            }
-          },
-          {
-            "transition": "ChemotherapyddACTHP",
-            "condition": {
-              "description": "N+",
-              "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
-            }
-          },
-          {
-            "transition": "Surgery1",
-            "condition": {
-              "description": "N0",
-              "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\" return Tuple{ resourceType: 'Observation', id: N0.id.value , status: N0.status.value} "
-            }
-          }
-        ]
-      },
-      "Surgery1": {
-        "label": "Surgery",
-        "action": [
-          {
-            "type": "create",
-            "description": "Cancer Related Surgery Procedure",
-            "resource": {
-              "resourceType": "ServiceRequest",
-              "code": {
-                "coding": [
-                  {
-                    "system": "http://snomed.info/sct",
-                    "code": "392021009",
-                    "display": "Lumpectomy of breast (procedure)"
-                  }
-                ],
-                "text": "Lumpectomy of breast (procedure)"
-              }
-            }
-          }
-        ],
-        "cql": "if exists [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value }",
-        "transitions": [
-          {
-            "transition": "PaclitaxelTrastuzumab"
-          }
-        ]
-      },
-      "PaclitaxelTrastuzumab": {
-        "label": "Paclitaxel and Trastuzumab",
-        "action": [
-          {
-            "type": "create",
-            "description": "Paclitaxel request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "583214",
-                    "display": "PACLitaxel"
-                  }
-                ],
-                "text": "PACLitaxel"
-              }
-            }
-          },
-          {
-            "type": "create",
-            "description": "Trastuzumab request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1922509",
-                    "display": "trastuzumab"
-                  }
-                ],
-                "text": "trastuzumab"
-              }
-            }
-          }
-        ],
-        "cql": "[MedicationRequest: \"paclitaxel 100 MG Injection\"] MR return Tuple{ resourceType: 'MedicationRequest', id: MR.id.value , status: MR.status.value} ",
-        "transitions": []
-      },
-      "ChemotherapyTCHP": {
-        "label": "Chemotherapy TCHP",
-        "action": [
-          {
-            "type": "create",
-            "description": "Chemotherapy TCHP Regimen",
-            "resource": {
-                "resourceType": "CarePlan",
-                "title": "ChemoTCHP"
-            }
-          }
-        ],
-        "cql": "[CarePlan] TCHP where TCHP.title.value='ChemoTCHP' return Tuple{ resourceType: 'CarePlan', id: TCHP.id.value , status: TCHP.status.value}",
-        "transitions": [
-          {
-            "transition": "Surgery2"
-          }
-        ]
-      },
-      "ChemotherapyACTHP": {
-        "label": "Chemotherapy ACTHP",
-        "action": [
-          {
-            "type": "create",
-            "description": "Chemotherapy ACTHP Regimen",
-            "resource": {
-                "resourceType": "CarePlan",
-                "title": "ChemoACTHP"
-            }
-          }
-        ],
-        "cql": "[CarePlan] ACTHP where ACTHP.title.value='ChemoACTHP' return Tuple{ resourceType: 'CarePlan', id: ACTHP.id.value , status: ACTHP.status.value}",
-        "transitions": [
-          {
-            "transition": "Surgery2"
-          }
-        ]
-      },
-      "ChemotherapyddACTHP": {
-        "label": "Chemotherapy ddACTHP",
-        "action": [
-          {
-            "type": "create",
-            "description": "Chemotherapy ddACTHP Regimen",
-            "resource": {
-                "resourceType": "CarePlan",
-                "title": "ChemoddACTHP"
-            }
-          }
-        ],
-        "cql": "[CarePlan] CTHP where CTHP.title.value='ChemoddACTHP' return Tuple{ resourceType: 'CarePlan', id: CTHP.id.value , status: CTHP.status.value}",
-        "transitions": [
-          {
-            "transition": "Surgery2"
-          }
-        ]
-      },
-      "Surgery2": {
-        "label": "Surgery",
-        "action": [
-          {
-            "type": "create",
-            "description": "Cancer Related Surgery Procedure",
-            "resource": {
-              "resourceType": "ServiceRequest",
-              "code": {
-                "coding": [
-                  {
-                    "system": "http://snomed.info/sct",
-                    "code": "392021009",
-                    "display": "Lumpectomy of breast (procedure)"
-                  }
-                ],
-                "text": "Lumpectomy of breast (procedure)"
-              }
-            }
-          }
-        ],
-        "cql": "if exists [Procedure: \"Lumpectomy of breast (procedure) code\"] then [Procedure: \"Lumpectomy of breast (procedure) code\"] Lumpectomy return Tuple{ resourceType: 'Procedure', id: Lumpectomy.id.value, status: Lumpectomy.status.value } else [ServiceRequest: \"Lumpectomy of breast (procedure) code\"] Request return Tuple{ resourceType: 'ServiceRequest', id: Request.id.value, status: Request.status.value }",
-        "transitions": [
-          {
-            "transition": "PathologicalResponse"
-          }
-        ]
-      },
-      "PathologicalResponse": {
-        "label": "Pathological Response",
-        "transitions": [
-          {
-            "transition": "NodeStatus2",
-            "condition": {
-              "description": "Complete",
-              "cql": "[Observation \"Pathologic response code\"] Response where ToConcept(Response.value as FHIR.CodeableConcept) ~ \"Complete\" return Tuple{ resourceType: 'Observation', id: Response.id.value, status: Response.status.value} "
-            }
-          },
-          {
-            "transition": "AdotrastuzumabEmtansine",
-            "condition": {
-              "description": "Partial/Stable/Progressive",
-              "cql": "[Observation \"Pathologic response code\"] Response let ResponseConcept: ToConcept(Response.value as FHIR.CodeableConcept) where ResponseConcept ~ \"Partial\" or ResponseConcept ~ \"Stable\" or ResponseConcept ~ \"Progressive\" return Tuple{ resourceType: 'Observation', id: Response.id.value, status: Response.status.value} "
-            }
-          }
-        ]
-      },
-      "AdotrastuzumabEmtansine": {
-        "label": "Ado-trastuzumab Emtansine",
-        "action": [
-          {
-            "type": "create",
-            "description": "Ado-trastuzumab Emtansine Request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1658084",
-                    "display": "ado-trastuzumab emtansine"
-                  }
-                ],
-                "text": "ado-trastuzumab emtansine"
-              }
-            }
-          }
-        ],
-        "cql": "[MedicationRequest: \"ado-trastuzumab emtansine 100 MG Injection\"] MR return Tuple{ resourceType: 'MedicationRequest', id: MR.id.value , status: MR.status.value} ",
-        "transitions": []
-      },
-      "NodeStatus2": {
-        "label": "Node Status Prior to Surgery",
-        "transitions": [
-          {
-            "transition": "Trastuzumab",
-            "condition": {
-              "description": "N0",
-              "cql": "[Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] N0 where ToConcept(N0.value as FHIR.CodeableConcept) ~ \"N0 category (finding)\" return Tuple{ resourceType: 'Observation', id: N0.id.value , status: N0.status.value} "
-            }
-          },
-          {
-            "transition": "PertuzumabTrastuzumab",
-            "condition": {
-              "description": "N+",
-              "cql": " [Observation: \"Regional lymph nodes.clinical [Class] Cancer code\"] NLarge let NLargeConcept: ToConcept(NLarge.value as FHIR.CodeableConcept) where NLargeConcept ~ \"N1 category (finding)\" or NLargeConcept ~ \"N2 category (finding)\" or NLargeConcept ~ \"N3 category (finding)\" return Tuple{ resourceType: 'Observation', id: NLarge.id.value , status: NLarge.status.value} "
-            }
-          }
-        ]
-      },
-      "Trastuzumab": {
-        "label": "Trastuzumab",
-        "action": [
-          {
-            "type": "create",
-            "description": "Trastuzumab request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1922509",
-                    "display": "trastuzumab"
-                  }
-                ],
-                "text": "trastuzumab"
-              }
-            }
-          }
-        ],
-        "cql": "[MedicationRequest: \"trastuzumab 150 MG Injection code\"] MR return Tuple{ resourceType: 'MedicationRequest', id: MR.id.value , status: MR.status.value} ",
-        "transitions": []
-      },
-      "PertuzumabTrastuzumab": {
-        "label": "Pertuzumab and Trastuzumab",
-        "action": [
-          {
-            "type": "create",
-            "description": "Pertuzumab request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1298948",
-                    "display": "pertuzumab"
-                  }
-                ],
-                "text": "pertuzumab"
-              }
-            }
-          },
-          {
-            "type": "create",
-            "description": "Trastuzumab request",
-            "resource": {
-              "resourceType": "MedicationRequest",
-              "medicationCodeableConcept": {
-                "coding": [
-                  {
-                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                    "code": "1922509",
-                    "display": "trastuzumab"
-                  }
-                ],
-                "text": "trastuzumab"
-              }
-            }
-          }
-        ],
-        "cql": "[MedicationRequest: \"14 ML pertuzumab 30 MG/ML Injection\"] MR return Tuple{ resourceType: 'MedicationRequest', id: MR.id.value , status: MR.status.value} ",
-        "transitions": []
-      }
-    },
-    "elm": {
-      "navigational": {
-         "library" : {
-            "identifier" : {
-               "id" : "mCODEResources",
-               "version" : "1"
-            },
-            "schemaIdentifier" : {
-               "id" : "urn:hl7-org:elm",
-               "version" : "r1"
-            },
-            "usings" : {
-               "def" : [ {
-                  "localIdentifier" : "System",
-                  "uri" : "urn:hl7-org:elm-types:r1"
-               }, {
-                  "localIdentifier" : "FHIR",
-                  "uri" : "http://hl7.org/fhir",
-                  "version" : "4.0.0"
-               } ]
-            },
-            "codeSystems" : {
-               "def" : [ {
-                  "name" : "SNOMEDCT",
-                  "id" : "http://snomed.info/sct",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "LOINC",
-                  "id" : "http://loinc.org",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "RXNORM",
-                  "id" : "http://www.nlm.nih.gov/research/umls/rxnorm",
-                  "accessLevel" : "Public"
-               } ]
-            },
-            "codes" : {
-               "def" : [ {
-                  "name" : "Primary tumor.clinical [Class] Cancer code",
-                  "id" : "21905-5",
-                  "display" : "Primary tumor.clinical [Class] Cancer",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "Regional lymph nodes.clinical [Class] Cancer code",
-                  "id" : "21906-3",
-                  "display" : "Regional lymph nodes.clinical [Class] Cancer",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain code",
-                  "id" : "85319-2",
-                  "display" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "T0 category (finding) code",
-                  "id" : "58790005",
-                  "display" : "T0 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "T1 category (finding) code",
-                  "id" : "23351008",
-                  "display" : "T1 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "N0 category (finding) code",
-                  "id" : "62455006",
-                  "display" : "N0 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "N1 category (finding) code",
-                  "id" : "53623008",
-                  "display" : "N1 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Lumpectomy of breast (procedure) code",
-                  "id" : "392021009",
-                  "display" : "Lumpectomy of breast (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Teleradiotherapy procedure (procedure) code",
-                  "id" : "33195004",
-                  "display" : "Teleradiotherapy procedure (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Chemotherapy (procedure) code",
-                  "id" : "367336001",
-                  "display" : "Chemotherapy (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "14 ML pertuzumab 30 MG/ML Injection code",
-                  "id" : "1298948",
-                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "Cyclophosphamide 1000 MG Injection code",
-                  "id" : "1734919",
-                  "display" : "Cyclophosphamide 1000 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "trastuzumab 150 MG Injection code",
-                  "id" : "1922509",
-                  "display" : "trastuzumab 150 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code",
-                  "id" : "1790099",
-                  "display" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "ado-trastuzumab emtansine 100 MG Injection code",
-                  "id" : "1658084",
-                  "display" : "ado-trastuzumab emtansine 100 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "paclitaxel 100 MG Injection code",
-                  "id" : "583214",
-                  "display" : "paclitaxel 100 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "11p partial monosomy syndrome 4135001 code",
-                  "id" : "4135001",
-                  "display" : "11p partial monosomy syndrome",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Orbital lymphoma 13048006 code",
-                  "id" : "13048006",
-                  "display" : "Orbital lymphoma",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Delta heavy chain disease 20224008 code",
-                  "id" : "20224008",
-                  "display" : "Delta heavy chain disease",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Malignant neoplasm of breast 254837009 code",
-                  "id" : "254837009",
-                  "display" : "Malignant neoplasm of breast",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Primary malignant neoplasm of colon 93761005 code",
-                  "id" : "93761005",
-                  "display" : "Primary malignant neoplasm of colon",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Secondary malignant neoplasm of colon 94260004 code",
-                  "id" : "94260004",
-                  "display" : "Secondary malignant neoplasm of colon",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Carcinoma in situ of prostate (disorder) 92691004 code",
-                  "id" : "92691004",
-                  "display" : "Carcinoma in situ of prostate (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Small cell carcinoma of lung (disorder) 254632001 code",
-                  "id" : "254632001",
-                  "display" : "Small cell carcinoma of lung (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Non-small cell lung cancer (disorder) 254637007 code",
-                  "id" : "254637007",
-                  "display" : "Non-small cell lung cancer (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               } ]
-            },
-            "concepts" : {
-               "def" : [ {
-                  "name" : "T0 category (finding)",
-                  "display" : "T0 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "T0 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "T1 category (finding)",
-                  "display" : "T1 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "T1 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "N0 category (finding)",
-                  "display" : "N0 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "N0 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "N1 category (finding)",
-                  "display" : "N1 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "N1 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "14 ML pertuzumab 30 MG/ML Injection code"
-                  } ]
-               }, {
-                  "name" : "Cyclophosphamide 1000 MG Injection",
-                  "display" : "Cyclophosphamide 1000 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "Cyclophosphamide 1000 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "trastuzumab 150 MG Injection",
-                  "display" : "trastuzumab 150 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "trastuzumab 150 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "display" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"
-                  } ]
-               }, {
-                  "name" : "ado-trastuzumab emtansine 100 MG Injection",
-                  "display" : "ado-trastuzumab emtansine 100 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "ado-trastuzumab emtansine 100 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "paclitaxel 100 MG Injection",
-                  "display" : "paclitaxel 100 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "paclitaxel 100 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "display" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain code"
-                  } ]
-               }, {
-                  "name" : "Primary cancers",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "11p partial monosomy syndrome 4135001 code"
-                  }, {
-                     "name" : "Orbital lymphoma 13048006 code"
-                  }, {
-                     "name" : "Delta heavy chain disease 20224008 code"
-                  }, {
-                     "name" : "Malignant neoplasm of breast 254837009 code"
-                  }, {
-                     "name" : "Primary malignant neoplasm of colon 93761005 code"
-                  }, {
-                     "name" : "Secondary malignant neoplasm of colon 94260004 code"
-                  }, {
-                     "name" : "Carcinoma in situ of prostate (disorder) 92691004 code"
-                  }, {
-                     "name" : "Small cell carcinoma of lung (disorder) 254632001 code"
-                  }, {
-                     "name" : "Non-small cell lung cancer (disorder) 254637007 code"
-                  } ]
-               } ]
-            },
-            "statements" : {
-               "def" : [ {
-                  "name" : "Patient",
-                  "context" : "Patient",
-                  "expression" : {
-                     "type" : "SingletonFrom",
-                     "operand" : {
-                        "dataType" : "{http://hl7.org/fhir}Patient",
-                        "type" : "Retrieve"
-                     }
-                  }
-               }, {
-                  "name" : "Primary Cancer Condition",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "Cancer",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Condition",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Primary cancers",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ]
-                  }
-               }, {
-                  "name" : "ToCode",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "type" : "FunctionDef",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "coding",
-                              "type" : "OperandRef"
-                           }
-                        }
-                     },
-                     "then" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Code",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Null"
-                        }
-                     },
-                     "else" : {
-                        "classType" : "{urn:hl7-org:elm-types:r1}Code",
-                        "type" : "Instance",
-                        "element" : [ {
-                           "name" : "code",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "code",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "system",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "system",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "version",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "version",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "display",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "display",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        } ]
-                     }
-                  },
-                  "operand" : [ {
-                     "name" : "coding",
-                     "operandTypeSpecifier" : {
-                        "name" : "{http://hl7.org/fhir}Coding",
-                        "type" : "NamedTypeSpecifier"
-                     }
-                  } ]
-               }, {
-                  "name" : "ToConcept",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "type" : "FunctionDef",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "concept",
-                              "type" : "OperandRef"
-                           }
-                        }
-                     },
-                     "then" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Concept",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Null"
-                        }
-                     },
-                     "else" : {
-                        "classType" : "{urn:hl7-org:elm-types:r1}Concept",
-                        "type" : "Instance",
-                        "element" : [ {
-                           "name" : "codes",
-                           "value" : {
-                              "type" : "Query",
-                              "source" : [ {
-                                 "alias" : "C",
-                                 "expression" : {
-                                    "path" : "coding",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "name" : "concept",
-                                       "type" : "OperandRef"
-                                    }
-                                 }
-                              } ],
-                              "relationship" : [ ],
-                              "return" : {
-                                 "expression" : {
-                                    "name" : "ToCode",
-                                    "type" : "FunctionRef",
-                                    "operand" : [ {
-                                       "name" : "C",
-                                       "type" : "AliasRef"
-                                    } ]
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "display",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "text",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "concept",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        } ]
-                     }
-                  },
-                  "operand" : [ {
-                     "name" : "concept",
-                     "operandTypeSpecifier" : {
-                        "name" : "{http://hl7.org/fhir}CodeableConcept",
-                        "type" : "NamedTypeSpecifier"
-                     }
-                  } ]
-               }, {
-                  "name" : "T > 2",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "TLarge",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Observation",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Primary tumor.clinical [Class] Cancer code",
-                                 "type" : "CodeRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "let" : [ {
-                        "identifier" : "TLageConcept",
-                        "expression" : {
-                           "name" : "ToConcept",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "strict" : false,
-                              "type" : "As",
-                              "operand" : {
-                                 "path" : "value",
-                                 "scope" : "TLarge",
-                                 "type" : "Property"
-                              },
-                              "asTypeSpecifier" : {
-                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
-                                 "type" : "NamedTypeSpecifier"
-                              }
-                           } ]
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Null"
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "Observation",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "TLarge",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "TLarge",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "T <= 2",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "TSmall",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Observation",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Primary tumor.clinical [Class] Cancer code",
-                                 "type" : "CodeRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Null"
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "Observation",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "TSmall",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "TSmall",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "N+",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "NLarge",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Observation",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Regional lymph nodes.clinical [Class] Cancer code",
-                                 "type" : "CodeRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "let" : [ {
-                        "identifier" : "NLargeConcept",
-                        "expression" : {
-                           "name" : "ToConcept",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "strict" : false,
-                              "type" : "As",
-                              "operand" : {
-                                 "path" : "value",
-                                 "scope" : "NLarge",
-                                 "type" : "Property"
-                              },
-                              "asTypeSpecifier" : {
-                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
-                                 "type" : "NamedTypeSpecifier"
-                              }
-                           } ]
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Null"
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "Observation",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "NLarge",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "NLarge",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "N0",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "N0",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Observation",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Regional lymph nodes.clinical [Class] Cancer code",
-                                 "type" : "CodeRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Equivalent",
-                        "operand" : [ {
-                           "name" : "ToConcept",
-                           "type" : "FunctionRef",
-                           "operand" : [ {
-                              "strict" : false,
-                              "type" : "As",
-                              "operand" : {
-                                 "path" : "value",
-                                 "scope" : "N0",
-                                 "type" : "Property"
-                              },
-                              "asTypeSpecifier" : {
-                                 "name" : "{http://hl7.org/fhir}CodeableConcept",
-                                 "type" : "NamedTypeSpecifier"
-                              }
-                           } ]
-                        }, {
-                           "name" : "N0 category (finding)",
-                           "type" : "ConceptRef"
-                        } ]
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "Observation",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "N0",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "N0",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "Surgery1",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Exists",
-                           "operand" : {
-                              "dataType" : "{http://hl7.org/fhir}Procedure",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        }
-                     },
-                     "then" : {
-                        "type" : "Query",
-                        "source" : [ {
-                           "alias" : "Lumpectomy",
-                           "expression" : {
-                              "dataType" : "{http://hl7.org/fhir}Procedure",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        } ],
-                        "relationship" : [ ],
-                        "return" : {
-                           "expression" : {
-                              "type" : "Tuple",
-                              "element" : [ {
-                                 "name" : "resourceType",
-                                 "value" : {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "Procedure",
-                                    "type" : "Literal"
-                                 }
-                              }, {
-                                 "name" : "id",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "id",
-                                       "scope" : "Lumpectomy",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }, {
-                                 "name" : "status",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "status",
-                                       "scope" : "Lumpectomy",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              } ]
-                           }
-                        }
-                     },
-                     "else" : {
-                        "type" : "Query",
-                        "source" : [ {
-                           "alias" : "Request",
-                           "expression" : {
-                              "dataType" : "{http://hl7.org/fhir}ServiceRequest",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        } ],
-                        "relationship" : [ ],
-                        "return" : {
-                           "expression" : {
-                              "type" : "Tuple",
-                              "element" : [ {
-                                 "name" : "resourceType",
-                                 "value" : {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "ServiceRequest",
-                                    "type" : "Literal"
-                                 }
-                              }, {
-                                 "name" : "id",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "id",
-                                       "scope" : "Request",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }, {
-                                 "name" : "status",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "status",
-                                       "scope" : "Request",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              } ]
-                           }
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "PaclitaxelTrastuzumab",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "MR",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
-                           "codeProperty" : "medication",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "paclitaxel 100 MG Injection",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "MedicationRequest",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "ChemotherapyTCHP",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "TCHP",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}CarePlan",
-                           "type" : "Retrieve"
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "path" : "value",
-                           "type" : "Property",
-                           "source" : {
-                              "path" : "title",
-                              "scope" : "TCHP",
-                              "type" : "Property"
-                           }
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "ChemoTCHP",
-                           "type" : "Literal"
-                        } ]
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "CarePlan",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "TCHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "TCHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "ChemotherapyACTHP",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "ACTHP",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}CarePlan",
-                           "type" : "Retrieve"
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "path" : "value",
-                           "type" : "Property",
-                           "source" : {
-                              "path" : "title",
-                              "scope" : "ACTHP",
-                              "type" : "Property"
-                           }
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "ChemoACTHP",
-                           "type" : "Literal"
-                        } ]
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "CarePlan",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "ACTHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "ACTHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "ChemotherapyddACTHP",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "CTHP",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}CarePlan",
-                           "type" : "Retrieve"
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "where" : {
-                        "type" : "Equal",
-                        "operand" : [ {
-                           "path" : "value",
-                           "type" : "Property",
-                           "source" : {
-                              "path" : "title",
-                              "scope" : "CTHP",
-                              "type" : "Property"
-                           }
-                        }, {
-                           "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                           "value" : "ChemoddACTHP",
-                           "type" : "Literal"
-                        } ]
-                     },
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "CarePlan",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "CTHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "CTHP",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "Surgery2",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Exists",
-                           "operand" : {
-                              "dataType" : "{http://hl7.org/fhir}Procedure",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        }
-                     },
-                     "then" : {
-                        "type" : "Query",
-                        "source" : [ {
-                           "alias" : "Lumpectomy",
-                           "expression" : {
-                              "dataType" : "{http://hl7.org/fhir}Procedure",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        } ],
-                        "relationship" : [ ],
-                        "return" : {
-                           "expression" : {
-                              "type" : "Tuple",
-                              "element" : [ {
-                                 "name" : "resourceType",
-                                 "value" : {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "Procedure",
-                                    "type" : "Literal"
-                                 }
-                              }, {
-                                 "name" : "id",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "id",
-                                       "scope" : "Lumpectomy",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }, {
-                                 "name" : "status",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "status",
-                                       "scope" : "Lumpectomy",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              } ]
-                           }
-                        }
-                     },
-                     "else" : {
-                        "type" : "Query",
-                        "source" : [ {
-                           "alias" : "Request",
-                           "expression" : {
-                              "dataType" : "{http://hl7.org/fhir}ServiceRequest",
-                              "codeProperty" : "code",
-                              "type" : "Retrieve",
-                              "codes" : {
-                                 "type" : "ToList",
-                                 "operand" : {
-                                    "name" : "Lumpectomy of breast (procedure) code",
-                                    "type" : "CodeRef"
-                                 }
-                              }
-                           }
-                        } ],
-                        "relationship" : [ ],
-                        "return" : {
-                           "expression" : {
-                              "type" : "Tuple",
-                              "element" : [ {
-                                 "name" : "resourceType",
-                                 "value" : {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "ServiceRequest",
-                                    "type" : "Literal"
-                                 }
-                              }, {
-                                 "name" : "id",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "id",
-                                       "scope" : "Request",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }, {
-                                 "name" : "status",
-                                 "value" : {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "status",
-                                       "scope" : "Request",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              } ]
-                           }
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "Complete",
-                  "context" : "Patient",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "Partial/Stable/Progressive",
-                  "context" : "Patient",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "AdotrastuzumabEmtansine",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "MR",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
-                           "codeProperty" : "medication",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "ado-trastuzumab emtansine 100 MG Injection",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "MedicationRequest",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "Trastuzumab",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "MR",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
-                           "codeProperty" : "medication",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "trastuzumab 150 MG Injection code",
-                                 "type" : "CodeRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "MedicationRequest",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "PertuzumabTrastuzumab",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "MR",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}MedicationRequest",
-                           "codeProperty" : "medication",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "14 ML pertuzumab 30 MG/ML Injection",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "resourceType",
-                              "value" : {
-                                 "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                 "value" : "MedicationRequest",
-                                 "type" : "Literal"
-                              }
-                           }, {
-                              "name" : "id",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "id",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           }, {
-                              "name" : "status",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "status",
-                                    "scope" : "MR",
-                                    "type" : "Property"
-                                 }
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               } ]
-            }
+   "id": "eNPAgToBD",
+   "name": "Breast Cancer: Neoadjuvant Chemotherapy with Surgery ",
+   "description": "Pathway for the Early Stage HER2+ Breast Cancer Pathway for neoadjuvant chemotherapy with surgery.",
+   "library": [],
+   "preconditions": [
+     {
+       "id": "1",
+       "elementName": "Condition",
+       "expected": "Breast Cancer",
+       "cql": "exists(\"Primary Cancer Condition\" PrimaryCancer where PrimaryCancer.code.text.value ~ 'Malignant neoplasm of breast (disorder)')"
+     },
+     {
+       "id": "2",
+       "elementName": "HER2 Status",
+       "expected": "+",
+       "cql": "exists([Observation: \"HER2 [Presence] in Breast cancer specimen by Immune stain\"] Her2 where Her2.value.text.value ~ 'Positive')"
+     }
+   ],
+   "nodes": {
+     "Start": {
+       "key": "Start",
+       "label": "Start",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "TumorSize"
          }
-      },
-      "preconditions": {
-         "library" : {
-            "identifier" : {
-               "id" : "mCODEResources",
-               "version" : "1"
-            },
-            "schemaIdentifier" : {
-               "id" : "urn:hl7-org:elm",
-               "version" : "r1"
-            },
-            "usings" : {
-               "def" : [ {
-                  "localIdentifier" : "System",
-                  "uri" : "urn:hl7-org:elm-types:r1"
-               }, {
-                  "localIdentifier" : "FHIR",
-                  "uri" : "http://hl7.org/fhir",
-                  "version" : "4.0.0"
-               } ]
-            },
-            "codeSystems" : {
-               "def" : [ {
-                  "name" : "SNOMEDCT",
-                  "id" : "http://snomed.info/sct",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "LOINC",
-                  "id" : "http://loinc.org",
-                  "accessLevel" : "Public"
-               }, {
-                  "name" : "RXNORM",
-                  "id" : "http://www.nlm.nih.gov/research/umls/rxnorm",
-                  "accessLevel" : "Public"
-               } ]
-            },
-            "codes" : {
-               "def" : [ {
-                  "name" : "Primary tumor.clinical [Class] Cancer code",
-                  "id" : "21905-5",
-                  "display" : "Primary tumor.clinical [Class] Cancer",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "Regional lymph nodes.clinical [Class] Cancer code",
-                  "id" : "21906-3",
-                  "display" : "Regional lymph nodes.clinical [Class] Cancer",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain code",
-                  "id" : "85319-2",
-                  "display" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "LOINC"
-                  }
-               }, {
-                  "name" : "T0 category (finding) code",
-                  "id" : "58790005",
-                  "display" : "T0 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "T1 category (finding) code",
-                  "id" : "23351008",
-                  "display" : "T1 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "N0 category (finding) code",
-                  "id" : "62455006",
-                  "display" : "N0 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "N1 category (finding) code",
-                  "id" : "53623008",
-                  "display" : "N1 category (finding)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Lumpectomy of breast (procedure) code",
-                  "id" : "392021009",
-                  "display" : "Lumpectomy of breast (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Teleradiotherapy procedure (procedure) code",
-                  "id" : "33195004",
-                  "display" : "Teleradiotherapy procedure (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Chemotherapy (procedure) code",
-                  "id" : "367336001",
-                  "display" : "Chemotherapy (procedure)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "14 ML pertuzumab 30 MG/ML Injection code",
-                  "id" : "1298948",
-                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "Cyclophosphamide 1000 MG Injection code",
-                  "id" : "1734919",
-                  "display" : "Cyclophosphamide 1000 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "trastuzumab 150 MG Injection code",
-                  "id" : "1922509",
-                  "display" : "trastuzumab 150 MG Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code",
-                  "id" : "1790099",
-                  "display" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "RXNORM"
-                  }
-               }, {
-                  "name" : "11p partial monosomy syndrome 4135001 code",
-                  "id" : "4135001",
-                  "display" : "11p partial monosomy syndrome",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Orbital lymphoma 13048006 code",
-                  "id" : "13048006",
-                  "display" : "Orbital lymphoma",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Delta heavy chain disease 20224008 code",
-                  "id" : "20224008",
-                  "display" : "Delta heavy chain disease",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Malignant neoplasm of breast 254837009 code",
-                  "id" : "254837009",
-                  "display" : "Malignant neoplasm of breast",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Primary malignant neoplasm of colon 93761005 code",
-                  "id" : "93761005",
-                  "display" : "Primary malignant neoplasm of colon",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Secondary malignant neoplasm of colon 94260004 code",
-                  "id" : "94260004",
-                  "display" : "Secondary malignant neoplasm of colon",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Carcinoma in situ of prostate (disorder) 92691004 code",
-                  "id" : "92691004",
-                  "display" : "Carcinoma in situ of prostate (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Small cell carcinoma of lung (disorder) 254632001 code",
-                  "id" : "254632001",
-                  "display" : "Small cell carcinoma of lung (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               }, {
-                  "name" : "Non-small cell lung cancer (disorder) 254637007 code",
-                  "id" : "254637007",
-                  "display" : "Non-small cell lung cancer (disorder)",
-                  "accessLevel" : "Public",
-                  "codeSystem" : {
-                     "name" : "SNOMEDCT"
-                  }
-               } ]
-            },
-            "concepts" : {
-               "def" : [ {
-                  "name" : "T0 category (finding)",
-                  "display" : "T0 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "T0 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "T1 category (finding)",
-                  "display" : "T1 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "T1 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "N0 category (finding)",
-                  "display" : "N0 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "N0 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "N1 category (finding)",
-                  "display" : "N1 category (finding)",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "N1 category (finding) code"
-                  } ]
-               }, {
-                  "name" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "display" : "14 ML pertuzumab 30 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "14 ML pertuzumab 30 MG/ML Injection code"
-                  } ]
-               }, {
-                  "name" : "Cyclophosphamide 1000 MG Injection",
-                  "display" : "Cyclophosphamide 1000 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "Cyclophosphamide 1000 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "trastuzumab 150 MG Injection",
-                  "display" : "trastuzumab 150 MG Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "trastuzumab 150 MG Injection code"
-                  } ]
-               }, {
-                  "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "display" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code"
-                  } ]
-               }, {
-                  "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "display" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain code"
-                  } ]
-               }, {
-                  "name" : "Primary cancers",
-                  "accessLevel" : "Public",
-                  "code" : [ {
-                     "name" : "11p partial monosomy syndrome 4135001 code"
-                  }, {
-                     "name" : "Orbital lymphoma 13048006 code"
-                  }, {
-                     "name" : "Delta heavy chain disease 20224008 code"
-                  }, {
-                     "name" : "Malignant neoplasm of breast 254837009 code"
-                  }, {
-                     "name" : "Primary malignant neoplasm of colon 93761005 code"
-                  }, {
-                     "name" : "Secondary malignant neoplasm of colon 94260004 code"
-                  }, {
-                     "name" : "Carcinoma in situ of prostate (disorder) 92691004 code"
-                  }, {
-                     "name" : "Small cell carcinoma of lung (disorder) 254632001 code"
-                  }, {
-                     "name" : "Non-small cell lung cancer (disorder) 254637007 code"
-                  } ]
-               } ]
-            },
-            "statements" : {
-               "def" : [ {
-                  "name" : "Patient",
-                  "context" : "Patient",
-                  "expression" : {
-                     "type" : "SingletonFrom",
-                     "operand" : {
-                        "dataType" : "{http://hl7.org/fhir}Patient",
-                        "type" : "Retrieve"
-                     }
-                  }
-               }, {
-                  "name" : "Primary Cancer Condition",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "Cancer",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Condition",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "Primary cancers",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ]
-                  }
-               }, {
-                  "name" : "ToCode",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "type" : "FunctionDef",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "coding",
-                              "type" : "OperandRef"
-                           }
-                        }
-                     },
-                     "then" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Code",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Null"
-                        }
-                     },
-                     "else" : {
-                        "classType" : "{urn:hl7-org:elm-types:r1}Code",
-                        "type" : "Instance",
-                        "element" : [ {
-                           "name" : "code",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "code",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "system",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "system",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "version",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "version",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "display",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "display",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "coding",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        } ]
-                     }
-                  },
-                  "operand" : [ {
-                     "name" : "coding",
-                     "operandTypeSpecifier" : {
-                        "name" : "{http://hl7.org/fhir}Coding",
-                        "type" : "NamedTypeSpecifier"
-                     }
-                  } ]
-               }, {
-                  "name" : "ToConcept",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "type" : "FunctionDef",
-                  "expression" : {
-                     "type" : "If",
-                     "condition" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Boolean",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "IsNull",
-                           "operand" : {
-                              "name" : "concept",
-                              "type" : "OperandRef"
-                           }
-                        }
-                     },
-                     "then" : {
-                        "asType" : "{urn:hl7-org:elm-types:r1}Concept",
-                        "type" : "As",
-                        "operand" : {
-                           "type" : "Null"
-                        }
-                     },
-                     "else" : {
-                        "classType" : "{urn:hl7-org:elm-types:r1}Concept",
-                        "type" : "Instance",
-                        "element" : [ {
-                           "name" : "codes",
-                           "value" : {
-                              "type" : "Query",
-                              "source" : [ {
-                                 "alias" : "C",
-                                 "expression" : {
-                                    "path" : "coding",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "name" : "concept",
-                                       "type" : "OperandRef"
-                                    }
-                                 }
-                              } ],
-                              "relationship" : [ ],
-                              "return" : {
-                                 "expression" : {
-                                    "name" : "ToCode",
-                                    "type" : "FunctionRef",
-                                    "operand" : [ {
-                                       "name" : "C",
-                                       "type" : "AliasRef"
-                                    } ]
-                                 }
-                              }
-                           }
-                        }, {
-                           "name" : "display",
-                           "value" : {
-                              "path" : "value",
-                              "type" : "Property",
-                              "source" : {
-                                 "path" : "text",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "name" : "concept",
-                                    "type" : "OperandRef"
-                                 }
-                              }
-                           }
-                        } ]
-                     }
-                  },
-                  "operand" : [ {
-                     "name" : "concept",
-                     "operandTypeSpecifier" : {
-                        "name" : "{http://hl7.org/fhir}CodeableConcept",
-                        "type" : "NamedTypeSpecifier"
-                     }
-                  } ]
-               }, {
-                  "name" : "Condition",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "PrimaryCancer",
-                        "expression" : {
-                           "name" : "Primary Cancer Condition",
-                           "type" : "ExpressionRef"
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "value",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "text",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "code",
-                                       "scope" : "PrimaryCancer",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }
-                           }, {
-                              "name" : "match",
-                              "value" : {
-                                 "type" : "Equivalent",
-                                 "operand" : [ {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "text",
-                                       "type" : "Property",
-                                       "source" : {
-                                          "path" : "code",
-                                          "scope" : "PrimaryCancer",
-                                          "type" : "Property"
-                                       }
-                                    }
-                                 }, {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "Malignant neoplasm of breast (disorder)",
-                                    "type" : "Literal"
-                                 } ]
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               }, {
-                  "name" : "HER2 Status",
-                  "context" : "Patient",
-                  "accessLevel" : "Public",
-                  "expression" : {
-                     "type" : "Query",
-                     "source" : [ {
-                        "alias" : "Her2",
-                        "expression" : {
-                           "dataType" : "{http://hl7.org/fhir}Observation",
-                           "codeProperty" : "code",
-                           "type" : "Retrieve",
-                           "codes" : {
-                              "type" : "ToList",
-                              "operand" : {
-                                 "name" : "HER2 [Presence] in Breast cancer specimen by Immune stain",
-                                 "type" : "ConceptRef"
-                              }
-                           }
-                        }
-                     } ],
-                     "relationship" : [ ],
-                     "return" : {
-                        "expression" : {
-                           "type" : "Tuple",
-                           "element" : [ {
-                              "name" : "value",
-                              "value" : {
-                                 "path" : "value",
-                                 "type" : "Property",
-                                 "source" : {
-                                    "path" : "text",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "value",
-                                       "scope" : "Her2",
-                                       "type" : "Property"
-                                    }
-                                 }
-                              }
-                           }, {
-                              "name" : "match",
-                              "value" : {
-                                 "type" : "Equivalent",
-                                 "operand" : [ {
-                                    "path" : "value",
-                                    "type" : "Property",
-                                    "source" : {
-                                       "path" : "text",
-                                       "type" : "Property",
-                                       "source" : {
-                                          "path" : "value",
-                                          "scope" : "Her2",
-                                          "type" : "Property"
-                                       }
-                                    }
-                                 }, {
-                                    "valueType" : "{urn:hl7-org:elm-types:r1}String",
-                                    "value" : "Positive",
-                                    "type" : "Literal"
-                                 } ]
-                              }
-                           } ]
-                        }
-                     }
-                  }
-               } ]
-            }
+       ],
+       "type": "start"
+     },
+     "TumorSize": {
+       "key": "TumorSize",
+       "label": "Tumor Size",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "ChemotherapyTCHP",
+           "condition": {
+             "description": "T > 2",
+             "cql": "TNM.T > 2"
+           }
+         },
+         {
+           "id": "2",
+           "transition": "ChemotherapyACTHP",
+           "condition": {
+             "description": "T > 2",
+             "cql": "TNM.T > 2"
+           }
+         },
+         {
+           "id": "3",
+           "transition": "ChemotherapyddACTHP",
+           "condition": {
+             "description": "T > 2",
+             "cql": "TNM.T > 2"
+           }
+         },
+         {
+           "id": "4",
+           "transition": "NodeStatus",
+           "condition": {
+             "description": "T <= 2",
+             "cql": "TNM.T <= 2"
+           }
          }
-      }
-    }
-  }
+       ],
+       "type": "branch"
+     },
+     "NodeStatus": {
+       "key": "NodeStatus",
+       "label": "Node Status",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "ChemotherapyTCHP",
+           "condition": {
+             "description": "N+",
+             "cql": "TNM.N+"
+           }
+         },
+         {
+           "id": "2",
+           "transition": "ChemotherapyACTHP",
+           "condition": {
+             "description": "N+",
+             "cql": "TNM.N+"
+           }
+         },
+         {
+           "id": "3",
+           "transition": "ChemotherapyddACTHP",
+           "condition": {
+             "description": "N+",
+             "cql": "TNM.N+"
+           }
+         },
+         {
+           "id": "4",
+           "transition": "Surgery1",
+           "condition": {
+             "description": "N0",
+             "cql": "TNM.N0"
+           }
+         }
+       ],
+       "type": "branch"
+     },
+     "Surgery1": {
+       "key": "Surgery1",
+       "label": "Surgery",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Cancer Related Surgery Procedure",
+           "resource": {
+             "resourceType": "ServiceRequest",
+             "code": {
+               "coding": [
+                 {
+                   "system": "http://snomed.info/sct",
+                   "code": "392021009",
+                   "display": "Lumpectomy of breast (procedure)"
+                 }
+               ],
+               "text": "Lumpectomy of breast (procedure)"
+             }
+           }
+         },
+       "cql": "exists([Procedure: \"Lumpectomy of breast (procedure) code\"]) or exists([ServiceRequest: \"Lumpectomy of breast (procedure) code\"])",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "PaclitaxelTrastuzumab"
+         }
+       ],
+       "type": "action"
+     },
+     "PaclitaxelTrastuzumab": {
+       "key": "PaclitaxelTrastuzumab",
+       "label": "Paclitaxel and Trastuzumab",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Paclitaxel request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "583214",
+                   "display": "PACLitaxel"
+                 }
+               ],
+               "text": "PACLitaxel"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"paclitaxel code\"])",
+       "transitions": [],
+       "type": "branch"
+     },
+     "ChemotherapyTCHP": {
+       "key": "ChemotherapyTCHP",
+       "label": "Chemotherapy TCHP",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Doxorubicin Medication request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1790099",
+                   "display": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+                 }
+               ],
+               "text": "10 ML Doxorubicin Hydrochloride 2 MG/ML Injection"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection code\"] MR where ToConcept(MR.medication as FHIR.CodeableConcept) ~ \"10 ML Doxorubicin Hydrochloride 2 MG/ML Injection\")",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "Surgery2"
+         }
+       ],
+       "type": "action"
+     },
+     "ChemotherapyACTHP": {
+       "key": "ChemotherapyACTHP",
+       "label": "Chemotherapy ACTHP",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Cyclophosphamide Medication request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1734919",
+                   "display": "Cyclophosphamide 1000 MG Injection"
+                 }
+               ],
+               "text": "Cyclophosphamide 1000 MG Injection"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"Cyclophosphamide 1000 MG Injection code\"] MR where ToConcept(MR.medication as FHIR.CodeableConcept) ~ \"Cyclophosphamide 1000 MG Injection\")",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "Surgery2"
+         }
+       ],
+       "type": "action"
+     },
+     "ChemotherapyddACTHP": {
+       "key": "ChemotherapyddACTHP",
+       "label": "Chemotherapy ddACTHP",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Pertuzumab Medication request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1298948",
+                   "display": "14 ML pertuzumab 30 MG/ML Injection"
+                 }
+               ],
+               "text": "14 ML pertuzumab 30 MG/ML Injection"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"14 ML pertuzumab 30 MG/ML Injection code\"] MR where ToConcept(MR.medication as FHIR.CodeableConcept) ~ \"14 ML pertuzumab 30 MG/ML Injection\")",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "Surgery2"
+         }
+       ],
+       "type": "action"
+     },
+     "Surgery2": {
+       "key": "Surgery2",
+       "label": "Surgery",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Cancer Related Surgery Procedure",
+           "resource": {
+             "resourceType": "ServiceRequest",
+             "code": {
+               "coding": [
+                 {
+                   "system": "http://snomed.info/sct",
+                   "code": "392021009",
+                   "display": "Lumpectomy of breast (procedure)"
+                 }
+               ],
+               "text": "Lumpectomy of breast (procedure)"
+             }
+           }
+         },
+       "cql": "exists([Procedure: \"Lumpectomy of breast (procedure) code\"]) or exists([ServiceRequest: \"Lumpectomy of breast (procedure) code\"])",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "PathologicalResponse"
+         }
+       ],
+       "type": "action"
+     },
+     "PathologicalResponse": {
+       "key": "PathologicalResponse",
+       "label": "Pathological Response",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "NodeStatus2",
+           "condition": {
+             "description": "Complete",
+             "cql": "Pathologic-Response.Complete"
+           }
+         },
+         {
+           "id": "2",
+           "transition": "AdotrastuzumabEmtansine",
+           "condition": {
+             "description": "Partial/Stable/Progressive",
+             "cql": "Pathologic-Response.Partial/Stable/Progressive"
+           }
+         }
+       ],
+       "type": "branch"
+     },
+     "AdotrastuzumabEmtansine": {
+       "key": "AdotrastuzumabEmtansine",
+       "label": "Ado-trastuzumab Emtansine",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Ado-trastuzumab Emtansine Request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1658084",
+                   "display": "ado-trastuzumab emtansine"
+                 }
+               ],
+               "text": "ado-trastuzumab emtansine"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"adotrastuzumab emtansine code\"])",
+       "transitions": [],
+       "type": "action"
+     },
+     "NodeStatus2": {
+       "key": "NodeStatus2",
+       "label": "Node Status Prior to Surgery",
+       "transitions": [
+         {
+           "id": "1",
+           "transition": "Trastuzumab",
+           "condition": {
+             "description": "N0",
+             "cql": "TNM.N0"
+           }
+         },
+         {
+           "id": "2",
+           "transition": "PertuzumabTrastuzumab",
+           "condition": {
+             "description": "N+",
+             "cql": "TNM.N+"
+           }
+         }
+       ],
+       "type": "branch"
+     },
+     "Trastuzumab": {
+       "key": "Trastuzumab",
+       "label": "Trastuzumab",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Trastuzumab request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1922509",
+                   "display": "trastuzumab"
+                 }
+               ],
+               "text": "trastuzumab"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"trastuzumab code\"])",
+       "transitions": [],
+       "type": "action"
+     },
+     "PertuzumabTrastuzumab": {
+       "key": "PertuzumabTrastuzumab",
+       "label": "Pertuzumab and Trastuzumab",
+       "action": {
+           "id": "1",
+           "type": "create",
+           "description": "Pertuzumab request",
+           "resource": {
+             "resourceType": "MedicationRequest",
+             "medicationCodeableConcept": {
+               "coding": [
+                 {
+                   "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                   "code": "1298948",
+                   "display": "pertuzumab"
+                 }
+               ],
+               "text": "pertuzumab"
+             }
+           }
+         },
+       "cql": "exists([MedicationRequest: \"pertuzumab code\"])",
+       "transitions": [],
+       "type": "action"
+     }
+   }
+ }

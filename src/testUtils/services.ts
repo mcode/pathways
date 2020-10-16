@@ -14,6 +14,7 @@ export const loadedService: Service<Array<Pathway>> = {
       library: 'test.cql',
       preconditions: [
         {
+          id: 'asdfg',
           elementName: 'condition',
           expected: 'breast cancer',
           cql: 'some fancy CQL statement'
@@ -21,7 +22,9 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }
@@ -32,6 +35,7 @@ export const loadedService: Service<Array<Pathway>> = {
       library: 'test.cql',
       preconditions: [
         {
+          id: 'qwerty',
           elementName: 'condition',
           expected: 'gist cancer',
           cql: 'some fancy CQL statement'
@@ -39,7 +43,9 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }
@@ -50,6 +56,7 @@ export const loadedService: Service<Array<Pathway>> = {
       library: 'test.cql',
       preconditions: [
         {
+          id: 'zxcvb',
           elementName: 'condition',
           expected: 'lung cancer',
           cql: 'some fancy CQL statement'
@@ -57,7 +64,9 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }
