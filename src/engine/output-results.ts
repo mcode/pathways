@@ -275,10 +275,17 @@ function getConditionalNextNode(
   for (const transition of currentNode.transitions) {
     if (transition.condition) {
       let currentTransitionDocumentation: DocumentationResource | null = null;
-      if (patientData[transition.condition.description]?.length)
-        // TODO: add functionality for multiple resources
-        currentTransitionDocumentation = patientData[transition.condition.description][0];
-      else {
+      if (patientData[transition.condition.description] === true) {
+        // TODO: how should this actually work now? this is a dummy object
+        const r = resources[0]; // probably the patient object tbh
+        currentTransitionDocumentation = {
+          resourceType: r.resourceType || 'Patient',
+          id: r.id || '1',
+          status: 'completed', 
+          node: currentNode.key,
+          onPath: true
+        };
+      } else {
         const documentReference = retrieveNote(transition.condition.description, resources);
         if (documentReference) {
           currentTransitionDocumentation = {

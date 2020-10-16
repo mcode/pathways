@@ -5,9 +5,10 @@ declare module 'pathways-model' {
   export type NodeObj = { [key: string]: ActionNode | BranchNode | ReferenceNode | PathwayNode };
 
   export interface Pathway {
+    id: string;
     name: string;
     description?: string;
-    library: string;
+    library: string[];
     preconditions: Precondition[];
     nodes: NodeObj;
     elm?: PathwayELM;

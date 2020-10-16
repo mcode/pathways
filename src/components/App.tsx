@@ -22,7 +22,6 @@ import { DomainResource, Practitioner, CarePlan } from 'fhir-objects';
 import styles from './App.module.scss';
 import { UserProvider } from './UserProvider';
 import { McodeElements } from 'mcode';
-import { getFixture } from 'engine/cql-extractor';
 import executeElm from 'engine/elm-executor';
 interface AppProps {
   demoId?: string;
@@ -279,5 +278,9 @@ const PatientView: FC<PatientViewProps> = ({ headerElement, graphContainerElemen
     </div>
   );
 };
+
+function getFixture(filename: string): Promise<string> {
+  return fetch(`./static/cql/${filename}`).then(cql => cql.text());
+}
 
 export default App;

@@ -9,9 +9,10 @@ export const loadedService: Service<Array<Pathway>> = {
   status: 'loaded',
   payload: [
     {
+      id: '1',
       name: 'test1',
       description: 'test1',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
           id: 'asdfg',
@@ -30,9 +31,10 @@ export const loadedService: Service<Array<Pathway>> = {
       }
     },
     {
+      id: '2',
       name: 'test2',
       description: 'test2',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
           id: 'qwerty',
@@ -51,9 +53,10 @@ export const loadedService: Service<Array<Pathway>> = {
       }
     },
     {
+      id: '3',
       name: 'test3',
       description: 'test3',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
           id: 'zxcvb',
