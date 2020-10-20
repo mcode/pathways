@@ -54,7 +54,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     const patient = usePatient().patient as fhir.Patient;
     if (note) note.node = actionNode.label;
 
-    const onConfirm = (action?: Action[]): void => {
+    const onConfirm = (action?: Action): void => {
       const newPatientRecords = [...patientRecords];
 
       // Create DocumentReference and add to patient record(and post to FHIR server)
@@ -77,9 +77,9 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       }
 
       // Translate pathway recommended resource and add to patient record
-      if (note?.status === 'Accepted' && action && action.length > 0) {
+      if (note?.status === 'Accepted' && action?.resource) {
         const resource: Resource = translatePathwayRecommendation(
-          action[0].resource,
+          action.resource,
           patient.id as string
         );
 
@@ -298,7 +298,7 @@ function renderAction(
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
-  const resource = actionNode.action[0].resource;
+  const resource = actionNode.action.resource;
   let coding = undefined;
 
   if (isMedicationRequest(resource)) {
@@ -314,7 +314,7 @@ function renderAction(
     <ExpandedNodeField
       key="Description"
       title="Description"
-      description={actionNode.action[0].description}
+      description={actionNode.action.description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
   ];

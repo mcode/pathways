@@ -21,13 +21,148 @@ interface NodeData {
   status: string;
 }
 
+export function pathwayData(
+  pathway: Pathway,
+  patientData: PatientData,
+  resources: DomainResource[]
+): PathwayResults {
+  const startNode = 'Start';
+  let currentNodes: string[] = [];
+  let nextNodes: string[] = [startNode];
+  const documentation: { [key: string]: Documentation } = {};
+
+  do {
+    currentNodes = nextNodes;
+    nextNodes = [];
+    // this should work whether there are 1 or many current nodes
+    // find the first one that is complete or in-progress
+    // and get the next nodes from that
+    // if there are none, then we stick with the current nodes
+    for (const nodeKey of currentNodes) {
+      const currentNode = pathway.nodes[nodeKey];
+      const outResource: DomainResource[] = []; // fake an "out" parameter
+      if (isNodeComplete(currentNode, patientData, resources, outResource)) {
+        documentation[nodeKey] = { node: nodeKey, onPath: true };
+        nextNodes = getNextNodes(currentNode, patientData, resources);
+        break;
+      } else if (isNodeInProgress(currentNode, patientData, resources, outResource)) {
+        documentation[nodeKey] = { node: nodeKey, onPath: true };
+        currentNodes = [nodeKey];
+        nextNodes = [];
+        break;
+      }
+    }
+  } while (nextNodes.length !== 0);
+
+  // TODO do a second pass of any items without documentation to see if they are complete
+
+  return {
+    patientId: patientData.Patient.id.value,
+    currentNodes,
+    documentation
+  };
+}
+
+function isNodeComplete(
+  currentNode: PathwayNode,
+  patientData: PatientData,
+  resources: DomainResource[],
+  outResource: DomainResource[]
+): boolean {
+  const note = retrieveNote(currentNode.label, resources);
+  if (note) {
+    outResource.push(note);
+  }
+
+  switch (currentNode.type) {
+    case 'start':
+      return true; // start node always complete
+    case 'action': {
+      const data = patientData[currentNode.key];
+      if (data) {
+        // note [] is falsy
+        // unshift the resource so it's in front of the note, if any
+        if (Array.isArray(data)) {
+          outResource.unshift(data[0]);
+        } else {
+          outResource.unshift(data);
+        }
+        return true;
+      }
+      return false; // TODO
+    }
+    case 'branch': {
+      // TODO originally this was done by whether or not it was missing data
+      const hasAnyTrue = currentNode.transitions.some(
+        t => t?.condition?.description && patientData[t?.condition?.description]
+      );
+      return hasAnyTrue || note;
+    }
+    default:
+      // 'null' or 'reference'
+      // TODO: how do we want to handle references?
+      // we should never hit a null in practice here
+      return false;
+  }
+}
+
+function isNodeInProgress(
+  currentNode: PathwayNode,
+  patientData: PatientData,
+  resources: DomainResource[],
+  outResource: DomainResource[]
+): boolean {
+  // TODO: does the CQL allow for fetching the resource, or is it boolean-only?
+  // note that the current exported pathways don't include meaningful cql on the action
+
+  return false;
+
+  // if (currentNode.type !== 'action') return false;
+
+  // const actionNode = currentNode as ActionNode;
+}
+
+function getNextNodes(
+  currentNode: PathwayNode,
+  patientData: PatientData,
+  resources: DomainResource[]
+): string[] {
+  // IMPORTANT -- this function assumes that the current node is complete
+
+  let nextNodes: string[] = [];
+  // type: 'action' | 'branch' | 'reference' | 'start' | 'null';
+  switch (currentNode.type) {
+    case 'start':
+    case 'action':
+      // conditionals not allowed here
+      nextNodes = currentNode.transitions.map(t => t.transition);
+      break;
+
+    case 'branch':
+      // TODO: why is the name the description
+      // TODO check for data entry note as well
+      nextNodes = currentNode.transitions
+        .filter(t => t?.condition?.description && patientData[t?.condition?.description])
+        .map(t => t.transition);
+      break;
+
+    default:
+      // 'null' or 'reference'
+      // TODO: how do we want to handle references?
+      // we should never hit a null in practice here
+      nextNodes = [];
+      break;
+  }
+  return nextNodes;
+}
+
 /**
  * Engine function to take in the ELM patient results and output data relating to the patient's pathway
  * @param pathway - the entire pathway
  * @param patientData - the data on the patient from a CQL execution. Note this is a single patient not the entire patientResults object
  * @return returns PathwayResults describing
  */
-export function pathwayData(
+export function pathwayDataOld(
   pathway: Pathway,
   patientData: PatientData,
   resources: DomainResource[]
@@ -281,7 +416,7 @@ function getConditionalNextNode(
         currentTransitionDocumentation = {
           resourceType: r.resourceType || 'Patient',
           id: r.id || '1',
-          status: 'completed', 
+          status: 'completed',
           node: currentNode.key,
           onPath: true
         };
@@ -330,7 +465,7 @@ function nextNode(
   resources: DomainResource[]
 ): NodeData | null {
   const currentNode: PathwayNode | ActionNode = pathway.nodes[currentNodeKey];
-  if ('action' in currentNode) {
+  if (currentNode.type === 'action') {
     let resource = patientData[currentNodeKey];
     if (resource?.length) {
       resource = resource[0]; // TODO: add functionality for multiple resources

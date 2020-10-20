@@ -152,7 +152,7 @@ export function libName(library: string): string {
   // +1 so we don't actually include that first space in the substring
   let name = trimmed.substring(firstSpace + 1, secondSpace);
 
-  if (name.startsWith('"')){
+  if (name.startsWith('"')) {
     // slice is like substring, but negative numbers count from the end
     name = name.slice(1, -1);
   }
@@ -184,7 +184,7 @@ export function libVersion(library: string): string {
 }
 
 // below copied directly from the builder:
-// https://github.com/mcode/pathway-builder/blob/5ad37dce6d065cfe1aaa35ea79158026ddac219f/src/utils/export.ts
+// https://github.com/mcode/pathway-builder/blob/5ad37dce6d/src/utils/export.ts
 // keep these up to date
 
 // interface purely for intermediate working objects

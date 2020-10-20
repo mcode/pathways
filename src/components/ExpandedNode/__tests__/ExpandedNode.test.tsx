@@ -101,9 +101,9 @@ describe('<ExpandedNode />', () => {
       />
     );
 
-    const resource = testActionNode.action[0].resource as BasicActionResource;
+    const resource = testActionNode.action.resource as BasicActionResource;
 
-    expect(getByText(testActionNode.action[0].description)).toBeVisible();
+    expect(getByText(testActionNode.action.description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.code.coding[0].system)).toBeVisible();
     expect(getByText(resource.code.coding[0].code)).toBeVisible();
@@ -128,9 +128,9 @@ describe('<ExpandedNode />', () => {
       />
     );
 
-    const resource = testMedicationRequestNode.action[0].resource as BasicMedicationRequestResource;
+    const resource = testMedicationRequestNode.action.resource as BasicMedicationRequestResource;
 
-    expect(getByText(testMedicationRequestNode.action[0].description)).toBeVisible();
+    expect(getByText(testMedicationRequestNode.action.description)).toBeVisible();
     expect(getByText(resource.resourceType)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].system)).toBeVisible();
     expect(getByText(resource.medicationCodeableConcept.coding[0].code)).toBeVisible();
