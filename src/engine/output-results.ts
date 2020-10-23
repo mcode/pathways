@@ -31,6 +31,12 @@ export function pathwayData(
   let nextNodes: string[] = [startNode];
   const documentation: { [key: string]: Documentation } = {};
 
+  // this function is essentially a recursive proof:
+  // - basis: we start at the start node
+  // - recursive: we know the current node(s) we are on, find the next ones
+  // if there are next ones, repeat the process with those, until we don't find any next steps
+  // then our "current node(s)" at the end, are the current step shown to the user
+
   do {
     currentNodes = nextNodes;
     nextNodes = [];
@@ -40,21 +46,33 @@ export function pathwayData(
     // if there are none, then we stick with the current nodes
     for (const nodeKey of currentNodes) {
       const currentNode = pathway.nodes[nodeKey];
-      const outResource: DomainResource[] = []; // fake an "out" parameter
-      if (isNodeComplete(currentNode, patientData, resources, outResource)) {
+      const [status, resource] = getStatusAndResource(currentNode, patientData, resources);
+      if (status === 'completed' || resource) {
         documentation[nodeKey] = { node: nodeKey, onPath: true };
-        nextNodes = getNextNodes(currentNode, patientData, resources);
-        break;
-      } else if (isNodeInProgress(currentNode, patientData, resources, outResource)) {
-        documentation[nodeKey] = { node: nodeKey, onPath: true };
-        currentNodes = [nodeKey];
-        nextNodes = [];
+        if (resource) {
+          const dr = documentation[nodeKey] as DocumentationResource;
+          dr.resourceType = resource.resourceType ?? '';
+          dr.id = resource.id ?? ''; // these should never be null in practice
+          dr.status =
+            resource.resourceType === 'DocumentReference'
+              ? (resource as DocumentReference).status
+              : 'completed';
+          dr.resource = resource;
+        }
+
+        if (status === 'completed') {
+          nextNodes = getNextNodes(currentNode, patientData, resources, resource);
+        } else {
+          currentNodes = [nodeKey];
+          nextNodes = [];
+        }
+
         break;
       }
     }
   } while (nextNodes.length !== 0);
 
-  // TODO do a second pass of any items without documentation to see if they are complete
+  // TODO do a second pass of any nodes without documentation to see if they are complete
 
   return {
     patientId: patientData.Patient.id.value,
@@ -63,69 +81,76 @@ export function pathwayData(
   };
 }
 
-function isNodeComplete(
+function getStatusAndResource(
   currentNode: PathwayNode,
   patientData: PatientData,
-  resources: DomainResource[],
-  outResource: DomainResource[]
-): boolean {
-  const note = retrieveNote(currentNode.label, resources);
-  if (note) {
-    outResource.push(note);
-  }
+  resources: DomainResource[]
+): [string, DomainResource | null] {
+  let status = '';
+  let resource: DomainResource | null = null;
+  // use the note, in case we can't find anything better
 
   switch (currentNode.type) {
     case 'start':
-      return true; // start node always complete
+      status = 'completed'; // start node always complete
+      break;
     case 'action': {
       const data = patientData[currentNode.key];
-      if (data) {
-        // note [] is falsy
-        // unshift the resource so it's in front of the note, if any
-        if (Array.isArray(data)) {
-          outResource.unshift(data[0]);
-        } else {
-          outResource.unshift(data);
+
+      let actionResource: DomainResource | null = null;
+      // unshift the resource so it's in front of the note, if any
+      if (Array.isArray(data)) {
+        if (data.length > 0) {
+          actionResource = data[0];
         }
-        return true;
+      } else if (data) {
+        actionResource = data;
       }
-      return false; // TODO
+
+      if (actionResource) {
+        resource = actionResource;
+        status = 'status' in resource ? resource['status'] : 'completed'; // TODO
+      } else {
+        resource = retrieveNote(currentNode.label, resources);
+      }
+      break;
     }
+
     case 'branch': {
       // TODO originally this was done by whether or not it was missing data
       const hasAnyTrue = currentNode.transitions.some(
         t => t?.condition?.description && patientData[t?.condition?.description]
       );
-      return hasAnyTrue || note;
+
+      if (hasAnyTrue) {
+        status = 'completed';
+      } else {
+        const branchNote = currentNode.transitions
+          .map(t => t?.condition && retrieveNote(t.condition.description, resources))
+          .find(n => n);
+        if (branchNote) {
+          status = 'completed';
+          resource = branchNote;
+        }
+      }
+      break;
     }
+
     default:
       // 'null' or 'reference'
       // TODO: how do we want to handle references?
       // we should never hit a null in practice here
-      return false;
+      status = 'not-started';
   }
-}
 
-function isNodeInProgress(
-  currentNode: PathwayNode,
-  patientData: PatientData,
-  resources: DomainResource[],
-  outResource: DomainResource[]
-): boolean {
-  // TODO: does the CQL allow for fetching the resource, or is it boolean-only?
-  // note that the current exported pathways don't include meaningful cql on the action
-
-  return false;
-
-  // if (currentNode.type !== 'action') return false;
-
-  // const actionNode = currentNode as ActionNode;
+  return [status, resource];
 }
 
 function getNextNodes(
   currentNode: PathwayNode,
   patientData: PatientData,
-  resources: DomainResource[]
+  resources: DomainResource[],
+  resource: DomainResource | null
 ): string[] {
   // IMPORTANT -- this function assumes that the current node is complete
 
@@ -138,14 +163,29 @@ function getNextNodes(
       nextNodes = currentNode.transitions.map(t => t.transition);
       break;
 
-    case 'branch':
-      // TODO: why is the name the description
-      // TODO check for data entry note as well
-      nextNodes = currentNode.transitions
-        .filter(t => t?.condition?.description && patientData[t?.condition?.description])
-        .map(t => t.transition);
-      break;
+    case 'branch': {
+      let noteChoice: string | undefined = undefined;
 
+      if (resource?.resourceType === 'DocumentReference') {
+        const note = resource as DocumentReference;
+        if (note?.identifier && note.identifier[0]?.value) {
+          noteChoice = atob(note.identifier[0].value);
+        }
+      }
+
+      nextNodes = currentNode.transitions
+        .filter(t => {
+          // either it matches by CQL, or it's the one the user previously chose
+          // (note that we don't currently allow for overriding CQL matches)
+          return (
+            t?.condition?.description &&
+            (patientData[t.condition.description] || t.condition.description === noteChoice)
+          );
+        })
+        .map(t => t.transition);
+
+      break;
+    }
     default:
       // 'null' or 'reference'
       // TODO: how do we want to handle references?
