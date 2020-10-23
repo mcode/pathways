@@ -22,7 +22,7 @@ export default function executeElm(
   }
 
   const executor = new Executor(lib);
-  const psource = new PatientSource.FHIRv400(patientRecord);
+  const psource = new PatientSource.FHIRv401(patientRecord);
   psource.loadBundles(patientRecord);
   const result = executor.exec(psource);
   return result;

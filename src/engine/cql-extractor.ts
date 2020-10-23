@@ -227,7 +227,7 @@ export function constructCqlLibrary(
   // and if we want to run it in cqf-ruler, as of today that needs to be FHIR 4.0.1 (NOT 4.0.0)
   return `
 library ${libraryName} version '1.0'
-using FHIR version '4.0.0'
+using FHIR version '4.0.1'
 ${includes}
 context Patient
 ${defines}
