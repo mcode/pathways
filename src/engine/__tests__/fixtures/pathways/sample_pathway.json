@@ -1,7 +1,8 @@
 {
+  "id": "ibC7HXxVq",
   "name": "test_breast_cancer",
   "description": "Mock breast cancer pathway used for testing the system",
-  "library": "mCODE_Library.cql",
+  "library": [],
   "preconditions": [
     {
       "elementName": "Condition",
@@ -12,6 +13,8 @@
   "nodes": {
     "Start": {
       "label": "Start",
+      "key": "Start",
+      "type": "start",
       "transitions": [
         {
           "transition": "T-test"
@@ -20,6 +23,8 @@
     },
     "T-test": {
       "label": "T-test",
+      "key": "T-test",
+      "type": "branch",
       "transitions": [
         {
           "transition": "N-test",
@@ -39,6 +44,8 @@
     },
     "N-test": {
       "label": "N-test",
+      "key": "N-test",
+      "type": "branch",
       "transitions": [
         {
           "transition": "Radiation",
@@ -65,6 +72,8 @@
     },
     "Surgery": {
       "label": "Surgery",
+      "key": "Surgery",
+      "type": "action",
       "action": [
         {
           "type": "create",
@@ -93,6 +102,8 @@
     },
     "Radiation": {
       "label": "Radiation",
+      "key": "Radiation",
+      "type": "action",
       "action": [
         {
           "type": "create",
@@ -117,6 +128,8 @@
     },
     "OtherRadiation": {
       "label": "Other Radiation",
+      "label": "OtherRadiation",
+      "type": "action",
       "action": [
         {
           "type": "create",
@@ -141,6 +154,8 @@
     },
     "Chemo": {
       "label": "Chemotherapy",
+      "key": "Chemo",
+      "type": "action",
       "action": [
         {
           "type": "create",
@@ -165,6 +180,8 @@
     },
     "ChemoMedication": {
       "label": "ChemoMedication Request",
+      "key": "ChemoMedication",
+      "type": "action",
       "action": [
         {
           "type": "create",

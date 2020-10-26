@@ -284,13 +284,13 @@ function renderBranch(
 function isMedicationRequest(
   request: MedicationRequest | ServiceRequest | CarePlan
 ): request is MedicationRequest {
-  return (request as MedicationRequest).medicationCodeableConcept !== undefined;
+  return (request as MedicationRequest)?.medicationCodeableConcept !== undefined;
 }
 
 function isServiceRequest(
   request: MedicationRequest | ServiceRequest | CarePlan
 ): request is ServiceRequest {
-  return (request as ServiceRequest).code !== undefined;
+  return (request as ServiceRequest)?.code !== undefined;
 }
 
 function renderAction(

@@ -99,7 +99,6 @@ function getStatusAndResource(
       const data = patientData[currentNode.key];
 
       let actionResource: DomainResource | null = null;
-      // unshift the resource so it's in front of the note, if any
       if (Array.isArray(data)) {
         if (data.length > 0) {
           actionResource = data[0];

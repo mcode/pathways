@@ -15,6 +15,7 @@ import results4 from './fixtures/evaluationResults/sample_pathway/patient4.json'
 
 describe('pathways evaluation engine', () => {
   // mock out the actual webservice and preconvert the pathway CQL to ELM.
+  // TODO: re-convert the ELM here so that it returns booleans instead of arrays in the right places
   global.fetch = jest.fn(() => Promise.resolve({ json: () => preconvertedELM, text: () => '' }));
 
   /**

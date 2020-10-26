@@ -18,22 +18,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [],
-      'T = T1': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'N = N0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '2'
-        }
-      ],
-      'N = N1': [],
+      'T = T0': false,
+      'T = T1': true,
+      'N = N0': true,
+      'N = N1': false,
       Surgery: [
         {
           resourceType: 'Procedure',
@@ -105,22 +93,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [],
-      'T = T1': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'N = N0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '2'
-        }
-      ],
-      'N = N1': [],
+      'T = T0': false,
+      'T = T1': true,
+      'N = N0': true,
+      'N = N1': false,
       Surgery: [
         {
           resourceType: 'Procedure',
@@ -177,16 +153,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'T = T1': [],
-      'N = N0': [],
-      'N = N1': [],
+      'T = T0': true,
+      'T = T1': false,
+      'N = N0': false,
+      'N = N1': false,
       Surgery: [],
       Radiation: [],
       OtherRadiation: [],
@@ -236,22 +206,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'T = T1': [],
-      'N = N0': [],
-      'N = N1': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '2'
-        }
-      ],
+      'T = T0': true,
+      'T = T1': false,
+      'N = N0': false,
+      'N = N1': true,
       Surgery: [],
       Radiation: [],
       OtherRadiation: [],
@@ -323,22 +281,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'T = T1': [],
-      'N = N0': [],
-      'N = N1': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '2'
-        }
-      ],
+      'T = T0': true,
+      'T = T1': false,
+      'N = N0': false,
+      'N = N1': true,
       Surgery: [],
       Radiation: [],
       OtherRadiation: [],
@@ -396,22 +342,10 @@ describe('pathway results translator', () => {
           value: '1'
         }
       },
-      'T = T0': [],
-      'T = T1': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '1'
-        }
-      ],
-      'N = N0': [
-        {
-          resourceType: 'Observation',
-          status: 'final',
-          id: '2'
-        }
-      ],
-      'N = N1': [],
+      'T = T0': false,
+      'T = T1': true,
+      'N = N0': true,
+      'N = N1': false,
       Surgery: [
         {
           resourceType: 'Procedure',
