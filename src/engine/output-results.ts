@@ -31,7 +31,7 @@ export function pathwayData(
   let nextNodes: string[] = [startNode];
   const documentation: { [key: string]: Documentation } = {};
 
-  // this function is essentially a recursive proof:
+  // think of this function like a proof by induction:
   // - basis: we start at the start node
   // - recursive: we know the current node(s) we are on, find the next ones
   // if there are next ones, repeat the process with those, until we don't find any next steps
@@ -56,7 +56,7 @@ export function pathwayData(
           dr.status =
             resource.resourceType === 'DocumentReference'
               ? (resource as DocumentReference).status
-              : 'completed';
+              : 'completed'; // TODO
           dr.resource = resource;
         }
 
@@ -73,6 +73,8 @@ export function pathwayData(
   } while (nextNodes.length !== 0);
 
   // TODO do a second pass of any nodes without documentation to see if they are complete
+  // need to review this function call
+  getNonPathDocumentation(pathway, patientData, resources, documentation);
 
   return {
     patientId: patientData.Patient.id.value,
@@ -88,7 +90,6 @@ function getStatusAndResource(
 ): [string, DomainResource | null] {
   let status = '';
   let resource: DomainResource | null = null;
-  // use the note, in case we can't find anything better
 
   switch (currentNode.type) {
     case 'start':
@@ -113,11 +114,17 @@ function getStatusAndResource(
       } else {
         resource = retrieveNote(currentNode.label, resources);
       }
+
+      // finally check for "advance" notes
+      if (status !== 'completed' && shouldAdvance(currentNode, resources)) {
+        status = 'completed';
+      }
+
       break;
     }
 
     case 'branch': {
-      // TODO originally this was done by whether or not it was missing data
+      // first see if any of the transition conditions evaluated to true
       const hasAnyTrue = currentNode.transitions.some(
         t => t?.condition?.description && patientData[t?.condition?.description]
       );
@@ -125,6 +132,9 @@ function getStatusAndResource(
       if (hasAnyTrue) {
         status = 'completed';
       } else {
+        // if none are true, look for a DocRef to see if a specific path was chosen
+        // (note that we don't care which one it is here, but store the doc anyway,
+        //  so that we can use it later without looking it up all over again)
         const branchNote = currentNode.transitions
           .map(t => t?.condition && retrieveNote(t.condition.description, resources))
           .find(n => n);
@@ -251,10 +261,11 @@ export function pathwayDataOld(
       nodeData = nextNode(pathway, patientData, currentNodeKey, resources);
     }
   }
+  getNonPathDocumentation(pathway, patientData, resources, patientDocumentation);
   return {
     patientId: patientData.Patient.id.value,
     currentNodes: currentNodes,
-    documentation: getAllDocumentation(pathway, patientData, resources, patientDocumentation)
+    documentation: patientDocumentation
   };
 }
 
@@ -307,12 +318,12 @@ export function preconditionData(pathway: Pathway, patientData: PatientData): Pr
  * @param resources - the patient resources
  * @param patientDocumentation - the documentation dictionary from nodes on the patient path
  */
-function getAllDocumentation(
+function getNonPathDocumentation(
   pathway: Pathway,
   patientData: PatientData,
   resources: DomainResource[],
   patientDocumentation: { [key: string]: Documentation }
-): { [key: string]: Documentation } {
+): void {
   const nodesWithDocumentation = Object.values(patientDocumentation)
     .filter(doc => doc.onPath)
     .map(doc => doc.node);
@@ -366,7 +377,6 @@ function getAllDocumentation(
       }
     }
   }
-  return patientDocumentation;
 }
 
 /**
