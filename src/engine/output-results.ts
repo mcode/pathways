@@ -53,11 +53,11 @@ export function pathwayData(
           const dr = documentation[nodeKey] as DocumentationResource;
           dr.resourceType = resource.resourceType ?? '';
           dr.id = resource.id ?? ''; // these should never be null in practice
-          dr.status =
-            resource.resourceType === 'DocumentReference'
-              ? (resource as DocumentReference).status
-              : 'completed'; // TODO
-          dr.resource = resource;
+
+          dr.status = 'status' in resource ? resource['status'] : 'unknown'; // TODO
+          // finally get the actual resource;
+          // until here `resource` is just a "stub" of id/resourceType
+          dr.resource = retrieveResource(dr, resources);
         }
 
         if (status === 'completed') {
