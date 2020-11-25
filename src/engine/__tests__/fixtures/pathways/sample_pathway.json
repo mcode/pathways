@@ -2,7 +2,7 @@
   "id": "ibC7HXxVq",
   "name": "test_breast_cancer",
   "description": "Mock breast cancer pathway used for testing the system",
-  "library": [],
+  "library": ["library main_library version '1.0'", "library dependency version '1.2.3'", "library another_dep version '2.0'"],
   "preconditions": [
     {
       "elementName": "Condition",
