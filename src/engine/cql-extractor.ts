@@ -38,60 +38,27 @@ function cqlAdd(cql: string, cqlBlock: string): string {
 }
 
 /**
- * Helper function to determine if a node has a conditional transition
- * @param node - the JSON object of the desired node on the pathway
- * @return true if node is a conditional transition and false
- *                   otherwise
- */
-function isConditional(node: PathwayNode): boolean {
-  if ('transitions' in node) {
-    return node.transitions.length > 1 ? true : false;
-  } else return false;
-}
-
-/**
- * Function to extract the CQL code from each node in the pathway and build
+ * Function to extract the CQL code from the pathway and build
  * the CQL code to execute
  * @param pathway - the JSON object of the entire pathway
  * @return a string of the CQL code for the navigational nodes in the pathway
  */
 export function extractNavigationCQL(pathway: Pathway): Promise<CqlObject> {
-  // TODO: this no longer needs to be async, but easier to just wrap it in a promise
+  // TODO: this no longer needs to be async,
+  //  but it's easier to just wrap it in a promise than change what calls it
   return new Promise((resolve, reject) => {
+    // we no longer need to construct a new library here, 
+    // as the builder constructed one for us, 
+    // and it's the first entry in pathway.library
+    // subsequent libraries are dependencies
     const libraries: { [k: string]: string } = {};
-    // pathway.library.forEach(l => libraries[libName(l)] = l);
 
-    // TODO: this is super duplicative
-    const includedLibs: IncludedCqlLibraries = {};
-
-    pathway.library.forEach(l => {
+    pathway.library.slice(1).forEach(l => {
       const n = libName(l);
-      const v = libVersion(l);
       libraries[n] = l;
-      includedLibs[n] = { cql: 'dummy, not needed here', version: v };
     });
 
-    let cql = constructCqlLibrary(pathway.id, includedLibs, {}, {});
-    // Loop through each JSON object in the pathway
-    // TODO: can we make this work with the constructCqlLibrary function?
-    for (const nodeKey in pathway.nodes) {
-      const node = pathway.nodes[nodeKey];
-      if ('cql' in node) {
-        const cqlBlock1 = node.cql;
-        const nextBlock1 = cqlFormat(cqlBlock1, nodeKey);
-        cql = cqlAdd(cql, nextBlock1);
-      } else if (isConditional(node)) {
-        for (const transition of node.transitions) {
-          const condition = transition.condition;
-          if (condition) {
-            const nextBlock2 = cqlFormat(condition.cql, condition.description);
-            cql = cqlAdd(cql, nextBlock2);
-          }
-        }
-      }
-    }
-
-    resolve({ main: cql, libraries });
+    resolve({ main: pathway.library[0], libraries });
   });
 }
 
