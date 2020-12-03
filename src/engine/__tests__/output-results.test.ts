@@ -49,9 +49,6 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
       },
@@ -63,9 +60,6 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'N-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '2',
         node: 'N-test',
         onPath: true
       },
@@ -118,18 +112,8 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
-      },
-      'N-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '2',
-        node: 'N-test',
-        onPath: false
       },
       Surgery: {
         resourceType: 'Procedure',
@@ -178,9 +162,6 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
       },
@@ -237,16 +218,10 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
       },
       'N-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '2',
         node: 'N-test',
         onPath: true
       },
@@ -306,16 +281,10 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
       },
       'N-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '2',
         node: 'N-test',
         onPath: true
       },
@@ -367,9 +336,6 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'T-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '1',
         node: 'T-test',
         onPath: true
       },
@@ -381,9 +347,6 @@ describe('pathway results translator', () => {
         onPath: true
       },
       'N-test': {
-        resourceType: 'Observation',
-        status: 'final',
-        id: '2',
         node: 'N-test',
         onPath: true
       }

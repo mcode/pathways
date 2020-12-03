@@ -89,7 +89,7 @@ export function pathwayData(
 
 /**
  * Find the status of the given node, and a relevant resource for documentation.
- * The returned resource may be a Request (such as MedicationRequest), 
+ * The returned resource may be a Request (such as MedicationRequest),
  * an Action (such as Procedure), or a note (DocumentReference).
  * @param currentNode - the given node in the pathway to check
  * @param patientData - result of evaluating pathway ELM against the patient
@@ -294,32 +294,20 @@ function getNonPathDocumentation(
         for (const transition of (node as PathwayNode).transitions) {
           if (!transition.condition) continue;
 
-          if (
-            patientData[transition.condition.description] &&
-            patientData[transition.condition.description].length
-          ) {
-            const documentation = patientData[transition.condition.description][0];
-            documentation.node = nodeKey;
-            documentation.onPath = false;
-            (documentation as DocumentationResource).resource = retrieveResource(
-              documentation,
-              resources
-            );
+          // note, branch nodes no longer have documentation resources, just boolean
+
+          // Check for document reference note
+          const documentReference = retrieveNote(transition.condition.description, resources);
+          if (documentReference) {
+            const documentation = {
+              resourceType: 'DocumentReference',
+              status: documentReference.status,
+              id: documentReference.id,
+              node: nodeKey,
+              onPath: false,
+              resource: documentReference
+            };
             patientDocumentation[nodeKey] = { ...documentation };
-          } else {
-            // Check for document reference note
-            const documentReference = retrieveNote(transition.condition.description, resources);
-            if (documentReference) {
-              const documentation = {
-                resourceType: 'DocumentReference',
-                status: documentReference.status,
-                id: documentReference.id,
-                node: nodeKey,
-                onPath: false,
-                resource: documentReference
-              };
-              patientDocumentation[nodeKey] = { ...documentation };
-            }
           }
         }
       }
