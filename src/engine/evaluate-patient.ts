@@ -1,4 +1,4 @@
-import { extractNavigationCQL, extractPreconditionCQL, CqlObject } from './cql-extractor';
+import { extractCQL, CqlObject } from './cql-extractor';
 import convertCQL, { convertBasicCQL, ElmObject } from './cql-to-elm';
 import executeElm from './elm-executor';
 import { pathwayData, preconditionData } from './output-results';
@@ -29,7 +29,7 @@ export function evaluatePatientOnPathway(
 ): Promise<PathwayResults> {
   const patientDataPromise = pathway.elm?.navigational
     ? processELMCommon(patientRecord, pathway.elm.navigational)
-    : extractNavigationCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+    : extractCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
   return patientDataPromise.then(patientData => pathwayData(pathway, patientData, resources));
 }
@@ -47,7 +47,7 @@ export function evaluatePathwayPreconditions(
 ): Promise<PreconditionResult> {
   const patientDataPromise = pathway.elm?.preconditions
     ? processELMCommon(patientRecord, pathway.elm.preconditions)
-    : extractPreconditionCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+    : extractCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
   return patientDataPromise.then(patientData => preconditionData(pathway, patientData));
 }
