@@ -72,8 +72,7 @@ export function pathwayData(
     }
   } while (nextNodes.length !== 0);
 
-  // TODO do a second pass of any nodes without documentation to see if they are complete
-  // need to review this function call
+  // do a second pass of any nodes without documentation to see if they are complete
   getNonPathDocumentation(pathway, patientData, resources, documentation);
 
   return {
