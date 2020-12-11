@@ -6,15 +6,15 @@ describe('extractCQL', () => {
     const extractedCQL = extractCQL(pathway);
     expect(extractedCQL).resolves.toHaveProperty(
       'main',
-      expect.stringContaining("library main_library version '1.0'")
+      expect.stringContaining("library LIB947dcdc version '1.0'")
     );
     expect(extractedCQL).resolves.toHaveProperty(
-      'libraries.dependency',
-      expect.stringContaining("library dependency version '1.2.3'")
+      'libraries.LIB_Preconditions',
+      expect.stringContaining("library LIB_Preconditions version '1.0.0'")
     );
     expect(extractedCQL).resolves.toHaveProperty(
-      'libraries.another_dep',
-      expect.stringContaining("library another_dep version '2.0'")
+      'libraries.FHIRHelpers',
+      expect.stringContaining("library FHIRHelpers version '4.0.1'")
     );
   });
 });
