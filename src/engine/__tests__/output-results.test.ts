@@ -17,9 +17,9 @@ describe('pathway results translator', () => {
       },
       'T <= 2': false,
       'T > 2': true,
-      'N0': true,
+      N0: true,
       'N+': false,
-      'ChemotherapyTCHP': [
+      ChemotherapyTCHP: [
         {
           resourceType: 'MedicationRequest',
           status: 'completed',
@@ -34,7 +34,7 @@ describe('pathway results translator', () => {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
@@ -64,16 +64,16 @@ describe('pathway results translator', () => {
       },
       'T <= 2': false,
       'T > 2': true,
-      'N0': true,
+      N0: true,
       'N+': false,
-      'ChemotherapyTCHP': [
+      ChemotherapyTCHP: [
         {
           resourceType: 'MedicationRequest',
           status: 'completed',
           id: '2'
         }
       ],
-      'SurgeryMainPath': [
+      SurgeryMainPath: [
         {
           resourceType: 'ServiceRequest',
           status: 'active',
@@ -89,7 +89,7 @@ describe('pathway results translator', () => {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
@@ -124,7 +124,7 @@ describe('pathway results translator', () => {
       },
       'T <= 2': true,
       'T > 2': false,
-      'N0': false,
+      N0: false,
       'N+': false,
       PaclitaxelandTrastuzumab: [
         {
@@ -142,7 +142,7 @@ describe('pathway results translator', () => {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
@@ -170,7 +170,7 @@ describe('pathway results translator', () => {
       },
       'T <= 2': true,
       'T > 2': false,
-      'N0': true,
+      N0: true,
       'N+': false,
       SurgeryN0Path: [
         {
@@ -195,11 +195,11 @@ describe('pathway results translator', () => {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
-      'NodeStatus': {
+      NodeStatus: {
         node: 'NodeStatus',
         onPath: true
       },
@@ -236,7 +236,7 @@ describe('pathway results translator', () => {
       },
       'T <= 2': true,
       'T > 2': false,
-      'N0': false,
+      N0: false,
       'N+': true,
       ChemotherapyACTHP: [
         {
@@ -254,11 +254,11 @@ describe('pathway results translator', () => {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
-      'NodeStatus': {
+      NodeStatus: {
         node: 'NodeStatus',
         onPath: true
       },
@@ -287,22 +287,26 @@ describe('pathway results translator', () => {
       },
       'T <= 2': true,
       'T > 2': false,
-      'N0': false,
+      N0: false,
       'N+': true
     };
     const patientPath = pathwayData(pathway, patientData, resources);
 
-    expect(patientPath.currentNodes).toStrictEqual(['ChemotherapyTCHP', 'ChemotherapyACTHP', 'ChemotherapyddACTHP']);
+    expect(patientPath.currentNodes).toStrictEqual([
+      'ChemotherapyTCHP',
+      'ChemotherapyACTHP',
+      'ChemotherapyddACTHP'
+    ]);
     expect(patientPath.documentation).toEqual({
       Start: {
         node: 'Start',
         onPath: true
       },
-      'TumorSize': {
+      TumorSize: {
         node: 'TumorSize',
         onPath: true
       },
-      'NodeStatus': {
+      NodeStatus: {
         node: 'NodeStatus',
         onPath: true
       }
@@ -318,7 +322,7 @@ describe('precondition results translator', () => {
           value: '1'
         }
       },
-      "Cancer Condition": [
+      'Cancer Condition': [
         {
           value: 'Malignant neoplasm of breast (disorder)',
           match: true
@@ -349,7 +353,7 @@ describe('precondition results translator', () => {
           value: '2'
         }
       },
-      "Cancer Condition": [
+      'Cancer Condition': [
         {
           value: 'Non-small cell lung cancer (disorder)',
           match: false
