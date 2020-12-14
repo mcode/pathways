@@ -1,8 +1,7 @@
 import {
   extractMultipartBoundary,
   extractMultipartFileName,
-  extractJSONContent,
-  extractCQLInclude
+  extractJSONContent
 } from 'utils/regexes';
 
 // sample response from https://github.com/cqframework/cql-translation-service
@@ -114,28 +113,6 @@ describe('extractJSONContent', () => {
           }
         }
       });
-    }
-  });
-});
-
-/*
-github.com/cqframework/cql-exec-examples/blob/master/diabetic-foot-exam/r4/cql/DiabeticFootExam.cql
-*/
-const sampleCQL = `
-library DiabeticFootExam version '1.0.0'
-using FHIR version '4.0.0'
-include FHIRHelpers version '4.0.0' called FHIRHelpers
-
-codesystem "SNOMEDCT": 'http://snomed.info/sct'
-`;
-
-describe('extractCQLInclude', () => {
-  it('correctly matches expected text', () => {
-    const result = extractCQLInclude.exec(sampleCQL);
-    expect(result).not.toBeNull();
-    if (result) {
-      // typescript doesn't understand expect not null
-      expect(result[1]).toEqual('FHIRHelpers');
     }
   });
 });

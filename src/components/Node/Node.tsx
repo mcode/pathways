@@ -141,8 +141,8 @@ const NodeIcon: FC<NodeIconProps> = ({ pathwayNode, isAction }) => {
   if (pathwayNode.label === 'Start') icon = faPlay;
   if (isAction) {
     const actionNode = pathwayNode as ActionNode;
-    if (actionNode.action.length > 0) {
-      const resourceType = actionNode.action[0].resource.resourceType;
+    if (actionNode.action) {
+      const resourceType = actionNode.action.resource.resourceType;
       if (resourceType === 'MedicationRequest') icon = faPrescriptionBottleAlt;
       else if (resourceType === 'ServiceRequest') icon = faSyringe;
       else if (resourceType === 'CarePlan') icon = faBookMedical;

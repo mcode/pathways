@@ -1,4 +1,4 @@
-import { extractNavigationCQL, extractPreconditionCQL, CqlObject, Library } from './cql-extractor';
+import { extractCQL, CqlObject } from './cql-extractor';
 import convertCQL, { convertBasicCQL, ElmObject } from './cql-to-elm';
 import executeElm from './elm-executor';
 import { pathwayData, preconditionData } from './output-results';
@@ -9,8 +9,6 @@ import {
   ElmResults,
   PreconditionResult
 } from 'pathways-model';
-import { getFixture } from './cql-extractor';
-import { extractCQLInclude } from 'utils/regexes';
 import { DomainResource, Bundle } from 'fhir-objects';
 function instanceOfElmObject(object: object): object is ElmObject {
   return 'main' in object;
@@ -31,7 +29,7 @@ export function evaluatePatientOnPathway(
 ): Promise<PathwayResults> {
   const patientDataPromise = pathway.elm?.navigational
     ? processELMCommon(patientRecord, pathway.elm.navigational)
-    : extractNavigationCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+    : extractCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
   return patientDataPromise.then(patientData => pathwayData(pathway, patientData, resources));
 }
@@ -49,7 +47,7 @@ export function evaluatePathwayPreconditions(
 ): Promise<PreconditionResult> {
   const patientDataPromise = pathway.elm?.preconditions
     ? processELMCommon(patientRecord, pathway.elm.preconditions)
-    : extractPreconditionCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
+    : extractCQL(pathway).then(cql => processCQLCommon(patientRecord, cql));
 
   return patientDataPromise.then(patientData => preconditionData(pathway, patientData));
 }
@@ -61,23 +59,11 @@ export function evaluatePathwayPreconditions(
  * @return the raw, unprocessed patientResults
  *         derived from executing the CQL against the given patient
  */
-function processCQLCommon(patientRecord: Bundle, cql: string): Promise<PatientData> {
-  // Likely need an intermediary step that gathers the CQL files needed
-  // example function gatherCQL
-  return gatherCQL(cql)
-    .then(result => {
-      if (Object.keys(result).length > 0) {
-        // non-empty library
-        const cqlObject: CqlObject = {
-          main: cql,
-          libraries: result
-        };
-        return convertCQL(cqlObject);
-      } else {
-        return convertBasicCQL(cql);
-      }
-    })
-    .then(elm => processELMCommon(patientRecord, elm));
+function processCQLCommon(patientRecord: Bundle, cql: CqlObject): Promise<PatientData> {
+  const elmPromise =
+    Object.keys(cql.libraries).length > 0 ? convertCQL(cql) : convertBasicCQL(cql.main);
+
+  return elmPromise.then(elm => processELMCommon(patientRecord, elm));
 }
 
 /**
@@ -103,22 +89,4 @@ function processELMCommon(patientRecord: Bundle, elm: object): Promise<PatientDa
     const patientData = elmResults.patientResults[patientIds[0]];
     resolve(patientData);
   });
-}
-
-// example function that would gather library CQL files
-function gatherCQL(cql: string): Promise<Library> {
-  const lib = extractCQLInclude.exec(cql);
-  if (lib) {
-    return getFixture(`${lib[1]}.cql`).then(result => {
-      return new Promise(function(resolve, reject): void {
-        setTimeout(function() {
-          resolve({ FHIRHelpers: result });
-        }, 300);
-      });
-    });
-  } else {
-    return new Promise(function(resolve, reject): void {
-      resolve({});
-    });
-  }
 }

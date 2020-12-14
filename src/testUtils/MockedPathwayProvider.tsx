@@ -8,10 +8,12 @@ interface PathwayProviderProps {
 }
 
 const pathway: Pathway = {
+  id: '12345',
   name: 'Test Pathway',
-  library: 'mCODE_Library.cql',
+  library: [],
   preconditions: [
     {
+      id: 'asdfg',
       elementName: 'condition',
       expected: 'breast cancer',
       cql: 'some fancy CQL statement'
@@ -19,7 +21,9 @@ const pathway: Pathway = {
   ],
   nodes: {
     Start: {
+      key: 'Start',
       label: 'Start',
+      type: 'start',
       transitions: []
     }
   }

@@ -54,7 +54,7 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
     const patient = usePatient().patient as fhir.Patient;
     if (note) note.node = actionNode.label;
 
-    const onConfirm = (action?: Action[]): void => {
+    const onConfirm = (action?: Action): void => {
       const newPatientRecords = [...patientRecords];
 
       // Create DocumentReference and add to patient record(and post to FHIR server)
@@ -77,9 +77,9 @@ const ExpandedNode: FC<ExpandedNodeProps> = memo(
       }
 
       // Translate pathway recommended resource and add to patient record
-      if (note?.status === 'Accepted' && action && action.length > 0) {
+      if (note?.status === 'Accepted' && action?.resource) {
         const resource: Resource = translatePathwayRecommendation(
-          action[0].resource,
+          action.resource,
           patient.id as string
         );
 
@@ -282,25 +282,39 @@ function renderBranch(
 }
 
 function isMedicationRequest(
-  request: MedicationRequest | ServiceRequest
+  request: MedicationRequest | ServiceRequest | CarePlan
 ): request is MedicationRequest {
-  return (request as MedicationRequest).medicationCodeableConcept !== undefined;
+  return (request as MedicationRequest)?.medicationCodeableConcept !== undefined;
 }
+
+function isServiceRequest(
+  request: MedicationRequest | ServiceRequest | CarePlan
+): request is ServiceRequest {
+  return (request as ServiceRequest)?.code !== undefined;
+}
+
 function renderAction(
   actionNode: ActionNode,
   documentation: DocumentationResource | undefined,
   isAccepted: boolean | null
 ): ReactElement[] {
-  const resource = actionNode.action[0].resource;
-  const coding = isMedicationRequest(resource)
-    ? resource?.medicationCodeableConcept?.coding
-    : resource?.code?.coding;
+  const resource = actionNode.action.resource;
+  let coding = undefined;
+
+  if (isMedicationRequest(resource)) {
+    coding = resource?.medicationCodeableConcept?.coding;
+  } else if (isServiceRequest(resource)) {
+    coding = resource?.code?.coding;
+  } else {
+    // CarePlans don't have codes. we can hack one up from the name
+    coding = [{ display: resource?.title }];
+  }
 
   const returnElements = [
     <ExpandedNodeField
       key="Description"
       title="Description"
-      description={actionNode.action[0].description}
+      description={actionNode.action.description}
     />,
     <ExpandedNodeField key="Type" title="Type" description={resource.resourceType} />
   ];

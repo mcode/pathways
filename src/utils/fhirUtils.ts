@@ -132,7 +132,7 @@ export function createNoteContent(
   note.status = status;
   note.notes = notes;
   if (actionNode) {
-    note.treatment = actionNode.action[0].description;
+    note.treatment = actionNode.action.description;
     note.node = actionNode.label;
   }
 

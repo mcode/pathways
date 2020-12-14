@@ -1,10 +1,9 @@
-import { PathwayNode, ActionNode } from 'pathways-model';
+import { PathwayNode } from 'pathways-model';
 
 export function isActionNode(node: PathwayNode): boolean {
-  const { action } = node as ActionNode;
-  return action ? action.length > 0 : false;
+  return node.type === 'action';
 }
 
 export function isBranchNode(node: PathwayNode): boolean {
-  return !isActionNode(node) && node.transitions.length > 1;
+  return node.type === 'branch';
 }

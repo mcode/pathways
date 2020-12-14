@@ -9,11 +9,13 @@ export const loadedService: Service<Array<Pathway>> = {
   status: 'loaded',
   payload: [
     {
+      id: '1',
       name: 'test1',
       description: 'test1',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
+          id: 'asdfg',
           elementName: 'condition',
           expected: 'breast cancer',
           cql: 'some fancy CQL statement'
@@ -21,17 +23,21 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }
     },
     {
+      id: '2',
       name: 'test2',
       description: 'test2',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
+          id: 'qwerty',
           elementName: 'condition',
           expected: 'gist cancer',
           cql: 'some fancy CQL statement'
@@ -39,17 +45,21 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }
     },
     {
+      id: '3',
       name: 'test3',
       description: 'test3',
-      library: 'test.cql',
+      library: [],
       preconditions: [
         {
+          id: 'zxcvb',
           elementName: 'condition',
           expected: 'lung cancer',
           cql: 'some fancy CQL statement'
@@ -57,7 +67,9 @@ export const loadedService: Service<Array<Pathway>> = {
       ],
       nodes: {
         Start: {
+          key: 'Start',
           label: 'Start',
+          type: 'start',
           transitions: []
         }
       }

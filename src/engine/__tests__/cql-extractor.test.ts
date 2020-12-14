@@ -1,24 +1,20 @@
 import pathway from './fixtures/pathways/sample_pathway.json';
-import { extractNavigationCQL, extractPreconditionCQL } from '../cql-extractor';
+import { extractCQL } from '../cql-extractor';
 
-describe('extractNavigationCQL', () => {
+describe('extractCQL', () => {
   it('extracts the CQL from a pathway', () => {
-    global.fetch = jest.fn(() => Promise.resolve({ text: () => 'fakeCQL' }));
-    const extractedCQL = extractNavigationCQL(pathway);
-    expect(extractedCQL).resolves.toEqual(expect.stringContaining('fakeCQL'));
-    expect(extractedCQL).resolves.not.toEqual(expect.stringContaining('flux-capacitor'));
-    expect(extractedCQL).resolves.toEqual(expect.stringContaining('Primary tumor'));
-  });
-});
-
-describe('extractPreconditionCQL', () => {
-  it('extracts the precondition CQL from a pathway', () => {
-    global.fetch = jest.fn(() => Promise.resolve({ text: () => 'fakeCQL' }));
-    const extractedCQL = extractPreconditionCQL(pathway);
-    expect(extractedCQL).resolves.toEqual(expect.stringContaining('fakeCQL'));
-    expect(extractedCQL).resolves.not.toEqual(expect.stringContaining('flux-capacitor'));
-    expect(extractedCQL).resolves.toEqual(
-      expect.stringContaining('Malignant neoplasm of breast (disorder)')
+    const extractedCQL = extractCQL(pathway);
+    expect(extractedCQL).resolves.toHaveProperty(
+      'main',
+      expect.stringContaining("library LIB947dcdc version '1.0'")
+    );
+    expect(extractedCQL).resolves.toHaveProperty(
+      'libraries.LIB_Preconditions',
+      expect.stringContaining("library LIB_Preconditions version '1.0.0'")
+    );
+    expect(extractedCQL).resolves.toHaveProperty(
+      'libraries.FHIRHelpers',
+      expect.stringContaining("library FHIRHelpers version '4.0.1'")
     );
   });
 });
